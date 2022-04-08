@@ -1,2 +1,2 @@
 # lwmfjc.github.io.source
-存放博客源码
+放博客的源码
