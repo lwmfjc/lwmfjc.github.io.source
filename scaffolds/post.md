@@ -1,6 +1,7 @@
 ---
 title: {{ title }}
 date: {{ date }}
+updated: {{ date }} 
 description: ''
 categories:
   - '学习'
