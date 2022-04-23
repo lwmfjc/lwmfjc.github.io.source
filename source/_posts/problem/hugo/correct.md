@@ -1,7 +1,7 @@
 ---
 title: "正确文件结构"
-date: 2021-12-27T09:31:50+08:00
-updated: 2022-04-24
+date: 2021-12-27 09:31:50 
+updated: 2021-12-28 09:31:50 
 draft: true
 description: 正确文件结构，测试下面图片
 categories: 
