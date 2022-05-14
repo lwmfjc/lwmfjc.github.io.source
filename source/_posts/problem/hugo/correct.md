@@ -6,6 +6,8 @@ draft: true
 description: 正确文件结构，测试下面图片
 categories: 
  - "问题"
+tags:
+ - "hugo问题"
 
 ---
 
