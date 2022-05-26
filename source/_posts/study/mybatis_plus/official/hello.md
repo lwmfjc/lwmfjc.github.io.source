@@ -75,6 +75,11 @@ updated: 2022-05-20 17:16:29
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>3.5.1</version>
             </dependency>
+    
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+            </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
@@ -96,9 +101,9 @@ updated: 2022-05-20 17:16:29
     
         </dependencies>
     ```
-
+  
   - 配置resources/application.yml文件
-
+  
     ```yml
     spring:
       datasource:
@@ -110,8 +115,65 @@ updated: 2022-05-20 17:16:29
         init:
           schema-locations: classpath:db/schema-mysql.sql
           data-locations: classpath:db/data-mysql.sql
+          mode: always
     ```
-
+  
+  - entity类和mapper类的处理
+  
+    - entity
+  
+      ```java
+      @Data
+      public class User {
+          private Long id;
+          private String name;
+          private Integer age;
+          private String email;
+      }
+      ```
+  
+    - mapper
+  
+      ```java
+      
+      import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+      import com.baomidou.mybatisplus.samples.quickstart.entity.User;
+      
+      public interface UserMapper extends BaseMapper<User> {
+      
+      }
+      ```
+  
+  - 测试类
+  
+    ```java
+    import com.baomidou.mybatisplus.samples.quickstart.Application;
+    import com.baomidou.mybatisplus.samples.quickstart.entity.User;
+    import com.baomidou.mybatisplus.samples.quickstart.mapper.UserMapper;
+    import org.junit.jupiter.api.Assertions;
+    import org.junit.jupiter.api.Test;
+    import org.springframework.beans.factory.annotation.Autowired;
+    import org.springframework.boot.test.context.SpringBootTest;
+    
+    import java.util.List;
+    
+    @SpringBootTest(classes = {Application.class})
+    public class SampleTest {
+    
+        @Autowired
+        private UserMapper userMapper;
+    
+        @Test
+        public void testSelect() {
+            System.out.println(("----- selectAll method test ------"));
+            List<User> userList = userMapper.selectList(null);
+            Assertions.assertEquals(5, userList.size());
+            userList.forEach(System.out::println);
+        }
+    
+    }
+    ```
+  
   - 
-
+  
   
