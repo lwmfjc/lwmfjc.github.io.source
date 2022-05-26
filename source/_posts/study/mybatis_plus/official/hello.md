@@ -488,6 +488,13 @@ updated: 2022-05-20 17:16:29
     - 测试
       ![image-20220526151658557](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526151658557.png)
   
-  - 
+  - 使用mybatis-x 插件（idea）
+  
+  
+    
+    ![image-20220526153005432](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526153005432.png)
+    ![image-20220526152906823](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526152906823.png)
+  
+    ![image-20220526152939073](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526152939073.png)
   
   
