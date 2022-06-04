@@ -174,88 +174,90 @@ updated: 2022-05-20 17:16:29
     }
     ```
   
-  - mybatis-plus 代码自动生成
   
-    - maven 依赖
   
-      ```xml
-      
-              <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-generator -->
-              <dependency>
-                  <groupId>com.baomidou</groupId>
-                  <artifactId>mybatis-plus-generator</artifactId>
-                  <version>3.5.2</version>
-              </dependency>
-              <!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity-engine-core -->
-              <dependency>
-                  <groupId>org.apache.velocity</groupId>
-                  <artifactId>velocity-engine-core</artifactId>
-                  <version>2.3</version>
-              </dependency>
-      ```
+  ###  mybatis-plus 代码自动生成
   
-    - 在测试类中编写程序让其自动生成
+  - maven 依赖
   
-      ```java
-      import com.baomidou.mybatisplus.generator.FastAutoGenerator;
-      import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
-      import org.apache.ibatis.jdbc.ScriptRunner;
-      
-      import java.io.InputStream;
-      import java.io.InputStreamReader;
-      import java.sql.Connection;
-      import java.sql.SQLException;
-      
-      /**
-       * <p>
-       * 快速生成
-       * </p>
-       *
-       * @author lanjerry
-       * @since 2021-09-16
-       */
-      public class FastAutoGeneratorTest {
-      
-          /**
-           * 执行初始化数据库脚本
-           */
-          public static void before() throws SQLException {
-              Connection conn = DATA_SOURCE_CONFIG.build().getConn();
-              InputStream inputStream = FastAutoGeneratorTest.class.getResourceAsStream("/db/schema-mysql.sql");
-              ScriptRunner scriptRunner = new ScriptRunner(conn);
-              scriptRunner.setAutoCommit(true);
-              scriptRunner.runScript(new InputStreamReader(inputStream));
-              conn.close();
-          }
-      
-          /**
-           * 数据源配置
-           */
-          private static final DataSourceConfig.Builder DATA_SOURCE_CONFIG = new DataSourceConfig
-                  .Builder("jdbc:mysql://localhost:3306/mybatis_plus_demo?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&nullCatalogMeansCurrent=true", "root", "123456");
-      
-          /**
-           * 执行 run
-           */
-          public static void main(String[] args) throws SQLException {
-              before();
-              FastAutoGenerator.create(DATA_SOURCE_CONFIG)
-                      // 全局配置
-                      .globalConfig((scanner, builder) -> builder.author(scanner.apply("请输入作者名称")))
-                      // 包配置
-                      .packageConfig((scanner, builder) -> builder.parent(scanner.apply("请输入包名")))
-                      // 策略配置
-                      .strategyConfig((scanner, builder) -> builder.addInclude(scanner.apply("请输入表名，多个表名用,隔开")))
-                      /*
-                          模板引擎配置，默认 Velocity 可选模板引擎 Beetl 或 Freemarker
-                         .templateEngine(new BeetlTemplateEngine())
-                         .templateEngine(new FreemarkerTemplateEngine())
-                       */
-                      .execute();
-          }
-      }
-      
-      ```
+    ```xml
+    
+            <!-- https://mvnrepository.com/artifact/com.baomidou/mybatis-plus-generator -->
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>3.5.2</version>
+            </dependency>
+            <!-- https://mvnrepository.com/artifact/org.apache.velocity/velocity-engine-core -->
+            <dependency>
+                <groupId>org.apache.velocity</groupId>
+                <artifactId>velocity-engine-core</artifactId>
+                <version>2.3</version>
+            </dependency>
+    ```
+  
+  - 在测试类中编写程序让其自动生成
+  
+    ```java
+    import com.baomidou.mybatisplus.generator.FastAutoGenerator;
+    import com.baomidou.mybatisplus.generator.config.DataSourceConfig;
+    import org.apache.ibatis.jdbc.ScriptRunner;
+    
+    import java.io.InputStream;
+    import java.io.InputStreamReader;
+    import java.sql.Connection;
+    import java.sql.SQLException;
+    
+    /**
+     * <p>
+     * 快速生成
+     * </p>
+     *
+     * @author lanjerry
+     * @since 2021-09-16
+     */
+    public class FastAutoGeneratorTest {
+    
+        /**
+         * 执行初始化数据库脚本
+         */
+        public static void before() throws SQLException {
+            Connection conn = DATA_SOURCE_CONFIG.build().getConn();
+            InputStream inputStream = FastAutoGeneratorTest.class.getResourceAsStream("/db/schema-mysql.sql");
+            ScriptRunner scriptRunner = new ScriptRunner(conn);
+            scriptRunner.setAutoCommit(true);
+            scriptRunner.runScript(new InputStreamReader(inputStream));
+            conn.close();
+        }
+    
+        /**
+         * 数据源配置
+         */
+        private static final DataSourceConfig.Builder DATA_SOURCE_CONFIG = new DataSourceConfig
+                .Builder("jdbc:mysql://localhost:3306/mybatis_plus_demo?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&nullCatalogMeansCurrent=true", "root", "123456");
+    
+        /**
+         * 执行 run
+         */
+        public static void main(String[] args) throws SQLException {
+            before();
+            FastAutoGenerator.create(DATA_SOURCE_CONFIG)
+                    // 全局配置
+                    .globalConfig((scanner, builder) -> builder.author(scanner.apply("请输入作者名称")))
+                    // 包配置
+                    .packageConfig((scanner, builder) -> builder.parent(scanner.apply("请输入包名")))
+                    // 策略配置
+                    .strategyConfig((scanner, builder) -> builder.addInclude(scanner.apply("请输入表名，多个表名用,隔开")))
+                    /*
+                        模板引擎配置，默认 Velocity 可选模板引擎 Beetl 或 Freemarker
+                       .templateEngine(new BeetlTemplateEngine())
+                       .templateEngine(new FreemarkerTemplateEngine())
+                     */
+                    .execute();
+        }
+    }
+    
+    ```
   
   - 使用mybats-x插件自动生成代码
   
@@ -491,7 +493,7 @@ updated: 2022-05-20 17:16:29
   - 使用mybatis-x 插件（idea）
   
   
-    
+  
     ![image-20220526153005432](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526153005432.png)
     ![image-20220526152906823](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526152906823.png)
   
