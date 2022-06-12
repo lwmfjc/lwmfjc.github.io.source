@@ -1,5 +1,5 @@
 ---
-title: 03-其他
+title: boge-03-其他
 description: '其他'
 categories:
   - 学习
