@@ -70,12 +70,62 @@ updated: 2022-07-20 21:57:18
 
 ![image-20220721232308526](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220721232308526.png)
 
-1. 如果git commit ，那么这里的历史版本是删不掉的
-2. 如果只是在工作区，或者添加到了暂存区，那么是可以恢复的
+1. 工作机制
+   - 如果git commit ，会生成对应的历史版本，那么这里的历史版本是删不掉的
+   - 如果只是在工作区，或者添加到了暂存区，那么是可以恢复(删掉（操作记录）)的
+   - git add (让git知道有这个文件)
+      ![image-20220723091448949](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723091448949.png)
+      如果只有v1,v2,v3，V3版本是删不掉的，如果要恢复成v2，只能再提交一次版本
+   
+2. 远程库--
+   代码托管中心是基于网络服务器的远程代码仓库，简称为远程库
+   ![image-20220723091726956](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723091726956.png)
+
+   - 局域网 GitLab
+
+   - 互联网 GitHub  Gitee 码云
 
 # 安装
 
-1. git安装、客户端使用
+1. git安装、客户端使用(windows)
+
+   - git安装位置  任意 非中文、无空格
+
+   - 选项配置
+     ![image-20220723092103420](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092103420.png)
+
+   - 编辑器选择
+     ![image-20220723092214293](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092214293.png)
+
+   - 是否修改初始化分支的名字--默认master
+     ![image-20220723092243222](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092243222.png)
+
+   - 默认第二个，这里选择第一个，只能在git bash里面使用
+     ![image-20220723092335836](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092335836.png)
+
+   - 后台客户端协议
+     ![image-20220723092421411](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092421411.png)
+
+   - 配置行末换行符
+     windows--CRLF
+     linux--LF
+
+     默认，让git根据系统自动转换![image-20220723092452460](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092452460.png)
+     
+ - 从远程拉取代码时，模式--用默认
+      ![image-20220723092620029](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092620029.png)
+   
+    - 凭据管理器
+      记录登陆行为，不用每次登录
+      ![image-20220723092645389](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092645389.png)
+   
+    - 其他配置 软链接文件 缓存
+      ![image-20220723092729653](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092729653.png)
+   
+    - 再git bash里运行第三方程序
+   
+     安装成功---视频里面是2.31
+   ![image-20220723092855691](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220723092855691.png)
 
 # 命令
 
