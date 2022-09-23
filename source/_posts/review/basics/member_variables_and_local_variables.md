@@ -101,3 +101,5 @@ obj1.test(10)
 
 非静态代码块或者进入方法，都会在栈中开辟空间存储局部变量
 ![image-20220923113808372](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923113808372.png)
+
+注意：静态代码块定义的变量，只会存在于静态代码块中。不是类变量，也不属于成员变量
