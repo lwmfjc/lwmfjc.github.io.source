@@ -19,7 +19,34 @@ updated: 2022-09-23 13:37:38
 
 ## 事务传播行为
 
-Definition ```/ˌdefɪˈnɪʃ(ə)n/```
+Definition ```/ˌdefɪˈnɪʃ(ə)n/``` 定义
+
+Propagation ```/ˌprɒpəˈɡeɪʃn/``` 传播
+假设有代码如下：
+
+```java
+@Service
+Class A {
+    @Autowired
+    B b;
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void aMethod {
+        //do something
+        b.bMethod();
+    }
+}
+@Service
+Class B {
+    @Transactional(propagation = Propagation.XXXXXX)
+    public void bMethod {
+       //do something
+    }
+}
+```
+
 共7种，其中主要有4种如下
+
+- **`TransactionDefinition.PROPAGATION_REQUIRED`**
+  
 
 - 
