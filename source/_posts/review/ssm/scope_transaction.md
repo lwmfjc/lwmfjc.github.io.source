@@ -153,3 +153,4 @@ Class B {
   读已提交，对同一字段的多次读取结果都是一致的。可以阻止脏读，但幻读或不可重复读仍会发生
 - **`TransactionDefinition.ISOLATION_SERIALIZABLE`**
   串行化，可以防止脏读、幻读及不可重复读，所有事务依次逐个执行，完全服从ACID，但严重影响性能
+
