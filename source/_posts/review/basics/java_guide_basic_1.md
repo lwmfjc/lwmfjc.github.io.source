@@ -138,3 +138,188 @@ updated: 2022-09-28 10:51:00
 
 - 包装类型的缓存机制
   Byte，Short，Integer，Long这4中包装类默认创建了数值[-128,127]的相应类型的缓存数据，Character创建了数值在[0,127]范围的缓存数据，Boolean直接返回True or False
+  
+  - Integer缓存代码
+    
+    ```java
+    public static Integer valueOf(int i) {
+        if (i >= IntegerCache.low && i <= IntegerCache.high)
+            return IntegerCache.cache[i + (-IntegerCache.low)];
+        return new Integer(i);
+    }
+    private static class IntegerCache {
+        static final int low = -128;
+        static final int high;
+        static {
+            // high value may be configured by property
+            int h = 127;
+        }
+    }
+    ```
+    
+  - Character缓存代码
+  
+    ```java
+    public static Character valueOf(char c) {
+        if (c <= 127) { // must cache
+          return CharacterCache.cache[(int)c];
+        }
+        return new Character(c);
+    }
+    
+    private static class CharacterCache {
+        private CharacterCache(){}
+        static final Character cache[] = new Character[127 + 1];
+        static {
+            for (int i = 0; i < cache.length; i++)
+                cache[i] = new Character((char)i);
+        }
+    
+    }
+    ```
+  
+  - Boolean缓存代码
+  
+    ```java
+    public static Boolean valueOf(boolean b) {
+        return (b ? TRUE : FALSE);
+    }
+    ```
+  
+  - 注意Float和Double没有使用缓存机制，且 只有调用valueOf才会使用缓存，当使用new的时候是直接创建新对象
+  
+    ```java
+        public Integer(int value) {
+            this.value = value;
+        }
+    ```
+  
+  - 举例
+  
+    ```java
+            Boolean t=new Boolean(true);
+            Boolean f=new Boolean(true);
+            System.out.println(t==f); //false
+            System.out.println(t.equals(f)); //true
+    
+            Boolean t1=Boolean.valueOf(true);
+            Boolean f1=Boolean.valueOf(true);
+            System.out.println(t1==f1); //true
+    
+            System.out.println(Boolean.TRUE==Boolean.TRUE); //true
+            //============================================//
+    		Integer i1 = 33; //这里发生了自动装箱，相当于Integer.valueOf(30)
+            Integer i2 = 33;
+            System.out.println(i1 == i2);// 输出 true
+    
+            Float i11 = 333f;
+            Float i22 = 333f;
+            System.out.println(i11 == i22);// 输出 false
+    
+            Double i3 = 1.2;
+            Double i4 = 1.2;
+            System.out.println(i3 == i4);// 输出 false
+    
+            //===========================================//
+    		Integer i1 = 40;
+            Integer i2 = new Integer(40);
+            System.out.println(i1==i2);
+    ```
+  
+  - 如上，所有整型包装类对象之间值的比较，应该全部使用equals方法比较
+    ![image-20220929092643596](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220929092643596.png)
+  
+  - 什么是自动装箱和拆箱
+  
+    - **装箱**：将基本类型用它们对应的引用类型包装起来；
+    - **拆箱**：将包装类型转换为基本数据类型；
+  
+  - 举例说明
+  
+    ```java
+    Integer i = 10 ;//装箱
+    int n = i ;//拆箱
+    ```
+  
+    对应的字节码
+  
+    ```
+       L1
+    
+        LINENUMBER 8 L1
+    
+        ALOAD 0
+    
+        BIPUSH 10
+    
+        INVOKESTATIC java/lang/Integer.valueOf (I)Ljava/lang/Integer;
+    
+        PUTFIELD AutoBoxTest.i : Ljava/lang/Integer;
+    
+       L2
+    
+        LINENUMBER 9 L2
+    
+        ALOAD 0
+    
+        ALOAD 0
+    
+        GETFIELD AutoBoxTest.i : Ljava/lang/Integer;
+    
+        INVOKEVIRTUAL java/lang/Integer.intValue ()I
+    
+        PUTFIELD AutoBoxTest.n : I
+    
+        RETURN
+    ```
+  
+    如图，Integer i = 10 等价于Integer i = Integer.valueOf(10)  
+  
+    int n= i 等价于 int n= i.intValue();
+  
+    频繁拆装箱会严重影响系统行呢个
+  
+  - 浮点数运算的时候会有精度丢失的风险
+  
+    > 这个和计算机保存浮点数的机制有很大关系。我们知道计算机是二进制的，而且计算机在表示一个数字时，宽度是有限的，无限循环的小数存储在计算机时，只能被截断，所以就会导致小数精度发生损失的情况。这也就是解释了为什么浮点数没有办法用二进制精确表示。
+  
+    十进制下的0.2无法精确转换成二进制小数
+  
+    ```
+    // 0.2 转换为二进制数的过程为，不断乘以 2，直到不存在小数为止，
+    // 在这个计算过程中，得到的整数部分从上到下排列就是二进制的结果。
+    0.2 * 2 = 0.4 -> 0
+    0.4 * 2 = 0.8 -> 0
+    0.8 * 2 = 1.6 -> 1
+    0.6 * 2 = 1.2 -> 1
+    0.2 * 2 = 0.4 -> 0（发生循环）
+    ```
+  
+  - 使用BigDecimal解决上面的问题
+  
+    ```java
+    BigDecimal a = new BigDecimal("1.0");
+    BigDecimal b = new BigDecimal("0.9");
+    BigDecimal c = new BigDecimal("0.8");
+    
+    BigDecimal x = a.subtract(b);
+    BigDecimal y = b.subtract(c);
+    
+    System.out.println(x); /* 0.1 */
+    System.out.println(y); /* 0.1 */
+    System.out.println(Objects.equals(x, y)); /* true */
+    ```
+  
+  - 超过long整形的数据，使用BigInteger
+  
+    Java中，64位long整型是最大的整数类型
+  
+    ```java
+    long l = Long.MAX_VALUE;
+    System.out.println(l + 1); // -9223372036854775808
+    System.out.println(l + 1 == Long.MIN_VALUE); // true
+    //BigInteger内部使用int[] 数组来存储任意大小的整型数据
+    //对于常规整数类型，使用BigInteger运算的效率会降低
+    ```
+  
+    ![image-20220929093558353](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220929093558353.png)
