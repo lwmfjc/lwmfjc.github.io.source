@@ -1,6 +1,6 @@
 ---
-title: javaGuide基础
-description: javaGuide基础
+title: javaGuide基础1
+description: javaGuide基础1
 categories:
   - 学习
 tags:
