@@ -189,4 +189,37 @@ updated: 2022-09-29 10:16:13
     }
     ```
 
-  - 
+    - 如上，保存字符串的数组被final修饰且为私有，并且String类没有提供暴露修改该字符串的方法
+    - String类被修饰为final修饰呆滞不能被继承，避免子类破坏
+
+  - Java9  
+
+    ```java
+    public final class String implements java.io.Serializable,Comparable<String>, CharSequence {
+        // @Stable 注解表示变量最多被修改一次，称为“稳定的”。
+        @Stable
+        private final byte[] value;
+    }
+    
+    abstract class AbstractStringBuilder implements Appendable, CharSequence {
+        byte[] value;
+    
+    }
+    ```
+
+    - > Java9为何String底层实现由char[] 改成了 byte[] 新版的 String 其实支持两个编码方案： Latin-1 和 UTF-16。如果字符串中包含的汉字没有超过 Latin-1 可表示范围内的字符，那就会使用 Latin-1 作为编码方案。Latin-1 编码方案下，`byte` 占一个字节(8 位)，`char` 占用 2 个字节（16），`byte` 相较 `char` 节省一半的内存空间。
+      >
+      > JDK 官方就说了绝大部分字符串对象只包含 Latin-1 可表示的字符。
+
+- 字符串使用“+” 还是 Stringbuilder 
+  Java本身不支持运算符重载，但 “ + ” 和 “+=” 是专门为String重载过的运算符，Java中仅有的两个  
+
+  ```java
+  String str1 = "he";
+  String str2 = "llo";
+  String str3 = "world";
+  String str4 = str1 + str2 + str3;
+  ```
+
+  对应的字节码：  
+  ![image-20221008114449075](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008114449075.png)
