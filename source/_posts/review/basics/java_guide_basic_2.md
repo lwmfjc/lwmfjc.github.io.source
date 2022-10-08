@@ -223,3 +223,79 @@ updated: 2022-09-29 10:16:13
 
   对应的字节码：  
   ![image-20221008114449075](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008114449075.png)
+  
+  字符串对象通过“+”的字符串拼接方式，实际上是通过 `StringBuilder` 调用 `append()` 方法实现的，拼接完成之后调用 `toString()` 得到一个 `String` 对象。因此这里就会产生问题，如下代码，会产生过多的StringBuilder对象
+  
+  ```java
+  String[] arr = {"he", "llo", "world"};
+  String s = "";
+  for (int i = 0; i < arr.length; i++) {
+      s += arr[i];
+  }
+  System.out.println(s);
+  
+  ```
+  
+  会循环创建StringBuilder对象，建议自己创建一个新的StringBuilder并使用：  
+  
+  ```java
+  String[] arr = {"he", "llo", "world"};
+  StringBuilder s = new StringBuilder();
+  for (String value : arr) {
+      s.append(value);
+  }
+  System.out.println(s);
+  ```
+  
+- String#equals()和Object#equals()有何区别
+  String的equals被重写过，比较的是字符串的值是否相等，而Object的equals比较的是对象的内存地址
+
+- 字符串常量池  
+  是JVM为了提升性能和减少内存消耗针对字符串（String类）专门开辟的一块区域，主要目的是为了避免字符串的重复创建
+
+  ```java
+  // 在堆中创建字符串对象”ab“ (这里也可以说是在常量池中创建对象)
+  // 将字符串对象”ab“的引用(常量池中的饮用)保存在字符串常量池中
+  String aa = "ab";
+  // 直接返回字符串常量池中字符串对象”ab“的引用
+  String bb = "ab";
+  System.out.println(aa==bb);// true
+  ```
+
+  - ####  String s1 = new String("abc");这句话创建了几个字符串对象？
+
+    会创建 1 或 2 个字符串对象。
+    如果常量池中存在值为"abc"的对象，则直接在堆中创建一个对象，并且返回该对象的引用；如果不存在，则先在常量池中创建该对象，然后再在堆中创建该对象，并且返回该对象（堆中）的引用
+
+    下面这个解释，说明常量池存储的是引用（堆中某一块区域的）![image-20221008144055351](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008144055351.png)
+
+    ```java
+    // 字符串常量池中已存在字符串对象“abc”的引用
+    String s1 = "abc";
+    // 下面这段代码只会在堆中创建 1 个字符串对象“abc”
+    String s2 = new String("abc");
+    ```
+
+  - intern方法的作用，是一个native方法，作用是将指定的字符串对象的引用保存在字符串常量池中
+
+    ```java
+    // 在堆中创建字符串对象”Java“
+    // 将字符串对象”Java“的引用保存在字符串常量池中
+    String s1 = "Java";
+    // 直接返回字符串常量池中字符串对象”Java“对应的引用
+    String s2 = s1.intern();
+    // 会在堆中在单独创建一个字符串对象
+    String s3 = new String("Java");
+    // 直接返回字符串常量池中字符串对象”Java“对应的引用
+    String s4 = s3.intern();
+    // s1 和 s2 指向的是堆中的同一个对象
+    System.out.println(s1 == s2); // true
+    // s3 和 s4 指向的是堆中不同的对象
+    System.out.println(s3 == s4); // false
+    // s1 和 s4 指向的是堆中的同一个对象
+    System.out.println(s1 == s4); //true
+    
+    ```
+
+- 问题：String 类型的变量和常量做“+”运算时发生了什么
+  
