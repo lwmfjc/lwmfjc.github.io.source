@@ -4,8 +4,9 @@ description: javaGuide基础3
 categories:
   - 学习
 tags:
-  - 复习
-  - 复习-基础
+  - '复习'
+  - '复习-javaGuide'
+  - '复习-javaGuide-基础'
 date: 2022-10-08 15:23:15
 updated: 2022-10-08 15:23:15
 ---
@@ -211,7 +212,7 @@ updated: 2022-10-08 15:23:15
 
 
     也可以是非静态的
-
+    
     ```java
     class A{
         private String name;
