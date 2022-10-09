@@ -312,5 +312,40 @@ updated: 2022-10-08 15:23:15
 - 序列化的目的，通过网络传输对象，或者说是将对象存储到文件系统、数据库、内存中
   ![image-20221009102741094](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221009102741094.png)
 
+- 被```transient```修饰的变量，不进行序列化：即当对象被反序列化时，被```transient```修饰的变量值不会被持久化和恢复  ```transient 英[ˈtrænziənt]```
+
+  - `transient` 只能修饰变量，不能修饰类和方法。
+  - `transient` 修饰的变量，在反序列化后变量值将会被置成类型的默认值。例如，如果是修饰 `int` 类型，那么反序列后结果就是 `0`。
+  - `static` 变量因为不属于任何对象(Object)，所以无论有没有 `transient` 关键字修饰，均不会被序列化。
+
+- JavaIO流
+
+  > IO 即 `Input/Output`，输入和输出。数据输入到计算机内存的过程即输入，反之输出到外部存储（比如数据库，文件，远程主机）的过程即输出。数据传输过程类似于水流，因此称为 IO 流。IO 流在 Java 中分为输入流和输出流，而根据数据的处理方式又分为字节流和字符流。
+
+- JavaIO流的类都是从如下4个抽象类基类中派生出来的
+
+  - `InputStream`/`Reader`: 所有的输入流的基类，前者是字节输入流，后者是字符输入流。
+  - `OutputStream`/`Writer`: 所有输出流的基类，前者是字节输出流，后者是字符输出流。
+
+- 不管是文件读写还是网络发送接收，信息的最小存储单元都是字节，那为什么I/O流操作要分为字节流操作和字符流操作
+
+  - 字符流由Java虚拟机将字节转换得到，过程较为耗时
+  - 如果不知道编码类型的过，使用字节流的过程中很容易出现乱码
+
 ## 语法糖
 
+```syntactic 英[sɪnˈtæktɪk]``` 句法的
+
+指的是为了方便程序员开发程序而设计的一种特殊语法，对编程语言的功能并没有影响，语法糖写出来的代码往往更简单简洁且容易阅读，比如```for-each```，原理：基于普通的for循环和迭代器
+
+```java
+String[] strs = {"JavaGuide", "公众号：JavaGuide", "博客：https://javaguide.cn/"};
+for (String s : strs) {
+  	System.out.println(s);
+}
+```
+
+> JVM 其实并不能识别语法糖，Java 语法糖要想被正确执行，需要先通过编译器进行解糖，也就是在程序编译阶段将其转换成 JVM 认识的基本语法。这也侧面说明，Java 中真正支持语法糖的是 Java 编译器而不是 JVM。如果你去看`com.sun.tools.javac.main.JavaCompiler`的源码，你会发现在`compile()`中有一个步骤就是调用`desugar()`，这个方法就是负责解语法糖的实现的。
+
+Java中常见的语法糖：  
+泛型、自动拆装箱、变长参数、枚举、内部类、增强 for 循环、try-with-resources 语法、lambda 表达式等
