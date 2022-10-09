@@ -29,6 +29,7 @@ updated: 2022-10-08 15:23:15
 
     - Unchecked Exception ， 不受检查异常 ， 可以不处理
       
+
 （算数异常，类型转换异常，不合法的线程状态异常，下标超出异常，空指针异常，参数类型异常，数字格式异常，不支持操作异常）
       ArithmeticException，ClassCastException，IllegalThreadStateException，IndexOutOfBoundsException
       
@@ -59,15 +60,257 @@ updated: 2022-10-08 15:23:15
 
 - finally中的代码不一定执行（如果finally之前虚拟机就已经被终止了）
 
+  - 另外两种情况，程序所在的线程死亡；关闭CPU；都会导致代码不执行
+
+- 使用try-with-resources代替try-catch-finally
+
+  - 适用范围：任何实现```java.lang.AutoCloseable```或者```java.io.Closeable```的对象【比如InputStream、OutputStream、Scanner、PrintWriter等需要调用close()方法的资源】
+
+  - 在try-with-resources中，任何catch或finally块在声明的资源关闭后运行
+
+  - 例子
+
+    ```java
+    //读取文本文件的内容
+    Scanner scanner = null;
+    try {
+        scanner = new Scanner(new File("D://read.txt"));
+        while (scanner.hasNext()) {
+            System.out.println(scanner.nextLine());
+        }
+    } catch (FileNotFoundException e) {
+        e.printStackTrace();
+    } finally {
+        if (scanner != null) {
+            scanner.close();
+        }
+    }
+    
+    ```
+
+    改造后：  
+
+    ```
+    try (Scanner scanner = new Scanner(new File("test.txt"))) {
+        while (scanner.hasNext()) {
+            System.out.println(scanner.nextLine());
+        }
+    } catch (FileNotFoundException fnfe) {
+        fnfe.printStackTrace();
+    }
+    
+    ```
+
+    可以使用分隔符来分割  
+
+    ```java
+    try (BufferedInputStream bin = new BufferedInputStream(new FileInputStream(new File("test.txt")));
+         BufferedOutputStream bout = new BufferedOutputStream(new FileOutputStream(new File("out.txt")))) {
+        int b;
+        while ((b = bin.read()) != -1) {
+            bout.write(b);
+        }
+    }
+    catch (IOException e) {
+        e.printStackTrace();
+    }
+    
+    ```
+
+- 需要注意的地方  
+
+  - 不要把异常定义为静态变量，因为这样会导致异常栈信息错乱。每次手动抛出异常，我们都需要手动 new 一个异常对象抛出。
+  - 抛出的异常信息一定要有意义。
+  - 建议抛出更加具体的异常比如字符串转换为数字格式错误的时候应该抛出`NumberFormatException`而不是其父类`IllegalArgumentException`。
+  - 使用日志打印异常之后就不要再抛出异常了（两者不要同时存在一段代码逻辑中）。
+
 ## 泛型
+
+- 什么是泛型？有什么作用
+  Java泛型（Generics）JDK5中引入的一个新特性，使用泛型参数，可以增强代码的可读性以及稳定性
+
+- 编译器可以**对泛型参数进行检测，并通过泛型参数可以指定传入的对象类型**，比如```ArrayList<Person> persons=new ArrayList<Person>()```这行代码指明该ArrayList对象只能传入Person对象，若传入其他类型的对象则会报错
+
+  - 原生List返回类型为Object，需要手动转换类型才能使用，使用泛型后编译器自动转换
+
+- 泛型使用方式  
+
+  - 泛型类
+
+    ```java
+    //此处T可以随便写为任意标识，常见的如T、E、K、V等形式的参数常用于表示泛型
+    //在实例化泛型类时，必须指定T的具体类型
+    public class Generic<T>{
+    
+        private T key;
+    
+        public Generic(T key) {
+            this.key = key;
+        }
+    
+        public T getKey(){
+            return key;
+        }
+    }
+    // 使用
+    Generic<Integer> genericInteger = new Generic<Integer>(123456);
+    ```
+
+  - 泛型接口
+
+    ```java
+    public interface Generator<T> {
+        public T method();
+    }
+    ```
+
+    - 不指定类型使用  
+
+      ```java
+      class GeneratorImpl<T> implements Generator<T>{
+          @Override
+          public T method() {
+              return null;
+          }
+      }
+      
+      ```
+
+    - 指定类型使用
+
+      ```java
+      class GeneratorImpl<T> implements Generator<String>{
+          @Override
+          public String method() {
+              return "hello";
+          }
+      }
+      
+      ```
+
+  - 泛型方法  
+
+    ```java
+       public static < E > void printArray( E[] inputArray )
+       {
+             for ( E element : inputArray ){
+                System.out.printf( "%s ", element );
+             }
+             System.out.println();
+        }
+    //使用
+    // 创建不同类型数组： Integer, Double 和 Character
+    Integer[] intArray = { 1, 2, 3 };
+    String[] stringArray = { "Hello", "World" };
+    printArray( intArray  );
+    printArray( stringArray  );
+    
+    ```
+
+    上面称为静态方法，Java中泛型只是一个占位符，必须在传递类型后才能使用，类在实例化时才能传递类型参数，而类型方法的加载优先于类的实例化，静态泛型方法是**没有办法使用类上声明的泛型（即上面的第二点中类名旁边的T）**的，只能使用自己生命的<E> 
+
+
+    也可以是非静态的
+
+    ```java
+    class A{
+        private String name;
+        private int age;
+    
+        public <E> int  geA(E e){
+            System.out.println(e.toString());
+            return 1;
+        }
+    }
+    //使用,其中 <Object> 可以省略
+    a.<Object>geA(new Object());  
+    ```
 
 ## 反射
 
+- 反射赋予了我们在运行时分析类以及执行类中方法的能力，通过反射可以获取任意一个类的所有属性和方法
+
+- 反射增加了安全问题，可以无视泛型参数的安全检查（泛型参数的安全检查发生在编译器），不过其对于框架来说实际是影响不大的
+
+- 应用场景  
+  一般用于框架中，框架中大量使用了动态代理，而动态代理的实现也依赖于反射
+
+  ```java
+  //JDK动态代理
+  public class DebugInvocationHandler implements InvocationHandler {
+      /**
+       * 代理类中的真实对象
+       */
+      private final Object target;
+  
+      public DebugInvocationHandler(Object target) {
+          this.target = target;
+      }
+  
+      public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
+          System.out.println("before method " + method.getName());
+          Object result = method.invoke(target, args);
+          System.out.println("after method " + method.getName());
+          return result;
+      }
+  }
+  ```
+
+  注解也使用到了反射，比如Spring上的@Component注解。
+  可以基于反射分析类，然后获取到类/属性/方法/方法的参数上的注解，获取注解后，做进一步的处理
+
 ## 注解
 
-## SPI
+- 注解，Java5引入，用于修饰类、方法或者变量，提供某些信息供程序在编译或者运行时使用
+
+  ```java
+  @Target(ElementType.METHOD)
+  @Retention(RetentionPolicy.SOURCE)
+  public @interface Override {
+  
+  }
+  //注解本质上是一个继承了Annotation的特殊接口
+  public interface Override extends Annotation{
+  
+  }
+  ```
+
+- 注解只有被解析后才会生效
+
+  - **编译期直接扫描** ：编译器在编译 Java 代码的时候扫描对应的注解并处理，比如某个方法使用`@Override` 注解，编译器在编译的时候就会检测当前的方法是否重写了父类对应的方法。
+  - **运行期通过反射处理** ：像框架中自带的注解(比如 Spring 框架的 `@Value` 、`@Component`)都是通过反射来进行处理的。
+
+## SPI 
+
+- 介绍
+  - Service Provider Interface ，服务提供者的接口 ， 专门提供给服务提供者或者扩展框架功能的开发者去使用的一个接口
+  - SPI 将服务接口和具体的服务实现分离开来，将服务调用方和服务实现者解耦，能够提升程序的扩展性、可维护性。修改或者替换服务实现并不需要修改调用方。
+  - 很多框架都使用了 Java 的 SPI 机制，比如：Spring 框架、数据库加载驱动、日志接口、以及 Dubbo 的扩展实现等等。
+  - SPI扩展实现
+    ![image-20221009101411097](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221009101411097.png)
+- API和SPI区别
+  ![image-20221009101546801](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221009101546801.png)
+  - 模块之间通过接口进行通讯，在服务调用方和服务实现方(服务提供者)之间引入一个“接口”
+    - 当接口和实现，都是放在实现方的时候，这就是API
+    - 当接口存在于调用方，由接口调用方确定接口规则，然后由不同的厂商去根据这个规则对这个接口进行实现，从而提供服务，即SPI
+- 提供了接口设计的灵活性，缺点：  
+  - 需要遍历加载所有的实现类，不能做到按需加载，效率较低
+  - 当多个ServiceLoader同时load时，会有并发问题
 
 ## I/O
+
+- 序列化和反序列化
+
+  - 序列化：将数据结构或对象换成二级制字节流的过程
+  - 反序列化：将在序列化过程中所生成的二进制字节流转换成数据结构或者对象的过程
+  - 对于Java，序列化的都是对象（Object），即实例化后的类（Class）
+
+- 维基
+
+  > **序列化**（serialization）在计算机科学的数据处理中，是指将数据结构或对象状态转换成可取用格式（例如存成文件，存于缓冲，或经由网络中发送），以留待后续在相同或另一台计算机环境中，能恢复原先状态的过程。依照序列化格式重新获取字节的结果时，可以利用它来产生与原始对象相同语义的副本。对于许多对象，像是使用大量引用的复杂对象，这种序列化重建的过程并不容易。面向对象中的对象序列化，并不概括之前原始对象所关系的函数。这种过程也称为对象编组（marshalling）。从一系列字节提取数据结构的反向操作，是反序列化（也称为解编组、deserialization、unmarshalling）。
+
+- 序列化的目的，通过网络传输对象，或者说是将对象存储到文件系统、数据库、内存中
+  ![image-20221009102741094](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221009102741094.png)
 
 ## 语法糖
 
