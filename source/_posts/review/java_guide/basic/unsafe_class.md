@@ -81,6 +81,62 @@ public final class Unsafe {
 
 #### 内存操作
 
+相关方法:  
+
+```java
+//分配新的本地空间
+public native long allocateMemory(long bytes);
+//重新调整内存空间的大小
+public native long reallocateMemory(long address, long bytes);
+//将内存设置为指定值
+public native void setMemory(Object o, long offset, long bytes, byte value);
+//内存拷贝
+public native void copyMemory(Object srcBase, long srcOffset,Object destBase, long destOffset,long bytes);
+//清除内存
+public native void freeMemory(long address);
+```
+
+测试：  
+
+```java
+private void memoryTest() {
+    int size = 4;
+    long addr = unsafe.allocateMemory(size);
+    long addr3 = unsafe.reallocateMemory(addr, size * 2);
+    System.out.println("addr: "+addr);
+    System.out.println("addr3: "+addr3);
+    try {
+        //向每个字节，写入1 首先使用allocateMemory方法申请 4 字节长度的内存空间，在循环中调用setMemory方法向每个字节写入内容为byte类型的 1
+        unsafe.setMemory(null,addr ,size,(byte)1);
+        for (int i = 0; i < 2; i++) {
+            unsafe.copyMemory(null,addr,null,addr3+size*i,4);
+        }
+        System.out.println(unsafe.getInt(addr));
+        System.out.println(unsafe.getLong(addr3));
+    }finally {
+        unsafe.freeMemory(addr);
+        unsafe.freeMemory(addr3);
+    }
+}
+//结果
+addr: 2433733895744
+addr3: 2433733894944
+16843009
+72340172838076673
+```
+
+对于setMemory的解释 [来源](https://www.cnblogs.com/throwable/p/9139947.html)
+
+```java
+public native void setMemory(Object o, long offset, long bytes, byte value); 将给定内存块中的所有字节设置为固定值(通常是0)。内存块的地址由对象引用o和偏移地址共同决定，如果对象引用o为null，offset就是绝对地址。第三个参数就是内存块的大小，如果使用allocateMemory进行内存开辟的话，这里的值应该和allocateMemory的参数一致。value就是设置的固定值，一般为0(这里可以参考netty的DirectByteBuffer)。一般而言，o为null，所有有个重载方法是public native void setMemory(long offset, long bytes, byte value);，等效于setMemory(null, long offset, long bytes, byte value);。
+```
+
+
+
+分析：
+
+> 分析一下运行结果，首先使用`allocateMemory`方法申请 4 字节长度的内存空间，在循环中调用`setMemory`方法向每个字节写入内容为`byte`类型的 1，当使用 Unsafe 调用`getInt`方法时，因为一个`int`型变量占 4 个字节，会一次性读取 4 个字节，组成一个`int`的值，对应的十进制结果为 16843009。
+
 #### 内存屏障
 
 #### 对象操作
