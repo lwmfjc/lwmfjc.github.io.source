@@ -383,11 +383,33 @@ public native void setMemory(Object o, long offset, long bytes, byte value); 将
           }
       }
   }
+  //结果
+1 2 3 4 5 6 7 8 9
   ```
-
   
+  使用两个线程去修改int型属性a的值，并且只有在a的值等于传入的参数x减一时，才会将a的值变为x，也就是实现对a的加一的操作
+  ![image-20221011184828760](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221011184828760.png)
 
-#### 线程调度
+#### 线程调度(多线程问题)
+
+```java
+//Unsafe类提供的相关方法
+//取消阻塞线程
+public native void unpark(Object thread);
+//阻塞线程
+public native void park(boolean isAbsolute, long time);
+//获得对象锁（可重入锁）
+@Deprecated
+public native void monitorEnter(Object o);
+//释放对象锁
+@Deprecated
+public native void monitorExit(Object o);
+//尝试获取对象锁
+@Deprecated
+public native boolean tryMonitorEnter(Object o);
+```
+
+
 
 #### Class操作
 
