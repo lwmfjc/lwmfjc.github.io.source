@@ -409,8 +409,128 @@ public native void monitorExit(Object o);
 public native boolean tryMonitorEnter(Object o);
 ```
 
+方法 `park`、`unpark` 即可实现线程的挂起与恢复，将一个线程进行挂起是通过 `park` 方法实现的，调用 `park` 方法后，线程将一直阻塞直到超时或者中断等条件出现；`unpark` 可以终止一个挂起的线程，使其恢复正常。
 
+Unsafe源码中monitor相关的方法被标记为deprecated
+
+```java
+//获得对象锁
+@Deprecated
+public native void monitorEnter(Object var1);
+//释放对象锁
+@Deprecated
+public native void monitorExit(Object var1);
+//尝试获得对象锁
+@Deprecated
+public native boolean tryMonitorEnter(Object var1);
+```
+
+`monitorEnter`方法用于获得对象锁，`monitorExit`用于释放对象锁，如果对一个没有被`monitorEnter`加锁的对象执行此方法，会抛出`IllegalMonitorStateException`异常。`tryMonitorEnter`方法尝试获取对象锁，如果成功则返回`true`，反之返回`false`。
+
+代码应用：  
+
+```java
+public static void main(String[] args) {
+    Thread mainThread = Thread.currentThread();
+    new Thread(()->{
+        try {
+            TimeUnit.SECONDS.sleep(5);
+            System.out.println("subThread try to unpark mainThread");
+            unsafe.unpark(mainThread);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }).start();
+
+    System.out.println("park main mainThread");
+    unsafe.park(false,0L);
+    System.out.println("unpark mainThread success");
+}
+//输出
+park main mainThread
+subThread try to unpark mainThread
+unpark mainThread success
+```
+
+流程图如下：  
+![image-20221012090743240](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221012090743240.png)
 
 #### Class操作
 
+Unsafe对class的相关操作主要包括类加载和静态变量的操作方法
+
+- 静态属性读取相关的方法
+
+  ```java
+  //获取静态属性的偏移量
+  public native long staticFieldOffset(Field f);
+  //获取静态属性的对象指针---另一说,获取静态变量所属的类在方法区的首地址
+  public native Object staticFieldBase(Field f);
+  //判断类是否需要实例化（用于获取类的静态属性前进行检测）
+  public native boolean shouldBeInitialized(Class<?> c);
+  ```
+
+- 测试
+
+  ```java
+  @Data
+  public class User {
+      public static String name="Hydra";
+      int age;
+  }
+  private void staticTest() throws Exception {
+      User user=new User();
+      System.out.println(unsafe.shouldBeInitialized(User.class));
+      Field sexField = User.class.getDeclaredField("name");
+      long fieldOffset = unsafe.staticFieldOffset(sexField);
+      Object fieldBase = unsafe.staticFieldBase(sexField);
+      Object object = unsafe.getObject(fieldBase, fieldOffset);
+      System.out.println(object);
+  }
+  /**
+   运行结果:falseHydra
+  */
+  ```
+
+  在 `Unsafe` 的对象操作中，我们学习了通过`objectFieldOffset`方法获取对象属性偏移量并基于它对变量的值进行存取，但是它不适用于类中的静态属性，这时候就需要使用`staticFieldOffset`方法。在上面的代码中，只有在获取`Field`对象的过程中依赖到了`Class`，而获取静态变量的属性时不再依赖于`Class`。
+
+  在上面的代码中首先创建一个`User`对象，这是因为如果一个类没有被实例化，那么它的静态属性也不会被初始化，最后获取的字段属性将是`null`。所以在获取静态属性前，需要调用`shouldBeInitialized`方法，判断在获取前是否需要初始化这个类。如果删除创建 User 对象的语句，运行结果会变为：```truenull```
+
+- ```defineClass```方法允许程序在运行时动态创建一个类
+
+  ```java
+  public native Class<?> defineClass(String name, byte[] b, int off, int len, ClassLoader loader,ProtectionDomain protectionDomain);
+  
+  ```
+
+  利用class类字节码文件，动态创建一个类
+
+  ```java
+  private static void defineTest() {
+      String fileName="F:\\workspace\\unsafe-test\\target\\classes\\com\\cn\\model\\User.class";
+      File file = new File(fileName);
+      try(FileInputStream fis = new FileInputStream(file)) {
+          byte[] content=new byte[(int)file.length()];
+          fis.read(content);
+          Class clazz = unsafe.defineClass(null, content, 0, content.length, null, null);
+          Object o = clazz.newInstance();
+          Object age = clazz.getMethod("getAge").invoke(o, null);
+          System.out.println(age);
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+  }
+  ```
+
+  
+
 #### 系统信息
+
+```java
+//获取系统相关信息
+//返回系统指针的大小。返回值为4（32位系统）或 8（64位系统）。
+public native int addressSize();
+//内存页的大小，此值为2的幂次方。
+public native int pageSize();
+```
+
