@@ -141,9 +141,44 @@ equals()检查是必要的，因为有可能发生碰撞，所以性能没有直
 
 ### 自动装箱与拆箱
 
+- 装箱过程，通过调用**包装器的valueOf**方法实现的，而拆箱过程，则是通过调用**包装器的xxxValue**方法实现的
 
+- 自动装箱
+
+  ```java
+   public static void main(String[] args) {
+      int i = 10;
+      Integer n = i;
+  }
+  //反编译后的代码
+  public static void main(String args[])
+  {
+      int i = 10;
+      Integer n = Integer.valueOf(i);
+  }
+  ```
+
+- 自动拆箱  
+
+  ```java
+  public static void main(String[] args) {
+  
+      Integer i = 10;
+      int n = i;
+  }
+  //反编译后的代码
+  public static void main(String args[])
+  {
+      Integer i = Integer.valueOf(10);
+      int n = i.intValue(); //注意，是intValue，不是initValue
+  }
+  ```
+
+  
 
 ### 可变长参数
+
+
 
 ### 枚举
 
