@@ -178,11 +178,122 @@ equals()检查是必要的，因为有可能发生碰撞，所以性能没有直
 
 ### 可变长参数
 
+variable arguments，是在Java 1.5中引入的一个特性，允许一个方法把任意数量的值作为参数，代码：  
 
+```java
+public static void main(String[] args)
+    {
+        print("Holis", "公众号:Hollis", "博客：www.hollischuang.com", "QQ：907607222");
+    }
+
+public static void print(String... strs)
+{
+    for (int i = 0; i < strs.length; i++)
+    {
+        System.out.println(strs[i]);
+    }
+}
+//反编译后代码
+ public static void main(String args[])
+{
+    print(new String[] {
+        "Holis", "\u516C\u4F17\u53F7:Hollis", "\u535A\u5BA2\uFF1Awww.hollischuang.com", "QQ\uFF1A907607222"
+    });
+}
+
+public static transient void print(String strs[])
+{
+    for(int i = 0; i < strs.length; i++)
+        System.out.println(strs[i]);
+
+}
+```
+
+如上，可变参数在被使用的时候，会创建一个数组，数组的长度，就是调用该方法的传递的实参的个数，然后再把参数值全部放到这个数组当中，最后把这个数组作为参数传递到被调用的方法中
 
 ### 枚举
 
+关键字`enum`可以将一组具名的值的有限集合创建为一种新的类型，而这些具名的值可以作为常规的程序组件使用，这是一种非常有用的功能
+
+写一个enum类进行测试
+
+```java 
+public enum T {
+    SPRING,SUMMER;
+}
+//反编译之后
+// Decompiled by Jad v1.5.8g. Copyright 2001 Pavel Kouznetsov.
+// Jad home page: http://www.kpdus.com/jad.html
+// Decompiler options: packimports(3) 
+// Source File Name:   T.java
+
+package com.ly.review.base;
+
+
+public final class T extends Enum
+{
+
+    /**
+    下面这个和博客不太一样,博客里面是这样的
+//    ENUM$VALUES是博客编译后的数组名
+    public static T[] values()
+    {
+        T at[];
+        int i;
+        T at1[];
+        System.arraycopy(at = ENUM$VALUES, 0, at1 = new T[i = at.length], 0, i);
+        return at1;
+    }
+    
+    */
+    public static T[] values()
+    {
+        return (T[])$VALUES.clone();
+    }
+    
+
+    public static T valueOf(String s)
+    {
+        return (T)Enum.valueOf(com/ly/review/base/T, s);
+    }
+
+    private T(String s, int i)
+    {
+        super(s, i);
+    }
+
+    public static final T Spring;
+    public static final T SUMMER;
+    private static final T $VALUES[];
+
+    static 
+    {
+        Spring = new T("Spring", 0);
+        SUMMER = new T("SUMMER", 1);
+        $VALUES = (new T[] {
+            Spring, SUMMER
+        });
+    }
+}
+
+```
+
+重要代码：  
+
+1. ```public final class T extends Enum```
+   说明该类不可继承
+
+2. ```java
+       public static final T Spring;
+       public static final T SUMMER;
+   ```
+
+   说明枚举类型不可修改
+
 ### 内部类
+
+内部类又称为嵌套类，可以把内部类理解成外部类的一个普通成员
+内部类是语法糖，因为他仅仅是一个编译时的概念
 
 ### 条件编译
 
