@@ -293,15 +293,232 @@ public final class T extends Enum
 ### 内部类
 
 内部类又称为嵌套类，可以把内部类理解成外部类的一个普通成员
-内部类是语法糖，因为他仅仅是一个编译时的概念
+**内部类之所以也是语法糖，是因为它仅仅是一个编译时的概念，`outer.java`里面定义了一个内部类`inner`，一旦编译成功，就会生成两个完全不同的`.class`文件了，分别是`outer.class`和`outer$inner.class`。所以内部类的名字完全可以和它的外部类名字相同。**
+
+代码如下：  
+
+```java
+public class OutterClass {
+    private String userName;
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public static void main(String[] args) {
+
+    }
+
+    class InnerClass{
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+}
+```
+
+编译之后，会生成两个class文件OutterClass.class和OutterClass$InnerClass.class。所以内部类是可以跟外部类完全一样的名字的
+如果要对OutterClass.class进行反编译，那么他会把OutterClass$InnerClass.class也一起进行反编译
+
+```java
+public class OutterClass
+{
+    class InnerClass
+    {
+        public String getName()
+        {
+            return name;
+        }
+        public void setName(String name)
+        {
+            this.name = name;
+        }
+        private String name;
+        final OutterClass this$0;
+
+        InnerClass()
+        {
+            this.this$0 = OutterClass.this;
+            super();
+        }
+    }
+
+    public OutterClass()
+    {
+    }
+    public String getUserName()
+    {
+        return userName;
+    }
+    public void setUserName(String userName){
+        this.userName = userName;
+    }
+    public static void main(String args1[])
+    {
+    }
+    private String userName;
+}
+```
 
 ### 条件编译
 
+—般情况下，程序中的每一行代码都要参加编译。但有时候出于**对程序代码优化的考虑**，希望只对其中一部分内容进行编译，此时就需要在程序中加上条件，让编译器只对满足条件的代码进行编译，将不满足条件的代码舍弃，这就是条件编译。
+
+```java
+public class ConditionalCompilation {
+    public static void main(String[] args) {
+        final boolean DEBUG = true;
+        if(DEBUG) {
+            System.out.println("Hello, DEBUG!");
+        }
+
+        final boolean ONLINE = false;
+
+        if(ONLINE){
+            System.out.println("Hello, ONLINE!");
+        }
+    }
+}
+//反编译之后如下
+public class ConditionalCompilation
+{
+
+    public ConditionalCompilation()
+    {
+    }
+
+    public static void main(String args[])
+    {
+        boolean DEBUG = true;
+        System.out.println("Hello, DEBUG!");
+        boolean ONLINE = false;
+    }
+}
+```
+
+**Java 语法的条件编译，是通过判断条件为常量的 if 语句实现的。其原理也是 Java 语言的语法糖。根据 if 判断条件的真假，编译器直接把分支为 false 的代码块消除。通过该方式实现的条件编译，必须在方法体内实现，而无法在正整个 Java 类的结构或者类的属性上进行条件编译**
+
 ### 断言
+
+Java 在执行的时候默认是不启动断言检查的（这个时候，所有的断言语句都将忽略！），如果要开启断言检查，则需要用开关`-enableassertions`或`-ea`来开启
+
+代码如下：  
+
+```java
+public class AssertTest {
+    public static void main(String args[]) {
+        int a = 1;
+        int b = 1;
+        assert a == b;
+        System.out.println("公众号：Hollis");
+        assert a != b : "Hollis";
+        System.out.println("博客：www.hollischuang.com");
+    }
+}
+//反编译之后代码如下
+public class AssertTest {
+   public AssertTest()
+    {
+    }
+    public static void main(String args[])
+{
+    int a = 1;
+    int b = 1;
+    if(!$assertionsDisabled && a != b)
+        throw new AssertionError();
+    System.out.println("\u516C\u4F17\u53F7\uFF1AHollis");
+    if(!$assertionsDisabled && a == b)
+    {
+        throw new AssertionError("Hollis");
+    } else
+    {
+        System.out.println("\u535A\u5BA2\uFF1Awww.hollischuang.com");
+        return;
+    }
+}
+
+static final boolean $assertionsDisabled = !com/hollis/suguar/AssertTest.desiredAssertionStatus();
+
+}
+```
+
+- 断言的底层是if语言，如果断言为true，则什么都不做；如果断言为false，则程序抛出AssertError来打断程序执行
+- -enableassertions会设置$assertionsDisabled字段的值
 
 ### 数值字面量
 
+java7中，字面量允许在数字之间插入任意多个下划线，不会对字面值产生影响，可以方便阅读
+
+源代码：  
+
+```java
+public class Test {
+    public static void main(String... args) {
+        int i = 10_000;
+        System.out.println(i);
+    }
+}
+//反编译后
+public class Test
+{
+  public static void main(String[] args)
+  {
+    int i = 10000;
+    System.out.println(i);
+  }
+}
+```
+
+
+
 ### for-each
+
+源代码：  
+
+```java
+public static void main(String... args) {
+    String[] strs = {"Hollis", "公众号：Hollis", "博客：www.hollischuang.com"};
+    for (String s : strs) {
+        System.out.println(s);
+    }
+    List<String> strList = ImmutableList.of("Hollis", "公众号：Hollis", "博客：www.hollischuang.com");
+    for (String s : strList) {
+        System.out.println(s);
+    }
+}
+//反编译之后
+public static transient void main(String args[])
+{
+    String strs[] = {
+        "Hollis", "\u516C\u4F17\u53F7\uFF1AHollis", "\u535A\u5BA2\uFF1Awww.hollischuang.com"
+    };
+    String args1[] = strs;
+    int i = args1.length;
+    for(int j = 0; j < i; j++)
+    {
+        String s = args1[j];
+        System.out.println(s);
+    }
+
+    List strList = ImmutableList.of("Hollis", "\u516C\u4F17\u53F7\uFF1AHollis", "\u535A\u5BA2\uFF1Awww.hollischuang.com");
+    String s;
+    for(Iterator iterator = strList.iterator(); iterator.hasNext(); System.out.println(s))
+        s = (String)iterator.next();
+
+}
+```
+
+会改成普通的for语句循环，或者使用迭代器
 
 ### try-with-resource
 
