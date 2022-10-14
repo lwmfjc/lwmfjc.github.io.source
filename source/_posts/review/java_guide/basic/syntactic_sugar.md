@@ -522,7 +522,106 @@ public static transient void main(String args[])
 
 ### try-with-resource
 
+关闭资源的方式，就是再finally块里释放，即调用close方法
+
+```java
+//正常使用
+public static void main(String[] args) {
+    BufferedReader br = null;
+    try {
+        String line;
+        br = new BufferedReader(new FileReader("d:\\hollischuang.xml"));
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
+    } catch (IOException e) {
+        // handle exception
+    } finally {
+        try {
+            if (br != null) {
+                br.close();
+            }
+        } catch (IOException ex) {
+            // handle exception
+        }
+    }
+}
+```
+
+JDK7之后提供的关闭资源的方式：  
+
+```java
+public static void main(String... args) {
+    try (BufferedReader br = new BufferedReader(new FileReader("d:\\ hollischuang.xml"))) {
+        String line;
+        while ((line = br.readLine()) != null) {
+            System.out.println(line);
+        }
+    } catch (IOException e) {
+        // handle exception
+    }
+}
+```
+
+编译后：  
+
+```java
+public static transient void main(String args[])
+    {
+        BufferedReader br;
+        Throwable throwable;
+        br = new BufferedReader(new FileReader("d:\\ hollischuang.xml"));
+        throwable = null;
+        String line;
+        try
+        {
+            while((line = br.readLine()) != null)
+                System.out.println(line);
+        }
+        catch(Throwable throwable2)
+        {
+            throwable = throwable2;
+            throw throwable2;
+        }
+        if(br != null)
+            if(throwable != null)
+                try
+                {
+                    br.close();
+                }
+                catch(Throwable throwable1)
+                {
+                    throwable.addSuppressed(throwable1);
+                }
+            else
+                br.close();
+            break MISSING_BLOCK_LABEL_113;
+            Exception exception;
+            exception;
+            if(br != null)
+                if(throwable != null)
+                    try
+                    {
+                        br.close();
+                    }
+                    catch(Throwable throwable3)
+                      {
+                        throwable.addSuppressed(throwable3);
+                    }
+                else
+                    br.close();
+        throw exception;
+        IOException ioexception;
+        ioexception;
+    }
+}
+```
+
+也就是我们没有做关闭的操作，编译器都帮我们做了
+
 ### Lambda表达式
+
+
 
 ## 可能遇到的坑
 
