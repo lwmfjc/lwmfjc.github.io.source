@@ -619,15 +619,88 @@ public static transient void main(String args[])
 
 也就是我们没有做关闭的操作，编译器都帮我们做了
 
-### Lambda表达式
+### Lambda表达
 
+- 使用lambda表达式便利list
 
+  ```java
+  public static void main(String... args) {
+      List<String> strList = ImmutableList.of("Hollis", "公众号：Hollis", "博客：www.hollischuang.com");
+  
+      strList.forEach( s -> { System.out.println(s); } );
+  }
+  ```
+
+  反编译之后
+
+  ```java
+  public static /* varargs */ void main(String ... args) {
+      ImmutableList strList = ImmutableList.of((Object)"Hollis", (Object)"\u516c\u4f17\u53f7\uff1aHollis", (Object)"\u535a\u5ba2\uff1awww.hollischuang.com");
+      strList.forEach((Consumer<String>)LambdaMetafactory.metafactory(null, null, null, (Ljava/lang/Object;)V, lambda$main$0(java.lang.String ), (Ljava/lang/String;)V)());
+  }
+  
+  private static /* synthetic */ void lambda$main$0(String s) {
+      System.out.println(s);
+  }
+  ```
+
+- lambda表达式的实现其实是依赖了一些底层的api，在编译阶段，会把lambda表达式进行解糖，转换成调用内部api的方式
 
 ## 可能遇到的坑
 
 ### 泛型
 
+- 泛型的类型参数不能用在 Java 异常处理的 catch 语句中。因为异常处理是由 JVM 在运行时刻来进行的。由于类型信息被擦除，JVM 是无法区分两个异常类型`MyException<String>`和`MyException<Integer>`的
+
+- 泛型类的所有静态变量是共享的
+
+  ```java
+  public class StaticTest{
+      public static void main(String[] args){
+          GT<Integer> gti = new GT<Integer>();
+          gti.var=1;
+          GT<String> gts = new GT<String>();
+          gts.var=2;
+          System.out.println(gti.var);
+      }
+  }
+  class GT<T>{
+      public static int var=0;
+      public void nothing(T x){}
+  }
+  ```
+
+  
+
 ### 自动装箱与拆箱
 
+对于自动装箱，整形对象通过使用相同的缓存和重用，适用于整数值区间 [ -128，+127 ] 
+
+```java
+public static void main(String[] args) {
+    Integer a = 1000;
+    Integer b = 1000;
+    Integer c = 100;
+    Integer d = 100;
+    System.out.println("a == b is " + (a == b));
+    System.out.println(("c == d is " + (c == d)));
+}
+//结果
+a == b is false
+c == d is true
+```
+
 ### 增强for循环
+
+遍历时不要使用list的remove方法：
+
+```java
+for (Student stu : students) {
+    if (stu.getId() == 2)
+        students.remove(stu);
+}
+//会报ConcurrentModificationException异常，Iterator在工作的时候不允许被迭代的对象被改变，但可以使用Iterator本身的remove()来删除对象，会在删除当前对象的同时，维护索引的一致性
+```
+
+
 
