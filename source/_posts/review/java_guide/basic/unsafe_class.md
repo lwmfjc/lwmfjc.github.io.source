@@ -409,8 +409,34 @@ public native void monitorExit(Object o);
 public native boolean tryMonitorEnter(Object o);
 ```
 
+方法 `park`、`unpark` 即可实现线程的挂起与恢复，将一个线程进行挂起是通过 `park` 方法实现的，调用 `park` 方法后，线程将一直阻塞直到超时或者中断等条件出现；`unpark` 可以终止一个挂起的线程，使其恢复正常。
 
+此外，`Unsafe` 源码中`monitor`相关的三个方法已经被标记为`deprecated`，不建议被使用：
+
+```java
+//获得对象锁
+@Deprecated
+public native void monitorEnter(Object var1);
+//释放对象锁
+@Deprecated
+public native void monitorExit(Object var1);
+//尝试获得对象锁
+@Deprecated
+public native boolean tryMonitorEnter(Object var1);
+```
+
+`monitorEnter`方法用于获得对象锁，`monitorExit`用于释放对象锁，如果对一个没有被`monitorEnter`加锁的对象执行此方法，会抛出`IllegalMonitorStateException`异常。`tryMonitorEnter`方法尝试获取对象锁，如果成功则返回`true`，反之返回`false`。
 
 #### Class操作
 
+
+
 #### 系统信息
+
+```java
+//返回系统指针的大小。返回值为4（32位系统）或 8（64位系统）。
+public native int addressSize();
+//内存页的大小，此值为2的幂次方。
+public native int pageSize();
+```
+
