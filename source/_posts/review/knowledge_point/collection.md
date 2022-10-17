@@ -132,5 +132,28 @@ updated: 2022-10-17 08:55:24
   - 无序性，指存储的数据，在底层数据结构中，并非按照数组索引的书顺序添加（而是根据数据的哈希值决定）
   - 不可重复性：指添加的元素按照equals()判断时，返回false。需同时填写equals()方法和hashCode() 方法
 
-### Queue
+- 比较HashSet、LinkedHashSet和TreeSet三者异同
 
+  - 都是Set实现类，保证元素唯一，且非线程安全
+  - 三者底层数据结构不同，HashSet底层为哈希表（HashMap）; LinkedHashSet底层为链表+哈希表 ，元素的插入和取出顺序满足FIFO。TreeSet底层为红黑树，元素有序，排序方式有自然排序和定制排序
+    ![image-20221017170434986](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017170434986.png)
+
+## Queue
+
+### Queue和Deque的区别
+
+![image-20221017170659204](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017170659204.png)
+
+- Queue
+  - Queue为单端队列，只能从一端插入元素，另一端删除元素，实现上一般遵循**先进先出（FIFO）**规则【Dequeue为双端队列，在队列两端均可插入或删除元素】
+  - Queue扩展了Collection接口，根据**因容量问题而导致操作失败后的处理方式不同**分两类，操作失败后**抛异常**或**返回特殊值**
+    ![image-20221017172811954](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017172811954.png)
+  - Dequeue，双端队列，在队列两端均可插入或删除元素，也会根据失败后处理方式分两类
+    Deque还有push()和pop()等其他方法，可用于模拟栈
+    ![image-20221017173058398](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017173058398.png)
+
+### ArrayDeque与LinkedList区别
+
+
+
+### 说一说PriorityQueue
