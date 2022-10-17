@@ -154,6 +154,21 @@ updated: 2022-10-17 08:55:24
 
 ### ArrayDeque与LinkedList区别
 
+- ArrayDeque和LinkedList都实现了Deque接口，两者都具有队列功能
+- ArrayDeque基于可变长的数组和双指针来实现，而LinkedList则通过链表来实现
+- ArrayDeque不支持存储NULL数据，但LinkedList支持
+- ArrayDeque是后面（JDK1.6)引入的，而LinkedList在JDK1.2就存在
+- `ArrayDeque` 插入时可能存在扩容过程, 不过均摊后的插入操作依然为 O(1)。虽然 `LinkedList` 不需要扩容，但是每次插入数据时均需要申请新的堆空间，均摊性能相比更慢。
 
+总的来说，ArrayDeque来实现队列要比Linked更好，此外，ArrayDeque也可以用于实现栈
 
 ### 说一说PriorityQueue
+
+`PriorityQueue` 是在 JDK1.5 中被引入的, 其与 `Queue` 的区别在于元素出队顺序是与优先级相关的，即总是优先级最高的元素先出队。
+
+这里列举其相关的一些要点：
+
+- `PriorityQueue` 利用了二叉堆的数据结构来实现的，底层使用可变长的数组来存储数据
+- `PriorityQueue` 通过堆元素的上浮和下沉，实现了在 O(logn) 的时间复杂度内插入元素和删除堆顶元素。
+- `PriorityQueue` 是非线程安全的，且不支持存储 `NULL` 和 `non-comparable` 的对象。
+- `PriorityQueue` 默认是小顶堆，但可以接收一个 `Comparator` 作为构造参数，从而来自定义元素优先级的先后。
