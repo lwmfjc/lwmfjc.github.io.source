@@ -10,16 +10,16 @@ date: 2022-10-17 08:55:24
 updated: 2022-10-17 08:55:24
 ---
 
+## 集合包括`Collection`和```Map```，Collection 存放单一元素。Map 存放键值对
+![image-20221017103340847](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017103340847.png)
 
+## List，Set，Queue，Map区别
 
-- 集合包括`Collection`和```Map```，Collection 存放单一元素。Map 存放键值对
-  ![image-20221017103340847](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017103340847.png)
-- List，Set，Queue，Map区别
-  - `List`(对付顺序的好帮手): 存储的元素是有序的、可重复的。
-  - `Set`(注重独一无二的性质): 存储的元素是无序的、不可重复的。
-  - `Queue`(实现排队功能的叫号机): 按特定的排队规则来确定先后顺序，存储的元素是有序的、可重复的。
-  - `Map`(用 key 来搜索的专家): 使用键值对（key-value）存储，类似于数学上的函数 y=f(x)，"x" 代表 key，"y" 代表 value，key 是无序的、不可重复的，value 是无序的、可重复的，每个键最多映射到一个值。
-- 各种集合框架--底层数据结构
+- `List`(对付顺序的好帮手): 存储的元素是有序的、可重复的。
+- `Set`(注重独一无二的性质): 存储的元素是无序的、不可重复的。
+- `Queue`(实现排队功能的叫号机): 按特定的排队规则来确定先后顺序，存储的元素是有序的、可重复的。
+- `Map`(用 key 来搜索的专家): 使用键值对（key-value）存储，类似于数学上的函数 y=f(x)，"x" 代表 key，"y" 代表 value，key 是无序的、不可重复的，value 是无序的、可重复的，每个键最多映射到一个值。
+## 各种集合框架--底层数据结构
   - List
     - ArrayList、Vector  ---->  Object[] 数组
     - LinkedList  双向链表 (jdk 1.6 之前为循环链表, 1.7 取消了循环)
@@ -36,9 +36,101 @@ updated: 2022-10-17 08:55:24
     - `LinkedHashMap`： `LinkedHashMap` 继承自 `HashMap`，所以它的底层仍然是基于拉链式散列结构即由数组和链表或红黑树组成。另外，`LinkedHashMap` 在上面结构的基础上，增加了一条双向链表，使得上面的结构可以保持键值对的插入顺序。同时通过对链表进行相应的操作，实现了访问顺序相关逻辑。 
     - `Hashtable`： 数组+链表组成的，数组是 `Hashtable` 的主体，链表则是主要为了解决哈希冲突而存在的
     - `TreeMap`： 红黑树（自平衡的排序二叉树）
-- 如何选用集合
+
+## 如何选用集合
+
   - 当我们只需要存放元素值时，就选择实现`Collection` 接口的集合，需要保证元素唯一时选择实现 `Set` 接口的集合比如 `TreeSet` 或 `HashSet`，不需要就选择实现 `List` 接口的比如 `ArrayList` 或 `LinkedList`，然后再根据实现这些接口的集合的特点来选用
   - 需要根据键值获取到元素值时就选用 `Map` 接口下的集合，需要排序时选择 `TreeMap`,不需要排序时就选择 `HashMap`,需要保证线程安全就选用 `ConcurrentHashMap`。
-- 为什么需要集合
+
+## 为什么需要集合
+
   - 当需要保存一组类型相同的数据时，需要容器来保存，即数组，但实际中存储的类型多样，数组一旦声明则不可变长，且数组数据类型也确定、数组有序可重复
   - 集合可以存储不同类型不同数量的对象，还可以保存具有映射关系的数据
+
+## Collection 子接口
+
+### List
+
+- ArrayList和Vector区别：ArrayList是List主要实现类，底层使用Object[]存储线程不安全（synchronized关键字）；Vector是List古老实现类，底层使用Object[]存储，线程安全
+
+- ArrayList与LinkedList：
+
+  - 都是线程不安全
+  - ArrayList底层使用Object数组，LinkedList底层使用双向链表结构（JDK7以后非循环链表）
+  - ArrayList采用数组存储，所以插入和删除元素的时间复杂度受位置印象；LinkedList采用链表，所以在头尾插入或者删除元素不受元素位置影响，而如果需要插入或者删除中间指定位置，则时间复杂度为O(n) [主要是因为要遍历]
+  - LinkedList不支持高效的随机元素访问，而ArrayList支持（即通过元素的序号快速获取元素对象）
+  - 内存空间占用：ArrayList的空间浪费主要体现在List结尾会预留一定的容量空间，而LinkedList的空间花费则体现在它的每一个元素都需要消耗比ArrayList更多的空间（存放直接后继、直接前驱及数据）
+
+- 实际项目中不怎么使用LinkedList，因为ArrayList性能通常会更好，LinkedList仅仅在头尾插入或者删除元素的时间时间复杂度近似O(1)
+
+- 双向链表与双向循环链表
+
+  - 双向链表，首尾相连
+    ![image-20221017145140450](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017145140450.png)
+  - 双向循环链表，首尾相连（头节点的前驱=尾结点，尾结点的后继=头节点）
+
+- 补充：RandomAccess接口，这个接口只是用来**标识**：**实现这个接口的类，具有随机访问功能**，但并不是说因为实现了该接口才具有的快速随机访问机制
+
+  - Collections里面有这样一段代码
+
+    ```java
+        public static <T>
+        int binarySearch(List<? extends Comparable<? super T>> list, T key) {
+            if (list instanceof RandomAccess || list.size()<BINARYSEARCH_THRESHOLD)
+                return Collections.indexedBinarySearch(list, key);
+            else
+                return Collections.iteratorBinarySearch(list, key);
+        }
+    ```
+
+  - ArrayList实现了RandomAccess方法，而LinkedList没有。是由于ArrayList底层是数组，支持快速随机访问，时间复杂度为O(1)，而LinkedList底层是链表，不支持快速随机访问，时间复杂度为O(n)
+
+### Set
+
+- Coparable和Comparator的区别
+
+  - Comparable实际出自```java.lang```包，有一个compareTo(Object obj)方法用来排序
+  - Comparator实际出自```java.util```包，有一个compare(Object obj1,Object obj2)方法用来排序
+
+- ``` Collections.sort(List<T> list, Comparator<? super T> c) ```默认是正序，T必须实现了Comparable，且```Arrays.sort()```方法中的部分代码如下：
+
+  ```java
+  //使用插入排序
+          if (length < INSERTIONSORT_THRESHOLD) {
+              for (int i=low; i<high; i++)
+                  for (int j=i; j>low && c.compare(dest[j-1], dest[j])>0; j--) //如果前一个数跟后面的数相比大于零，则进行交换，即大的排后面
+                      swap(dest, j, j-1);
+              return;
+          }
+  //当比较结果>0时，调换数组前后两个元素的值，也就是后面的一定要比前面的大，即
+      public int compareTo(Person o) {
+          if (this.age > o.getAge()) {
+              return 1;
+          }
+          if (this.age < o.getAge()) {
+              return -1;
+          }
+          return 0;
+      }
+  //下面这段代码，按照年龄降序（默认是升序）
+          Collections.sort(arrayList, new Comparator<Integer>() {
+  
+              @Override
+              public int compare(Integer o1, Integer o2) {
+                  //如果结果大于0，则两个数对调 
+                  //如果返回o2.compareTo(o1)，就是当o2>01时，两个结果对换，也就是降序
+                  //如果返回o1.compareTo(o2)，就是当o1>o2时，两个结果对换，也就是升序   也就是当和参数顺序一致时，是升序；反之，则是降序
+                  return o2.compareTo(o1); 
+                  
+              }
+          });
+  //上面这段代码，标识
+  ```
+
+- 无序性和不可重复性
+
+  - 无序性，指存储的数据，在底层数据结构中，并非按照数组索引的书顺序添加（而是根据数据的哈希值决定）
+  - 不可重复性：指添加的元素按照equals()判断时，返回false。需同时填写equals()方法和hashCode() 方法
+
+### Queue
+
