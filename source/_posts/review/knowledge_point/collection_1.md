@@ -1,11 +1,11 @@
 ---
-title: 集合
-description: 集合
+title: 集合_1
+description: 集合_1
 categories:
   - 学习
 tags:
-  - 复习
-  - 复习--知识点 
+  - '复习'
+  - '复习--知识点' 
 date: 2022-10-17 08:55:24
 updated: 2022-10-17 08:55:24
 ---
