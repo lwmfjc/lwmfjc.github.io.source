@@ -245,11 +245,61 @@ updated: 2022-10-18 08:54:49
       ```
 
 - ConcurrentHashMap线程安全的**具体实现方式/底层具体实现**
+
+  - JDK1.8之前的ConcurrentHashMap
+
+    ![image-20221019164531847](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221019164531847.png)`Segment` 继承了 `ReentrantLock`,所以 `Segment` 是一种可重入锁，扮演锁的角色。`HashEntry` 用于存储键值对数据。
+
+    ```java
+    static class Segment<K,V> extends ReentrantLock implements Serializable {
+    }
+    ```
+
+    一个 `ConcurrentHashMap` 里包含一个 `Segment` 数组，`Segment` 的个数一旦**初始化就不能改变**。 `Segment` 数组的大小默认是 16，也就是说默认可以同时支持 16 个线程并发写。
+    `Segment` 的结构和 `HashMap` 类似，是一种数组和链表结构，一个 `Segment` 包含一个 `HashEntry` 数组，每个 `HashEntry` 是一个链表结构的元素，每个 `Segment` 守护着一个 `HashEntry` 数组里的元素，当对 `HashEntry` 数组的数据进行修改时，必须首先获得对应的 `Segment` 的锁。也就是说，对同一 `Segment` 的并发写入会被阻塞，不同 `Segment` 的写入是可以并发执行的。
+
+  - JDK 1.8 之后
+    ![image-20221019165516462](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221019165516462.png)
+    使用Node数组+链表/红黑树，几乎重写了ConcurrentHashMap，使用```Node+CAS+Synchronized```保证并发安全，数据结构跟HashMap1.8类似，超过一定阈值（默认8）将链表【O(N)】转成红黑树【O(log (N) )】
+    JDK8中，只锁定当前链表/红黑二叉树的首节点，这样只要hash不冲突就不会产生并发，不影响其他Node的读写，提高效率 
+
+## Collections工具类（不重要）
+
+包括 排序/查找/替换
+
+- 排序
+
+  ```java
+  void reverse(List list)//反转
+  void shuffle(List list)//随机排序
+  void sort(List list)//按自然排序的升序排序
+  void sort(List list, Comparator c)//定制排序，由Comparator控制排序逻辑
+  void swap(List list, int i , int j)//交换两个索引位置的元素
+  void rotate(List list, int distance)//旋转。当distance为正数时，将list后distance个元素整体移到前面。当distance为负数时，将 list的前distance个元素整体移到后面
+  ```
+
+- 查找/替换
+
+  ```java
+  int binarySearch(List list, Object key)//对List进行二分查找，返回索引，注意List必须是有序的
+  int max(Collection coll)//根据元素的自然顺序，返回最大的元素。 类比int min(Collection coll)
+  int max(Collection coll, Comparator c)//根据定制排序，返回最大元素，排序规则由Comparatator类控制。类比int min(Collection coll, Comparator c)
+  void fill(List list, Object obj)//用指定的元素代替指定list中的所有元素
+  int frequency(Collection c, Object o)//统计元素出现次数
+  int indexOfSubList(List list, List target)//统计target在list中第一次出现的索引，找不到则返回-1，类比int lastIndexOfSubList(List source, list target)
+  boolean replaceAll(List list, Object oldVal, Object newVal)//用新元素替换旧元素
+  ```
+
+- 同步控制，Collections提供了多个synchronizedXxx()方法，该方法可以将指定集合包装成线程同步的集合，从而解决并发问题。
+  其中，**HashSet、TreeSet、ArrayList、LinkedList、HashMap、TreeMap**都是线程不安全的
+
+  ```java
+  //不推荐，因为效率极低 建议使用JUC包下的并发集合
+  synchronizedCollection(Collection<T>  c) //返回指定 collection 支持
+  的同步（线程安全的）collection。
+  synchronizedList(List<T> list)//返回指定列表支持的同步（线程安全的）List。
+  synchronizedMap(Map<K,V> m) //返回由指定映射支持的同步（线程安全的）Map。
+  synchronizedSet(Set<T> s) //返回指定 set 支持的同步（线程安全的）set。
+  ```
+
   
-
-## Collections工具类
-
-## Java集合使用注意事项总结
-
-
-
