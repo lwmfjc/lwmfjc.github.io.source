@@ -114,7 +114,29 @@ updated: 2022-10-20 17:01:47
 
 2. 以无参构造参数函数为例
 
-   得到最小扩容量--->确定是否扩容--->真实进行扩容
+   得到最小扩容量( 如果空数组则为10，否则原数组大小+1 )--->确定是否扩容【**minCapacity > 此时的数组大小**】--->
+   真实进行扩容 【 grow(int minCapacity) 】
+
+   - 扩容的前提是  数组最小扩容 > 数组实际大小 
+
+   - 几个名词：oldCapacity，newCapacity (oldCapacity * 1.5 )，minCapacity，MAX_ARRAY_SIZE ,INT_MAX 
+
+     > 对于MAX_ARRAY_SIZE的解释：  
+     > /** 要分配的数组的最大大小。
+     >   一些 VM 在数组中保留一些标题字。
+     >   尝试分配更大的数组可能会导致 OutOfMemoryError：请求的数组大小超过 VM 限制**/
+     > Integer.MAX_VALUE = Ingeger.MAX_VALUE - 8 ; 
+
+     ```capacity 英[kəˈpæsəti]```
+     这个方法最后是要用newCapacity扩容的，所以要给他更新可用的值，也就是：  
+
+     1. 如果扩容后还比minCapacity 小，那就把newCapacity更新为minCapacity的值
+
+     2. 如果比MAX_ARRAY_SIZE还大，那就超过范围了
+
+        得通过hugeCapacity(minCapcacity) ，即minCapacity和MAX_ARRAY_SIZE来设置newCapacity
+
+     3. -> 这里有点绕，看了也记不住-----其实前面第1步，就是说我至少需要minCapcacity的数，但是如果newCapacity (1.5 * oldCapacity )比MAX_ARRAY_SIZE：如果实际需要的容量 (miniCapacity > MAX_ARRAY_SIZE , 那就直接取Integer.MAX_VALUE ；如果没有，那就取MAX_ARRAY_SIZE )
 
    ```java
    //add方法，先扩容，再赋值（实际元素长度最后）
@@ -200,8 +222,111 @@ updated: 2022-10-20 17:01:47
 
 4. hugeCapacity
    当新容量超过MAX_ARRAY_SIZE时，```if (newCapacity - MAX_ARRAY_SIZE > 0)``` 进入该方法
-   如图：  
+
+   ```java
+       private static int hugeCapacity(int minCapacity) {
+           if (minCapacity < 0) // overflow
+               throw new OutOfMemoryError();
+           //对minCapacity和MAX_ARRAY_SIZE进行比较
+           //若minCapacity大，将Integer.MAX_VALUE作为新数组的大小
+           //若MAX_ARRAY_SIZE大，将MAX_ARRAY_SIZE作为新数组的大小
+           //MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
+           return (minCapacity > MAX_ARRAY_SIZE) ?
+               Integer.MAX_VALUE :
+               MAX_ARRAY_SIZE;
+       }
+   ```
+
+5. System.arraycopy() 和 Arrays.copyOf() 
+
+   - ```java
+     //System.arraycopy() 是一个native方法
+         // 我们发现 arraycopy 是一个 native 方法,接下来我们解释一下各个参数的具体意义
+         /**
+         *   复制数组
+         * @param src 源数组
+         * @param srcPos 源数组中的起始位置
+         * @param dest 目标数组
+         * @param destPos 目标数组中的起始位置
+         * @param length 要复制的数组元素的数量
+         */
+         public static native void arraycopy(Object src,  int  srcPos,
+                                             Object dest, int destPos,
+                                             int length);
+     ```
+
+     例子：
+
+     ```java
+     public class ArraycopyTest {
+     
+     	public static void main(String[] args) {
+     		// TODO Auto-generated method stub
+     		int[] a = new int[10];
+     		a[0] = 0;
+     		a[1] = 1;
+     		a[2] = 2;
+     		a[3] = 3;
+     		System.arraycopy(a, 2, a, 3, 3);
+     		a[2]=99;
+     		for (int i = 0; i < a.length; i++) {
+     			System.out.print(a[i] + " ");
+     		}
+     	}
+     
+     }
+     //结果
+     0 1 99 2 3 0 0 0 0 0
+     ```
+
+   - Arrays.copyOf() 方法
+
+     ```java
+         public static int[] copyOf(int[] original, int newLength) {
+         	// 申请一个新的数组
+             int[] copy = new int[newLength];
+     	// 调用System.arraycopy,将源数组中的数据进行拷贝,并返回新的数组
+             System.arraycopy(original, 0, copy, 0,
+                              Math.min(original.length, newLength));
+             return copy;
+         }
+     
+     //场景
+        /**
+          以正确的顺序返回一个包含此列表中所有元素的数组（从第一个到最后一个元素）; 返回的数组的运行时类型是指定数组的运行时类型。
+          */
+         public Object[] toArray() {
+         //elementData：要复制的数组；size：要复制的长度
+             return Arrays.copyOf(elementData, size);
+         }
+     ```
+
+     Arrays.copypf() ： 用来扩容，或者缩短
+
+     ```java
+     public class ArrayscopyOfTest {
+     
+     	public static void main(String[] args) {
+     		int[] a = new int[3];
+     		a[0] = 0;
+     		a[1] = 1;
+     		a[2] = 2;
+     		int[] b = Arrays.copyOf(a, 10);
+     		System.out.println("b.length"+b.length);
+     	}
+     }
+     //结果： 10
+     ```
+
+6.  联系及区别
    
+   - 看两者源代码可以发现 `copyOf()`内部实际调用了 `System.arraycopy()` 方法
+   - arraycopy 更能实现自
+     定义
+   
+7. ensureCapacity 方法
+最好在向 `ArrayList` 添加大量元素之前用 `ensureCapacity` 方法，以减少增量重新分配的次数
+   向 `ArrayList` 添加大量元素之前使用`ensureCapacity` 方法可以提升性能。不过，这个性能差距几乎可以忽略不计。而且，实际项目根本也不可能往 `ArrayList` 里面添加这么多元素
 
 ## 2. 核心源码解读
 
