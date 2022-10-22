@@ -12,7 +12,9 @@ updated: 2022-10-21 15:30:09
 
 ## HashMap简介
 
-- HashMachine
+- HashMap用来存放键值对，基于哈希表的Map接口实现，是非线程安全的
+- 可以存储null的key和value，但null作为键只能有一个
+- 
 
 ## 底层数据结构分析
 
