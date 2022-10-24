@@ -22,7 +22,7 @@ updated: 2022-10-23 12:21:12
 ## 字节流
 
 - 字节输入流 InputStream
-  InputStream用于从源头（通常是文件）读取数据（字节信息）到内存中，java.io.InputStream抽象类是所有字节输入流的父类
+  InputStream用于从源头（通常是文件）读取数据（字节信息）到内存中，java.io.InputStream抽象类是**所有字节输入流的父类**
 
   - 常用方法
 
@@ -97,7 +97,7 @@ updated: 2022-10-23 12:21:12
 
 - 字节输出流 OutputStream
 
-  - OutputStream用于将字节数据（字节信息）写入到目的地（通常是文件），java.io.OutputStream抽象类是所有字节输出流的父类
+  - OutputStream用于将字节数据（字节信息）写入到目的地（通常是文件），java.io.OutputStream抽象类是**所有字节输出流的父类**
 
       > //常用方法
       >
@@ -147,6 +147,89 @@ updated: 2022-10-23 12:21:12
     ```
 
 ## 字符流
+
+- 简介
+  文件读写或者网络发送接收，信息的最小存储单元都是字节，为什么I/O流操作要分为字节流操作和字符流操作呢
+
+  - 字符流是由Java虚拟机将字节转换得到的，过程相对耗时
+
+  - 如果不知道编码类型，容易出现乱码
+    如上面的代码，将文件内容改为 ： 你好，我是Guide
+
+    ```java
+    try (InputStream fis = new FileInputStream("input.txt")) {
+        System.out.println("Number of remaining bytes:"
+                + fis.available());
+        int content;
+        long skip = fis.skip(2);
+        System.out.println("The actual number of bytes skipped:" + skip);
+        System.out.print("The content read from file:");
+        while ((content = fis.read()) != -1) {
+            System.out.print((char) content);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    //输出
+    /**Number of remaining bytes:9
+    The actual number of bytes skipped:2
+    The content read from file:§å®¶å¥½
+    **/
+    ```
+
+    为了解决乱码问题，I/O流提供了一个直接操作字符的接口，方便对字符进行流操作；但如果音频文件、图片等媒体文件用字节流比较好，涉及字符的话使用字符流
+
+    > ★ 重要：
+    >
+    > 字符流默认采用的是 `Unicode` 编码，我们可以通过构造方法自定义编码。顺便分享一下之前遇到的笔试题：常用字符编码所占字节数？`utf8` :英文占 1 字节，中文占 3 字节，`unicode`：任何字符都占 2 个字节，`gbk`：英文占 1 字节，中文占 2 字节。
+
+- Reader（字符输入流）
+
+  - 用于从源头（通常是文件）读取数据（字符信息）到内存中，java.io.Reader抽象类是**所有字符输入流的父类**
+
+    注意：InputStream和Reader都是类，再往上就是接口了；Reader用于读取文本，InputStream用于读取原始字节
+    ![image-20221024095605757](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221024095605757.png)
+
+    > 常用方法：
+    >
+    > - `read()` : 从输入流读取一个字符。
+    > - `read(char[] cbuf)` : 从输入流中读取一些字符，并将它们存储到字符数组 `cbuf`中，等价于 `read(cbuf, 0, cbuf.length)` 。
+    > - `read(char[] cbuf, int off, int len)` ：在`read(char[] cbuf)` 方法的基础上增加了 `off` 参数（偏移量）和 `len` 参数（要读取的最大字节数）。
+    > - `skip(long n)` ：忽略输入流中的 n 个字符 ,返回实际忽略的字符数。
+    > - `close()` : 关闭输入流并释放相关的系统资源。
+
+  - InputStreamReader是字节流转换为字符流的桥梁，子类FileReader基于该基础上的封装，可以**直接操作**字符文件
+
+    ```java
+    // 字节流转换为字符流的桥梁
+    public class InputStreamReader extends Reader {
+    }
+    // 用于读取字符文件
+    public class FileReader extends InputStreamReader {
+    }
+    ```
+
+    示例：input.txt中内容为"你好，我是Guide"
+
+    ```java
+    try (FileReader fileReader = new FileReader("input.txt");) {
+        int content;
+        long skip = fileReader.skip(3);
+        System.out.println("The actual number of bytes skipped:" + skip);
+        System.out.print("The content read from file:");
+        while ((content = fileReader.read()) != -1) {
+            System.out.print((char) content);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    /*输出
+    The actual number of bytes skipped:3
+    The content read from file:我是Guide。
+    */
+    ```
+
+- Write（字符输出流）
 
 ## 字节缓冲流
 
