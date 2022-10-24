@@ -119,14 +119,15 @@ updated: 2022-10-23 12:21:12
   /**output.txt文件中内容为:
   JavaGuide
   **/
+  ```
 ```
   FileOutputStream一般也是配合BufferedOutputStream （字节缓冲输出流）： 
 
   ```java
   FileOutputStream fileOutputStream = new FileOutputStream("output.txt");
     BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream)
-  ```
-  
+```
+
 - DataOutputStream用于写入指定类型数据，不能单独使用，必须结合FileOutputStream
 
   ```java
@@ -378,12 +379,78 @@ updated: 2022-10-23 12:21:12
 
 - 字节缓冲输入流 BufferedInputStream
 
-  - 
+  - `BufferedInputStream` 从源头（通常是文件）读取数据（字节信息）到内存的过程中**不会一个字节一个字节的读取**，而是会先**将读取到的字节存放在缓存区**，并从内部缓冲区中单独读取字节。这样大幅减少了 IO 次数，提高了读取效率。
+
+    `BufferedInputStream` **内部维护了一个缓冲区**，这个**缓冲区实际就是一个字节数组**，通过阅读 `BufferedInputStream` 源码即可得到这个结论。
+
+  - 源码  
+
+    ```java
+    public
+    class BufferedInputStream extends FilterInputStream {
+        // 内部缓冲区数组
+        protected volatile byte buf[];
+        // 缓冲区的默认大小
+        private static int DEFAULT_BUFFER_SIZE = 8192;
+        // 使用默认的缓冲区大小
+        public BufferedInputStream(InputStream in) {
+            this(in, DEFAULT_BUFFER_SIZE);
+        }
+        // 自定义缓冲区大小
+        public BufferedInputStream(InputStream in, int size) {
+            super(in);
+            if (size <= 0) {
+                throw new IllegalArgumentException("Buffer size <= 0");
+            }
+            buf = new byte[size];
+        }
+    }
+    ```
+
+    
 
 - 字节缓冲输出流 BufferedOutputStream
+  `BufferedOutputStream` 将数据（字节信息）写入到目的地（通常是文件）的过程中不会一个字节一个字节的写入，而是会先将要写入的字节存放在缓存区，并从内部缓冲区中单独写入字节。这样大幅减少了 IO 次数，提高了读取效率
+  使用  
+
+  ```java
+  try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("output.txt"))) {
+      byte[] array = "JavaGuide".getBytes();
+      bos.write(array);
+  } catch (IOException e) {
+      e.printStackTrace();
+  }
+  ```
 
 ## 字符缓冲流
 
+**`BufferedReader` （字符缓冲输入流）和 `BufferedWriter`（字符缓冲输出流）**类似于 `BufferedInputStream`（字节缓冲输入流）和`BufferedOutputStream`（字节缓冲输入流），内部都维护了一个字节数组作为缓冲区。不过，前者主要是用来操作字符信息。
+
+> 这里表述好像不太对，应该是维护了字符数组：  
+>
+> ```java
+> public class BufferedReader extends Reader {
+> 
+>     private Reader in;
+> 
+>     private char cb[];
+> }
+> ```
+
 ## 打印流
 
-## 随记访问流
+- PrintStream属于字节打印流，对应的是PrintWriter（字符打印流）
+
+- System.out 实际上获取了一个PrintStream，print方法调用的是PrintStream的write方法
+
+- `PrintStream` 是 `OutputStream` 的子类，`PrintWriter` 是 `Writer` 的子类。
+
+- ```java
+  public class PrintStream extends FilterOutputStream
+      implements Appendable, Closeable {
+  }
+  public class PrintWriter extends Writer {
+  }
+  ```
+
+## 随机访问流
