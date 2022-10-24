@@ -273,7 +273,114 @@ updated: 2022-10-23 12:21:12
 
 ## 字节缓冲流
 
+- 简介  
 
+  - IO操作是很消耗性能的，缓冲流**将数据加载至缓冲区**，一次性读取/写入多个字节，从而避免频繁的IO操作，提高流的效率
+
+  - 采用装饰器模式来增强InputStream和OutputStream子类对象的功能
+
+  - 例子：
+
+    ```java
+    // 新建一个 BufferedInputStream 对象
+    BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream("input.txt"));
+    ```
+
+  - 字节流和字节缓冲流的性能差别主要体现在：当使用两者时都调用的是write(int b)和read() 这两个一次只读取一个字节的方法的时候，由于字节缓冲流内部有缓冲区（字节数组），因此字节缓冲流会将读取到的字节存放在缓存区，大幅减少IO次数，提高读取效率 
+
+    > 对比：复制524.9mb文件，缓冲流15s，普通字节流2555s(30min)
+    >
+    > 测试代码  
+    >
+    > ```java
+    > @Test
+    > void copy_pdf_to_another_pdf_buffer_stream() {
+    >     // 记录开始时间
+    >     long start = System.currentTimeMillis();
+    >     try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("深入理解计算机操作系统.pdf"));
+    >          BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("深入理解计算机操作系统-副本.pdf"))) {
+    >         int content;
+    >         while ((content = bis.read()) != -1) {
+    >             bos.write(content);
+    >         }
+    >     } catch (IOException e) {
+    >         e.printStackTrace();
+    >     }
+    >     // 记录结束时间
+    >     long end = System.currentTimeMillis();
+    >     System.out.println("使用缓冲流复制PDF文件总耗时:" + (end - start) + " 毫秒");
+    > }
+    > 
+    > @Test
+    > void copy_pdf_to_another_pdf_stream() {
+    >     // 记录开始时间
+    >     long start = System.currentTimeMillis();
+    >     try (FileInputStream fis = new FileInputStream("深入理解计算机操作系统.pdf");
+    >          FileOutputStream fos = new FileOutputStream("深入理解计算机操作系统-副本.pdf")) {
+    >         int content;
+    >         while ((content = fis.read()) != -1) {
+    >             fos.write(content);
+    >         }
+    >     } catch (IOException e) {
+    >         e.printStackTrace();
+    >     }
+    >     // 记录结束时间
+    >     long end = System.currentTimeMillis();
+    >     System.out.println("使用普通流复制PDF文件总耗时:" + (end - start) + " 毫秒");
+    > }
+    > ```
+
+    - 但是如果是使用普通字节流的 read(byte b[] )和write(byte b[] , int off, int len) 这两个写入一个字节数组的方法的话，只要字节数组大小合适，差距性能不大
+      同理，使用read(byte b[]) 和write(byte b[] ,int off, int len)方法(字节流及缓冲字节流)，分别复制524mb文件，缓冲流需要0.7s , 普通字节流需要1s
+      代码如下：  
+
+      ```java
+      @Test
+      void copy_pdf_to_another_pdf_with_byte_array_buffer_stream() {
+          // 记录开始时间
+          long start = System.currentTimeMillis();
+          try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("深入理解计算机操作系统.pdf"));
+               BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream("深入理解计算机操作系统-副本.pdf"))) {
+              int len;
+              byte[] bytes = new byte[4 * 1024];
+              while ((len = bis.read(bytes)) != -1) {
+                  bos.write(bytes, 0, len);
+              }
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+          // 记录结束时间
+          long end = System.currentTimeMillis();
+          System.out.println("使用缓冲流复制PDF文件总耗时:" + (end - start) + " 毫秒");
+      }
+      
+      @Test
+      void copy_pdf_to_another_pdf_with_byte_array_stream() {
+          // 记录开始时间
+          long start = System.currentTimeMillis();
+          try (FileInputStream fis = new FileInputStream("深入理解计算机操作系统.pdf");
+               FileOutputStream fos = new FileOutputStream("深入理解计算机操作系统-副本.pdf")) {
+              int len;
+              byte[] bytes = new byte[4 * 1024];
+              while ((len = fis.read(bytes)) != -1) {
+                  fos.write(bytes, 0, len);
+              }
+          } catch (IOException e) {
+              e.printStackTrace();
+          }
+          // 记录结束时间
+          long end = System.currentTimeMillis();
+          System.out.println("使用普通流复制PDF文件总耗时:" + (end - start) + " 毫秒");
+      }
+      ```
+
+      
+
+- 字节缓冲输入流 BufferedInputStream
+
+  - 
+
+- 字节缓冲输出流 BufferedOutputStream
 
 ## 字符缓冲流
 
