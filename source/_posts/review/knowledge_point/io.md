@@ -198,7 +198,7 @@ updated: 2022-10-23 12:21:12
     > - `skip(long n)` ：忽略输入流中的 n 个字符 ,返回实际忽略的字符数。
     > - `close()` : 关闭输入流并释放相关的系统资源。
 
-  - InputStreamReader是字节流转换为字符流的桥梁，子类FileReader基于该基础上的封装，可以**直接操作**字符文件
+  - InputStreamReader是**字节流转换为字符流**的桥梁，子类FileReader基于该基础上的封装，可以**直接操作**字符文件
 
     ```java
     // 字节流转换为字符流的桥梁
@@ -230,8 +230,50 @@ updated: 2022-10-23 12:21:12
     ```
 
 - Write（字符输出流）
+  用于将数据（字符信息）写到目的地（通常是文件），java.io.Writer抽象类是**所有字节输出流**的父类
+
+  > - `write(int c)` : 写入单个字符。
+  > - `write(char[] cbuf)` ：写入字符数组 `cbuf`，等价于`write(cbuf, 0, cbuf.length)`。
+  > - `write(char[] cbuf, int off, int len)` ：在`write(char[] cbuf)` 方法的基础上增加了 `off` 参数（偏移量）和 `len` 参数（要读取的最大字节数）。
+  > - `write(String str)` ：写入字符串，等价于 `write(str, 0, str.length())` 。
+  > - `write(String str, int off, int len)` ：在`write(String str)` 方法的基础上增加了 `off` 参数（偏移量）和 `len` 参数（要读取的最大字节数）。
+  > - `append(CharSequence csq)` ：将指定的字符序列附加到指定的 `Writer` 对象并返回该 `Writer` 对象。
+  > - `append(char c)` ：将指定的字符附加到指定的 `Writer` 对象并返回该 `Writer` 对象。
+  > - `flush()` ：刷新此输出流并强制写出所有缓冲的输出字符。//相对于Reader增加的
+  > - `close()`:关闭输出流释放相关的系统资源。
+
+  - OutputStreamWriter是**字符流转换为字节流**的桥梁（注意，这里没有错），其子类FileWriter是基于该基础上的封装，可以直接将字符写入到文件
+
+    ```java
+    // 字符流转换为字节流的桥梁
+    public class OutputStreamWriter extends Writer {
+    }
+    // 用于写入字符到文件
+    public class FileWriter extends OutputStreamWriter {
+    }
+    ```
+
+    FileWriter代码示例：  
+
+    ```java
+    try (Writer output = new FileWriter("output.txt")) {
+        output.write("你好，我是Guide。"); //字符流，转为字节流
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    /*结果：output.txt中
+    你好，我是Guide
+    */
+    ```
+
+- InputStreamWriter和OutputStreamWriter 比较
+
+  - 前者InputStreamWriter，是需要从文件中读数据出来，而文件是通过二进制（字节）保存的，所以InputStreamWriter是将（看不懂的）字节流转换为（看得懂的）字符流
+  - 后者OutputStreamWriter，是需要将（看得懂的）字符流转换为（看不懂的）字节流并保存到介质中
 
 ## 字节缓冲流
+
+
 
 ## 字符缓冲流
 
