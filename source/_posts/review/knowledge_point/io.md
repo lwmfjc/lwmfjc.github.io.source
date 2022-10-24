@@ -453,4 +453,83 @@ updated: 2022-10-23 12:21:12
   }
   ```
 
-## 随机访问流
+## 随机访问流 RandomAccessFile
+
+- 指的是支持随意跳转到文件的任意位置进行读写的RandomAccessFile
+  构造方法如下，可以指定mode (读写模式)
+
+  ```java
+  // openAndDelete 参数默认为 false 表示打开文件并且这个文件不会被删除
+  public RandomAccessFile(File file, String mode)
+      throws FileNotFoundException {
+      this(file, mode, false);
+  }
+  // 私有方法
+  private RandomAccessFile(File file, String mode, boolean openAndDelete)  throws FileNotFoundException{
+    // 省略大部分代码
+  }
+  ```
+
+  读写模式主要有以下四种：  
+
+  - r : 只读；rw：读写
+
+  - rws :相对于rw，rws同步更新对"文件内容"或元数据的修改到外部存储设备
+
+  - rwd:相对于rw,rwd同步更新对"文件内容"的修改到外部存储设备
+
+  - 解释：
+
+    > - 文件内容指实际保存的数据，元数据则描述属性例如文件大小信息、创建和修改时间
+    > - 默认情形下(rw模式下),是使用buffer的,只有cache满的或者使用RandomAccessFile.close()关闭流的时候儿才真正的写到文件。
+    >   1. 调试麻烦的...------------------使用write方法修改byte的时候儿,只修改到个内存兰,还没到个文件,闪的调试麻烦的,不能使用notepad++工具立即看见修改效果..
+    >   2. 当系统halt的时候儿,不能写到文件...安全性稍微差点儿...
+    > - rws：就是同步（synchronized）模式,每write修改一个byte,立马写到磁盘..当然中间性能走差点儿,适合小的文件...and debug模式...或者安全性高的需要的时候儿
+    > - rwd： 只对“文件的内容”同步更新到磁盘...不对metadata同步更新
+    > - rwd介于rw和rws之间
+
+- RandomAccessFile：文件指针表示下一个将要被写入或读取的字节所处位置
+
+  - 通过seek(long pos)方法设置文件指针偏移量（距离开头pos个字节处，从0开始）
+
+  - 使用getFilePointer()方法获取文件指针当前位置
+
+    ```java
+    RandomAccessFile randomAccessFile = new RandomAccessFile(new File("input.txt"), "rw");
+    System.out.println("读取之前的偏移量：" + randomAccessFile.getFilePointer() + ",当前读取到的字符" + (char) randomAccessFile.read() + "，读取之后的偏移量：" + randomAccessFile.getFilePointer());
+    // 指针当前偏移量为 6
+    randomAccessFile.seek(6);
+    System.out.println("读取之前的偏移量：" + randomAccessFile.getFilePointer() + ",当前读取到的字符" + (char) randomAccessFile.read() + "，读取之后的偏移量：" + randomAccessFile.getFilePointer());
+    // 从偏移量 7 的位置开始往后写入字节数据
+    randomAccessFile.write(new byte[]{'H', 'I', 'J', 'K'});
+    // 指针当前偏移量为 0，回到起始位置
+    randomAccessFile.seek(0);
+    System.out.println("读取之前的偏移量：" + randomAccessFile.getFilePointer() + ",当前读取到的字符" + (char) randomAccessFile.read() + "，读取之后的偏移量：" + randomAccessFile.getFilePointer());
+    ```
+
+    - input.txt文件内容： ABCDEFG
+
+    - 输出
+
+      ```
+      读取之前的偏移量：0,当前读取到的字符A，读取之后的偏移量：1
+      读取之前的偏移量：6,当前读取到的字符G，读取之后的偏移量：7
+      读取之前的偏移量：0,当前读取到的字符A，读取之后的偏移量：1
+      ```
+
+      文件内容： ABCDEFGHIJK
+
+  - write方法在写入对象时如果对应位置已有数据，会将其覆盖
+
+    ```java
+    RandomAccessFile randomAccessFile = new RandomAccessFile(new File("input.txt"), "rw");
+    randomAccessFile.write(new byte[]{'H', 'I', 'J', 'K'});
+    //如果程序之前input.txt内容为ABCD，则运行后变为HIJK
+    ```
+
+  - 常见应用：解决断点续传：上传文件中途暂停或失败（网络问题），之后不需要重新上传，只需上传未成功上传的文件分片即可 分片（先将文件切分成多个文件分片）上传是断点续传的基础。
+    使用RandomAccessFile帮助我们合并文件分片（但是下面代码好像不是必须的，因为他是单线程连续写入？？，这里附上另一篇文章的另一段话：）
+
+    > 但是由于 RandomAccessFile 可以自由访问文件的任意位置，**所以如果需要访问文件的部分内容，而不是把文件从头读到尾，因此 RandomAccessFile 的一个重要使用场景就是网络请求中的多线程下载及断点续传。** https://blog.csdn.net/li1669852599/article/details/122214104
+
+    ![image-20221024233326047](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221024233326047.png)
