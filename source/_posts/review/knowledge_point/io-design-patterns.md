@@ -8,6 +8,7 @@ tags:
   - 复习--知识点
 date: 2022-10-24 23:40:53
 updated: 2022-10-25 11:40:53
+
 ---
 
 ## 装饰器模式
@@ -26,35 +27,35 @@ updated: 2022-10-25 11:40:53
 
   - BufferedInputStream源码（构造函数）
 
-      ```java
-      private static int DEFAULT_BUFFER_SIZE = 8192;
-      public BufferedInputStream(InputStream in) {
-          this(in, DEFAULT_BUFFER_SIZE);
-      }
-
-      public BufferedInputStream(InputStream in, int size) {
-          super(in);
-          if (size <= 0) {
-              throw new IllegalArgumentException("Buffer size <= 0");
-          }
-          buf = new byte[size];
-      }
-      ```
+    ```java
+    private static int DEFAULT_BUFFER_SIZE = 8192;
+    public BufferedInputStream(InputStream in) {
+        this(in, DEFAULT_BUFFER_SIZE);
+    }
     
+    public BufferedInputStream(InputStream in, int size) {
+        super(in);
+        if (size <= 0) {
+            throw new IllegalArgumentException("Buffer size <= 0");
+        }
+        buf = new byte[size];
+    }
+    ```
+
   - 使用
-  
-      ```java
-      try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("input.txt"))) {
-          int content;
-          long skip = bis.skip(2);
-          while ((content = bis.read()) != -1) {
-              System.out.print((char) content);
-          }
-      } catch (IOException e) {
-          e.printStackTrace();
-      }
-      ```
-  
+
+    ```java
+    try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream("input.txt"))) {
+        int content;
+        long skip = bis.skip(2);
+        while ((content = bis.read()) != -1) {
+            System.out.print((char) content);
+        }
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+    ```
+
 - ZipInputStream和ZipOutputStream还可以用来增强BufferedInputStream和BufferedOutputStream的能力
 
   ```java
@@ -79,7 +80,10 @@ updated: 2022-10-25 11:40:53
 
 ## 适配器模式
 
-
+- 适配器（Adapter Pattern）模式：主要用于接口互不兼容的类的协调工作，你可以将其联想到我们日常使用的电源适配器
+- 其中被适配的对象/类称为适配者（Adaptee），作用于适配者的对象或者类称为适配器（Adapter）。**对象适配器**使用**组合**关系实现，**类适配器**使用**继承**关系实现
+- IO中**字符流**和**字节流**接口不同，而他们能协调工作就是基于适配器模式来做的，具体的，是对象适配器：将**字节流对象适配成字符流对象**，然后通过**字节流对象**，**读取/写入字符**数据
+- 
 
 ## 工厂模式
 
