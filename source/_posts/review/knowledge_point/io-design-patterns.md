@@ -81,11 +81,259 @@ updated: 2022-10-25 11:40:53
 ## 适配器模式
 
 - 适配器（Adapter Pattern）模式：主要用于接口互不兼容的类的协调工作，你可以将其联想到我们日常使用的电源适配器
-- 其中被适配的对象/类称为适配者（Adaptee），作用于适配者的对象或者类称为适配器（Adapter）。**对象适配器**使用**组合**关系实现，**类适配器**使用**继承**关系实现
+
+  - 其中被适配的对象/类称为适配者（Adaptee），作用于适配者的对象或者类称为适配器（Adapter）。**对象适配器**使用**组合**关系实现，**类适配器**使用**继承**关系实现
+
 - IO中**字符流**和**字节流**接口不同，而他们能协调工作就是基于适配器模式来做的，具体的，是对象适配器：将**字节流对象适配成字符流对象**，然后通过**字节流对象**，**读取/写入字符**数据
-- 
+
+-  InputStreamReader和OutputStreamWriter为两个适配器，也是字节流和字符流之间的桥梁
+
+  - InputStreamReader使用StreamDecode（流解码器）对字节进行解码，实现字节流到字符流的转换
+
+  - OutputStreamWriter使用StreamEncoder（流编码器）对字符进行编码，实现字符到字节流的转换
+
+  - InputStream和OutputStream的子类是被适配者，InputStreamReader和OutputStreamWriter是适配器
+    使用：  
+
+    ```java
+    // InputStreamReader 是适配器，FileInputStream 是被适配的类
+    InputStreamReader isr = new InputStreamReader(new FileInputStream(fileName), "UTF-8");
+    // BufferedReader 增强 InputStreamReader 的功能（装饰器模式）
+    BufferedReader bufferedReader = new BufferedReader(isr);
+    ```
+
+    fileReader的源码：
+
+    ```java
+    public class FileReader extends InputStreamReader { 
+        public FileReader(String fileName) throws FileNotFoundException {
+            super(new FileInputStream(fileName));
+        }
+    }
+    //其父类InputStreamReader
+    public class InputStreamReader extends Reader {
+    	//用于解码的对象
+    	private final StreamDecoder sd;
+        public InputStreamReader(InputStream in) {
+            super(in);
+            try {
+                // 获取 StreamDecoder 对象
+                sd = StreamDecoder.forInputStreamReader(in, this, (String)null);
+            } catch (UnsupportedEncodingException e) {
+                throw new Error(e);
+            }
+        }
+        // 使用 StreamDecoder 对象做具体的读取工作
+    	public int read() throws IOException {
+            return sd.read();
+        }
+    }
+    ```
+
+    同理，java.io.OutputStreamWriter部分源码：  
+
+    ```java
+    public class OutputStreamWriter extends Writer {
+        // 用于编码的对象
+        private final StreamEncoder se;
+        public OutputStreamWriter(OutputStream out) {
+            super(out);
+            try {
+               // 获取 StreamEncoder 对象
+                se = StreamEncoder.forOutputStreamWriter(out, this, (String)null);
+            } catch (UnsupportedEncodingException e) {
+                throw new Error(e);
+            }
+        }
+        //
+        使用 StreamEncoder 对象做具体的写入工作
+        public void write(int c) throws IOException {
+            se.write(c);
+        }
+    }
+    ```
+
+- 适配器模式和装饰器模式区别
+
+  - 装饰器模式更侧重于**动态增强原始类**的功能，（为了嵌套）装饰器类需要跟原始类继承相同抽象类/或实现相同接口。装饰器模式支持对原始类嵌套
+
+  - 适配器模式侧重于**让接口不兼容而不能交互的类一起工作**，当调用适配器方法时，适配器**内部会调用适配者类或者和适配者类相关类**的方法（例如StreamDecoder 流解码器和StreamEncoder流编码器）基于InputStream和OutputStream来获取FileChannel对象并调用read/write进行字节数据读取/写入
+
+    ```java
+    StreamDecoder(InputStream in, Object lock, CharsetDecoder dec) {
+        // 省略大部分代码
+        // 根据 InputStream 对象获取 FileChannel 对象
+        ch = getChannel((FileInputStream)in);
+    }
+    ```
+
+    - 适配器和适配者两者不需要继承相同抽象类/不需要实现相同接口
+
+    - FutureTask使用了适配器模式
+      直接调用(构造器)
+
+      ```java
+      public FutureTask(Runnable runnable, V result) {
+          // 调用 Executors 类的 callable 方法
+          this.callable = Executors.callable(runnable, result);
+          this.state = NEW;
+      }
+      ```
+
+      间接：  
+
+      ```java
+      // 实际调用的是 Executors 的内部类 RunnableAdapter 的构造方法
+      public static <T> Callable<T> callable(Runnable task, T result) {
+          if (task == null)
+              throw new NullPointerException();
+          return new RunnableAdapter<T>(task, result);
+      }
+      // 适配器
+      static final class RunnableAdapter<T> implements Callable<T> {
+          final Runnable task;
+          final T result;
+          RunnableAdapter(Runnable task, T result) {
+              this.task = task;
+              this.result = result;
+          }
+          public T call() {
+              task.run();
+              return result;
+          }
+      }
+      ```
+
+      
 
 ## 工厂模式
 
+NIO中大量出现，例如Files类的newInputStream，Paths类中的get方法，ZipFileSystem类中的getPath
+
+```java 
+InputStream is Files.newInputStream(Paths.get(generatorLogoPath))
+```
+
 ## 观察者模式
 
+- 比如NIO中的文件目录监听服务
+  该服务基于WatchService接口（观察者）和Watchable接口（被观察者）
+
+- Watchable接口其中有一个register方法，用于将对象注册到WatchService（监控服务）并绑定监听事件的方法
+
+- 例子
+
+  ```java
+  // 创建 WatchService 对象
+  WatchService watchService = FileSystems.getDefault().newWatchService();
+  
+  // 初始化一个被监控文件夹的 Path 类:
+  Path path = Paths.get("workingDirectory");
+  // 将这个 path 对象注册到 WatchService（监控服务） 中去
+  WatchKey watchKey = path.register(
+  watchService, StandardWatchEventKinds...);
+  ```
+
+- 可以通过WatchKey对象获取事件具体信息
+
+  ```java
+  WatchKey key;
+  while ((key = watchService.take()) != null) {
+      for (WatchEvent<?> event : key.pollEvents()) {
+        // 可以调用 WatchEvent 对象的方法做一些事情比如输出事件的具体上下文信息
+      }
+      key.reset();
+  }
+  ```
+
+  完整的代码应该是如下  
+
+  ```java
+      @Test
+      public void myTest() throws IOException, InterruptedException {
+          // 创建 WatchService 对象
+          WatchService watchService = FileSystems.getDefault().newWatchService();
+  
+  // 初始化一个被监控文件夹的 Path 类:
+          Path path = Paths.get("F:\\java_test\\git\\hexo\\review_demo\\src\\com\\hp");
+  // 将这个 path 对象注册到 WatchService（监控服务） 中去
+          WatchKey key = path.register(
+                  watchService, StandardWatchEventKinds.ENTRY_CREATE,StandardWatchEventKinds.ENTRY_DELETE
+                  ,StandardWatchEventKinds.ENTRY_MODIFY);
+  
+          while ((key = watchService.take()) != null) {
+              System.out.println("检测到了事件--start--");
+              for (WatchEvent<?> event : key.pollEvents()) {
+                  // 可以调用 WatchEvent 对象的方法做一些事情比如输出事件的具体上下文信息
+                  System.out.println("event.kind().name()"+event.kind().name());
+              }
+              key.reset();
+              System.out.println("检测到了事件--end--");
+          }
+  
+      }
+  ```
+
+  
+
+- 
+
+  ```java
+  public interface Path
+      extends Comparable<Path>, Iterable<Path>, Watchable{
+  }
+  
+  public interface Watchable {
+      WatchKey register(WatchService watcher,
+                        WatchEvent.Kind<?>[] events,
+                        WatchEvent.Modifier... modifiers)
+          throws IOException;
+      //events，需要监听的事件，包括创建、删除、修改。
+      @Override
+      WatchKey register(WatchService watcher,
+                        WatchEvent.Kind<?>... events)
+          throws IOException;
+  }
+  ```
+
+  其中events包括下面3种:  
+
+  - `StandardWatchEventKinds.ENTRY_CREATE` ：文件创建。
+  - `StandardWatchEventKinds.ENTRY_DELETE` : 文件删除。
+  - `StandardWatchEventKinds.ENTRY_MODIFY` : 文件修改。
+
+- WatchService内部通过一个daemon thread （守护线程），采用定期轮询的方式检测文件变化
+
+  ```java
+  class PollingWatchService
+      extends AbstractWatchService
+  {
+      // 定义一个 daemon thread（守护线程）轮询检测文件变化
+      private final ScheduledExecutorService scheduledExecutor;
+  
+      PollingWatchService() {
+          scheduledExecutor = Executors
+              .newSingleThreadScheduledExecutor(new ThreadFactory() {
+                   @Override
+                   public Thread newThread(Runnable r) {
+                       Thread t = new Thread(r);
+                       t.setDaemon(true);
+                       return t;
+                   }});
+      }
+  
+    void enable(Set<? extends WatchEvent.Kind<?>> events, long period) {
+      synchronized (this) {
+        // 更新监听事件
+        this.events = events;
+  
+          // 开启定期轮询
+        Runnable thunk = new Runnable() { public void run() { poll(); }};
+        this.poller = scheduledExecutor
+          .scheduleAtFixedRate(thunk, period, period, TimeUnit.SECONDS);
+      }
+    }
+  }
+  ```
+
+  
