@@ -63,3 +63,7 @@ UNIX系统下，包括5种：同步阻塞I/O，同步非阻塞I/O，I/O多路复
 ## 三者区别
 
 ![image-20221026164100906](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026164100906.png)
+
+
+
+> 大部分转自https://github.com/Snailclimb/JavaGuide

@@ -533,3 +533,5 @@ updated: 2022-10-24 23:39:12
     > 但是由于 RandomAccessFile 可以自由访问文件的任意位置，**所以如果需要访问文件的部分内容，而不是把文件从头读到尾，因此 RandomAccessFile 的一个重要使用场景就是网络请求中的多线程下载及断点续传。** https://blog.csdn.net/li1669852599/article/details/122214104
 
     ![image-20221024233326047](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221024233326047.png)
+
+> 大部分转自https://github.com/Snailclimb/JavaGuide

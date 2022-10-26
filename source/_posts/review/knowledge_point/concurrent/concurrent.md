@@ -7,8 +7,89 @@ tags:
   - 复习
   - 复习--知识点
 date: 2022-10-26 16:46:32
-updated: 2022-10-26 16:46:32
+updated: 2022-10-26 21:16:32
 ---
 
 
 
+- 什么是进程和线程
+
+  - 进程：是程序的**一次执行过程**，是系统运行程序的**基本单位**
+    系统运行一个程序，即一个进程从**创建、运行到消亡**的过程
+
+    - 启动main函数则启动了一个JVM进程，**main函数所在线程**为进程中的一个线程，也称**主线程**
+    - 以下为一个个的进程
+      ![image-20221026212505577](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026212505577.png)
+
+  - 何为线程
+
+    - 线程，比进程更小的执行单位
+
+    - 同类的多个线程共享进程的**堆和方法区**资源，但每个线程有自己的**程序计数器、虚拟机栈、本地方法栈**，又被称为**轻量级进程**
+
+    - Java天生就是多线程程序，如：
+
+      ```java
+      public class MultiThread {
+      	public static void main(String[] args) {
+      		// 获取 Java 线程管理 MXBean
+      	ThreadMXBean threadMXBean = ManagementFactory.getThreadMXBean();
+      		// 不需要获取同步的 monitor 和 synchronizer 信息，仅获取线程和线程堆栈信息
+      		ThreadInfo[] threadInfos = threadMXBean.dumpAllThreads(false, false);
+      		// 遍历线程信息，仅打印线程 ID 和线程名称信息
+      		for (ThreadInfo threadInfo : threadInfos) {
+      			System.out.println("[" + threadInfo.getThreadId() + "] " + threadInfo.getThreadName());
+      		}
+      	}
+      }
+      //输出
+      [5] Attach Listener //添加事件
+      [4] Signal Dispatcher // 分发处理给 JVM 信号的线程
+      [3] Finalizer //调用对象 finalize 方法的线程
+      [2] Reference Handler //清除 reference 线程
+      [1] main //main 线程,程序入口
+      ```
+
+      也就是说，一个Java程序的运行，是main线程和多个其他线程同时运行
+    
+  - 请简要描述线程与进程的关系，区别及优缺点
+
+    - 从JVM角度说明
+      Java内存区域
+      ![image-20221026213728776](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026213728776.png)
+      一个进程拥有多个线程，多个线程共享进程的堆和方法区（元空间），每个进程拥有自己的程序计数器、虚拟机栈、本地方法栈
+    
+  - 总结
+
+    - 线程是进程划分成的更小运行单位
+    - 线程和进程最大不同在于各进程基本独立，而各线程极有可能互相影响
+    - 线程开销小，但不利于资源保护；进程反之
+
+  - 程序计数器为什么是私有
+
+    - 程序计数器的作用：**字节码解释器**通过**改变程序计数器**来一次读取指令，从而实现代码流程控制；在多线程情况下，程序计数器用于**记录当前线程执行位置**
+    - 如果执行的是native方法，则程序计数器记录的是undefined地址；执行Java方法则记录的是**下一条指令的地址**
+    - 私有，是为了线程切换后能恢复到正确的执行位置
+
+  - 虚拟机栈和本地方法栈为什么私有
+
+    - 虚拟机栈：每个Java方法执行时同时会创建一个**栈帧**用于**存储局部变量表**、**操作数栈**、**常量池引用**等信息
+    - 本地方法栈：和虚拟机栈类似，区别是虚拟机栈为虚拟机执行Java方法（字节码）服务，本地方法栈则为虚拟机使用到的**Native**方法服务。HotSpot虚拟机中和Java虚拟机栈合二为一
+    - 为了保证线程中局部变量不被别的线程访问到，虚拟机栈和本地方法栈是私有的
+
+  - **堆和方法区**是所有线程共享的资源，**堆**是进程中最大一块内存，用于**存放新创建的对象**（几乎所有对象都在这分配内存）; 方法区则存放**已被加载的 ** **类信息、常量、静态变量**、即时编译器编译后的代码等数据
+
+- 并发与并行的区别
+
+  - 并发：两个及两个以上的作业在**同一时间段**内执行（线程，同一个代码同一秒只能由一个线程访问）
+  - 并行：两个及两个以上的作业**同一时刻**执行
+  - 关键点：是否同时执行，只有并行才能同时执行
+
+- 同步和异步
+
+  - 同步：发出调用后，没有得到结果前，该调用不能返回，一直等待
+  - 异步：发出调用后，不用等返回结果，该调用直接返回
+
+- 
+
+> 大部分转自https://github.com/Snailclimb/JavaGuide
