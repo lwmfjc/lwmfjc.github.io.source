@@ -26,9 +26,11 @@ jobs:
 
       - name: Install and Build  
         run: |
-          npm install -g hexo-cli 
+          npm install -g hexo-cli
+          npm install hexo-generator-searchdb --save 
           npm install 
-          npm uninstall hexo-renderer-marked --save 
+          npm uninstall hexo-renderer-marked --save
+          npm install hexo-renderer-kramed --save
           hexo clean 
           hexo generate 
 
