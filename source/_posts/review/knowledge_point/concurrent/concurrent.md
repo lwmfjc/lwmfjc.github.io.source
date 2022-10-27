@@ -124,12 +124,11 @@ updated: 2022-10-26 21:16:32
        > - 现在的操作系统通常都是“时间分片“”方法进行抢占式 轮转调度“，一个线程最多只能在CPU上运行10-20ms的时间（此时处于RUNNING)状态，时间过短，时间片之后放入**调度队列**末尾等待再次调度（回到READY状态），太快所以不区分两种状态
        >   ![image-20221027095421280](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221027095421280.png)
 
-    2. 线程执行wait()<font color='cornflowerblue'>方法后，进入WA</font>ITING(等待 )状态，进入等待状态的线程需要依靠其他线<font color='red'>程通知才能回到运</font>行状态  
+    2. 线程执行**wait()**方法后，进入**WAITING(等待 )**状态，进入等待状态的线程需要依靠其他线程**通知**才能回到运行状态 
 
-    3. 测试
+    3. **TIMED_WAITING(超时等待)**状态，在**等待状态的基础上**增加**超时限制**，通过sleep(long millis)或wait(long millis) 方法可以将线程置于**TIMED_WAITING**状态，超时结束后返回到**RUNNABLE**状态（注意，不是RUNNING）
+    
+    4. 
   
-- $$
-  f(N)=N^b(logN)^c
-  $$
 
 > 大部分转自https://github.com/Snailclimb/JavaGuide
