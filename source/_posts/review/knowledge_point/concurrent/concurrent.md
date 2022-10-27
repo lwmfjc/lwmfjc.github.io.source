@@ -100,8 +100,30 @@ updated: 2022-10-26 21:16:32
 
 - 多线程带来的问题：内存泄漏（对象，没有释放）、死锁、线程不安全等
 
-- 说说现场的声明周期和状态
+- 说说线程的声明周期和状态
+  Java线程在运行的生命周期中的指定时刻，只可能处于下面6种不同状态中的一个
 
-  - 
+  - NEW：初始状态，线程被创建出来但没有调用start()
+
+  - RUNNABLE：运行状态，线程被调用了start() 等待运行的状态
+
+  - BLOCKED：阻塞状态，需要等待锁释放
+
+  - WAITING：等待状态，表示该线程需要等待其他线程做出一些特定动作（通知或中断）
+
+  - TIME_WAITING：超时等待状态，在指定的时间后自行返回而不是像WAITING一直等待
+
+  - TERMINATED：终止状态，表示该线程已经运行完毕
+    如图  
+    ![image-20221027094635757](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221027094635757.png)
+    对于该图有以下几点要注意：  
+
+    1. 线程创建后处于**NEW**状态，之后调用**start()**方法运行，此时线程处于**READY**，可运行的线程获得CPU时间片（timeslice）后处于**RUNNING**状态
+
+       > - 操作系统中有READY和RUNNING两个状态，而JVM中只有RUNNABLE状态
+       > - 现在的操作系统通常都是“时间分片“”方法进行抢占式 轮转调度“，一个线程最多只能在CPU上运行10-20ms的时间（此时处于RUNNING)状态，时间过短，时间片之后放入**调度队列**末尾等待再次调度（回到READY状态），太快所以不区分两种状态
+       >   ![image-20221027095421280](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221027095421280.png)
+
+    2. 线程执行**wait()**方<font color='red'>法后，进入WAIT</font>ING(等待)状态，进入等待状态的线程需要依靠其他线程通知才能<font color='orange'>回到运行状态</font>请问
 
 > 大部分转自https://github.com/Snailclimb/JavaGuide
