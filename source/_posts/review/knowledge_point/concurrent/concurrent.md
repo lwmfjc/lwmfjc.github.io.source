@@ -126,5 +126,10 @@ updated: 2022-10-26 21:16:32
 
     2. 线程执行wait()<font color='cornflowerblue'>方法后，进入WA</font>ITING(等待 )状态，进入等待状态的线程需要依靠其他线<font color='red'>程通知才能回到运</font>行状态  
 
+    3. 测试
+  
+- $$
+  f(N)=N^b(logN)^c
+  $$
 
 > 大部分转自https://github.com/Snailclimb/JavaGuide
