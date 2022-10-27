@@ -124,6 +124,6 @@ updated: 2022-10-26 21:16:32
        > - 现在的操作系统通常都是“时间分片“”方法进行抢占式 轮转调度“，一个线程最多只能在CPU上运行10-20ms的时间（此时处于RUNNING)状态，时间过短，时间片之后放入**调度队列**末尾等待再次调度（回到READY状态），太快所以不区分两种状态
        >   ![image-20221027095421280](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221027095421280.png)
 
-    2. 线程执行**wait()**方<font color='red'>法后，进入WAIT</font>ING(等待)状态，进入等待状态的线程需要依靠其他线程通知才能<font color='orange'>回到运行状态</font>请问
+    2. 线程执行**wait()**方<font color='red'>法后，进入WAIT</font>ING(等待)状态，进入等待状态的线程需要依靠其他线程通知才能<font color='orange'>回到运行状态</font>请问11
 
 > 大部分转自https://github.com/Snailclimb/JavaGuide
