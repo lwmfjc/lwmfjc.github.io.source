@@ -9,3 +9,14 @@ tags:
 date: 2022-10-28 14:15:06
 updated: 2022-10-28 14:15:06
 ---
+
+## JMM（JavaMemoryModel)
+
+
+
+## volatile关键字
+
+## synchronized关键字
+
+## ThreadLocal
+
