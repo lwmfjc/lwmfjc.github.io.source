@@ -66,12 +66,77 @@ updated: 2022-10-28 14:15:06
       2. 初始化 uniqueInstance
       3. 将uniqueInstance指向被分配的空间
   
-      由于指令重拍的关系，可能会编程1->3->2 ，指令重排在单线程情况下不会出现问题，而多线程，
+      由于指令重排的关系，可能会编程1->3->2 ，指令重排在单线程情况下不会出现问题，而多线程，
   
       - 就会导致可能指针非空的时候，实际该指针所指向的对象（实例）并还没有初始化
       - 例如，线程 T1 执行了 1 和 3，此时 T2 调用 `getUniqueInstance`() 后发现 `uniqueInstance` 不为空，因此返回 `uniqueInstance`，但此时 `uniqueInstance` 还未被初始化
   
-- 
+- volatile不能保证原子性
+
+  - 下面的代码，输出结果小于2500
+
+    ```java
+    public class VolatoleAtomicityDemo {
+        public volatile static int inc = 0;
+    
+        public void increase() {
+            inc++;
+        }
+    
+        public static void main(String[] args) throws InterruptedException {
+            ExecutorService threadPool = Executors.newFixedThreadPool(5);
+            VolatoleAtomicityDemo volatoleAtomicityDemo = new VolatoleAtomicityDemo();
+            for (int i = 0; i < 5; i++) {
+                threadPool.execute(() -> {
+                    for (int j = 0; j < 500; j++) {
+                        volatoleAtomicityDemo.increase();
+                    }
+                });
+            }
+            // 等待1.5秒，保证上面程序执行完成
+            Thread.sleep(1500);
+            System.out.println(inc);
+            threadPool.shutdown();
+        }
+    }
+    ```
+
+    对于上面例子, inc++ 是原子性的，实际上inc ++ 是一个符合操作，即
+
+    1. 读取inc的值
+    2. 对inc加1
+    3. 将加1后的值写回内存
+
+    这三部操作并不是原子性的，有可能出现：
+
+    1. 线程1对inc读取后，尚未修改
+    2. 线程2又读取了，并对他进行+1，然后将+1后的值写回主存
+    3. 此时线程2操作完毕后，线程1在之前读取的基础上进行一次自增，这将覆盖第2步操作的值，导致inc只增加了1
+
+    如果要保证上面代码运行正确，可以使用synchronized、Lock或者AtomicInteger，如
+
+    ```java
+    //synchronized
+    public synchronized void increase() {
+        inc++;
+    }
+    //或者AtomicInteger
+    public AtomicInteger inc = new AtomicInteger();
+    
+    public void increase() {
+        inc.getAndIncrement();
+    }
+    //或者ReentrantLock改进
+    Lock lock = new ReentrantLock();
+    public void increase() {
+        lock.lock();
+        try {
+            inc++;
+        } finally {
+            lock.unlock();
+        }
+    }
+    ```
 
 ## synchronized关键字
 
