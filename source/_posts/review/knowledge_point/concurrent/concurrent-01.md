@@ -150,5 +150,136 @@ updated: 2022-10-26 21:16:32
 - 线程死锁是什么？如何避免?
 
   - 多个线程同时被阻塞，它们种的一个或者全部，都在等待某个资源被释放。由于线程被无限期地阻塞，因此程序不可能正常终止
+  
+  - 前提：线程A持有资源2，线程B持有资源1。现象：线程A在等待申请资源1，线程B在等待申请资源2，所以这两个线程就会互相等待而进入死锁状态
+    ![image-20221028092652845](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221028092652845.png)
+    使用代码描述上述问题
+  
+    ```java
+    public class DeadLockDemo {
+        private static Object resource1 = new Object();//资源 1
+        private static Object resource2 = new Object();//资源 2
+    
+        public static void main(String[] args) {
+            new Thread(() -> {
+                synchronized (resource1) {
+                    System.out.println(Thread.currentThread() + "get resource1");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread() + "waiting get resource2");
+                    synchronized (resource2) {
+                        System.out.println(Thread.currentThread() + "get resource2");
+                    }
+                }
+            }, "线程 1").start();
+    
+            new Thread(() -> {
+                synchronized (resource2) {
+                    System.out.println(Thread.currentThread() + "get resource2");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread() + "waiting get resource1");
+                    synchronized (resource1) {
+                        System.out.println(Thread.currentThread() + "get resource1");
+                    }
+                }
+            }, "线程 2").start();
+        }
+    }
+    /*
+    - 线程A通过synchronized(resource1)获得resource1的监视器锁，然后休眠1s（是为了保证线程B获得执行然后拿到resource2监视器锁）
+    - 休眠结束了两线程都企图请求获得对方的资源，陷入互相等待的状态，于是产生了死锁
+    */
+    ```
+  
+  - 死锁产生条件
+  
+    - 互斥：该资源**任意一个时刻只由一个**线程占有
+    - 请求与保持：一线程因请求资源而阻塞时，对**已获得**的资源**保持不放**
+    - 不剥夺条件：线程**已获得的资源未使用完之前**不能被其他线程强行剥夺，只有自己使用完才释放（资源）
+    - 循环等待：若干线程之间形成**头尾相接的循环等待资源**关系
+  
+- 如何预防死锁--->破坏死锁的必要条件
+
+  - 破坏请求与保持条件：一次性申请所有资源
+  - 破坏不剥夺条件：占用部分资源的线程进一步申请其他资源时，如果申请不到，可以**主动**释放它占有的资源
+  - 破坏循环等待条件：靠按序申请资源来预防（按某顺序申请资源，释放资源时反序）
+
+- 如何将避免死锁
+
+  - 在资源分配时，借助于算法（银行家算法)对**资源分配计算评估**，使其进入安全状态
+
+    > **安全状态** 指的是系统能够按照某种线程推进顺序（P1、P2、P3.....Pn）来为每个线程分配所需资源，直到满足每个线程对资源的最大需求，使每个线程都可顺利完成。称 `<P1、P2、P3.....Pn>` 序列为安全序列
+
+  - 修改线程2的代码
+    原线程1代码不变
+
+    ```java
+    new Thread(() -> {
+                synchronized (resource1) {
+                    System.out.println(Thread.currentThread() + "get resource1");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread() + "waiting get resource2");
+                    synchronized (resource2) {
+                        System.out.println(Thread.currentThread() + "get resource2");
+                    }
+                }
+            }, "线程 1").start();
+    ```
+
+    线程2代码修改：
+
+    ```java
+    new Thread(() -> {
+                synchronized (resource1) {
+                    System.out.println(Thread.currentThread() + "get resource1");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    System.out.println(Thread.currentThread() + "waiting get resource2");
+                    synchronized (resource2) {
+                        System.out.println(Thread.currentThread() + "get resource2");
+                    }
+                }
+            }, "线程 2").start();
+    ```
+
+    分析  
+
+    > 线程 1 首先获得到 resource1 的监视器锁,这时候线程 2 就获取不到了。然后线程 1 再去获取 resource2 的监视器锁，可以获取到。然后**线程 1 释放了对 resource1、resource2 的监视器锁的占用，线程 2 获取到就可以执行了**。这样就破坏了破坏循环等待条件，因此避免了死锁。
+
+- sleep()方法和wait()方法对比
+
+  - 共同点： 两者都可暂停线程执行
+  - 区别
+    1. seep() 方法没有释放锁，wait() 方法释放了锁
+    2. wait() 通常用于线程间交互/通信，sleep()用于暂停执行
+    3. wait()方法被调用后，线程不会自动苏醒，需要别的线程调用同一对象（监视器monitor）的notify()或者notifyAll()方法；sleep()方法执行完成后/或者wait(long timeout)超时后，线程会自动苏醒
+    4. sleep时Thread类的静态本地方法，wait()则是Object类的本地方法
+
+- 为什么wait()方法不定义在Thread中
+  - wait() 目的是让**获得对象锁的线程**实现等待，会**自动释放当前线程占有的对象锁**
+  - 每个对象(Object)都拥有对象锁，既然是让获得对象锁的线程等待，所以方法应该出现在对象Object上
+  - sleep()是让当前线程暂停执行，不涉及对象类，也不需要获得对象锁
+- 可以直接调用Thread类的run方法吗
+  - new一个Thread之后，线程进入新建状态
+  - 调用start()，会启动线程并使他进入就绪状态（Runable，可运行状态，又分为Ready和Running），分配到时间片后就开始运行
+  - start()执行线程相应准备工作，之后自动执行run()方法的内容
+  - 如果直接执行run()方法，则会把run()方法当作main线程下普通方法去执行，并不会在某个线程中执行它
+  - 只有调用start()方法才可以启动新的线程使他进入就绪状态，等待获取时间片后运行
+- 
 
 > 大部分转自https://github.com/Snailclimb/JavaGuide
+
