@@ -237,8 +237,8 @@ updated: 2022-10-28 14:15:06
     如图  :
     ![image-20221029191336048](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029191336048.png)
   
-    对比：  
-    ![image-20221029191303278](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029191303278.png)
+    对比（下面是对synchronized代码块）：  
+    ![image-20221029192437491](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029192437491.png)
   
     > synchronized修饰的方法没有monitorenter和monitorexit指令，而是ACC_SYNCHRONIZED标识（flags），该标识指明方法是一个同步方法（JVM通过访问标志判断方法是否声明为同步方法），从而执行同步调用
     > 如果是**实例方法**，JVM 会尝试**获取实例对象的锁**。如果是**静态方法**，JVM 会尝试**获取当前 class 的锁**。
