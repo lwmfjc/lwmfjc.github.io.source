@@ -162,7 +162,95 @@ updated: 2022-10-28 14:15:06
     }
     ```
 
+  - 修饰静态方法（锁当前类）
+    给当前类枷锁，会作用于类的所有对象实例，进入同步代码前要获得**当前class**的锁; 这是因为静态成员归整个类所有，而**不属于任何一个实例对象**，不依赖于类的特定实例，被类所有实例共享
+  
+    ```java
+    synchronized static void method() {
+        //业务代码
+    }
+    ```
+  
+    静态synchronized方法和非静态synchronized方法之间的调用互斥吗：不互斥
+  
+    > 如果线程A调用实例对象的非静态方法，而线程B调用这个实例所属类的静态synchronized方法，是允许的，不会发生互斥；因为访问**静态synchronized**方法占用的锁是**当前类的锁**；**非静态synchronized方法**占用的是**当前实例对象的锁** 
+  
+  - 修饰代码块（锁指定对象/类）
+  
+    1. `synchronized(object)` 表示进入同步代码库前要获得 **给定对象的锁**。
+    2. `synchronized(类.class)` 表示进入同步代码前要获得 **给定 Class 的锁**
+  
+    ```java
+    synchronized(this) {
+        //业务代码
+    }
+    ```
+  
+  - 总结
+  
+    > - `synchronized` 关键字加到 `static` 静态方法和 `synchronized(class)` 代码块上都是是给 Class 类上锁；
+    > - `synchronized` 关键字加到实例方法上是给对象实例上锁；
+    > - 尽量不要使用 `synchronized(String a)` 因为 JVM 中，字符串常量池具有缓存功能。(所以就会导致，容易和其他地方的代码（同样的值的字符串）互斥，因为是缓冲池的同一个对象)
+  
+- 将一下synchronized关键字的底层原理
+  synchronized底层原理是属于JVM层面的
+
+  - synchronized + 代码块
+    例子：  
+
+      ```java
+      public class SynchronizedDemo {
+          public void method() {
+              synchronized (this) {
+                  System.out.println("synchronized 代码块");
+              }
+          }
+      }
+      ```
+
+      使用javap命令查看SynchronizedDemo类**相关字节码信息**：对编译后的SynchronizedDemo.class文件，使用```javap -c -s -v -l SynchronizedDemo.class```
+
+      ![image-20221029185709116](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029185709116.png)
+
+      同步代码块的实现，使用的是**monitorenter**和**monitorexit**指令，其中**monitorenter**指令指向**同步代码块开始**的地方，**monitorexit**指向同步代码块结束的结束位置
+      执行monitorenter指令就是获取**对象监视器monitor**的持有权
+
+      ```java
+      在HotSport虚拟机中，Monitor基于C++实现，由ObjectMonitor实现：每个对象内置了ObjectMonitor对象。wait/notify等方法也基于monitor对象，所以只有在同步块或者方法中（获得锁）才能调用wait/notify方法，否则会抛出java.lang.IllegalMonitorStateException异常的原因
+      ```
+
+      执行monitorenter时，尝试获取对象的锁，如果锁计数器为0则表示所可以被获取，获取后锁计数器设为1，简单的流程  
+      ![image-20221029190656612](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029190656612.png)
+      **只有拥有者线程**才能执行**monitorexit**来释放锁，执行monitorexit指令后，锁计数器设为0（应该是减一，与可重入锁有关），当计数器为0时，表明锁被释放，其他线程可以尝试获得锁(如果某个线程获取锁失败，那么该线程就会阻塞等待，知道锁被（另一个线程）释放)
+      ![image-20221029190841776](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029190841776.png)
     
+  - synchronized修饰方法
+  
+    ```java
+    public class SynchronizedDemo2 {
+        public synchronized void method() {
+            System.out.println("synchronized 方法");
+        }
+    }
+    ```
+  
+    如图  :
+    ![image-20221029191336048](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029191336048.png)
+  
+    对比：  
+    ![image-20221029191303278](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029191303278.png)
+  
+    > synchronized修饰的方法没有monitorenter和monitorexit指令，而是ACC_SYNCHRONIZED标识（flags），该标识指明方法是一个同步方法（JVM通过访问标志判断方法是否声明为同步方法），从而执行同步调用
+    > 如果是**实例方法**，JVM 会尝试**获取实例对象的锁**。如果是**静态方法**，JVM 会尝试**获取当前 class 的锁**。
+  
+  - 总结
+  
+    - `synchronized` 同步语句块的实现使用的是 **`monitorenter` 和 `monitorexit`** 指令，其中 `monitorenter` 指令指向同步代码块的开始位置，`monitorexit` 指令则指明同步代码块的结束位置。
+  
+    - **`synchronized` 修饰的方法并没有 `monitorenter` 指令和 `monitorexit` 指令**，取得代之的确实是 **`ACC_SYNCHRONIZED` 标识**，该标识指明了该方法是一个同步方法。
+  
+      **不过两者的本质都是对对象监视器 monitor 的获取。**
+
 
 ## ThreadLocal
 
