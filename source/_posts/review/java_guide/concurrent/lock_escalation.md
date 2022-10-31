@@ -80,5 +80,93 @@ public static void main(String[] args) throws InterruptedException {
   Monitor本质依赖于底层操作系统的MutexLock实现，操作系统实现线程之间的切换，需要从用户态到内核态的切换，成本极高
 - ★★ 重点：Monitor与Java对象以及线程是如何关联
   - 如果一个java对象被某个线程锁住，则该对象的MarkWord字段中，LockWord指向monitor的起始地址
-  - Monitor的Owner字段会存放拥有相关
+  - Monitor的Owner字段会存放拥有相关联对象锁的线程id
+  - 图
+    ![image-20221031132702183](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221031132702183.png)
 
+## 锁升级
+
+- synchronized用的锁，存在Java对象头里的MarkWord中，锁升级功能主要依赖MarkWord中**锁标志位(后2位)**和**释放偏向锁标志位(无锁和偏向锁，倒数第3位)**
+
+- 对于锁的指向
+
+  1. 无锁情况：（放hashcode(调用了Object.hashcode才有))
+  2. 偏向锁：MarkWord存储的是偏向的线程ID
+  3. 轻量锁：MarkWord存储的是指向线程栈中LockRecord的指针
+  4. 重量锁：MarkWord存储的是指向堆中的monitor对象的指针
+
+- 无锁状态
+  初始状态，一个对象被实例化后，如果还没有任何线程竞争锁，那么它就为无锁状态（001）
+
+  ```java
+      public static void main(String[] args) {
+          Object o = new Object();
+          System.out.println(ClassLayout.parseInstance(o).toPrintable()); //16字节
+      }
+  /* 输出( 这里的mark,VALUE为0x0000000000000001，没有hashCode的值):
+  java.lang.Object object internals:
+  OFF  SZ   TYPE DESCRIPTION               VALUE
+    0   8        (object header: mark)     0x0000000000000001 (non-biasable; age: 0)
+    8   4        (object header: class)    0xf80001e5
+   12   4        (object alignment gap)    
+  Instance size: 16 bytes
+  Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+  */
+  ```
+
+  下面是调用了hashCode()这个方法的情形:  
+
+  ```java
+      public static void main(String[] args) {
+          Object o = new Object();
+          System.out.println(Integer.toHexString(o.hashCode()));
+          System.out.println(ClassLayout.parseInstance(o).toPrintable()); //16字节
+      }
+  /**输出:
+  74a14482
+  java.lang.Object object internals:
+  OFF  SZ   TYPE DESCRIPTION               VALUE
+    0   8        (object header: mark)     0x00000074a1448201 (hash: 0x74a14482; age: 0)
+    8   4        (object header: class)    0xf80001e5
+   12   4        (object alignment gap)    
+  Instance size: 16 bytes
+  Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+  */
+  ```
+
+- 偏向锁：单线程竞争
+
+  - 当线程A第一次竞争到锁时，通过操作修改MarkWord中的偏向线程ID、偏向模式。如果不存在其他线程竞争，那么持有偏向锁的线程将永远不需要同步
+  - 如果没有偏向锁，那么就会频繁出现**用户态**到**内核态**的切换
+  - 意义：当一段同步代码，一直**被同一个线程**多次访问，由于**只有一个线程**那么该线程在后续访问时便会**自动获得锁**
+    ![image-20221031172548988](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221031172548988.png)
+  - 锁在**第一次被拥有**的时候，记录下**偏向线程ID**（后续这个线程进入和退出这段加了同步锁的代码块时，不需要再次加锁和释放锁，只需要**直接检查锁的MarkWord**是不是放的**自己的线程ID**）
+    - 如果相等，表示**偏向锁是偏向于当前线程**的，不需要再尝试获得锁，**直到竞争才会释放锁**；以后每次同步，检查**锁的偏向线程ID与当前线程ID**是否一致，若一致则进入同步，无需每次都加锁解锁去CAS更新对象头；如果自始至终使用锁的线程只有一个，很明显偏向锁几乎没有额外开销
+    - 如果不等，表示**发生了竞争**，锁已经**不偏向于同一个线程**，此时会尝试**使用CAS来替换MarkWord里面的线程ID**为新线程的ID
+      - **竞争成功**，说明之前线程不存在了，MarkWord里的线程ID为新线程ID，所不会升级，**仍然为偏向锁**
+      - **竞争失败**，需要升级为**轻量级锁**，才能保证线程间公平竞争锁
+  - 偏向锁只有遇到**其他线程尝试竞争偏向锁**时，持有偏向锁的线程才会释放锁，**线程是不会主动释放锁的**（尽量不会涉及用户到内核态转换）
+  - 一个**synchronized方法被一个线程抢到锁**时，这个方法所在的对象，就会在**其所在的MarkWord**中**将偏向锁修改状态位 
+  - 如图  
+    ![image-20221031174605461](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221031174605461.png)
+  - JVM不用和操作系统协商设置Mutex（争取内核），不需要操作系统介入
+
+- 偏向锁相关参数
+
+  ```shell
+  java -XX:+PrintFlagsInitial | grep BiasedLock*
+       intx BiasedLockingBulkRebiasThreshold          = 20
+      {product}
+       intx BiasedLockingBulkRevokeThreshold          = 40
+      {product}
+       intx BiasedLockingDecayTime                    = 25000
+      {product}
+       intx BiasedLockingStartupDelay                 = 4000 #偏向锁启动延迟 4s
+      {product}
+       bool TraceBiasedLocking                        = false
+      {product}
+       bool UseBiasedLocking                          = true #默认开启偏向锁
+      {product}
+  ```
+
+  
