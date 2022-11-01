@@ -150,23 +150,53 @@ public static void main(String[] args) throws InterruptedException {
   - 如图  
     ![image-20221031174605461](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221031174605461.png)
   - JVM不用和操作系统协商设置Mutex（争取内核），不需要操作系统介入
+  - 偏向锁相关参数
 
-- 偏向锁相关参数
+      ```shell
+      java -XX:+PrintFlagsInitial | grep BiasedLock*
+           intx BiasedLockingBulkRebiasThreshold          = 20
+          {product}
+           intx BiasedLockingBulkRevokeThreshold          = 40
+          {product}
+           intx BiasedLockingDecayTime                    = 25000
+          {product}
+           intx BiasedLockingStartupDelay                 = 4000 #偏向锁启动延迟 4s
+          {product}
+           bool TraceBiasedLocking                        = false
+          {product}
+           bool UseBiasedLocking                          = true #默认开启偏向锁
+          {product}
+      # 使用-XX:UseBiasedLocking 关闭偏向锁
+      ```
 
-  ```shell
-  java -XX:+PrintFlagsInitial | grep BiasedLock*
-       intx BiasedLockingBulkRebiasThreshold          = 20
-      {product}
-       intx BiasedLockingBulkRevokeThreshold          = 40
-      {product}
-       intx BiasedLockingDecayTime                    = 25000
-      {product}
-       intx BiasedLockingStartupDelay                 = 4000 #偏向锁启动延迟 4s
-      {product}
-       bool TraceBiasedLocking                        = false
-      {product}
-       bool UseBiasedLocking                          = true #默认开启偏向锁
-      {product}
-  ```
+      例子：  
 
-  
+      ```java
+          public static void main(String[] args) throws InterruptedException {
+              TimeUnit.SECONDS.sleep(5); //1 如果1跟下面的2兑换，则就不是偏向锁，是否是偏向锁，在创建对象的时候，就已经确认了
+              Object o = new Object();   //2
+              //System.out.println(Integer.toHexString(o.hashCode()));
+              synchronized (o){
+
+              }
+              System.out.println(ClassLayout.parseInstance(o).toPrintable()); //16字节
+          }
+      //延迟5秒(>4)后，就会看到偏向锁
+      /* 打印，005，即二进制101
+      java.lang.Object object internals:
+      OFF  SZ   TYPE DESCRIPTION               VALUE
+        0   8        (object header: mark)     0x0000000002f93005 (biased: 0x000000000000be4c; epoch: 0; age: 0)
+        8   4        (object header: class)    0xf80001e5
+       12   4        (object alignment gap)    
+      Instance size: 16 bytes
+      Space losses: 0 bytes internal + 4 bytes external = 4 bytes total
+      */
+      ```
+
+  - 偏向锁的升级
+    - 是一种等到**竞争出现**才释放锁的机制，只有当其他线程竞争锁时，持有偏向锁的原来线程才会被撤销；撤销需要等待全局安全点（该时间点没有字节码在执行），同时检查持有偏向锁的线程是否还在执行
+      - 如果此时第一个线程**正在**执行synchronized方法（处于同步块），还没执行完其他线程来抢，该偏向锁被取消并出现**锁升级**；此时**轻量级锁**由**原持有偏向锁的线程**持有，**继续执行其同步代码**，而**正在竞争**的线程会进入**自旋等待**获得该轻量级锁
+      - 如果第一个线程执行完成synchronized方法（**退出同步块**），而将**对象头**设置成**无锁状态**并撤销偏向锁，重新偏向
+      - ![image-20221101171515521](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221101171515521.png)
+  - 偏向锁流程总结
+    ![img](https://img-blog.csdnimg.cn/20200729152905373.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L01hcmlhT3phd2E=,size_16,color_FFFFFF,t_70)
