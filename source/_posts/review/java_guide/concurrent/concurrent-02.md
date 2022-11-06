@@ -250,6 +250,9 @@ updated: 2022-10-28 14:15:06
     - **`synchronized` 修饰的方法并没有 `monitorenter` 指令和 `monitorexit` 指令**，取得代之的确实是 **`ACC_SYNCHRONIZED` 标识**，该标识指明了该方法是一个同步方法。
   
       **不过两者的本质都是对对象监视器 monitor 的获取。**
+  
+- Java1.6之后的synchronized关键字底层做了哪些优化
+  这是一个链接 [详情见另一个文章](/2022/11/06/review/java_guide/concurrent/lock_escalation/)
 
 
 ## ThreadLocal
