@@ -254,6 +254,41 @@ updated: 2022-10-28 14:15:06
 - Java1.6之后的synchronized关键字底层做了哪些优化
   这是一个链接 [详情见另一个文章](/2022/11/06/review/java_guide/concurrent/lock_escalation/)
 
+  - JDK1.6对锁的实现，引入了大量的优化，如**偏向锁、轻量级锁、自旋锁、适应性自旋锁、锁消除、锁粗化**等技术来减少操作的开销
+  - 锁主要存在**四种状态**，依次是：无锁状态、偏向锁状态、轻量级锁状态、重量级锁状态，他们会随着竞争的激烈而逐渐升级**锁可以升级但不可以降级，这种策略是为了提高获得锁和释放锁的效率**
+
+- synchronized和volatile的区别
+  synchronized和volatile是互补的存在，而非对立
+
+  - volatile关键字是线程同步的轻量级实现，所以volatile性能肯定比synchronized关键字好，但volatile用于变量而synchronized关键字修饰方法及代码块
+  - volatile关键字能保证数据的可见性、有序性，但无法保证原子性；synchronized三者都能保证
+  - volatile主要还是用于解决变量在线程之间的可见性，而synchronized关键字解决的是多个线程之间访问资源的同步性
+
+- synchronized 和 ReentrantLock 的区别
+
+  1. 两者都是可重入锁
+     ”可重入锁“指的是，自己可以再次获取自己的内部锁。比如一个线程获得了某个对象的锁，此时这个对象锁还没有释放，当其再次想要获取这个对象的锁的时候还是可以获取的  
+     反之，如果是不可重入锁的话，就会造成死锁。
+     同一个线程，每次获取锁，锁的计数器都自增1，所以要等到锁的计数器下降为0时才能释放锁
+  2. synchronized依赖于JVM而ReentrantLock依赖于API
+     synchronized为虚拟机在JDK1.6进行的优化，但这些优化是在虚拟机层面实现的；ReentrantLock是JDK层面实现的，使用时，使用lock()和unlock()并配合try/finally语句块来完成 （Java代码）
+
+- ReentrantLock 比 synchronized 增加了一些高级功能
+  ReentrantLock增加了一些高级功能，主要有
+
+  1. 等待可中断，提供了能够**中断等待锁的线程**的机制，通过lock.lockInterruptibly()来实现该机制。即正在等待的线程可以放弃等待，改为处理其他事情
+
+  2. 可实现公平锁：可以指定是公平锁还是非公平锁，而synchronized只能是非公平锁。
+     所谓公平锁就是先等待的线程先获得锁。ReentrantLock默认是非公平的，可以通过构造方法指定是否公平
+
+  3. 可实现选择性的通知（锁可以绑定多个条件）
+     **`synchronized`关键字与`wait()`和`notify()`/`notifyAll()`**方法相结合可以实现等待/通知机制。**`ReentrantLock`**类当然也可以实现，但是需要借助于**`Condition`接口与`newCondition()`**方法。
+
+     > - `Condition`是 JDK1.5 之后才有的，它具有很好的灵活性，比如可以实现多路通知功能也就是在一个`Lock`对象中可以创建多个`Condition`实例（即对象监视器），**线程对象可以注册在指定的`Condition`中，从而可以有选择性的进行线程通知，在调度线程上更加灵活。 **
+     > - **在使用`notify()/notifyAll()`方法进行通知时，被通知的线程是由 JVM 选择的，用`ReentrantLock`类结合`Condition`实例可以实现“选择性通知”** ，这个功能非常重要，而且是 Condition 接口默认提供的。
+     >   - `synchronized`关键字就相当于整个 Lock 对象中只有一个`Condition`实例，所有的线程都注册在它一个身上。如果执行`notifyAll()`方法的话就会通知所有处于等待状态的线程这样会造成很大的效率问题，
+     >   - `Condition`实例的`signalAll()`方法 只会唤醒注册在该`Condition`实例中的所有等待线程。
+
 
 ## ThreadLocal
 
