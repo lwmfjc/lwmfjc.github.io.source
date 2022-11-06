@@ -1,6 +1,6 @@
 ---
-title: 锁升级（该文弃用）
-description: 锁升级（该文弃用）
+title: (该文弃用)锁升级
+description: (该文弃用)锁升级
 categories:
   - 学习
 tags:
@@ -94,6 +94,15 @@ public static void main(String[] args) throws InterruptedException {
   2. 偏向锁：MarkWord存储的是偏向的线程ID
   3. 轻量锁：MarkWord存储的是指向线程栈中LockRecord的指针
   4. 重量锁：MarkWord存储的是指向堆中的monitor对象的指针
+
+
+
+
+
+
+
+
+## =================================从这之后往下，是有误的的=============================
 
 - 无锁状态
   初始状态，一个对象被实例化后，如果还没有任何线程竞争锁，那么它就为无锁状态（001）
