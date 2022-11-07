@@ -8,7 +8,7 @@ tags:
   - 复习-javaGuide
   - 复习-javaGuide-并发
 date: 2022-10-28 14:15:06
-updated: 2022-10-28 14:15:06
+updated: 2022-11-07 16:00:06
 ---
 
 ## JMM（JavaMemoryModel)
@@ -293,5 +293,172 @@ updated: 2022-10-28 14:15:06
 ## ThreadLocal
 
 - ThreadLocal有什么用
+
   1. 通常情况下，创建的变量是可以被**任何一个线程访问并修改**的
-  2. JDK自带的ThreadLocal类，该类主要解决的就是让每个线程绑定自己的值，可以将ThreadLocal
+  2. JDK自带的ThreadLocal类，该类主要解决的就是让**每个线程绑定自己的值**，可以将ThreadLocal类形象的比喻成存放数据的盒子，盒子中可以存储每个线程的私有数据
+  3. 对于ThreadLocal变量，访问这个变量的每个线程都会有这个变量的本地副本。使用get()和set()来获取默认值或将其值更改为当前线程所存的副本的值
+
+- 如何使用ThreadLocal
+  Demo演示实际中如何使用ThreadLocal  
+
+  ```java
+  import java.text.SimpleDateFormat;
+  import java.util.Random;
+  
+  public class ThreadLocalExample implements Runnable{
+  
+       // SimpleDateFormat 不是线程安全的，所以每个线程都要有自己独立的副本
+      private static final ThreadLocal<SimpleDateFormat> formatter = ThreadLocal.withInitial(() -> new SimpleDateFormat("yyyyMMdd HHmm"));
+      /* 非lambda写法
+        private static final ThreadLocal<SimpleDateFormat> formatter = new ThreadLocal<SimpleDateFormat>(){
+      @Override
+      protected SimpleDateFormat initialValue(){
+          return new SimpleDateFormat("yyyyMMdd HHmm");
+      }
+  };
+      */
+  
+      public static void main(String[] args) throws InterruptedException {
+          ThreadLocalExample obj = new ThreadLocalExample();
+          for(int i=0 ; i<10; i++){
+              Thread t = new Thread(obj, ""+i);
+              Thread.sleep(new Random().nextInt(1000));
+              t.start();
+          }
+      }
+  
+      //formatter.get().toPattern() 同一个对象的线程变量formatter(里面封装了一个simpleDateFormate对象，具有初始值)
+      //每个线程访问时，先打印它的初始值，然后休眠1s（1s内的随机数），反正每个线程随机数不同，然后修改它
+      //结果：虽然前面执行的线程，修改值，但是后面执行的线程打印的值还是一样的 没有修改
+      @Override
+      public void run() {
+          System.out.println("Thread Name= "+Thread.currentThread().getName()+" default Formatter = "+formatter.get().toPattern());
+          try {
+              Thread.sleep(new Random().nextInt(1000));
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          }
+          //formatter pattern is changed here by thread, but it won't reflect to other threads
+          formatter.set(new SimpleDateFormat());
+  
+          System.out.println("Thread Name= "+Thread.currentThread().getName()+" formatter = "+formatter.get().toPattern());
+      }
+  
+  }
+  /*虽然前面执行的线程，修改值，但是后面执行的线程打印的值还是一样的 没有修改 , 结果如下：
+   Thread Name= 0 default Formatter = yyyyMMdd HHmm
+  Thread Name= 0 formatter = yy-M-d ah:mm
+  Thread Name= 1 default Formatter = yyyyMMdd HHmm
+  Thread Name= 2 default Formatter = yyyyMMdd HHmm
+  Thread Name= 1 formatter = yy-M-d ah:mm
+  Thread Name= 3 default Formatter = yyyyMMdd HHmm
+  Thread Name= 2 formatter = yy-M-d ah:mm
+  Thread Name= 4 default Formatter = yyyyMMdd HHmm
+  Thread Name= 3 formatter = yy-M-d ah:mm
+  Thread Name= 4 formatter = yy-M-d ah:mm
+  Thread Name= 5 default Formatter = yyyyMMdd HHmm
+  Thread Name= 5 formatter = yy-M-d ah:mm
+  Thread Name= 6 default Formatter = yyyyMMdd HHmm
+  Thread Name= 6 formatter = yy-M-d ah:mm
+  Thread Name= 7 default Formatter = yyyyMMdd HHmm
+  Thread Name= 7 formatter = yy-M-d ah:mm
+  Thread Name= 8 default Formatter = yyyyMMdd HHmm
+  Thread Name= 9 default Formatter = yyyyMMdd HHmm
+  Thread Name= 8 formatter = yy-M-d ah:mm
+  Thread Name= 9 formatter = yy-M-d ah:mm
+  */
+  ```
+
+- ThreadLocal原理了解吗
+
+  - 从Thread类源代码入手  
+
+      ```java
+      public class Thread implements Runnable {
+          //......
+          //与此线程有关的ThreadLocal值。由ThreadLocal类维护
+          ThreadLocal.ThreadLocalMap threadLocals = null;
+
+          //与此线程有关的InheritableThreadLocal值。由InheritableThreadLocal类维护
+          ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;
+          //......
+      }
+      ```
+      
+      1. Thread类中有一个**threadLocals**和一个**inheritableThreadLocals**变量，它们都是ThreadLocalMap类型的变量，ThreadLocalMap可以理解为ThreadLocal类实现的定制化HashMap ( key为threadLocal , value 为值)
+         默认两个变量都是null，当调用set或get时会创建，实际调用的是ThreadLocalMap类对应的get()、set()方法
+      
+         ```java
+         public void set(T value) {
+             //获取当前请求的线程    
+             Thread t = Thread.currentThread();
+             //取出 Thread 类内部的 threadLocals 变量(哈希表结构)
+             ThreadLocalMap map = getMap(t);
+             if (map != null)
+                 // 将需要存储的值放入到这个哈希表中
+                 //★★实际使用的方法
+                 map.set(this, value);
+             else
+                 //★★实际使用的方法
+                 createMap(t, value);
+         }
+         ThreadLocalMap getMap(Thread t) {
+             return t.threadLocals;
+         }
+         ```
+      
+         - 如上，实际存取都是从Thread的threadLocals （ThreadLocalMap类）中，并不是存在ThreadLocal上，ThreadLocal用来传递了**变量值**，只是ThreadLocalMap的封装
+      
+         - ThreadLocal类中通过Thread.currentThread()获取到当前线程对象后，直接通过getMap(Thread t) 可以访问到该线程的ThreadLocalMap对象
+      
+         - **每个Thread中具备一个ThreadLocalMap，而ThreadLocalMap可以存储以ThreadLocal为key，Object对象为value的键值对**
+      
+           ```java
+           ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
+               //......
+           }
+           ```
+      
+           比如我们在同一个线程中声明了两个 `ThreadLocal` 对象的话， `Thread`内部都是使用仅有的那个`ThreadLocalMap` 存放数据的，`ThreadLocalMap`的 key 就是 `ThreadLocal`对象，value 就是 `ThreadLocal` 对象调用`set`方法设置的值
+      
+      2. ThreadLocal数据结构如下图所示
+         ![image-20221107150751048](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221107150751048.png)
+      
+         **`ThreadLocalMap`是`ThreadLocal`的静态内部类。**
+         ![image-20221107151155140](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221107151155140.png)
+  
+- ThreadLocal内存泄露问题时怎么导致的
+
+  - 前提知识：强引用、软引用、弱引用和虚引用的区别
+
+    1. 强引用StrongReference  
+       是最普遍的一种引用方式，只要强引用存在，则垃圾回收器就不会回收这个对象
+
+    2. 软引用 SoftReference  
+       如果内存足够不回收，如果内存不足则回收
+
+    3. 弱引用WeakReference  如果一个对象只具有弱引用，那就类似于**可有可无的生活用品**。弱引用与软引用的区别在于：只具有弱引用的对象拥有更短暂的生命周期。在垃圾回收器线程扫描它 所管辖的内存区域的过程中，一旦发现了只具有弱引用的对象，**不管当前内存空间足够与否，都会回收它的内存**。不过，由于垃圾回收器是一个优先级很低的线程， 因此不一定会很快发现那些只具有弱引用的对象。
+
+       弱引用可以和一个引用队列（ReferenceQueue）联合使用，如果弱引用所引用的对象被垃圾回收，Java 虚拟机就会把这个弱引用加入到与之关联的引用队列中。
+
+    4. 虚引用PhantomReference   
+
+       - 如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。**虚引用主要用来跟踪对象被垃圾回收器回收的活动**
+       - 虚引用与软引用和弱引用的一个区别在于：**虚引用必须和引用队列 （ReferenceQueue）联合使用**。当垃圾回收器准备回收一个对象时，如果发现它还有虚引，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。 
+
+  - ThreadLocalMap中，使用的key为ThreadLocal的弱引用（源码中，即Entry），而value是强引用
+    所以，ThreadLocal没有被外部强引用的情况下，垃圾回收的时候 key会被清理掉，而value不会
+
+    ```java
+    static class Entry extends WeakReference<ThreadLocal<?>> {
+        /** The value associated with this ThreadLocal. */
+        Object value;
+    
+        Entry(ThreadLocal<?> k, Object v) {
+            super(k);
+            value = v;
+        }
+    }
+    ```
+
+  - 此时，ThreadLocalMap中就会出现key为null的Entry，如果不做任何措施，value永远无法被GC回收，此时会产生内存泄漏。ThreadLocaMap实现中已经考虑了这种情况，在调用set()、get()、remove()方法时，清理掉key为null的记录 所以使用完ThreadLocal的方法后，最好手动调用remove()方法
