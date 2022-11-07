@@ -292,3 +292,6 @@ updated: 2022-10-28 14:15:06
 
 ## ThreadLocal
 
+- ThreadLocal有什么用
+  1. 通常情况下，创建的变量是可以被**任何一个线程访问并修改**的
+  2. JDK自带的ThreadLocal类，该类主要解决的就是让每个线程绑定自己的值，可以将ThreadLocal
