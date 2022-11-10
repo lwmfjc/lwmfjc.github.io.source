@@ -128,6 +128,99 @@ updated: 2022-11-07 16:04:33
 
 - 如何创建线程池
 
+  - 不允许使用Executors去创建，而是通过new ThreadPoolExecutor的方式：能让写的同学明确线程池运行规则，规避资源耗尽
+
+    > 使用Executors返回线程池对象的弊端：
+    >
+    > ```java
+    > //#####时间表示keepAliveTime#####
+    > //########线程数量固定，队列长度为Integer.MAX################
+    > Executors.newFixedThreadPool(3);
+    > public static ExecutorService newFixedThreadPool(int nThreads) {
+    >         return new ThreadPoolExecutor(nThreads, nThreads,
+    >                                       0L, TimeUnit.MILLISECONDS,
+    >                                       new LinkedBlockingQueue<Runnable>());
+    >     }
+    > //############线程数量固定，队列长度为Integer.MAX############## 
+    > Executors.newSingleThreadExecutor(Executors.defaultThreadFactory());
+    >  public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
+    >         return new FinalizableDelegatedExecutorService
+    >             (new ThreadPoolExecutor(1, 1,
+    >                                     0L, TimeUnit.MILLISECONDS,
+    >                                     new LinkedBlockingQueue<Runnable>(),
+    >                                     threadFactory));
+    > //############线程数量为Integer.MAX############# 
+    > Executors.newCachedThreadPool(Executors.defaultThreadFactory());
+    > public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+    >         return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+    >                                       60L, TimeUnit.SECONDS,
+    >                                       new SynchronousQueue<Runnable>(),
+    >                                       threadFactory);
+    >     }
+    > //#############线程数量为Integer.MAX############# 
+    > Executors.newScheduledThreadPool(3, Executors.defaultThreadFactory()); 
+    >      public static ScheduledExecutorService newScheduledThreadPool(
+    >             int corePoolSize, ThreadFactory threadFactory) {
+    >         return new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
+    >     }
+    >      ====================>
+    > public ScheduledThreadPoolExecutor(int corePoolSize,
+    >                                        ThreadFactory threadFactory) {
+    >         super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+    >               new DelayedWorkQueue(), threadFactory);
+    >     }
+    > 
+    > ```
+    >
+    > - **FixedThreadPool**和**SingleThreadExecutor**：这两个方案允许请求的队列长度为Integer.MAX_VALUE，可能**堆积大量请求**，导致OOM
+    > - **CachedThreadPool**和**ScheduledThreadPool**：允许创建的线程数量为Integer.MAX_VALUE，可能**创建大量线程**，导致OOM
+
+  - 通过构造方法实现
+    ![image-20221109171604573](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221109171604573.png)
+
+  - 通过Executor框架的工具类Executors来实现
+    以下三个方法，返回的类型都是ThreadPoolExecutor
+
+    - FixedThreadPool : 该方法返回**固定线程数量**的线程池，线程数量**始终不变**。当有新任务提交时，线程池中若有空闲线程则立即执行；若没有，则新任务被暂存到任务队列中，待有线程空闲时，则处理在任务队列中的任务
+    - SingleThreadExecutor：方法返回一个**只有一个线程**的线程池。若多余一个任务被提交到该线程池，任务被保存到一个任务队列中，待线程空闲，按先进先出的顺序执行队列中任务
+    - CachedThreadPool：该方法返回一个**根据实际情况调整线程数量**的线程池。
+      数量不固定，若有空闲线程可以复用则**优先使用可复用**线程。若**所有线程均工作，此时又有新任务**提交，则**创建新线程**处理任务。所有线程在当前任务执行完毕后返回线程池进行复用
+
+    Executors工具类中的方法  
+    ![image-20221110104950618](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221110104950618.png)
+
+  - ThreadPoolExecutor类分析
+    该类提供四个构造方法，看最长那个，其余的都是（给定默认值后）调用这个方法
+
+    ```java
+    /**
+     * 用给定的初始参数创建一个新的ThreadPoolExecutor。
+     */
+    public ThreadPoolExecutor(int corePoolSize,
+                          int maximumPoolSize,
+                          long keepAliveTime,
+                          TimeUnit unit,
+                          BlockingQueue<Runnable> workQueue,
+                          ThreadFactory threadFactory,
+                          RejectedExecutionHandler handler) {
+        if (corePoolSize < 0 ||
+            maximumPoolSize <= 0 ||
+            maximumPoolSize < corePoolSize ||
+            keepAliveTime < 0)
+                throw new IllegalArgumentException();
+        if (workQueue == null || threadFactory == null || handler == null)
+            throw new NullPointerException();
+        this.corePoolSize = corePoolSize;
+        this.maximumPoolSize = maximumPoolSize;
+        this.workQueue = workQueue;
+        this.keepAliveTime = unit.toNanos(keepAliveTime);
+        this.threadFactory = threadFactory;
+        this.handler = handler;
+    }
+    ```
+
+    
+
 - 线程池分析原理
 
 ## Atomic原子类
