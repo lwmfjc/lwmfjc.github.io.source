@@ -219,7 +219,26 @@ updated: 2022-11-07 16:04:33
     }
     ```
 
+    构造函数重要参数分析  
+    corePoolSize : 核心线程数定义**最小可以运行的线程数**量  
+    maximumPoolSize: 当队列中存放的任务**达到队列容量时**，当前可以同时运行的线程数量**变为最大线程数**  
+    workQueue：当新线程来的时候先判断当前运行线程数量是否**达到核心**线程数，如果达到的话，**新任务就会被存放在队列**中
+    ThreadPoolExecutor其他常见参数：  
     
+    1. keepAliveTime：如果线程池中的线程数量大于corePoolSize时，如果这时没有新任务提交，核心线程外的线程不会立即销毁，而是等待，等待的时间超过了keepAliveTime就会被回收
+    
+    2. unit: keepAliveTime参数的时间单位
+    
+    3. threadFactory: executor创建新线程的时候会用到
+    
+    4. handle: 饱和策略
+    
+       > 如果同时运行的线程数量达到最大线程数，且队列已经被放满任务，ThreadPoolTaskExecutor定义该情况下的策略：
+       >
+       > - **`ThreadPoolExecutor.AbortPolicy`：** 抛出 `RejectedExecutionException`来拒绝新任务的处理。
+       > - **`ThreadPoolExecutor.CallerRunsPolicy`：** 调用**执行自己的线程(如果在main方法中，那就是main线程)**运行任务，也就是直接在**调用`execute`方法的线程**中**运行(`run`)被拒绝的任务**，如果**执行程序已关闭，则会丢弃该任务**。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。如果您的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。
+       > - **`ThreadPoolExecutor.DiscardPolicy`：** 不处理新任务，直接丢弃掉。
+       > - **`ThreadPoolExecutor.DiscardOldestPolicy`：** 此策略将丢弃最早的未处理的任务请求。
 
 - 线程池分析原理
 
