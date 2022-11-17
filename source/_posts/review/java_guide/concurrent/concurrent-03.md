@@ -402,7 +402,57 @@ updated: 2022-11-07 16:04:33
 
 ## Atomic原子类
 
+Atomic ``` 英[əˈtɒmɪk] ```原子，即不可分割
 
+线程中，Atomic，指一个操作是不可中断的，即使在多线程一起执行时，一个操作一旦开始，就不会被其他线程干扰
+
+原子类，即具有**原子/原子操作特性**的类。并发包```java.util.concurrent```原子类都放在```java.util.concurrent.atomit```
+![image-20221117152847851](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221117152847851.png)
+
+Java中存在四种原子类（基本、数组、引用、对象属性）
+
+1. 基本类型：AtomicInteger，AtomicLong，AtomicBoolean
+2. 数组类型：AtomicIntegerArray，AtomicLongArray，AtomicReferenceArray
+3. 引用类型：AtomicReference，AtomicStampedReference（原子更新带有版本号的引用类型。该类将整数值与引用关联，解决原子的更新数据和数据的版本号，解决使用CAS进行原子更新可能出现的ABA问题），AtomicMarkableReference（原子更新带有标记位的引用类型）
+4. 对象属性修改类型：AtomicIntegerFiledUpdater原子更新整型字段的更新器；AtomicLongFiledUpdater；AtomicReferenceFieldUpdater
+
+### AtomicInteger的使用
+
+```java
+//AtomicInteger类常用方法(下面的自增，都使用了CAS，是同步安全的)
+ublic final int get() //获取当前的值
+public final int getAndSet(int newValue)//获取当前的值，并设置新的值
+public final int getAndIncrement()//获取当前的值，并自增
+public final int getAndDecrement() //获取当前的值，并自减
+public final int getAndAdd(int delta) //获取当前的值，并加上预期的值
+boolean compareAndSet(int expect, int update) //如果输入的数值等于预期值，则以原子方式将该值设置为输入值（update）
+public final void lazySet(int newValue)//最终设置为newValue,使用 lazySet 设置之后可能导致其他线程在之后的一小段时间内还是可以读到旧的值。
+------
+//使用如下
+class AtomicIntegerTest {
+    private AtomicInteger count = new AtomicInteger();
+    //使用AtomicInteger之后，不需要对该方法加锁，也可以实现线程安全。
+    public void increment() {
+        count.incrementAndGet();
+    }
+
+    public int getCount() {
+        return count.get();
+    }
+} 
+```
+
+### 浅谈AtomicInteger实现原理
+
+1. 位于Java.util.concurrent.atomic包下，对int封装，提供**原子性的访问和更新**操作，其原子性操作的实现基于CAS（CompareAndSet）
+   - CAS，比较并交换，Java并发中lock-free机制的基础，调用Sun的Unsafe的CompareAndSwapInt完成，为native方法，**基于CPU的CAS**指令来实现的，即无阻塞；且为CAS原语
+   - CAS：三个参数，1. 当前内存值V 2.旧的预期值  3.即将更新的值，当且仅当预期值A和内存值相同时，将内存值改为 8 并返回true；否则返回false ```在JAVA中,CAS通过调用C++库实现，由C++库再去调用CPU指令集。```
+   - CAS确定
+     - ABA　问题
+       如果期间发生了 A -> B -> A 的更新，仅仅判断数值是 A，可能导致不合理的修改操作；为此，提供了AtomicStampedReference 工具类，为引用建立类似版本号ｓｔａｍｐ的方式
+     - 循环时间长，开销大。CAS适用于
+
+### Java实现CAS的原理
 
 ## AQS
 
