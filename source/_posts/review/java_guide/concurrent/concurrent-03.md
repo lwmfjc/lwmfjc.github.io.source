@@ -347,9 +347,62 @@ updated: 2022-11-07 16:04:33
     
 
 - 线程池分析原理
-  由结果可以
+  由结果可以看出，线程池**先执行5个任务**，此时多出的任务会放到**队列**，那5个任务中**有任务执行完**的话，会拿新的任务执行
+  
+  ```java
+  //源码分析
+  // 存放线程池的运行状态 (runState) 和线程池内有效线程的数量 (workerCount)
+  private final AtomicInteger ctl = new AtomicInteger(ctlOf(RUNNING, 0));
+  
+  private static int workerCountOf(int c) {
+      return c & CAPACITY;
+  }
+  
+  private final BlockingQueue<Runnable> workQueue;
+  
+  public void execute(Runnable command) {
+      // 如果任务为null，则抛出异常。
+      if (command == null)
+          throw new NullPointerException();
+      // ctl 中保存的线程池当前的一些状态信息
+      int c = ctl.get();
+  
+      //  下面会涉及到 3 步 操作
+      // 1.首先判断当前线程池中执行的任务数量是否小于 corePoolSize
+      // 如果小于的话，通过addWorker(command, true)新建一个线程，并将任务(command)添加到该线程中；然后，启动该线程从而执行任务。
+      if (workerCountOf(c) < corePoolSize) {
+          if (addWorker(command, true))
+              return;
+          c = ctl.get();
+      }
+      // 2.如果当前执行的任务数量大于等于 corePoolSize 的时候就会走到这里
+      // 通过 isRunning 方法判断线程池状态，线程池处于 RUNNING 状态并且队列可以加入任务，该任务才会被加入进去
+      if (isRunning(c) && workQueue.offer(command)) {
+          int recheck = ctl.get();
+          // 再次获取线程池状态，如果线程池状态不是 RUNNING 状态就需要从任务队列中移除任务，并尝试判断线程是否全部执行完毕。同时执行拒绝策略。
+          if (!isRunning(recheck) && remove(command))
+              reject(command);
+              // 如果当前线程池为空就新创建一个线程并执行。
+          else if (workerCountOf(recheck) == 0)
+              addWorker(null, false);
+      }
+      //3. 通过addWorker(command, false)新建一个线程，并将任务(command)添加到该线程中；然后，启动该线程从而执行任务。
+      //如果addWorker(command, false)执行失败，则通过reject()执行相应的拒绝策略的内容。
+      else if (!addWorker(command, false))
+          reject(command);
+  }
+  ------ 
+  ```
+  
+  如图
+  ![image-20221117140008973](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221117140008973.png)
+  分析上面的例子，
+  
+  > 我们在代码中模拟了 10 个任务，我们配置的核心线程数为 5 、等待队列容量为 100 ，所以每次只可能存在 5 个任务同时执行，剩下的 5 个任务会被放到等待队列中去。当前的5个任务中如果有任务被执行完了，线程池就会去拿新的任务执行。
 
 ## Atomic原子类
+
+
 
 ## AQS
 
