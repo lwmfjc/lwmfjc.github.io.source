@@ -239,8 +239,112 @@ updated: 2022-11-07 16:04:33
        > - **`ThreadPoolExecutor.CallerRunsPolicy`：** 调用**执行自己的线程(如果在main方法中，那就是main线程)**运行任务，也就是直接在**调用`execute`方法的线程**中**运行(`run`)被拒绝的任务**，如果**执行程序已关闭，则会丢弃该任务**。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。如果您的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。
        > - **`ThreadPoolExecutor.DiscardPolicy`：** 不处理新任务，直接丢弃掉。
        > - **`ThreadPoolExecutor.DiscardOldestPolicy`：** 此策略将丢弃最早的未处理的任务请求。
+       
+       使用ThreadPoolTaskExecutor或ThreadPoolExecutor构造函数创建线程池时，若不指定RejectExcecutorHandler饱和策略则默认使用ThreadPoolExecutor.AbortPolicy，即抛出RejectedExecution来拒绝新来的任务；对于可伸缩程序，建议使用ThreadPoolExecutor.CallerRunsPolicy， 
+    
+  - 一个简单的线程池Demo
+
+    ```java
+    //定义一个Runnable接口实现类
+    import java.util.Date;
+    
+    /**
+     * 这是一个简单的Runnable类，需要大约5秒钟来执行其任务。
+     * @author shuang.kou
+     */
+    public class MyRunnable implements Runnable {
+    
+        private String command;
+    
+        public MyRunnable(String s) {
+            this.command = s;
+        }
+    
+        @Override
+        public void run() {
+            System.out.println(Thread.currentThread().getName() + " Start. Time = " + new Date());
+            processCommand();
+            System.out.println(Thread.currentThread().getName() + " End. Time = " + new Date());
+        }
+    
+        private void processCommand() {
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    
+        @Override
+        public String toString() {
+            return this.command;
+        }
+    }
+    //实际执行
+    import java.util.concurrent.ArrayBlockingQueue;
+    import java.util.concurrent.ThreadPoolExecutor;
+    import java.util.concurrent.TimeUnit;
+    
+    public class ThreadPoolExecutorDemo {
+    
+        private static final int CORE_POOL_SIZE = 5;//核心线程数5
+        private static final int MAX_POOL_SIZE = 10;//最大线程数10
+        private static final int QUEUE_CAPACITY = 100;//队列容量100
+        private static final Long KEEP_ALIVE_TIME = 1L;//等待时间
+        public static void main(String[] args) {
+    
+            //使用阿里巴巴推荐的创建线程池的方式
+            //通过ThreadPoolExecutor构造函数自定义参数创建
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                    CORE_POOL_SIZE,
+                    MAX_POOL_SIZE,
+                    KEEP_ALIVE_TIME,
+                    TimeUnit.SECONDS,
+                    new ArrayBlockingQueue<>(QUEUE_CAPACITY),
+                    new ThreadPoolExecutor.CallerRunsPolicy());
+    
+            for (int i = 0; i < 10; i++) {
+                //创建 MyRunnable 对象（MyRunnable 类实现了Runnable 接口）
+                Runnable worker = new MyRunnable("" + i);
+                //执行Runnable
+                executor.execute(worker);
+            }
+            //终止线程池
+            executor.shutdown();
+            while (!executor.isTerminated()) {
+            }
+            System.out.println("Finished all threads");
+        }
+    }
+    /*------输出
+    pool-1-thread-3 Start. Time = Sun Apr 12 11:14:37 CST 2020
+    pool-1-thread-5 Start. Time = Sun Apr 12 11:14:37 CST 2020
+    pool-1-thread-2 Start. Time = Sun Apr 12 11:14:37 CST 2020
+    pool-1-thread-1 Start. Time = Sun Apr 12 11:14:37 CST 2020
+    pool-1-thread-4 Start. Time = Sun Apr 12 11:14:37 CST 2020
+    pool-1-thread-3 End. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-4 End. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-1 End. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-5 End. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-1 Start. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-2 End. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-5 Start. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-4 Start. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-3 Start. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-2 Start. Time = Sun Apr 12 11:14:42 CST 2020
+    pool-1-thread-1 End. Time = Sun Apr 12 11:14:47 CST 2020
+    pool-1-thread-4 End. Time = Sun Apr 12 11:14:47 CST 2020
+    pool-1-thread-5 End. Time = Sun Apr 12 11:14:47 CST 2020
+    pool-1-thread-3 End. Time = Sun Apr 12 11:14:47 CST 2020
+    pool-1-thread-2 End. Time = Sun Apr 12 11:14:47 CST 2020
+    ------ 
+    */
+    ```
+
+    
 
 - 线程池分析原理
+  由结果可以
 
 ## Atomic原子类
 
