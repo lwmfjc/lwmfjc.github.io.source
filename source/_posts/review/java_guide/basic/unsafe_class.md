@@ -9,7 +9,10 @@ tags:
   - 复习-javaGuide-基础
 date: 2022-10-10 17:10:27
 updated: 2022-10-10 17:10
+
 ---
+
+> 转自https://github.com/Snailclimb/JavaGuide
 
 ```sun.misc.Unsafe```
 

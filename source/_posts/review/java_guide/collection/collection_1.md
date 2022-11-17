@@ -9,7 +9,10 @@ tags:
   - 复习-javaGuide-集合
 date: 2022-10-17 08:55:24
 updated: 2022-10-17 08:55:24
+
 ---
+
+> 转载自https://github.com/Snailclimb/JavaGuide
 
 ## 集合包括`Collection`和```Map```，Collection 存放单一元素。Map 存放键值对
 ![image-20221017103340847](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017103340847.png)

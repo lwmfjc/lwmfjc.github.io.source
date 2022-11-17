@@ -9,7 +9,10 @@ tags:
   - 复习-javaGuide-并发
 date: 2022-10-28 14:15:06
 updated: 2022-11-07 16:00:06
+
 ---
+
+> 转载自https://github.com/Snailclimb/JavaGuide
 
 ## JMM（JavaMemoryModel)
 

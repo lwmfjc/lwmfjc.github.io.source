@@ -9,7 +9,10 @@ tags:
   - 复习-javaGuide-基础
 date: 2022-10-10 14:30:02
 updated: 2022-10-10 14:30:02
+
 ---
+
+> 转载自https://github.com/Snailclimb/JavaGuide
 
 ### 代理模式
 

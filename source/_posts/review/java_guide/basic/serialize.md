@@ -9,7 +9,10 @@ tags:
   - 复习-javaGuide-基础
 date: 2022-10-10 10:39:01
 updated: 2022-10-10 10:39:01
+
 ---
+
+> 转载自https://github.com/Snailclimb/JavaGuide
 
 ### 什么是序列化？什么是反序列化
 

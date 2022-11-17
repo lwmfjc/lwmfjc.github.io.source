@@ -12,6 +12,8 @@ updated: 2022-10-25 11:40:53
 
 ---
 
+> 转载自https://github.com/Snailclimb/JavaGuide
+
 ## 装饰器模式
 
 - 装饰器，Decorator，装饰器模式可以在不改变原有对象的情况下拓展其功能
