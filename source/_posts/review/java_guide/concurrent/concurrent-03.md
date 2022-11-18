@@ -459,11 +459,60 @@ class AtomicIntegerTest {
        > 如图，它是同时更新了两个变量，而这两个变量都在新的对象上，所以就能解决多个共享变量的问题，即“将问题转换成，如果变量更新了，则更换一个对象”
    
 2. AtomicInteger原理浅析
+
+   一些公共属性：
+
+   ```java
+   public class AtomicInteger extends Number implements java.io.Serializable {
+       private static final long serialVersionUID = 6214790243416807050L;
    
+       // setup to use Unsafe.compareAndSwapInt for updates
+       private static final Unsafe unsafe = Unsafe.getUnsafe();
+       private static final long valueOffset;
+   
+       static {
+           try {
+               valueOffset = unsafe.objectFieldOffset
+                   (AtomicInteger.class.getDeclaredField("value"));
+           } catch (Exception ex) { throw new Error(ex); }
+       }
+   
+       private volatile int value;
+   }
+   ```
+
+   AtomicInteger，根据**valueOffset**代表的该变量值，**在内存中的偏移地址**，从而获取数据；且value用volatile修饰，保证多线程之间的可见性
+
+   ```java
+   public final int getAndIncrement() {
+       return unsafe.getAndAddInt(this, valueOffset, 1);
+   }
+   
+   //unsafe.getAndAddInt
+   public final int getAndAddInt(Object var1, long var2, int var4) {
+       int var5;
+       do {
+           var5 = this.getIntVolatile(var1, var2);
+       } while(!this.compareAndSwapInt(var1, var2, var5, var5 + var4));//先获取var1对象的偏移量为var2的内存地址上的值，设置为var5
+   //如果此刻还是var5，+1并赋值，否则重新获取
+   
+       return var5;
+   }
+   ```
+
+   - 假设线程1和线程2通过getIntVolatile拿到value的值都为1，线程1被挂起，线程2继续执行
+   - 线程2在compareAndSwapInt操作中由于预期值和内存值都为1，因此成功将内存值更新为2
+   - 线程1继续执行，在compareAndSwapInt操作中，预期值是1，而当前的内存值为2，CAS操作失败，什么都不做，返回false
+   - 线程1重新通过getIntVolatile拿到最新的value为2，再进行一次compareAndSwapInt操作，这次操作成功，内存值更新为3
 
 3. 原子操作的实现原理
 
+   - Java中的CAS操作正是利用了处理器提供的CMPXCHG指令实现的。自旋CAS实现的基本思路就是循环进行CAS操作直到操作成功为止。
+   - 在CAS中有三个操作数：分别是内存地址（在Java中可以简单理解为变量的内存地址，用V表示）、旧的预期值（用A表示）和新值（用B表示）。CAS指令执行时，当且仅当V符合旧的预期值A时，处理器才会用新值B更新V的值，否则他就不执行更新，但无论是否更新了V的值，都会返回V的旧值。(**这里说的三个值，指的是逻辑概念，而不是实际概念**)
+
 ### Java实现CAS的原理
+
+- i
 
 ## AQS
 
