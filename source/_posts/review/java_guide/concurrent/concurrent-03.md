@@ -512,8 +512,199 @@ class AtomicIntegerTest {
 
 ### Java实现CAS的原理
 
-- i
+i++是非线程安全的，因为**i++不是原子**操作；可以使用**synchronized和CAS实现加锁**
+
+**synchronized是悲观锁**，一旦获得锁，其他线程进入后就会阻塞等待锁；而**CAS是乐观锁**，执行时不会加锁，假设没有冲突，**如果因为冲突失败了就重试**，直到成功
+
+- 乐观锁和悲观锁
+
+  - 这是一种分类方式
+  - **悲观锁**，总是认为**每次访问共享资源会发生冲突**，所以**必须对每次数据操作加锁**，以**保证临界区的程序同一时间只能有一个线程**在执行
+  - 乐观锁，又称**“无锁”**，**假设对共享资源访问没有冲突**，线程可以不停的执行，无需加锁无需等待；一旦发生冲突，通常是使用一种称为CAS的技术保证线程执行安全  
+    - 无锁没有锁的存在，因此不可能发生死锁，即乐观锁天生免疫死锁
+    - 乐观锁用于“读多写少”的环境，避免加锁频繁影响性能；悲观锁用于“写多读少”，避免频繁失败及重试影响性能
+
+- CAS概念，即CompareAndSwap ，比较和交换，CAS中，有三个值（概念上）  
+  V：要更新的变量(var)；E：期望值（expected）；N：新值（new）
+  判断V是否等于E，如果等于，将V的值设置为N；如果不等，说明已经有其它线程更新了V，则当前线程放弃更新，什么都不做。
+  一般来说，预期值E本质上指的是“旧值”（判断是否修改了）
+
+  > 1. 如果有一个多个线程共享的变量`i`原本等于5，我现在在线程A中，想把它设置为新的值6;
+  > 2. 我们使用CAS来做这个事情；
+  > 3. 首先我们用i去与5对比，发现它等于5，说明没有被其它线程改过，那我就把它设置为新的值6，此次CAS成功，`i`的值被设置成了6；
+  > 4. 如果不等于5，说明`i`被其它线程改过了（比如现在`i`的值为2），那么我就什么也不做，此次CAS失败，`i`的值仍然为2。
+  >
+  > 其中i为V，5为E，6为N
+
+  CAS是一种原子操作，它是一种系统原语，是一条CPU原子指令，从CPU层面保证它的原子性（**不可能出现说，判断了i为5之后，正准备更新它的值，此时该值被其他线程改了**）
+
+  当**多个线程同时使用CAS操作一个变量**时，**只有一个会胜出，并成功更新**，**其余均会失败**，但**失败的线程并不会被挂起**，仅是**被告知失败，并且允许再次尝试**，当然也**允许失败的线程放弃**操作。
+
+- Java实现CAS的原理 - Unsafe类
+
+  - 在Java中，如果一个方法是native的，那Java就不负责具体实现它，而是交给底层的JVM使用c或者c++去实现
+
+  - Java中有一个Unsafe类，在sun.misc包中，里面有一些native方法，其中包括：  
+
+    > ```java
+    > boolean compareAndSwapObject(Object o, long offset,Object expected, Object x);
+    > boolean compareAndSwapInt(Object o, long offset,int expected,int x);
+    > boolean compareAndSwapLong(Object o, long offset,long expected,long x);
+    > //AtomicInteger.class
+    > public class AtomicInteger extends Number implements java.io.Serializable {
+    >     private static final long serialVersionUID = 6214790243416807050L;
+    > 
+    >     // setup to use Unsafe.compareAndSwapInt for updates
+    >     private static final Unsafe unsafe = Unsafe.getUnsafe();
+    >     private static final long valueOffset;
+    > 
+    >     static {
+    >         try {
+    >             valueOffset = unsafe.objectFieldOffset
+    >                 (AtomicInteger.class.getDeclaredField("value"));
+    >         } catch (Exception ex) { throw new Error(ex); }
+    >     }
+    > 
+    >     private volatile int value;
+    >     public final int getAndIncrement() {
+    >     	return unsafe.getAndAddInt(this, valueOffset, 1);
+    > 	}
+    > }
+    > ```
+
+    **Unsafe中对CAS的实现是C++**写的，它的具体实现和操作系统、CPU都有关系。Linux的X86中主要通过cmpxchgl这个指令在CPU级完成CAS操作，如果是多处理器则必须使用lock指令加锁
+
+    Unsafe类中还有park(线程挂起)和unpark(线程恢复)，LockSupport底层则调用了该方法；还有支持反射操作的allocateInstance()
+
+- 原子操作- AtomicInteger类源码简析
+  JDK提供了一些原子操作的类，在java.util.concurrent.atomic包下面，JDK11中有如下17个类
+  ![image-20221120182811204](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221120182811204.png)
+
+  - 包括 原子更新基本类型，原子更新数组，原子更新引用，原子更新字段(属性)
+
+  - 其中，AtomicInteger类的getAndAdd(int data)
+
+    ```java
+     public final int getAndAdd(int delta) {
+            return unsafe.getAndAddInt(this, valueOffset, delta);
+        }
+    //unsafe字段
+    private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
+    //上面方法实际调用
+    @HotSpotIntrinsicCandidate
+    public final int getAndAddInt(Object o, long offset, int delta) {
+        int v;
+        do {
+            v = getIntVolatile(o, offset);
+        } while (!weakCompareAndSetInt(o, offset, v, v + delta));
+        return v;
+    }
+    //对于offset，这是一个对象偏移量，用于获取某个字段相对Java对象的起始地址的偏移量
+    /*
+    一个java对象可以看成是一段内存，各个字段都得按照一定的顺序放在这段内存里，同时考虑到对齐要求，可能这些字段不是连续放置的，
+    
+    用这个方法能准确地告诉你某个字段相对于对象的起始内存地址的字节偏移量，因为是相对偏移量，所以它其实跟某个具体对象又没什么太大关系，跟class的定义和虚拟机的内存模型的实现细节更相关。
+    */
+    public class AtomicInteger extends Number implements java.io.Serializable {
+        private static final long serialVersionUID = 6214790243416807050L;
+    
+        // setup to use Unsafe.compareAndSwapInt for updates
+        private static final Unsafe unsafe = Unsafe.getUnsafe();
+        private static final long valueOffset;
+    
+        static {
+            try {
+                valueOffset = unsafe.objectFieldOffset
+                    (AtomicInteger.class.getDeclaredField("value"));
+            } catch (Exception ex) { throw new Error(ex); }
+        }
+    
+        private volatile int value;
+        public final int getAndIncrement() {
+        	return unsafe.getAndAddInt(this, valueOffset, 1);
+    	}
+    }
+    ```
+
+    再重新看这段代码
+
+    ```java
+    @HotSpotIntrinsicCandidate
+    public final int getAndAddInt(Object o, long offset, int delta) {
+        int v;
+        do {
+            v = getIntVolatile(o, offset);
+        } while (!weakCompareAndSetInt(o, offset, v, v + delta));
+        return v;
+    }
+    ```
+
+    这里声明了v，即要返回的值，即不论如何都会返回原来的值(更新成功前的值)，然后新的值为v+delta
+
+    使用do-while保证所有循环至少执行一遍  
+    循环体的条件是一个CAS方法：  
+
+    ```java
+    public final boolean weakCompareAndSetInt(Object o, long offset,
+                                              int expected,
+                                              int x) {
+        return compareAndSetInt(o, offset, expected, x);
+    }
+    
+    public final native boolean compareAndSetInt(Object o, long offset,
+                                                 int expected,
+                                                 int x);
+    ```
+
+    最终调用了native方法：compareAndSetInt方法
+
+    > 为甚么要经过一层weakCompareAndSetInt，在JDK 8及之前的版本，这两个方法是一样的。
+    >
+    > 而在JDK 9开始，这两个方法上面增加了@HotSpotIntrinsicCandidate注解。这个注解允许HotSpot VM自己来写汇编或IR编译器来实现该方法以提供性能。也就是说虽然外面看到的在JDK9中weakCompareAndSet和compareAndSet底层依旧是调用了一样的代码，但是不排除HotSpot VM会手动来实现weakCompareAndSet真正含义的功能的可能性。
+    >
+    > 简单来说，`weakCompareAndSet`操作仅保留了`volatile`自身变量的特性，而除去了happens-before规则带来的内存语义。也就是说，`weakCompareAndSet`**无法保证处理操作目标的volatile变量外的其他变量的执行顺序( 编译器和处理器为了优化程序性能而对指令序列进行重新排序 )，同时也无法保证这些变量的可见性。**这在一定程度上可以提高性能。（没看懂）
+
+    CAS如果旧值V不等于预期值E，它就会更新失败。说明旧的值发生了变化。那我们当然需要返回的是被其他线程改变之后的旧值了，因此放在了do循环体内
+
+- CAS实现原子操作的三大问题
+
+  - ABA问题
+  
+    - 就是一个值**原来是A，变成了B，又变回了A**。这个时候使用CAS是检查不出变化的，但实际上却被更新了两次
+  
+    - 在变量前面追加上**版本号或者时间戳**。从JDK 1.5开始，JDK的atomic包里提供了一个类`AtomicStampedReference`类来解决ABA问题
+  
+    - `AtomicStampedReference`类的`compareAndSet`方法的作用是首先检查当前引用是否等于预期引用，并且检查当前标志是否等于预期标志，如果二者都相等，才使用CAS设置为新的值和标志。
+  
+      > ```java
+      > public boolean compareAndSet(V   expectedReference,
+      >                              V   newReference,
+      >                              int expectedStamp,
+      >                              int newStamp) {
+      >     Pair<V> current = pair;
+      >     return
+      >         expectedReference == current.reference &&
+      >         expectedStamp == current.stamp &&
+      >         ((newReference == current.reference &&
+      >           newStamp == current.stamp) ||
+      >          casPair(current, Pair.of(newReference, newStamp)));
+      > }
+      > ```
+  
+  - 循环时间长开销大
+    
+    - CAS多与自旋结合，如果自旋CAS长时间不成功，则会占用大量CPU资源，解决思路是让**JVM支持处理器提供的pause指令**
+    
+      > pause指令能让自旋失败时cpu睡眠一小段时间再继续自旋，从而使得读操作的频率低很多,为解决内存顺序冲突而导致的CPU流水线重排的代价也会小很多。
+    
+    - 限制次数（如果可以放弃操作的话）
+    
+  - 只能保证一个共享变量的原子操作
+    - 使用JDK 1.5开始就提供的`AtomicReference`类保证对象之间的原子性，把多个变量放到一个对象里面进行CAS操作；
+    - 使用锁。锁内的临界区代码可以保证只有当前线程能操作。
 
 ## AQS
+
+
 
 ## 参考
