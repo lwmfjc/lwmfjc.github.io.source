@@ -137,8 +137,30 @@ updated: 2022-11-21 10:57:24
   JSR-133对happens-before原则的定义：  
 
   - 如果**一个操作happens-before另一个操作**，那么**第一个操作的执行结果将对第二个操作可见**，并且**第一个操作的执行顺序排在第二个操作之前**
+  
+  > 这是 JMM 对程序员强内存模型的承诺。从程序员的角度来说，可以这样理解 Happens-before 关系：如果 A Happens-before B，那么 JMM 将向程序员保证 — A 操作的结果将对 B 可见，且 A 的执行顺序排在 B 之前。注意，这只是 Java内存模型向程序员做出的保证，即Happens-before提供**跨线程的内存可见性保证**
+    >
+    > 对于这条定义，举个例子
+    >
+    > ```java
+    > // 以下操作在线程 A 中执行
+    > i = 1; // a
+    > 
+    > // 以下操作在线程 B 中执行
+    > j = i; // b
+    > 
+    > // 以下操作在线程 C 中执行
+    > i = 2; // c
+    > ```
+    >
+    > 假设线程 A 中的操作 a Happens-before 线程 B 的操作 b，那我们就可以确定操作 b 执行后，变量 j 的值一定是等于 1。
+    >
+    > 得出这个结论的依据有两个：一是根据 Happens-before 原则，a 操作的结果对 b 可见，即 “i=1” 的结果可以被观察到；二是线程 C 还没运行，线程 A 操作结束之后没有其他线程会修改变量 i 的值。
+    >
+    > 现在再来考虑线程 C，我们依然保持 a Happens-before b ，而 c 出现在 a 和 b 的操作之间，但是 c 与 b 没有 Happens-before 关系，也就是说 b 并不一定能看到 c 的操作结果。那么 b 操作的结果也就是 j 的值就不确定了，可能是 1 也可能是 2，那这段代码就是线程不安全的。
+  
   - 两个操作之间存在 happens-before 关系，并不意味着 Java 平台的具体实现必须要按照 happens-before 关系指定的顺序来执行。如果**重排序之后的执行结果，与按 happens-before 关系来执行的结果一致，那么 JMM 也允许这样的重排序**
-
+  
   > 例子：
   >
   > ```java
@@ -157,15 +179,28 @@ updated: 2022-11-21 10:57:24
 
 ### happens-before 常见规则有哪些？谈谈你的理解？
 
-1. 程序顺序规则：一个线程内，按照代码顺序，书写在前面的操作happens-before于书写在后面的操作
+主要的5条规则：
+
+1. 程序顺序规则：**一个线程内**，按照代码顺序，书写在前面的操作happens-before于书写在后面的操作
 2. 解锁规则：解锁happens-before于加锁
 3. volatile变量规则：**对一个 volatile 变量的写操作 happens-before 于后面对这个 volatile 变量的读操作**。说白了就是对 volatile 变量的**写操作的结果**对于**发生于其后的任何操作都是可见**的。
 4. 传递规则：如果A happens-before B，且B happens-before C ，那么A happens-before C
 5. 线程启动规则：Thread对象的start() 方法 happens-before 于此线程的每一个操作
 
-如果两个操作，不满足于上述任何一个happens-before规则，那么这两个操作就没有顺序的保障，JVM可以对这两个操作进行重排序
+如果两个操作，不满足于上述任何一个happens-before规则，那么这两个操作就没有顺序的保障，**JVM可以对这两个操作进行重排序**
 
 ### happens-before 和JMM什么关系
+
+1. 根据happens-before规则，告诉程序员，有哪些happens-before规则（哪些情况不会被重排序）
+
+   > 为了避免 Java 程序员为了理解 JMM 提供的内存可见性保证而去学习复杂的重排序规则以及这些规则的具体实现方法，JMM 就出了这么一个简单易懂的 Happens-before 原则，**一个 Happens-before 规则就对应于一个或多个编译器和处理器的重排序规则**
+
+2. - as-if-serial 语义保证单线程内程序的执行结果不被改变，Happens-before 关系保证正确同步的多线程程序的执行结果不被改变。
+   - as-if-serial 语义给编写单线程程序的程序员创造了一个幻境：单线程程序是按程序的顺序来执行的。Happens-before 关系给编写正确同步的多线程程序的程序员创造了一个幻境：正确同步的多线程程序是按 Happens-before 指定的顺序来执行的。
+
+3. JMM定义的
+
+![image-20221123111533905](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221123111533905.png)
 
 ## 再看并发编程三个重要特性
 
