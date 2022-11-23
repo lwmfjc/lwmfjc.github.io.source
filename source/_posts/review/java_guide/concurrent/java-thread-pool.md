@@ -13,7 +13,7 @@ updated: 2022-11-23 14:40:41
 
 > 转载自https://github.com/Snailclimb/JavaGuide
 
-## 使用线程池的好处
+## 一 使用线程池的好处
 
 - 池化技术：减少每次获取资源的消耗，提高对资源的利用率
 - 线程池提供一种**限制**和**管理资源（包括执行一个任务）**的方式，每个线程池还维护一些基本统计信息，例如**已完成任务**的数量
@@ -22,7 +22,7 @@ updated: 2022-11-23 14:40:41
   - 提高响应速度（任务到达直接执行，无需等待线程创建）
   - 提高线程可管理性（避免无休止创建，使用线程池同一分配、调优、监控）
 
-## Executor框架
+## 二 Executor框架
 
 Java5之后，通过Executor启动线程，比使用Thread的start方法更好，更易于管理，效率高，还能有助于避免this逃逸的问题
 
@@ -100,11 +100,24 @@ Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**�
 
 ### Executor框架的使用示意图
 
+![image-20221123173130638](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221123173130638.png)
+
+1. **主线程首先要创建实现 `Runnable` 或者 `Callable` 接口的任务对象。**
+2. **把创建完成的实现 `Runnable`/`Callable`接口的 对象直接交给 `ExecutorService` 执行**: `ExecutorService.execute（Runnable command）`）或者也可以把 `Runnable` 对象或`Callable` 对象提交给 `ExecutorService` 执行（`ExecutorService.submit（Runnable task）`或 `ExecutorService.submit（Callable <T> task）`）。
+3. **如果执行 `ExecutorService.submit（…）`，`ExecutorService` 将返回一个实现`Future`接口的对象**（我们刚刚也提到过了执行 `execute()`方法和 `submit()`方法的区别，`submit()`会返回一个 `FutureTask 对象）。由于 FutureTask` 实现了 `Runnable`，我们也可以创建 `FutureTask`，然后直接交给 `ExecutorService` 执行。
+4. **最后，主线程可以执行 `FutureTask.get()`方法来等待任务执行完成。主线程也可以执行 `FutureTask.cancel（boolean mayInterruptIfRunning）`来取消此任务的执行。**
+
+## 三 (重要)ThreadPoolExecutor类简单介绍
+
+**线程池实现类 `ThreadPoolExecutor` 是 `Executor` 框架最核心的类。**
+
+### ThreadPoolExecutor类分析
+
+### 推荐使用 `ThreadPoolExecutor` 构造函数创建线程池
 
 
-## (重要)ThreadPoolExecutor类简单介绍
 
-## ThreadPoolExecutor使用+原理分析
+## 四 ThreadPoolExecutor使用+原理分析
 
 ## 几种常见的线程池详解
 
