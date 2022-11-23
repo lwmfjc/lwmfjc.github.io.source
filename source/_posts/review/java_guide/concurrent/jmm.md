@@ -11,6 +11,8 @@ date: 2022-11-21 10:57:24
 updated: 2022-11-21 10:57:24
 ---
 
+> 引用自https://github.com/Snailclimb/JavaGuide
+
 ## 从CPU缓存模型说起
 
 - redis是为了解决**程序处理速度和访问常规关系型数据库速度不对等**的问题，**CPU缓存则是为了解决CPU处理速度和内存处理速度不对等的问题**
@@ -196,7 +198,7 @@ updated: 2022-11-21 10:57:24
    > 为了避免 Java 程序员为了理解 JMM 提供的内存可见性保证而去学习复杂的重排序规则以及这些规则的具体实现方法，JMM 就出了这么一个简单易懂的 Happens-before 原则，**一个 Happens-before 规则就对应于一个或多个编译器和处理器的重排序规则**
 
 2. - as-if-serial 语义保证单线程内程序的执行结果不被改变，Happens-before 关系保证正确同步的多线程程序的执行结果不被改变。
-   - as-if-serial 语义给编写单线程程序的程序员创造了一个幻境：单线程程序是按程序的顺序来执行的。Happens-before 关系给编写正确同步的多线程程序的程序员创造了一个幻境：正确同步的多线程程序是按 Happens-before 指定的顺序来执行的。
+   - as-if-serial 语义给编写单线程程序的程序员创造了一个幻境：**单线程程序是按程序的顺序来执行的。Happens-before 关系给编写正确同步的多线程程序的程序员创造了一个幻境：正确同步的多线程程序是按 Happens-before 指定的顺序来执行的。**
 
 3. JMM定义的
 
@@ -204,5 +206,109 @@ updated: 2022-11-21 10:57:24
 
 ## 再看并发编程三个重要特性
 
+原子性，可见性，有序性
+
+- 原子性
+  一次操作或多次操作，**要么所有的操作，全部都得到执行**并且不会受到任何因素的干扰而中断，**要么都不执行**
+
+  > Java中，使用synchronized、各种Lock以及各种原子类实现原子性(AtomicInteger等)
+  >
+  > `synchronized` 和各种 `Lock` 可以保证任一时刻只有一个线程访问该代码块，因此可以保障原子性。各种原子类是利用 CAS (compare and swap) 操作（可能也会用到 `volatile`或者`final`关键字）来保证原子操作。
+
+- 可见性
+  当**一个线程对共享变量进行了修改**，那么**另外的线程**都是**立即可以看到**修改后的最新值。
+
+  > 在 Java 中，可以借助`synchronized` 、`volatile` 以及各种 `Lock` 实现可见性。
+  >
+  > 如果我们将变量声明为 `volatile` ，这就指示 JVM，这个变量是共享且不稳定的，每次使用它都到主存中进行读取。
+
+- 有序性
+  由于指令重排序问题，代码的执行顺序未必就是编写代码时候的顺序
+
+  > **指令重排序可以保证串行语义一致，但是没有义务保证多线程间的语义也一致** ，所以在多线程下，指令重排序可能会导致一些问题。
+  >
+  > Java中，volatile关键字可以禁止指令进行重排序优化（注意，synchronized也可以）
+
 ## 总结
+
+补充：线程join()方法，导致调用线程暂停，直到xx.join()中的xx线程执行完，调用join方法的线程才继续执行
+
+```java
+Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                log.info("暂停5s");
+                try {
+                    TimeUnit.SECONDS.sleep(5);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread1.start();
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                log.info("暂停3s");
+                try {
+                    TimeUnit.SECONDS.sleep(3);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        thread2.start();
+        thread1.join();
+        thread2.join();
+        log.info("主线程执行");
+/*结果
+2022-11-23 13:57:06 下午 [Thread: Thread-1] 
+INFO:暂停5s
+2022-11-23 13:57:06 下午 [Thread: Thread-2] 
+INFO:暂停3s
+2022-11-23 13:57:11 下午 [Thread: main] 
+INFO:主线程执行
+*/
+```
+
+指令重排的影响，举例：
+
+```java
+public class Test {
+    private static int x = 0, y = 0;
+    private static int a = 0, b = 0;
+    public static void main(String[] args) throws InterruptedException {
+        for (int i = 0; ; i++) {
+            x = 0; y = 0;
+            a = 0; b = 0;
+            Thread one = new Thread(() -> {
+                a = 1;
+                x = b;
+            });
+            Thread other = new Thread(() -> {
+                b = 1;
+                y = a;
+            });
+            one.start(); other.start();;
+            one.join(); other.join();
+            if (x == 0 && y == 0) {
+                String result = "第" + i + "次（" + x + ", " + y + "）";
+                System.out.println(result);
+            }
+        }
+    }
+
+}
+/*
+
+因为线程one中，a和x并不存在依赖关系，因此可能会先执行x=b;而这个时候，b=0。因此x会被赋值为0，而a=1这条语句还没有被执行的时候，线程other先执行了y=a这条语句，这个时候a还是a=0;因此y被赋值为了0。所以存在情况x=0;y=0。这就是指令重排导致的多线程问题。
+原文链接：https://blog.csdn.net/qq_45948401/article/details/124973903
+*/
+```
+
+- Java 是最早尝试提供内存模型的语言，其主要目的是为了简化多线程编程，增强程序可移植性的。
+- CPU 可以通过制定缓存一致协议（比如 [MESI 协议open in new window](https://zh.wikipedia.org/wiki/MESI协议)）来解决内存缓存不一致性问题。
+- 为了提升执行速度/性能，计算机在执行程序代码的时候，会对指令进行重排序。 简单来说就是系统在执行代码的时候并不一定是按照你写的代码的顺序依次执行。**指令重排序可以保证串行语义一致，但是没有义务保证多线程间的语义也一致** ，所以在多线程下，指令重排序可能会导致一些问题。
+- 你可以把 JMM 看作是 Java 定义的并发编程相关的一组规范，除了抽象了线程和主内存之间的关系之外，其还规定了从 Java 源代码到 CPU 可执行指令的这个转化过程要遵守哪些和并发相关的原则和规范，其主要目的是为了简化多线程编程，增强程序可移植性的。
+- JSR 133 引入了 happens-before 这个概念来描述两个操作之间的内存可见性。
 
