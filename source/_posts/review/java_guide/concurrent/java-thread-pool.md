@@ -151,13 +151,164 @@ Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**�
 
 - ThreadPoolExecutor其他常见参数
 
-  1. 
+  1. **keepAliveTime**：当线程池中的**线程数量大于corePoolSize**时，如果此时**没有新任务提交，核心线程外的线程不会立即销毁，而是会等待**，直到等待时间超过了keepAliveTime才会被回收销毁
+  2. **unit**：keepAliveTime参数的时间单位
+  3. **threadFactory**：executor创建新线程的时候会用到
+  4. **handler**：饱和策略
+
+  线程池各个参数的相互关系的理解  
+  ![image-20221124095832400](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124095832400.png)
+  
+- ThreadPoolExecutor饱和策略定义
+  如果当前**同时运行的线程数量达到最大线程数量**并且**队列也已经被放满了任务**时，ThreadPoolTaskExecutor定义了一些策略： 
+
+  1. **`ThreadPoolExecutor.AbortPolicy`** ：抛出 `RejectedExecutionException`来拒绝新任务的处理。
+  2. **`ThreadPoolExecutor.CallerRunsPolicy`** ：调用执行自己的线程运行任务，也就是直接在**调用`execute`方法的线程中运行(`run`)被拒绝的任务**，如果执行程序已关闭，则会丢弃该任务。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。如果您的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。
+  3. **`ThreadPoolExecutor.DiscardPolicy`** ：不处理新任务，直接丢弃掉。
+  4. **`ThreadPoolExecutor.DiscardOldestPolicy`** ： 此策略将丢弃最早的未处理的任务请求。
+
+  > 举例：  Spring 通过 `ThreadPoolTaskExecutor` 或者我们直接通过 `ThreadPoolExecutor` 的构造函数创建线程池的时候，当我们不指定 `RejectedExecutionHandler` 饱和策略的话来配置线程池的时候默认使用的是 `ThreadPoolExecutor.AbortPolicy`。在默认情况下，`ThreadPoolExecutor` 将抛出 `RejectedExecutionException` 来拒绝新来的任务 ，这代表你将丢失对这个任务的处理。 对于可伸缩的应用程序，建议使用 `ThreadPoolExecutor.CallerRunsPolicy`。当最大池被填满时，此策略为我们提供可伸缩队列。（这个直接查看 `ThreadPoolExecutor` 的构造函数源码就可以看出，比较简单的原因，这里就不贴代码了。
 
 ### 推荐使用 `ThreadPoolExecutor` 构造函数创建线程池
 
+> 阿里巴巴Java开发手册"并发处理"这一章节，明确指出，线程资源必须通过线程池提供，不允许在应用中自行显示创建线程
 
+原因：使用线程池的好处是**减少在创建和销毁线程上所消耗的时间以及系统资源开销**，**解决资源不足**的问题。如果**不使用线程池**，有可能会**造成系统创建大量同类线程**而导致消耗完内存或者“过度切换”的问题。也**不允许使用Executors去创建，而是通过ThreadPoolExecutor构造方式**  
+Executors返回线程池对象的弊端：
+
+- FixedThreadPool和SingleThreadExecutor：允许请求的队列长度为Integer.MAV_VALUE 可能堆积大量请求，导致OOM
+- CachedThreadPool和ScheduledThreadPool，允许创建的线程数量为Integer.MAX_VALUE 可能创建大量线程，从而导致OOM
+
+创建线程的几种方法
+
+1. 通过ThreadPoolExecutor构造函数实现（推荐）
+   ![image-20221124105119802](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124105119802.png)
+2. 通过Executors框架的工具类Executors来实现，我们可以创建三红类型的ThreadPoolExecutor
+   FixedThreadPool、SingleThreadExecutor、CachedThreadPool
 
 ## 四 ThreadPoolExecutor使用+原理分析
+
+### 示例代码：Runnable+ThreadPoolExecutor
+
+先创建一个Runnable接口的实现类
+
+```java
+//MyRunnable.java
+import java.util.Date;
+
+/**
+ * 这是一个简单的Runnable类，需要大约5秒钟来执行其任务。
+ * @author shuang.kou
+ */
+public class MyRunnable implements Runnable {
+
+    private String command;
+
+    public MyRunnable(String s) {
+        this.command = s;
+    }
+
+    @Override
+    public void run() {
+        System.out.println(Thread.currentThread().getName() + " Start. Time = " + new Date());
+        processCommand();
+        System.out.println(Thread.currentThread().getName() + " End. Time = " + new Date());
+    }
+
+    private void processCommand() {
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public String toString() {
+        return this.command;
+    }
+} 
+```
+
+使用自定义的线程池
+
+```java
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+public class ThreadPoolExecutorDemo {
+
+    private static final int CORE_POOL_SIZE = 5;
+    private static final int MAX_POOL_SIZE = 10;
+    private static final int QUEUE_CAPACITY = 100;
+    private static final Long KEEP_ALIVE_TIME = 1L;
+    public static void main(String[] args) {
+
+        //使用阿里巴巴推荐的创建线程池的方式
+        //通过ThreadPoolExecutor构造函数自定义参数创建
+        ThreadPoolExecutor executor = new ThreadPoolExecutor(
+                CORE_POOL_SIZE, //5
+                MAX_POOL_SIZE,  //10
+                KEEP_ALIVE_TIME, //1L
+                TimeUnit.SECONDS, //单位
+                new ArrayBlockingQueue<>(QUEUE_CAPACITY),//100
+                new ThreadPoolExecutor.CallerRunsPolicy()); //主线程中运行
+
+        for (int i = 0; i < 10; i++) {
+            //创建WorkerThread对象（WorkerThread类实现了Runnable 接口）
+            Runnable worker = new MyRunnable("" + i);
+            //执行Runnable
+            executor.execute(worker);
+        }
+        //终止线程池
+        executor.shutdown();
+        // isTerminated 判断所有提交的任务是否完成(保证之前调用过shutdown方法) 
+        while (!executor.isTerminated()) {
+        }
+        System.out.println("Finished all threads");
+    }
+} 
+//结果：  
+/*
+corePoolSize: 核心线程数为 5。
+maximumPoolSize ：最大线程数 10
+keepAliveTime : 等待时间为 1L。
+unit: 等待时间的单位为 TimeUnit.SECONDS。
+workQueue：任务队列为 ArrayBlockingQueue，并且容量为 100;
+handler:饱和策略为 CallerRunsPolicy
+---output--- 
+pool-1-thread-3 Start. Time = Sun Apr 12 11:14:37 CST 2020
+pool-1-thread-5 Start. Time = Sun Apr 12 11:14:37 CST 2020
+pool-1-thread-2 Start. Time = Sun Apr 12 11:14:37 CST 2020
+pool-1-thread-1 Start. Time = Sun Apr 12 11:14:37 CST 2020
+pool-1-thread-4 Start. Time = Sun Apr 12 11:14:37 CST 2020
+pool-1-thread-3 End. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-4 End. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-1 End. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-5 End. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-1 Start. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-2 End. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-5 Start. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-4 Start. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-3 Start. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-2 Start. Time = Sun Apr 12 11:14:42 CST 2020
+pool-1-thread-1 End. Time = Sun Apr 12 11:14:47 CST 2020
+pool-1-thread-4 End. Time = Sun Apr 12 11:14:47 CST 2020
+pool-1-thread-5 End. Time = Sun Apr 12 11:14:47 CST 2020
+pool-1-thread-3 End. Time = Sun Apr 12 11:14:47 CST 2020
+pool-1-thread-2 End. Time = Sun Apr 12 11:14:47 CST 2020
+------ 
+*/
+```
+
+### 线程池原理分析
+
+如上，**线程池首先会先执行 5 个任务，然后这些任务有任务被执行完的话，就会去拿新的任务执行**
+
+### 几个常见的对比
+
+### callable+ThreadPoolExecutor示例代码
 
 ## 几种常见的线程池详解
 
