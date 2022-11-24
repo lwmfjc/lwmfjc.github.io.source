@@ -113,6 +113,46 @@ Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**�
 
 ### ThreadPoolExecutor类分析
 
+- 这里看最长的那个，其余三个都是在该构造方法的基础上产生，即**给定某些默认参数**的构造方法，比如**默认的拒绝策略**
+
+  ```java
+    /**
+       * 用给定的初始参数创建一个新的ThreadPoolExecutor。
+       */
+      public ThreadPoolExecutor(int corePoolSize,//线程池的核心线程数量
+                                int maximumPoolSize,//线程池的最大线程数
+                                long keepAliveTime,//当线程数大于核心线程数时，多余的空闲线程存活的最长时间
+                                TimeUnit unit,//时间单位
+                                BlockingQueue<Runnable> workQueue,//任务队列，用来储存等待执行任务的队列
+                                ThreadFactory threadFactory,//线程工厂，用来创建线程，一般默认即可
+                                RejectedExecutionHandler handler//拒绝策略，当提交的任务过多而不能及时处理时，我们可以定制策略来处理任务
+                                 ) {
+          if (corePoolSize < 0 ||
+              maximumPoolSize <= 0 ||
+              maximumPoolSize < corePoolSize ||
+              keepAliveTime < 0)
+              throw new IllegalArgumentException();
+          if (workQueue == null || threadFactory == null || handler == null)
+              throw new NullPointerException();
+          this.corePoolSize = corePoolSize;
+          this.maximumPoolSize = maximumPoolSize;
+          this.workQueue = workQueue;
+          this.keepAliveTime = unit.toNanos(keepAliveTime);
+          this.threadFactory = threadFactory;
+          this.handler = handler;
+      } 
+  ```
+
+- ThreadPoolExecutor中，3个最重要的参数
+
+  1. **corePoolSize**：**核心线程数**，定义了最小可以同时运行的线程数量
+  2. **maximumPoolSize**：**当队列中存放的任务达到队列容量**时，当前**可以同时运行的线程数量变为最大线程数**
+  3. **workQueue**：当新任务来的时候，会先判断当前运行的线程数量**是否达到核心线程数**，如果**达到**的话，新任务就会被存放在**队列**中
+
+- ThreadPoolExecutor其他常见参数
+
+  1. 
+
 ### 推荐使用 `ThreadPoolExecutor` 构造函数创建线程池
 
 
