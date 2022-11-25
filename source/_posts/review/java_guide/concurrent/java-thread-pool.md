@@ -676,6 +676,34 @@ execute方法源码
 
 2. SingleThreadExecutor
 
+   - SingleThreadExecutor是只有一个线程的线程池，源码：  
+
+     ```java
+      /**
+          *返回只有一个线程的线程池
+          */
+         public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
+             return new FinalizableDelegatedExecutorService
+                 (new ThreadPoolExecutor(1, 1,
+                                         0L, TimeUnit.MILLISECONDS,
+                                         new LinkedBlockingQueue<Runnable>(),
+                                         threadFactory));
+         }
+     //另一种构造函数
+       public static ExecutorService newSingleThreadExecutor() {
+             return new FinalizableDelegatedExecutorService
+                 (new ThreadPoolExecutor(1, 1,
+                                         0L, TimeUnit.MILLISECONDS,
+                                         new LinkedBlockingQueue<Runnable>()));
+         }
+     ```
+
+     新创建的 `SingleThreadExecutor` 的 `corePoolSize` 和 `maximumPoolSize` 都被设置为 1.其他参数和 `FixedThreadPool` 相同
+
+   - 执行过程
+     ![image-20221124173110534](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124173110534.png)
+     如果当前运行线程数少于corePoolSize（1），则创建一个新的线程执行任务；当前线程池有一个运行的线程后，将任务加入LinkedBlockingQueue；线程执行完当前的任务后，会在循环中反复从LinkedBlockingQueue中获取任务执行
+
 3. CachedThreadPool
 
 ## ScheduledThreadPoolExecutor详解
