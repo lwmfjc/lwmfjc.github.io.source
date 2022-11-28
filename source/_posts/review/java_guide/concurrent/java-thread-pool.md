@@ -703,10 +703,108 @@ execute方法源码
    - 执行过程
      ![image-20221124173110534](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124173110534.png)
      如果当前运行线程数少于corePoolSize（1），则创建一个新的线程执行任务；当前线程池有一个运行的线程后，将任务加入LinkedBlockingQueue；线程执行完当前的任务后，会在循环中反复从LinkedBlockingQueue中获取任务执行
+     
+   - 为什么不推荐使用SingleThreadExecutor
+     SingleThreadExecutor使用无界队列LinkedBlockingQueue作为线程池的工作队列（容量为Integer.MAX_VALUE) 。SingleThreadExecutor使用无界队列作为线程池的工作队列会对线程池带来的影响与FixedThreadPoll相同，即导致OOM
 
 3. CachedThreadPool
+   CachedThreadPool是一个会根据需要创建新线程的线程池，源码：
+
+   ```java
+       /**
+        * 创建一个线程池，根据需要创建新线程，但会在先前构建的线程可用时重用它。
+        */
+       public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
+           return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                         60L, TimeUnit.SECONDS,
+                                         new SynchronousQueue<Runnable>(),
+                                         threadFactory);
+       }
+   //其他构造函数
+   public static ExecutorService newCachedThreadPool() {
+           return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+                                         60L, TimeUnit.SECONDS,
+                                         new SynchronousQueue<Runnable>());
+       } 
+   ```
+
+   `CachedThreadPool` 的`corePoolSize` 被设置为空（0），`maximumPoolSize`被设置为 `Integer.MAX.VALUE`，即它是无界的，这也就意味着如果主线程提交任务的速度高于 `maximumPool` 中线程处理任务的速度时，`CachedThreadPool` 会不断创建新的线程。极端情况下，这样会导致耗尽 cpu 和内存资源
+
+   ★：SynchronousQueue队列只能容纳单个元素
+   执行过程（execute()示意图）
+
+
+   ![image-20221128163237634](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221128163237634.png)
+   上图说明：
+
+   1. 首先执行 `SynchronousQueue.offer(Runnable task)` 提交任务到任务队列。如果当前 `maximumPool` 中有闲线程正在执行 `SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)`，那么主线程执行 offer 操作与空闲线程执行的 `poll` 操作配对成功，主线程把任务交给空闲线程执行，`execute()`方法执行完成，否则执行下面的步骤 2；
+   2. 当初始 `maximumPool` 为空，或者 `maximumPool` 中没有空闲线程时，将没有线程执行 `SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)`。这种情况下，步骤 1 将失败，此时 `CachedThreadPool` 会创建新线程执行任务，execute 方法执行完成；
+
+   不推荐使用CachedThreadPool? 因为它允许创建的线程数量为Integer.MAX_VALUE,可能创建大量线程，从而导致OOM
 
 ## ScheduledThreadPoolExecutor详解
+
+项目中基本不会用到，主要用来在给定的延迟后运行任务，或者定期执行任务
+它使用的任务队列DelayQueue封装了一个PriorityQueue，PriorityQueue会对队列中的任务进行排序，执行**所需时间短**的放在前面先被执行(**ScheduledFutureTask的time**变量小的先执行)，如果一致则先提交的先执行(**ScheduleFutureTask的sequenceNumber变量**)
+
+- 代码，TimerTask
+
+  ```java
+  @Slf4j
+  class MyTimerTask extends TimerTask{
+  
+      @Override
+      public void run() {
+          log.info("hello");
+      }
+  }
+  public class TimerTaskTest {
+      public static void main(String[] args) {
+          Timer timer = new Timer();
+          Calendar calendar = Calendar.getInstance();
+          calendar.set(Calendar.HOUR_OF_DAY, 17);//控制小时
+          calendar.set(Calendar.MINUTE, 1);//控制分钟
+          calendar.set(Calendar.SECOND, 0);//控制秒
+          Date time = calendar.getTime();//执行任务时间为17:01:00
+  
+          //每天定时17:02执行操作，每5秒执行一次
+          timer.schedule(new MyTimerTask(), time, 5000 );
+      }
+  }
+  ```
+
+  
+
+- 代码，ScheduleThreadPoolExecutor
+
+  ```java
+  @Slf4j
+  public class ScheduleTask {
+      public static void main(String[] args) throws InterruptedException {
+          ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(3);
+          scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
+              @Override
+              public void run() {
+                  log.info("hello world!");
+              }
+          }, 3, 5, TimeUnit.SECONDS);//10表示首次执行任务的延迟时间，5表示每次执行任务的间隔时间，Thread.sleep(10000);
+  
+          System.out.println("Shutting down executor...");
+          TimeUnit.SECONDS.sleep(4);
+          //线程池一关闭，定时器就不会再执行
+          scheduledExecutorService.shutdown();
+          while (true){}
+      }
+  }
+  /*结果
+  Shutting down executor...
+  2022-11-28 17:25:06 下午 [Thread: pool-1-thread-1] 
+  INFO:hello world!
+  
+  不会再产出，因为线程池已经关了*/
+  ```
+
+  
 
 ## 线程池大小确定
 
