@@ -745,7 +745,38 @@ execute方法源码
 ## ScheduledThreadPoolExecutor详解
 
 项目中基本不会用到，主要用来在给定的延迟后运行任务，或者定期执行任务
-它使用的任务队列DelayQueue封装了一个PriorityQueue，PriorityQueue会对队列中的任务进行排序，执行**所需时间短**的放在前面先被执行(**ScheduledFutureTask的time**变量小的先执行)，如果一致则先提交的先执行(**ScheduleFutureTask的sequenceNumber变量**)
+它使用的**任务队列DelayQueue封装了一个PriorityQueue**，PriorityQueue会**对队列中的任务进行排序**，执行**所需时间（第一次执行的时间）短**的放在前面先被执行(**ScheduledFutureTask的time**变量小的先执行)，如果一致则先提交的先执行(**ScheduleFutureTask的sequenceNumber变量**)
+
+- ScheduleFutureTask
+
+  ```java
+   /**
+       * 其中, triggerTime(initialDelay, unit) 的结果即上面说的time，说的应该是第一次执行的时间，而不是整个任务的执行时间
+       * @throws RejectedExecutionException {@inheritDoc}
+       * @throws NullPointerException       {@inheritDoc}
+       * @throws IllegalArgumentException   {@inheritDoc}
+       */
+      public ScheduledFuture<?> scheduleAtFixedRate(Runnable command,
+                                                    long initialDelay,
+                                                    long period,
+                                                    TimeUnit unit) {
+          if (command == null || unit == null)
+              throw new NullPointerException();
+          if (period <= 0)
+              throw new IllegalArgumentException();
+          ScheduledFutureTask<Void> sft =
+              new ScheduledFutureTask<Void>(command,
+                                            null,
+                                            triggerTime(initialDelay, unit),
+                                            unit.toNanos(period));
+          RunnableScheduledFuture<Void> t = decorateTask(command, sft);
+          sft.outerTask = t;
+          delayedExecute(t);
+          return t;
+      }
+  ```
+
+  
 
 - 代码，TimerTask
 
@@ -801,12 +832,47 @@ execute方法源码
   2022-11-28 17:25:06 下午 [Thread: pool-1-thread-1] 
   INFO:hello world!
   
-  不会再产出，因为线程池已经关了*/
+  不会再执行定时任务，因为线程池已经关了*/
   ```
 
-  
+- ScheduleThreadPoolExecutor和Timer的比较
+  ![image-20221129092155589](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129092155589.png)![image-20221129092022551](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129092022551.png)
+
+  - Timer对系统时钟变化敏感，ScheduledThreadPoolExecutor不是
+
+
+    Timer使用的是**System.currentTime()**，而ScheduledThreadPoolExecutor使用的是**System.nanoTime()**
+
+  - Timer只有一个线程（导致长时间运行的任务延迟其他任务），ScheduleThreadPoolExecutor可以配置任意数量线程
+
+  - TimerTask中抛出运行时异常会杀死一个线程，从而导致Timer死机（即计划任务将不在运行）；而**ScheduleThreadExecutor**不仅**捕获运行时异常**，还允许**需要时处理（afterExecute方法）**，抛出异常的任务会被取消而**其他任务将继续运行**
+
+  JDK1.5 之后，没有理由再使用Timer进行任务调度
+
+- 运行机制
+  ![image-20221129103700454](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129103700454.png)
+  ScheduledThreadPoolExecutor的执行分为：
+
+  1. 当调用scheduleAtFixedRate()或scheduleWithFixedDelay()方法时，会向ScheduleThreadPoolExector的DelayQueue添加一个**实现了RunnableScheduleFuture接口的ScheduleFutureTask(私有内部类)**
+  2. 线程池中的线程**从DelayQueue中获取ScheduleFutureTask**，然后执行任务
+
+  为了执行周期性任务，对ThreadPoolExecutor做了如下修改：
+
+  - 使用DelayQueue作为任务队列
+  - 获取任务的方式不同
+  - 获取周期任务**后做了额外处理**
+
+  ![image-20221129104234412](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129104234412.png)
+  获取任务，执行任务，修改任务(time)，回放任务
+
+  > 1. 线程 1 从 `DelayQueue` 中获取已到期的 `ScheduledFutureTask（DelayQueue.take()）`。到期任务是指 `ScheduledFutureTask`的 time 大于等于当前系统的时间；
+  > 2. 线程 1 执行这个 `ScheduledFutureTask`；
+  > 3. 线程 1 修改 `ScheduledFutureTask` 的 time 变量为下次将要被执行的时间；
+  > 4. 线程 1 把这个修改 time 之后的 `ScheduledFutureTask` 放回 `DelayQueue` 中（`DelayQueue.add()`)。
 
 ## 线程池大小确定
+
+
 
 ## 参考
 
