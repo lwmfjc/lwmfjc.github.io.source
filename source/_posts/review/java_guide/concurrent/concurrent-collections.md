@@ -124,7 +124,7 @@ BlockingQueue是一个接口，继承自**Queue**，而**Queue**又继承自Coll
 
   
 
-- `ArrayBlockingQueue` 一旦创建，容量不能改变。其并发控制采用可重入锁 `ReentrantLock` ，不管是插入操作还是读取操作，都需要获取到锁才能进行操作。当队列容量满时，尝试将元素放入队列将导致操作阻塞;尝试从一个空队列中取一个元素也会同样阻塞。
+- `ArrayBlockingQueue` 一旦创建，容量不能改变。其并发控制采用**可重入锁 `ReentrantLock`** ，不管是插入操作还是读取操作，都需要获取到锁才能进行操作。当队列容量满时，尝试将元素放入队列将导致操作阻塞;尝试从一个空队列中取一个元素也会同样阻塞。
 
 - `ArrayBlockingQueue` **默认情况下不能保证线程访问队列的公平性**，所谓**公平性是指严格按照线程等待的绝对时间顺序，即最先等待的线程能够最先访问到 `ArrayBlockingQueue`**。而非公平性则是指访问 `ArrayBlockingQueue` 的顺序不是遵守严格的时间顺序，有可能存在，当 `ArrayBlockingQueue` 可以被访问时，长时间阻塞的线程依然无法访问到 `ArrayBlockingQueue`。如果保证公平性，通常会降低吞吐量。如果需要获得公平性的 `ArrayBlockingQueue`，可采用如下代码
 
@@ -167,7 +167,9 @@ BlockingQueue是一个接口，继承自**Queue**，而**Queue**又继承自Coll
 
 ## PriorityBlockingQueue
 
-
+- **支持优先级的无界阻塞队列**，默认情况元素采用**自然顺序**进行排序，或通过自定义类实现compareTo()方法指定元素排序，或初始化时通过**构造器参数Comparator**来指定排序规则
+- `PriorityBlockingQueue` 并发控制采用的是可重入锁 `ReentrantLock`，队列为无界队列（`ArrayBlockingQueue` 是有界队列，`LinkedBlockingQueue` 也可以通过在构造函数中传入 `capacity` 指定队列最大的容量，但是 `PriorityBlockingQueue` 只能指定初始的队列大小，后面插入元素的时候，**如果空间不够的话会自动扩容**）
+- 它就是 `PriorityQueue` 的线程安全版本。不可以插入 null 值，同时，插入队列的对象必须是可比较大小的（comparable），否则报 `ClassCastException` 异常。它的插入操作 put 方法不会 block，因为它是无界队列（take 方法在队列为空的时候会阻塞）
 
 # ConcurrentSkipListMap
 
