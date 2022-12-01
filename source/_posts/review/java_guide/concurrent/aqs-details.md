@@ -283,7 +283,150 @@ AQS 核心思想是，如果被请求的共享资源空闲，则将当前请求�
 
 # Semaphore
 
+Semaphore（信号量）可以指定多个线程同时访问某个资源  
 
+```java
+/**
+ *
+ * @author Snailclimb
+ * @date 2018年9月30日
+ * @Description: 需要一次性拿一个许可的情况
+ */
+public class SemaphoreExample1 {
+  // 请求的数量
+  private static final int threadCount = 550;
+
+  public static void main(String[] args) throws InterruptedException {
+    // 创建一个具有固定线程数量的线程池对象（如果这里线程池的线程数量给太少的话你会发现执行的很慢）
+    ExecutorService threadPool = Executors.newFixedThreadPool(300);
+    // 一次只能允许执行的线程数量。
+    final Semaphore semaphore = new Semaphore(20);
+
+    for (int i = 0; i < threadCount; i++) {
+      final int threadnum = i;
+      threadPool.execute(() -> {// Lambda 表达式的运用
+        try {
+          //通行证发了20个之后，就不能再发放了
+          semaphore.acquire();// 获取一个许可，所以可运行线程数量为20/1=20
+          test(threadnum);
+          semaphore.release();// 释放一个许可
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+
+      });
+    }
+    threadPool.shutdown();
+    System.out.println("finish");
+  }
+
+  //拿了通行证之后，处理2s钟后才释放
+  public static void test(int threadnum) throws InterruptedException {
+    Thread.sleep(1000);// 模拟请求的耗时操作
+    System.out.println("threadnum:" + threadnum);
+    Thread.sleep(1000);// 模拟请求的耗时操作
+  }
+} 
+```
+
+//另一个例子
+
+```java
+    public static void main(String[] args) throws InterruptedException{
+        AtomicInteger atomicInteger=new AtomicInteger();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        Semaphore semaphore=new Semaphore(3);
+        for(int i=0;i<8;i++) {
+            int finalI = i;
+            executorService.submit(()->{
+                try {
+                    semaphore.acquire();
+                    int i1 = atomicInteger.incrementAndGet();
+                    log.info("获取一个通行证"+ finalI); 
+                    TimeUnit.SECONDS.sleep(finalI+1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }finally {
+                    log.info("通行证"+ finalI +"释放完毕");
+                    semaphore.release();
+                }
+
+            });
+        }
+        log.info("全部获取完毕");
+        //这个方法不会导致线程立即结束
+        executorService.shutdown();
+        log.info("线程池shutdown");
+    }
+/* 结果
+2022-12-01 14:21:31 下午 [Thread: pool-1-thread-3] 
+INFO:获取一个通行证2
+2022-12-01 14:21:31 下午 [Thread: main] 
+INFO:全部获取完毕
+2022-12-01 14:21:31 下午 [Thread: main] 
+INFO:线程池shutdown
+2022-12-01 14:21:31 下午 [Thread: pool-1-thread-2] 
+INFO:获取一个通行证1
+2022-12-01 14:21:31 下午 [Thread: pool-1-thread-1] 
+INFO:获取一个通行证0
+2022-12-01 14:21:32 下午 [Thread: pool-1-thread-1] 
+INFO:通行证0释放完毕
+2022-12-01 14:21:32 下午 [Thread: pool-1-thread-4] 
+INFO:获取一个通行证3
+2022-12-01 14:21:33 下午 [Thread: pool-1-thread-2] 
+INFO:通行证1释放完毕
+2022-12-01 14:21:33 下午 [Thread: pool-1-thread-5] 
+INFO:获取一个通行证4
+2022-12-01 14:21:34 下午 [Thread: pool-1-thread-3] 
+INFO:通行证2释放完毕
+2022-12-01 14:21:34 下午 [Thread: pool-1-thread-6] 
+INFO:获取一个通行证5
+2022-12-01 14:21:36 下午 [Thread: pool-1-thread-4] 
+INFO:通行证3释放完毕
+2022-12-01 14:21:36 下午 [Thread: pool-1-thread-7] 
+INFO:获取一个通行证6
+2022-12-01 14:21:38 下午 [Thread: pool-1-thread-5] 
+INFO:通行证4释放完毕
+2022-12-01 14:21:38 下午 [Thread: pool-1-thread-8] 
+INFO:获取一个通行证7
+2022-12-01 14:21:40 下午 [Thread: pool-1-thread-6] 
+INFO:通行证5释放完毕
+2022-12-01 14:21:43 下午 [Thread: pool-1-thread-7] 
+INFO:通行证6释放完毕
+2022-12-01 14:21:46 下午 [Thread: pool-1-thread-8] 
+INFO:通行证7释放完毕
+
+Process finished with exit code 0
+
+如上所示，先是获取了210，之后释放一个获取一个(最多获取3个)，
+3+n*2 =10 ，之后陆续释放0获取3，释放1获取4，释放2获取5
+之后 释放3获取6，释放4获取7；
+这是还有5,7,6拿着通行证
+之后随机将5，7，6释放掉即可。 
+*/
+```
+
+//如上，shutdown不会立即停止，而是：  
+
+1. 线程池shutdown之后不再接收新任务
+
+2. sutdown只是将线程池的状态设置为SHUTWDOWN状态，正在执行的任务会继续执行下去，没有被执行的则中断。而shutdownNow则是将线程池的状态设置为STOP，正在执行的任务则被停止，没被执行任务的则返回。如果是shutdownNow,则会报这个问题 
+
+    ```java
+    java.lang.InterruptedException: sleep interrupted
+   	at java.lang.Thread.sleep(Native Method)
+   	at java.lang.Thread.sleep(Thread.java:340)
+   	at java.util.concurrent.TimeUnit.sleep(TimeUnit.java:386)
+   	at com.ly.SemaphoreExample2.lambda$main$0(SemaphoreExample2.java:45)
+   	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+   	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+   	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+   	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+   	at java.lang.Thread.run(Thread.java:748)
+    ```
+
+    
 
 # CountDownLatch
 
