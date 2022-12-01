@@ -426,7 +426,41 @@ Process finished with exit code 0
    	at java.lang.Thread.run(Thread.java:748)
     ```
 
-    
+    解释最上面的例子：  
+
+   1. 执行acquire()方法会导致阻塞，知道有一个许可证可以获得然后拿走一个许可证
+   2. 每个release()方法增加一个许可证，这可能会释放一个阻塞的acquire()方法
+   3. Semaphore只是维持了一个可以获得许可证的数量，**没有实际的许可证这个对象**
+   4. Semaphore经常用于**限制获取某种资源的线程数量**
+
+   > 可以一次性获取或释放多个许可，不过没必要
+   >
+   > ```java
+   > semaphore.acquire(5);// 获取5个许可，所以可运行线程数量为20/5=4
+   > test(threadnum);
+   > semaphore.release(5);// 释放5个许可
+   > ```
+
+   对应的使用tryAcquire，如果获取不到许可就立即返回false
+
+Semaphore有两种模式，**公平模式**和**非公平模式**
+
+- 公平模式：调用acquire()方法的顺序，就是获取许可证的顺序，遵循FIFO
+- 非公平模式：抢占式的  
+
+两个构造函数，**必须提供许可数量**，第二个构造方法可以指定是公平模式还是非公平模式，**默认非公平模式**
+
+```java
+   public Semaphore(int permits) {
+        sync = new NonfairSync(permits);
+    }
+
+    public Semaphore(int permits, boolean fair) {
+        sync = fair ? new FairSync(permits) : new NonfairSync(permits);
+    } 
+```
+
+> `Semaphore` 与 `CountDownLatch` 一样，也是共享锁的一种实现。它**默认构造 AQS 的 state 为 `permits`**。当执行任务的线程**数量超出 `permits`，那么多余的线程将会被放入阻塞队列 Park,并自旋判断 state 是否大于 0。只有当 state 大于 0 的时候，阻塞的线程才能继续执行**,此时先前执行任务的线程继续执行 `release()` 方法，**`release()` 方法使得 state 的变量会加 1，那么自旋的线程便会判断成功**。 如此，每次只有最多不超过 `permits` 数量的线程能自旋成功，便限制了执行任务线程的数量。
 
 # CountDownLatch
 
