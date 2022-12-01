@@ -81,8 +81,7 @@ AQS 核心思想是，如果被请求的共享资源空闲，则将当前请求�
 
       ```java
       //例子
-          @Test
-          public void tt() throws InterruptedException {
+         public void tt() throws InterruptedException {
               Lock reLock=new ReentrantLock();
               //reLock.lock();
               for(int i=0;i<100;i++){
@@ -90,8 +89,8 @@ AQS 核心思想是，如果被请求的共享资源空闲，则将当前请求�
                   new Thread(()->{
                       reLock.lock();
                       try {
-                          log.info("线程标志"+finalI+"即将停止10s");
-                          TimeUnit.SECONDS.sleep(10);
+                          log.info("线程标志"+finalI+"即将停止5s");
+                          TimeUnit.SECONDS.sleep(5);
                           log.info("线程标志"+finalI+"停止结束");
                       } catch (InterruptedException e) {
                           e.printStackTrace();
@@ -105,72 +104,158 @@ AQS 核心思想是，如果被请求的共享资源空闲，则将当前请求�
       /* 结果
       2022-11-30 17:27:31 下午 [Thread: Thread-1] 
       INFO:线程标志0即将停止10s
-      2022-11-30 17:27:41 下午 [Thread: Thread-1] 
+      2022-11-30 17:27:41 下午 [Threa2022-12-01 10:19:50 上午 [Thread: Thread-1] 
+      INFO:线程标志0即将停止5s
+      2022-12-01 10:19:55 上午 [Thread: Thread-1] 
       INFO:线程标志0停止结束
-      2022-11-30 17:27:41 下午 [Thread: Thread-2] 
-      INFO:线程标志1即将停止10s
-      2022-11-30 17:27:51 下午 [Thread: Thread-2] 
+      2022-12-01 10:19:55 上午 [Thread: Thread-2] 
+      INFO:线程标志1即将停止5s
+      2022-12-01 10:20:00 上午 [Thread: Thread-2] 
       INFO:线程标志1停止结束
-      2022-11-30 17:27:51 下午 [Thread: Thread-3] 
-      INFO:线程标志2即将停止10s
-      2022-11-30 17:28:01 下午 [Thread: Thread-3] 
+      2022-12-01 10:20:00 上午 [Thread: Thread-3] 
+      INFO:线程标志2即将停止5s
+      2022-12-01 10:20:05 上午 [Thread: Thread-3] 
       INFO:线程标志2停止结束
-      2022-11-30 17:28:01 下午 [Thread: Thread-4] 
-      INFO:线程标志3即将停止10s
-      2022-11-30 17:28:11 下午 [Thread: Thread-4] 
+      2022-12-01 10:20:05 上午 [Thread: Thread-4] 
+      INFO:线程标志3即将停止5s
+      2022-12-01 10:20:10 上午 [Thread: Thread-4] 
       INFO:线程标志3停止结束
-      2022-11-30 17:28:11 下午 [Thread: Thread-5] 
-      INFO:线程标志4即将停止10s
-      2022-11-30 17:28:21 下午 [Thread: Thread-5] 
+      2022-12-01 10:20:10 上午 [Thread: Thread-5] 
+      INFO:线程标志4即将停止5s
+      2022-12-01 10:20:15 上午 [Thread: Thread-5] 
       INFO:线程标志4停止结束
-      2022-11-30 17:28:21 下午 [Thread: Thread-6] 
-      INFO:线程标志5即将停止10s
-      2022-11-30 17:28:31 下午 [Thread: Thread-6] 
+      2022-12-01 10:20:15 上午 [Thread: Thread-6] 
+      INFO:线程标志5即将停止5s
+      2022-12-01 10:20:20 上午 [Thread: Thread-6] 
       INFO:线程标志5停止结束
-      2022-11-30 17:28:31 下午 [Thread: Thread-7] 
-      INFO:线程标志6即将停止10s
-      2022-11-30 17:28:41 下午 [Thread: Thread-7] 
+      2022-12-01 10:20:20 上午 [Thread: Thread-7] 
+      INFO:线程标志6即将停止5s
+      2022-12-01 10:20:25 上午 [Thread: Thread-7] 
       INFO:线程标志6停止结束
-      2022-11-30 17:28:41 下午 [Thread: Thread-8] 
-      INFO:线程标志7即将停止10s
-      2022-11-30 17:28:51 下午 [Thread: Thread-8] 
-      INFO:线程标志7停止结束
-      2022-11-30 17:28:51 下午 [Thread: Thread-9] 
-      INFO:线程标志8即将停止10s
-      2022-11-30 17:29:01 下午 [Thread: Thread-9] 
-      INFO:线程标志8停止结束
-      2022-11-30 17:29:01 下午 [Thread: Thread-10] 
-      INFO:线程标志9即将停止10s
-      2022-11-30 17:29:11 下午 [Thread: Thread-10] 
-      INFO:线程标志9停止结束
-      2022-11-30 17:29:11 下午 [Thread: Thread-11] 
-      INFO:线程标志10即将停止10s
-      2022-11-30 17:29:21 下午 [Thread: Thread-11] 
+      2022-12-01 10:20:25 上午 [Thread: Thread-8] 
+      INFO:线程标志7即将停止5s
+       
       */
       ```
-
       
-
+      
+      
     - 非公平锁：当线程要获取锁时，**先通过两次CAS操作去抢锁**，如果没抢到，当前线程**再加入到队列**中等待唤醒
-
+      **注意这个逻辑，所以其实不好测试**
+    
   - **`ReentrantLock` 中相关的源代码**
     ReentrantLock默认采用非公平锁，考虑获得更好的性能，通过boolean决定是否用公平锁（传入true用公平锁）
-
+  
     ```java
     /** Synchronizer providing all implementation mechanics */
-    private final Sync sync;
+  private final Sync sync;
     public ReentrantLock() {
-        // 默认非公平锁
+      // 默认非公平锁
         sync = new NonfairSync();
-    }
+  }
     public ReentrantLock(boolean fair) {
         sync = fair ? new FairSync() : new NonfairSync();
-    } 
+  } 
     ```
-
+  
     ReentrantLock中公平锁的lock方法
     
-
+    ```java
+    static final class FairSync extends Sync {
+        final void lock() {
+            acquire(1);
+        }
+        // AbstractQueuedSynchronizer.acquire(int arg)
+        public final void acquire(int arg) {
+            if (!tryAcquire(arg) &&
+                acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+                selfInterrupt();
+        }
+        protected final boolean tryAcquire(int acquires) {
+            final Thread current = Thread.currentThread();
+            int c = getState();
+            if (c == 0) {
+                // 1. 和非公平锁相比，这里多了一个判断：是否有线程在等待
+                if (!hasQueuedPredecessors() &&
+                    compareAndSetState(0, acquires)) {
+                    setExclusiveOwnerThread(current);
+                    return true;
+                }
+            }
+            else if (current == getExclusiveOwnerThread()) {
+                int nextc = c + acquires;
+                if (nextc < 0)
+                    throw new Error("Maximum lock count exceeded");
+                setState(nextc);
+                return true;
+            }
+            return false;
+        }
+    }
+    ```
+    
+    ReentrantLock中非公平锁的方法
+    
+    ```java
+    static final class NonfairSync extends Sync {
+        final void lock() {
+            // 2. 和公平锁相比，这里会直接先进行一次CAS，成功就返回了
+            if (compareAndSetState(0, 1))
+                setExclusiveOwnerThread(Thread.currentThread());
+            else
+                acquire(1);
+        }
+        // AbstractQueuedSynchronizer.acquire(int arg)
+        public final void acquire(int arg) {
+            if (!tryAcquire(arg) &&
+                acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+                selfInterrupt();
+        }
+        protected final boolean tryAcquire(int acquires) {
+            return nonfairTryAcquire(acquires);
+        }
+    }
+    /**
+     * Performs non-fair tryLock.  tryAcquire is implemented in
+     * subclasses, but both need nonfair try for trylock method.
+     */
+    final boolean nonfairTryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
+        int c = getState();
+        if (c == 0) {
+            // 这里没有对阻塞队列进行判断
+            if (compareAndSetState(0, acquires)) {
+                setExclusiveOwnerThread(current);
+                return true;
+            }
+        }
+        else if (current == getExclusiveOwnerThread()) {
+            int nextc = c + acquires;
+            if (nextc < 0) // overflow
+                throw new Error("Maximum lock count exceeded");
+            setState(nextc);
+            return true;
+        }
+        return false;
+    } 
+    ```
+    
+    **公平锁和非公平锁的两处不同:** 
+    
+    1. **非公平锁**在调用 **lock 后**，首先就会**调用 CAS 进行一次抢锁**，如果这个时候**恰巧锁没有被占用，那么直接就获取到锁返回**了。
+    2. **非公平锁**在 **CAS 失败**后，和公平锁一样都会进入到 **`tryAcquire`** 方法，在 `tryAcquire` 方法中，**如果发现锁这个时候被释放了（state == 0），非公平锁会直接 CAS 抢锁**，但是**公平锁会判断等待队列是否有线程处于等待状态**，如果有则不去抢锁，乖乖排到后面。
+    
+    **关键字：非公平锁，公平锁，CAS，等待队列**
+    也就是说，非公平锁有一次必须的CAS和(进入acquire)一次非必须的**CAS（锁已经释放则进行）**。而公平锁是直接进入acquire方法，其中先判断state 是否为0，非公平锁直接CAS，若失败则进入队列；而公平锁则会检测等待队列是否有线程处于等待
+    
+    > 相对来说，非公平锁会有更好的性能，因为它的吞吐量比较大。当然，非公平锁让获取锁的时间变得更加不确定，可能会导致在阻塞队列中的线程长期处于饥饿状态。
+    
+  - Share(共享)
+    多个线程同时执行，如Semaphore/CountDownLatch。Semaphore，CountDownLatch，CyclicBarrier，ReadWriteLock后面会讲
+    `ReentrantReadWriteLock` 可以看成是组合式，因为 **`ReentrantReadWriteLock` 也就是读写锁允许多个线程同时对某一资源进行读**。(时而独占，时而共享)
+  
+  不同的自定义同步器争用共享资源的方式也不同。**自定义同步器在实现时只需要实现共享资源 state 的获取与释放方式即可**，至于**具体线程等待队列的维护（如获取资源失败入队/唤醒出队等），AQS 已经在上层已经帮我们实现**好了。
+  
 - AQS底层使用了模板方法模式
   使用方式  
 
@@ -194,10 +279,11 @@ AQS 核心思想是，如果被请求的共享资源空闲，则将当前请求�
   >
   > 再以 `CountDownLatch` 以例，任务分为 N 个子线程去执行，state 也初始化为 N（注意 N 要与线程个数一致）。这 N 个子线程是并行执行的，每个子线程执行完后` countDown()` 一次，state 会 CAS(Compare and Swap) 减 1。等到所有子线程都执行完后(即 `state=0` )，会 `unpark()` 主调用线程，然后主调用线程就会从 `await()` 函数返回，继续后余动作。
   >
-  > 一般来说，自定义同步器要么是独占方法，要么是共享方式，他们也只需实现`tryAcquire-tryRelease`、`tryAcquireShared-tryReleaseShared`中的一种即可。但 AQS 也支持自定义同步器同时实现独占和共享两种方式，如`ReentrantReadWriteLock`。 
-
+  > 一般来说，自定义同步器要么是独占方法，要么是共享方式，他们也只需实现`tryAcquire-tryRelease`、`tryAcquireShared-tryReleaseShared`中的一种即可。但 AQS 也支持自定义同步器**同时实现独占和共享两种方式，如`ReentrantReadWriteLock`。** 
 
 # Semaphore
+
+
 
 # CountDownLatch
 
