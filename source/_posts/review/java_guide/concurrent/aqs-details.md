@@ -415,15 +415,15 @@ Process finished with exit code 0
 
     ```java
     java.lang.InterruptedException: sleep interrupted
-   	at java.lang.Thread.sleep(Native Method)
-   	at java.lang.Thread.sleep(Thread.java:340)
-   	at java.util.concurrent.TimeUnit.sleep(TimeUnit.java:386)
-   	at com.ly.SemaphoreExample2.lambda$main$0(SemaphoreExample2.java:45)
-   	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
-   	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
-   	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
-   	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
-   	at java.lang.Thread.run(Thread.java:748)
+      	at java.lang.Thread.sleep(Native Method)
+      	at java.lang.Thread.sleep(Thread.java:340)
+      	at java.util.concurrent.TimeUnit.sleep(TimeUnit.java:386)
+      	at com.ly.SemaphoreExample2.lambda$main$0(SemaphoreExample2.java:45)
+      	at java.util.concurrent.Executors$RunnableAdapter.call(Executors.java:511)
+      	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+      	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+      	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+      	at java.lang.Thread.run(Thread.java:748)
     ```
 
     解释最上面的例子：  
@@ -462,7 +462,99 @@ Semaphore有两种模式，**公平模式**和**非公平模式**
 
 > `Semaphore` 与 `CountDownLatch` 一样，也是共享锁的一种实现。它**默认构造 AQS 的 state 为 `permits`**。当执行任务的线程**数量超出 `permits`，那么多余的线程将会被放入阻塞队列 Park,并自旋判断 state 是否大于 0。只有当 state 大于 0 的时候，阻塞的线程才能继续执行**,此时先前执行任务的线程继续执行 `release()` 方法，**`release()` 方法使得 state 的变量会加 1，那么自旋的线程便会判断成功**。 如此，每次只有最多不超过 `permits` 数量的线程能自旋成功，便限制了执行任务线程的数量。
 
-# CountDownLatch
+# CountDownLatch(倒计时)
+
+- ```翻译：闭锁(倒计时锁) ```
+- 允许count个线程阻塞在一个地方，直至所有线程的任务都执行完毕
+- CountDownLatch是共享锁的一种实现（**我的理解是await的时候，其他线程可以执行，而不是lock，所以是"共享"**），默认构造AQS的state值为count。当线程使用countDown()方法时，其实是使用了tryReleaseShared方法以CAS操作来减少state，直至state为0
+- 当调用await()方法时，如果state不为0，那就证明任务还没有执行完毕,await()方法会一直阻塞，即await()方法之后的语句不会被执行。**之后**CountDownLatch会自旋CAS判断state==0，如果state == 0就会释放所有等待线程，await()方法之后的语句得到执行
+
+## CountDownLatch的两种典型用法
+
+1. 某线程在开始运行前等待n个线程执行完毕
+
+   > 将 `CountDownLatch` 的计数器初始化为 n （**`new CountDownLatch(n)`**），每**当一个任务线程执行完毕**，就将计数器减 1 （**`countdownlatch.countDown()`**），当计数器的值**变为 0** 时，在 **`CountDownLatch 上 await()` 的线程就会被唤醒**。一个典型应用场景就是启动一个服务时，主线程需要等待多个组件加载完毕，之后再继续执行。
+
+2. 实现多个线程开始执行任务的**最大并行性**
+   **为什么是最大呢，我觉得是因为即使线程已经start，但是不一定就全部启动了，有可能cpu调度并没有真正启动它**（概率极小）
+
+   > 注意是并行性，不是并发，强调的是多个线程在某一时刻同时开始执行。类似于赛跑，将多个线程放到起点，等待发令枪响，然后同时开跑。做法是初始化一个共享的 `CountDownLatch` 对象，将其计数器初始化为 1 （`new CountDownLatch(1)`），多个线程在开始执行任务前首先 `coundownlatch.await()`，当主线程调用 `countDown()` 时，计数器变为 0，多个线程同时被唤醒。
+
+CountDownLatch使用示例  
+
+300个线程，550个请求（及count = 550）。启动线程后，主线程阻塞。当所有请求都countDown，主线程恢复运行
+
+```java
+/**
+ *
+ * @author SnailClimb
+ * @date 2018年10月1日
+ * @Description: CountDownLatch 使用方法示例
+ */
+public class CountDownLatchExample1 {
+  // 请求的数量
+  private static final int threadCount = 550;
+
+  public static void main(String[] args) throws InterruptedException {
+    // 创建一个具有固定线程数量的线程池对象（如果这里线程池的线程数量给太少的话你会发现执行的很慢）
+    ExecutorService threadPool = Executors.newFixedThreadPool(300);
+    final CountDownLatch countDownLatch = new CountDownLatch(threadCount);
+    for (int i = 0; i < threadCount; i++) {
+      final int threadnum = i;
+      threadPool.execute(() -> {// Lambda 表达式的运用
+        try {
+          test(threadnum);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } finally {
+          countDownLatch.countDown();// 表示一个请求已经被完成
+        }
+
+      });
+    }
+    countDownLatch.await();
+    threadPool.shutdown();
+    System.out.println("finish");
+  }
+
+  public static void test(int threadnum) throws InterruptedException {
+    Thread.sleep(1000);// 模拟请求的耗时操作
+    System.out.println("threadnum:" + threadnum);
+    Thread.sleep(1000);// 模拟请求的耗时操作
+  }
+} 
+```
+
+- 与CountDownLatch的第一次交互是主线程等待其他线程
+
+- 主线程必须在启动其他线程后立即调用CountDownLatch.await()方法，这样主线程的操作就会在这个方法阻塞，直到其他线程完成各自任务
+
+- 其他N个线程必须引用闭锁对象，因为他们需要通知CountDownLatch对象 --已经完成各自任务（通过countDown()），每调用一次该方法count值减1
+
+- 当count值为0时，主线程就能通过await()方法恢复执行自己的任务
+
+- 如果使用不当会造成死锁（count始终不为0），导致一直等待
+
+  ```java
+  for (int i = 0; i < threadCount-1; i++) {
+  .......
+  }
+  ```
+
+## CountDownLatch 的不足
+
+**`CountDownLatch` 是一次性的**，计数器的值只能在构造方法中初始化一次，之后没有任何机制再次对其设置值，当 `CountDownLatch` **使用完毕后，它不能再次被使用**。
+
+## CountDownLatch 相常见面试题
+
+- `CountDownLatch` 怎么用？应用场景是什么？
+- `CountDownLatch` 和 `CyclicBarrier` 的不同之处？
+- `CountDownLatch` 类中主要的方法？
 
 # CyclicBarrier
+
+- CyclicBarrier和CountDownLatch类似，可以实现线程间的技术等待，主要应用场景和CountDownLatch类似，但更复杂强大
+- CountDownLatch基于AQS，而CycliBarrier基于ReentrantLock（ReentrantLock属于AQS同步器）和Condition
+- `CyclicBarrier` 的字面意思是可循环使用（Cyclic）的屏障（Barrier）。它要做的事情是：让**一组线程(中的一个)到达一个屏障（也可以叫同步点）时**被阻塞，直到**最后一个线程到达屏障**时，**屏障才会开门**，所有被屏障拦截的线程才会继续干活。
 
