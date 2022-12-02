@@ -557,4 +557,148 @@ public class CountDownLatchExample1 {
 - CyclicBarrier和CountDownLatch类似，可以实现线程间的技术等待，主要应用场景和CountDownLatch类似，但更复杂强大
 - CountDownLatch基于AQS，而CycliBarrier基于ReentrantLock（ReentrantLock属于AQS同步器）和Condition
 - `CyclicBarrier` 的字面意思是可循环使用（Cyclic）的屏障（Barrier）。它要做的事情是：让**一组线程(中的一个)到达一个屏障（也可以叫同步点）时**被阻塞，直到**最后一个线程到达屏障**时，**屏障才会开门**，所有被屏障拦截的线程才会继续干活。
+- `CyclicBarrier` 默认的构造方法是 `CyclicBarrier(int parties)`，其参数表示屏障拦截的线程数量，每个线程调用 `await()` 方法**告诉 `CyclicBarrier` 我已经到达了屏障，然后当前线程被阻塞**。
+
+```java
+/**
+ *
+ * @author Snailclimb
+ * @date 2018年10月1日
+ * @Description: 测试 CyclicBarrier 类中带参数的 await() 方法
+ */
+public class CyclicBarrierExample2 {
+  // 请求的数量
+  private static final int threadCount = 550;
+  // 需要同步的线程数量
+  private static final CyclicBarrier cyclicBarrier = new CyclicBarrier(5);
+
+  public static void main(String[] args) throws InterruptedException {
+    // 创建线程池
+    ExecutorService threadPool = Executors.newFixedThreadPool(10);
+
+    for (int i = 0; i < threadCount; i++) {
+      final int threadNum = i;
+      Thread.sleep(1000);
+      threadPool.execute(() -> {
+        try {
+          test(threadNum);
+        } catch (InterruptedException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } catch (BrokenBarrierException e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        }
+      });
+    }
+    threadPool.shutdown();
+  }
+
+  public static void test(int threadnum) throws InterruptedException, BrokenBarrierException {
+    System.out.println("threadnum:" + threadnum + "is ready");
+    try {
+      /**等待60秒，保证子线程完全执行结束*/
+      //如果等待的时间，超过了60秒，那么就会抛出异常，而且还会进行重置(变为0个线程再等待)
+      cyclicBarrier.await(60, TimeUnit.SECONDS);
+      //最后一个(第5个到达后，count会重置为0)
+    } catch (Exception e) {
+      System.out.println("-----CyclicBarrierException------");
+    }
+    System.out.println("threadnum:" + threadnum + "is finish");
+  }
+
+}
+/* 结果
+ threadnum:0is ready
+threadnum:1is ready
+threadnum:2is ready
+threadnum:3is ready
+threadnum:4is ready
+threadnum:4is finish
+threadnum:0is finish
+threadnum:1is finish
+threadnum:2is finish
+threadnum:3is finish
+threadnum:5is ready
+threadnum:6is ready
+threadnum:7is ready
+threadnum:8is ready
+threadnum:9is ready
+threadnum:9is finish
+threadnum:5is finish
+threadnum:8is finish
+threadnum:7is finish
+threadnum:6is finish
+...... 
+*/
+```
+
+在看一个例子：
+
+```java
+public class BarrierTest1 {
+    public static void main(String[] args) throws InterruptedException, TimeoutException, BrokenBarrierException {
+
+        CyclicBarrier cyclicBarrier = new CyclicBarrier(3);
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        executorService.submit(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                cyclicBarrier.await( );
+                System.out.println("数量11===="+cyclicBarrier.getNumberWaiting());
+                System.out.println("111");
+            } catch (Exception e) {
+                System.out.println("数量异常1111==="+cyclicBarrier.getNumberWaiting());
+                // e.printStackTrace();
+                System.out.println("报错1");
+            }
+
+        });
+        executorService.submit(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                System.out.println("数量2222===="+cyclicBarrier.getNumberWaiting());
+                cyclicBarrier.await(111,TimeUnit.SECONDS);
+                System.out.println("222");
+            } catch (Exception e) {
+                System.out.println("数量异常2222===="+cyclicBarrier.getNumberWaiting());
+                System.out.println("报错2");
+            }
+        });
+        executorService.submit(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            try {
+                System.out.println("数量33 await前===="+cyclicBarrier.getNumberWaiting());
+                cyclicBarrier.await();
+                System.out.println("数量33 await后===="+cyclicBarrier.getNumberWaiting());
+                System.out.println("333");
+            } catch (Exception e) {
+                System.out.println("数量异常333===="+cyclicBarrier.getNumberWaiting());
+                System.out.println("报错3");
+            }
+        });
+    }
+}
+/*
+ 数量2222====1
+数量33 await前====2
+数量33 await后====0
+333
+数量11====0
+111
+222
+*/
+```
 
