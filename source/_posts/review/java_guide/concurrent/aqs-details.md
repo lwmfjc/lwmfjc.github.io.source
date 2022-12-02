@@ -578,7 +578,7 @@ public class CyclicBarrierExample2 {
 
     for (int i = 0; i < threadCount; i++) {
       final int threadNum = i;
-      Thread.sleep(1000);
+      Thread.sleep(1000); ///注意这行
       threadPool.execute(() -> {
         try {
           test(threadNum);
@@ -630,6 +630,71 @@ threadnum:8is finish
 threadnum:7is finish
 threadnum:6is finish
 ...... 
+*/
+
+//注意这里，如果把Thread.sleep(1000)去掉，顺序(情况之一)为：
+//也就是说，上面的代码，导致的现象：所有的ready都挤在一起了(而且不分先后，随时执行，而某5个的finish，会等待那5个的ready执行完才会执行，且finish没有顺序的)
+/*threadnum:0is ready
+threadnum:5is ready
+threadnum:9is ready
+threadnum:7is ready
+threadnum:3is ready
+threadnum:8is ready
+threadnum:4is ready
+threadnum:2is ready
+threadnum:1is ready
+threadnum:6is ready
+------当线程数达到之后，优先执行------
+threadnum:3is finish
+threadnum:10is ready
+------当线程数达到之后，优先执行------
+threadnum:10is finish
+threadnum:11is ready
+threadnum:0is finish
+threadnum:5is finish
+threadnum:4is finish
+threadnum:1is finish
+threadnum:8is finish
+threadnum:12is ready
+threadnum:9is finish
+threadnum:7is finish
+threadnum:16is ready
+threadnum:15is ready
+------当线程数达到之后，优先执行------
+threadnum:14is ready
+threadnum:6is finish
+threadnum:13is ready
+threadnum:2is finish
+threadnum:19is ready
+threadnum:16is finish
+threadnum:12is finish
+threadnum:18is ready
+threadnum:11is finish
+threadnum:23is ready
+------当线程数达到之后，优先执行------
+threadnum:17is ready
+threadnum:19is finish
+threadnum:15is finish
+threadnum:25is ready
+threadnum:24is ready
+threadnum:18is finish
+threadnum:26is ready
+threadnum:13is finish
+threadnum:14is finish
+threadnum:23is finish
+threadnum:22is ready
+threadnum:21is ready
+threadnum:20is ready
+------当线程数达到之后，优先执行------
+threadnum:29is ready
+threadnum:28is ready
+threadnum:27is ready
+threadnum:22is finish
+threadnum:24is finish
+threadnum:25is finish
+threadnum:32is ready
+.....
+
 */
 ```
 
@@ -701,4 +766,10 @@ public class BarrierTest1 {
 222
 */
 ```
+
+# CyclicBarrier源码分析
+
+# CyclicBarrier和CountDownLatch区别
+
+# ReentrantLock和ReentrantReadWriteLock
 
