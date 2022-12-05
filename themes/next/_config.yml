@@ -250,11 +250,22 @@ post_meta:
 # Post wordcount display settings
 # Dependencies: https://github.com/theme-next/hexo-symbols-count-time
 symbols_count_time:
-  separated_meta: true
-  item_text_post: true
-  item_text_total: false
+  # 文章字数
+  symbols: true
+  # 阅读时长
+  time: true
+  # 总文章字数
+  total_symbols: true
+  # 阅读总时长
+  total_time: true
+  # 是否排除代码统计
+  exclude_codeblock: false
+  # 平均字长 即将多少个字符统计为1个字数
   awl: 2
-  wpm: 300
+  # 每分钟的字数 阅读速度
+  wpm: 200
+  # 统计单位 这里是分钟
+  suffix: "mins."
 # Use icon instead of the symbol # to indicate the tag at the bottom of the post
 tag_icon: false
 
