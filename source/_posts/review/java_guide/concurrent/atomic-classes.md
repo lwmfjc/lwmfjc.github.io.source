@@ -151,7 +151,96 @@ updated: 2022-12-05 09:24:36
 # 基本类型原子类
 
 - 使用原子方式更新基本类型：AtomicInteger 整型原子类，AtomicLong 长整型原子类 ，AtomicBoolean 布尔型原子类，下文以AtomicInteger为例子来介绍
-- 
+  常用方法：  
+
+  ```java
+  public final int get() //获取当前的值
+  public final int getAndSet(int newValue)//获取当前的值，并设置新的值
+  public final int getAndIncrement()//获取当前的值，并自增
+  public final int getAndDecrement() //获取当前的值，并自减
+  public final int getAndAdd(int delta) //获取当前的值，并加上预期的值
+  boolean compareAndSet(int expect, int update) //如果输入的数值等于预期值，则以原子方式将该值设置为输入值（update）
+  public final void lazySet(int newValue)//最终设置为newValue,使用 lazySet 设置之后可能导致其他线程在之后的一小段时间内还是可以读到旧的值。
+  ```
+
+  常见方法使用  
+
+  ```java
+  import java.util.concurrent.atomic.AtomicInteger;
+  
+  public class AtomicIntegerTest {
+  
+  	public static void main(String[] args) {
+  		// TODO Auto-generated method stub
+  		int temvalue = 0;
+  		AtomicInteger i = new AtomicInteger(0);
+  		temvalue = i.getAndSet(3);
+  		System.out.println("temvalue:" + temvalue + ";  i:" + i);//temvalue:0;  i:3
+  		temvalue = i.getAndIncrement();
+  		System.out.println("temvalue:" + temvalue + ";  i:" + i);//temvalue:3;  i:4
+  		temvalue = i.getAndAdd(5);
+  		System.out.println("temvalue:" + temvalue + ";  i:" + i);//temvalue:4;  i:9
+  	}
+  
+  } 
+  ```
+
+- 基本数据类型原子类的优势
+
+  - 多线程环境不使用原子类保证线程安全（基本数据类型）
+
+    ```java
+    class Test {
+            private volatile int count = 0;
+            //若要线程安全执行执行count++，需要加锁
+            public synchronized void increment() {
+                      count++;
+            }
+    
+            public int getCount() {
+                      return count;
+            }
+    } 
+    ```
+
+  - 多线程环境使用原子类保证线程安全(基本数据类型)  
+
+    ```java
+    class Test2 {
+            private AtomicInteger count = new AtomicInteger();
+        
+    	    //使用AtomicInteger之后，不需要加锁，也可以实现线程安全。
+            public void increment() {
+                      count.incrementAndGet();
+            }    
+            public int getCount() {
+                    return count.get();
+            }
+    } 
+    ```
+
+  - AtomicInteger线程安全原理简单分析
+    部分源码：  
+
+    ```java
+    / setup to use Unsafe.compareAndSwapInt for updates（更新操作时提供“比较并替换”的作用）
+        private static final Unsafe unsafe = Unsafe.getUnsafe();
+        private static final long valueOffset;
+    
+        static {
+            try {
+                valueOffset = unsafe.objectFieldOffset
+                    (AtomicInteger.class.getDeclaredField("value"));
+            } catch (Exception ex) { throw new Error(ex); }
+        }
+    
+        private volatile int value; 
+    ```
+
+    1. AtomicInteger类主要利用CAS（compare and swap) + volatile 和 native方法来保证原子操作，从而避免synchronized高开销，提高执行效率
+    2. CAS的原理是拿期望的值和原本的值做比较，如果相同则更新成新值
+       UnSafe类的objectFieldOffset()方法是一个本地方法，这个方法用来拿到**"原来的值"的内存地址**
+    3. value是一个volatile变量，在内存中可见，因此JVM可以保证任何时刻任何线程总能拿到该变量的最新值
 
 # 数组类型原子类
 
