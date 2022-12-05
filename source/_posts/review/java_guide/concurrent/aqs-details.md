@@ -769,6 +769,9 @@ public class BarrierTest1 {
 
 # CyclicBarrier源码分析
 
+- 当调用CyclicBarrier对象调用await() 方法时，实际上调用的是dowait(false,0L )方法
+- 
+
 # CyclicBarrier和CountDownLatch区别
 
 # ReentrantLock和ReentrantReadWriteLock
