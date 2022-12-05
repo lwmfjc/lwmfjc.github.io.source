@@ -11,7 +11,7 @@ date: 2022-12-05 09:24:36
 updated: 2022-12-05 09:24:36
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide
+> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者! 
 
 # 基本类型原子类
 

@@ -11,7 +11,7 @@ date: 2022-11-29 16:58:59
 updated: 2022-11-29 16:58:59
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide
+> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
 JDK提供的容器，大部分在java.util.concurrent包中
 

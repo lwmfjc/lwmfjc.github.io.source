@@ -12,7 +12,7 @@ updated: 2022-10-10 10:39:01
 
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide
+> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
 ### 什么是序列化？什么是反序列化
 

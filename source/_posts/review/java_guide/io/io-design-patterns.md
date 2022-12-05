@@ -12,7 +12,7 @@ updated: 2022-10-25 11:40:53
 
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide
+> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
 ## 装饰器模式
 
