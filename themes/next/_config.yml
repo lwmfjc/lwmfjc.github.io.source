@@ -249,11 +249,12 @@ post_meta:
 
 # Post wordcount display settings
 # Dependencies: https://github.com/theme-next/hexo-symbols-count-time
-# symbols_count_time:
-#  separated_meta: true
-#  item_text_post: true
-#  item_text_total: true
-
+symbols_count_time:
+  separated_meta: true
+  item_text_post: true
+  item_text_total: false
+  awl: 4
+  wpm: 200
 # Use icon instead of the symbol # to indicate the tag at the bottom of the post
 tag_icon: false
 
@@ -362,7 +363,7 @@ codeblock:
     # Show text copy result.
     show_result: true
     # Available values: default | flat | mac
-    style: 
+    style:
 
 back2top:
   enable: true
