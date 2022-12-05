@@ -634,6 +634,7 @@ threadnum:6is finish
 
 //注意这里，如果把Thread.sleep(1000)去掉，顺序(情况之一)为：
 //也就是说，上面的代码，导致的现象：所有的ready都挤在一起了(而且不分先后，随时执行，而某5个的finish，会等待那5个的ready执行完才会执行，且finish没有顺序的)
+//★如上，ready也是没有顺序的
 /*threadnum:0is ready
 threadnum:5is ready
 threadnum:9is ready
@@ -769,10 +770,123 @@ public class BarrierTest1 {
 
 # CyclicBarrier源码分析
 
-- 当调用CyclicBarrier对象调用await() 方法时，实际上调用的是dowait(false,0L )方法
-- 
+- 当调用CyclicBarrier对象调用await() 方法时，实际上调用的是dowait(false,0L )方法【主要用到false】
+
+  > `await()` 方法就像树立起一个栅栏的行为一样，将线程挡住了，当拦住的线程数量达到 `parties` 的值时，栅栏才会打开，线程才得以通过执行。
+
+  ```java
+  public int await() throws InterruptedException, BrokenBarrierException {
+    try {
+      	return dowait(false, 0L);
+    } catch (TimeoutException toe) {
+     	 throw new Error(toe); // cannot happen
+    }
+  } 
+  ```
+
+- dowait(false,0L)方法
+
+  ```java
+     // 当线程数量或者请求数量达到 count 时 await 之后的方法才会被执行。上面的示例中 count 的值就为 5。
+      private int count;
+      /**
+       * Main barrier code, covering the various policies.
+       */
+      private int dowait(boolean timed, long nanos)
+          throws InterruptedException, BrokenBarrierException,
+                 TimeoutException {
+          final ReentrantLock lock = this.lock;
+          // 锁住
+          lock.lock();
+          try {
+              final Generation g = generation;
+  
+              if (g.broken)
+                  throw new BrokenBarrierException();
+  
+              // 如果线程中断了，抛出异常
+              if (Thread.interrupted()) {
+                  breakBarrier();
+                  throw new InterruptedException();
+              }
+              // cout减1  //★前面锁住了，所以不需要CAS
+              int index = --count;
+              //★★ 当 count 数量减为 0 之后说明最后一个线程已经到达栅栏了，也就是达到了可以执行await 方法之后的条件
+              if (index == 0) {  // tripped
+                  boolean ranAction = false;
+                  try {
+                      final Runnable command = barrierCommand;
+                      if (command != null)
+                          command.run();
+                      ranAction = true;
+                      // 将 count 重置为 parties 属性的初始化值
+                      // 唤醒之前等待的线程
+                      // 下一波执行开始
+                      nextGeneration();
+                      return 0;
+                  } finally {
+                      if (!ranAction)
+                          breakBarrier();
+                  }
+              }
+  
+              // loop until tripped, broken, interrupted, or timed out
+              for (;;) {
+                  try {
+                      if (!timed)
+                          trip.await();
+                      else if (nanos > 0L)
+                          nanos = trip.awaitNanos(nanos);
+                  } catch (InterruptedException ie) {
+                      if (g == generation && ! g.broken) {
+                          breakBarrier();
+                          throw ie;
+                      } else {
+                          // We're about to finish waiting even if we had not
+                          // been interrupted, so this interrupt is deemed to
+                          // "belong" to subsequent execution.
+                          Thread.currentThread().interrupt();
+                      }
+                  }
+  
+                  if (g.broken)
+                      throw new BrokenBarrierException();
+  
+                  if (g != generation)
+                      return index;
+  
+                  if (timed && nanos <= 0L) {
+                      breakBarrier();
+                      throw new TimeoutException();
+                  }
+              }
+          } finally {
+              lock.unlock();
+          }
+      } 
+  ```
+
+  > 总结：`CyclicBarrier` 内部通过一个 count 变量作为计数器，count 的初始值为 parties 属性的初始化值，每当一个线程到了栅栏这里了，那么就将计数器减一。如果 count 值为 0 了，表示这是这一代最后一个线程到达栅栏，就尝试执行我们构造方法中输入的任务
+  >
+  > ------
+  >
+  > 著作权归所有 原文链接：https://javaguide.cn/java/concurrent/aqs.html
 
 # CyclicBarrier和CountDownLatch区别
 
+1. `CountDownLatch` 是计数器，只能使用一次，而 `CyclicBarrier` 的计数器提供 `reset` 功能，可以多次使用。
+
+2. 从jdk作者设计的目的来看，javadoc是这么描述他们的
+
+   > CountDownLatch: A synchronization aid that allows one or more threads to wait until a set of operations being performed in other threads completes.(CountDownLatch: 一个或者多个线程，等待其他多个线程完成某件事情之后才能执行；) CyclicBarrier : A synchronization aid that allows a set of threads to all wait for each other to reach a common barrier point.(CyclicBarrier : 多个线程互相等待，直到到达同一个同步点，再继续一起执行。)
+   >
+   > **需要结合上面的代码示例，CyclicBarrier示例是这个意思**
+
+3. 对于 `CountDownLatch` 来说，重点是“一个线程（多个线程）等待”，而其他的 N 个线程在完成“某件事情”之后，可以终止，也可以等待。【强调的是某个(组)等另一组线程完成】  
+   而对于 `CyclicBarrier`，重点是多个线程，在任意一个线程没有完成，所有的线程都必须等待。【强调的是互相】
+
+4. `CountDownLatch` 是**计数器**，线程完成一个记录一个，只不过计数不是递增而是递减，而 `CyclicBarrier` 更像是一个**阀门**，需要所有线程都到达，阀门才能打开，然后继续执行。
+
 # ReentrantLock和ReentrantReadWriteLock
 
+读写锁 `ReentrantReadWriteLock` 可以保证**多个线程可以同时读**，所以在**读操作远大于写操作的时候**，读写锁就非常有用了。
