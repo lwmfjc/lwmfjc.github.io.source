@@ -256,7 +256,7 @@ static CompletableFuture<Void> runAsync(Runnable runnable, Executor executor);
            .thenApply(s -> s + "world!").thenApply(s -> s + "nice!").thenRun(() -> System.out.println("hello!"));//hello! 
    ```
 
-   
+3. 
 
 ## 异步处理
 
