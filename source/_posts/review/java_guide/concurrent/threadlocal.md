@@ -516,6 +516,8 @@ public class InheritableThreadLocalDemo {
 
 # ThreadLocal项目中使用实战
 
+**这里涉及到requestId，没用过，不是很懂，略过**
+
 ## ThreadLocal使用场景
 
 ## Feign远程调用解决方案
