@@ -126,6 +126,32 @@ ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**
 
 # GC之后key是否为null
 
+> WeakReference的使用 
+>
+> ```java  
+> WeakReference<Car> weakCar = new WeakReference(Car)(car); 
+> weakCar.get();  //如果值为null表示已经被回收了
+> ```
+
+问题：  ThreadLocal的key为弱引用，那么在ThreadLocal.get()的时候，发生GC之后，key是否为null
+
+- Java的四种引用类型
+  - 强引用：通常情况new出来的为强引用，只要强引用存在，垃圾回收器**永远不会**回收被引用的对象（即使内存不足）
+  - 软引用：使用SoftReference修饰的对象称软引用，软引用指向的对象在**内存要溢出的时候**被回收
+  - 弱引用：使用WeakReference修饰的对象称为弱引用，只要发生垃圾回收，如果这个对象只被弱引用指向，那么就会被回收
+  - 虚引用：虚引用是最弱的引用，用PhantomReference定义。唯一的作用就是**用队列接收对象即将死亡的通知**
+
+使用反射方式查看GC后ThreadLocal中的数据情况
+
+```java
+/*
+t.join()方法阻塞调用此方法的线程(calling thread)进入 TIMED_WAITING 状态，直到线程t完成，此线程再继续
+*/
+
+```
+
+
+
 # ThreadLocal.set()方法源码详解
 
 # ThreadLocalMap Hash算法
