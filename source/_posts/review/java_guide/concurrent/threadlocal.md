@@ -213,22 +213,101 @@ threadLocal.set(s);
 
 使用弱引用+垃圾回收
 
-垃圾回收前，ThreadLoal是存在强引用的  
+**如上，垃圾回收前，ThreadLoal是存在强引用的，因此如果如上修改代码，则key不为null**  
+
+**当不存在强引用时，key会被回收**，即出现**value没被回收，key被回收，导致key永远存在，内存泄漏**
+
 ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/5.deed12c8.png)
 
-**只有当强引用不存在**
+
 
 # ThreadLocal.set()方法源码详解
 
+如图所示  
+![image-20221206134817533](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221206134817533.png)
+
+ThreadLocal中的set()方法原理如上，先取出线程Thread中的threadLocals，判断是否存在，然后使用ThreadLocal中的set方法进行数据处理
+
+```java
+public void set(T value) {
+    Thread t = Thread.currentThread();
+    ThreadLocalMap map = getMap(t);
+    if (map != null)
+        map.set(this, value);
+    else
+        createMap(t, value);
+}
+
+void createMap(Thread t, T firstValue) {
+    t.threadLocals = new ThreadLocalMap(this, firstValue);
+} 
+```
+
 # ThreadLocalMap Hash算法
+
+ThreadLocalMap实现了自己的hash算法来解决**散列表数组冲突**问题：  
+
+```java
+//i为当前key在散列表中对应的数组下标位置
+int i = key.threadLocalHashCode & (len-1);
+```
+
+threadLocalHashCode值的计算，ThreadLocal中有一个**属性为HASH_INCREMENT = 0x61c88647**  
+
+0x61c88647，又称为**斐波那契数**也叫**黄金分割数**，hash增量为这个数，好处是**hash 分布非常均匀**
+
+```java
+public class ThreadLocal<T> {
+    private final int threadLocalHashCode = nextHashCode();
+
+    private static AtomicInteger nextHashCode = new AtomicInteger();
+
+    private static final int HASH_INCREMENT = 0x61c88647;
+
+    //hashCode增加
+    private static int nextHashCode() {
+        return nextHashCode.getAndAdd(HASH_INCREMENT);
+    }
+
+    static class ThreadLocalMap {
+        ThreadLocalMap(ThreadLocal<?> firstKey, Object firstValue) {
+            table = new Entry[INITIAL_CAPACITY];
+            int i = firstKey.threadLocalHashCode & (INITIAL_CAPACITY - 1);
+
+            table[i] = new Entry(firstKey, firstValue);
+            size = 1;
+            setThreshold(INITIAL_CAPACITY);
+        }
+    }
+} 
+```
+
+例子如下，产生的哈希码分布十分均匀  
+![image-20221206135759498](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221206135759498.png)
+
+
+
+★★  说明，下面的所有示例图中，**绿色块Entry**代表为**正常数据**，**灰色块**代表Entry的**key为null**，已被垃圾回收。白色块代表Entry为null（或者说数组那个位置为null(没有指向)）
 
 # ThreadLocalMap Hash冲突
 
+- ThreadLocalMap 中使用**黄金分割数**作为**hash计算因子**，大大减少Hash冲突的概率
+- HashMap中解决冲突的方法，是在数组上构造一个**链表**结构，冲突的数据**挂载**到链表上，如果链表长度超过一定数量则会**转化为红黑树**
+- ThreadLocalMap中没有链表结构（使用**线性向后查找**）
+  - 如图
+    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/7.5b9136ff.png)
+  - 假设需要插入value = 27 的数据，hash后应该落入槽位4，而槽位已经有了Entry数据
+  - 此时**线性向后查找**，一直找到Entry为null的操作才会停止查找，将当前元素放入该槽位中
+  - 线性向后查找**迭代**中，会遇到**Entry不为null且key值相等**，以及**Entry中的key为null（图中Entry 为 2）**的情况，处理方式不同
+    - set过程中如果遇到了**key过期(key为null)的Entry数据**，实际上会进行一轮**探测式清理**操作
+
 # ThreadLocalMap.set() 详解
 
-# ThreadLocalMap过期key的探索
+ThreadLocalMap.set() 原理图解
 
-# ThreadLocalMap扩容机制
+
+
+# `ThreadLocalMap`过期 key 的探测式清理流程ThreadLocalMap扩容机制
 
 # ThreadLocalMap.get() 详解
 
