@@ -333,11 +333,186 @@ ThreadLocalMap.set() 原理图解
 
 # ThreadLocalMap扩容机制
 
+在`ThreadLocalMap.set()`方法的最后，如果执行完启发式清理工作后，未清理到任何数据，且当前散列数组中`Entry`的数量已经达到了**列表的扩容阈值`(len*2/3)`**，就开始执行`rehash()`逻辑：
+
+```java
+if (!cleanSomeSlots(i, sz) && sz >= threshold)
+    rehash();
+```
+
+rehash()的具体实现  
+
+```java
+private void rehash() {
+    expungeStaleEntries();
+
+    if (size >= threshold - threshold / 4)
+        resize();
+}
+
+private void expungeStaleEntries() {
+    Entry[] tab = table;
+    int len = tab.length;
+    for (int j = 0; j < len; j++) {
+        Entry e = tab[j];
+        if (e != null && e.get() == null)
+            expungeStaleEntry(j);
+    }
+} 
+```
+
+注意：  
+
+1. threshold ```[ˈθreʃhəʊld], 门槛```  = length * 2/3
+
+2. rehash之前进行一次容量判断( 是否 > threshold , 是则rehash)
+
+3. rehash时先进行expungeStaleEntries() （探索式清理，从table起始为止）
+
+   > 这里首先是会进行探测式清理工作，从`table`的起始位置往后清理，上面有分析清理的详细流程。清理完成之后，`table`中可能有一些`key`为`null`的`Entry`数据被清理掉，所以此时通过判断`size >= threshold - threshold / 4` 也就是`size >= threshold * 3/4` 来决定是否扩容。
+
+4. 清理后如果大于 threshold 的3/4 ，则进行扩容
+   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/24.ec7f7610.png)
+
+5. 具体的resize()方法
+   以oldTab .len = 8
+
+   1. 容后的`tab`的大小为`oldLen * 2` =16
+
+   2. 遍历老的散列表，重新计算`hash`位置，然后放到新的`tab`数组中，如果出现`hash`冲突则往后寻找最近的`entry`为`null`的槽位
+
+   3. 遍历完成之后，`oldTab`中所有的`entry`数据都已经放入到新的`tab`中了。重新计算`tab`下次扩容的**阈值**
+      代码如下
+
+      ```java
+      private void resize() {
+          Entry[] oldTab = table;
+          int oldLen = oldTab.length;
+          int newLen = oldLen * 2;
+          Entry[] newTab = new Entry[newLen];
+          int count = 0;
+      
+          for (int j = 0; j < oldLen; ++j) {
+              Entry e = oldTab[j];
+              if (e != null) {
+                  ThreadLocal<?> k = e.get();
+                  if (k == null) {
+                      e.value = null;
+                  } else {
+                      int h = k.threadLocalHashCode & (newLen - 1);
+                      while (newTab[h] != null)
+                          h = nextIndex(h, newLen);
+                      newTab[h] = e;
+                      count++;
+                  }
+              }
+          }
+      
+          setThreshold(newLen);
+          size = count;
+          table = newTab;
+      } 
+      ```
+
 # ThreadLocalMap.get() 详解
 
-# ThreadLocalMap过期key的启发式清理流程(略过)
+1.  通过查找`key`值计算出散列表中`slot`位置，然后该`slot`位置中的`Entry.key`和查找的`key`一致，则直接返回
+   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/26.ff0553de.png)
+
+2. `slot`位置中的`Entry.key`和要查找的`key`不一致，之后**清理**+**遍历**
+   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/27.9c78c2a2.png)
+
+   > 我们以`get(ThreadLocal1)`为例，通过`hash`计算后，正确的`slot`位置应该是 4，而`index=4`的槽位已经有了数据，且`key`值不等于`ThreadLocal1`，所以需要继续往后迭代查找。
+   >
+   > 迭代到`index=5`的数据时，此时`Entry.key=null`，触发一次探测式数据回收操作，执行`expungeStaleEntry()`方法，执行完后，`index 5,8`的数据都会被回收，而`index 6,7`的数据都会前移。`index 6,7`前移之后，继续从 `index=5` 往后迭代，于是就在 `index=5` 找到了`key`值相等的`Entry`数据，如下图所示：
+   > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/28.ea7d5196.png)
+
+3. `ThreadLocalMap.get()`源码详解
+
+   ```java
+   private Entry getEntry(ThreadLocal<?> key) {
+       int i = key.threadLocalHashCode & (table.length - 1);
+       Entry e = table[i];
+       if (e != null && e.get() == key)
+           return e;
+       else
+           return getEntryAfterMiss(key, i, e);
+   }
+   
+   private Entry getEntryAfterMiss(ThreadLocal<?> key, int i, Entry e) {
+       Entry[] tab = table;
+       int len = tab.length;
+   
+       while (e != null) {
+           ThreadLocal<?> k = e.get();
+           if (k == key)
+               return e;
+           if (k == null)
+               expungeStaleEntry(i);
+           else
+               i = nextIndex(i, len);
+           e = tab[i];
+       }
+       return null;
+   } 
+   ```
+
+   
+
+# ThreadLocalMap过期key的启发式清理流程(略过，跟移位运算符有关)
+
+> 上面多次提及到`ThreadLocalMap`过期key的两种清理方式：**探测式清理(expungeStaleEntry())**、**启发式清理(cleanSomeSlots())**
+>
+> 探测式清理是以当前`Entry` 往后清理，遇到值为`null`则结束清理，属于**线性探测清理**。
+>
+> 而启发式清理被作者定义为：**Heuristically scan some cells looking for stale entries**.
 
 # Inheritable ThreadLocal
+
+使用`ThreadLocal`的时候，在异步场景下是无法给子线程共享父线程中创建的线程副本数据的。JDK中存在InheritableThreadLocal类可以解决处理这个问题  
+
+> 原理： 子线程是通过在父线程中通过new Thread()方法创建子线程，Thread#init 方法在Thread的构造方法中被调用，**init**方法中拷贝父线程数据到子线程中  
+>
+> ```java
+> private void init(ThreadGroup g, Runnable target, String name,
+>                       long stackSize, AccessControlContext acc,
+>                       boolean inheritThreadLocals) {
+>     if (name == null) {
+>         throw new NullPointerException("name cannot be null");
+>     }
+> 
+>     if (inheritThreadLocals && parent.inheritableThreadLocals != null)
+>         this.inheritableThreadLocals =
+>             ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);
+>     this.stackSize = stackSize;
+>     tid = nextThreadID();
+> } 
+> ```
+
+```java
+public class InheritableThreadLocalDemo {
+    public static void main(String[] args) {
+        ThreadLocal<String> ThreadLocal = new ThreadLocal<>();
+        ThreadLocal<String> inheritableThreadLocal = new InheritableThreadLocal<>();
+        ThreadLocal.set("父类数据:threadLocal");
+        inheritableThreadLocal.set("父类数据:inheritableThreadLocal");
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                System.out.println("子线程获取父类ThreadLocal数据：" + ThreadLocal.get());
+                System.out.println("子线程获取父类inheritableThreadLocal数据：" + inheritableThreadLocal.get());
+            }
+        }).start();
+    }
+}
+/*结果
+子线程获取父类ThreadLocal数据：null
+子线程获取父类inheritableThreadLocal数据：父类数据:inheritableThreadLocal
+*/
+```
+
+但是如果不是直接new()，也就是实际中我们都是通过使用线程池来获取新线程的，那么可以使用阿里开源的一个组件解决这个问题 `TransmittableThreadLocal`
 
 # ThreadLocal项目中使用实战
 
