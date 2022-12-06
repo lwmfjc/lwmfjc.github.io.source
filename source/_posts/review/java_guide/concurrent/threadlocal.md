@@ -147,10 +147,76 @@ ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**
 /*
 t.join()方法阻塞调用此方法的线程(calling thread)进入 TIMED_WAITING 状态，直到线程t完成，此线程再继续
 */
+public class ThreadLocalDemo {
+
+    public static void main(String[] args) throws NoSuchFieldException, IllegalAccessException, InterruptedException {
+        Thread t = new Thread(()->test("abc",false));
+        t.start();
+        t.join();
+        System.out.println("--gc后--");
+        Thread t2 = new Thread(() -> test("def", true));
+        t2.start();
+        t2.join();
+    }
+
+    private static void test(String s,boolean isGC)  {
+        try {
+            new ThreadLocal<>().set(s);
+            if (isGC) {
+                System.gc();
+            }
+            Thread t = Thread.currentThread();
+            Class<? extends Thread> clz = t.getClass();
+            Field field = clz.getDeclaredField("threadLocals");
+            field.setAccessible(true);
+            Object ThreadLocalMap = field.get(t);
+            Class<?> tlmClass = ThreadLocalMap.getClass();
+            Field tableField = tlmClass.getDeclaredField("table");
+            tableField.setAccessible(true);
+            Object[] arr = (Object[]) tableField.get(ThreadLocalMap);
+            for (Object o : arr) {
+                if (o != null) {
+                    Class<?> entryClass = o.getClass();
+                    Field valueField = entryClass.getDeclaredField("value");
+                    Field referenceField = entryClass.getSuperclass().getSuperclass().getDeclaredField("referent");
+                    valueField.setAccessible(true);
+                    referenceField.setAccessible(true);
+                    System.out.println(String.format("弱引用key:%s,值:%s", referenceField.get(o), valueField.get(o)));
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+/* 结果如下
+弱引用key:java.lang.ThreadLocal@433619b6,值:abc
+弱引用key:java.lang.ThreadLocal@418a15e3,值:java.lang.ref.SoftReference@bf97a12
+--gc后--
+弱引用key:null,值:def 
+*/
 
 ```
 
+gc之后的图：  
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/3.a63c3de1.png)
+```new ThreadLocal<>().set(s);```  GC之后，key就会被回收，我们看到上面的debug中referent=null 
 
+如果这里修改代码，
+
+```
+ThreadLocal<Object> threadLocal=new ThreadLocal<>();
+threadLocal.set(s);
+```
+
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/4.c4285c13.png)
+
+使用弱引用+垃圾回收
+
+垃圾回收前，ThreadLoal是存在强引用的  
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/5.deed12c8.png)
+
+**只有当强引用不存在**
 
 # ThreadLocal.set()方法源码详解
 
