@@ -516,5 +516,9 @@ public class InheritableThreadLocalDemo {
 
 # ThreadLocal项目中使用实战
 
+## ThreadLocal使用场景
 
+## Feign远程调用解决方案
 
+## 线程池异步调用,requestId 传递
+## 使用MQ发送消息给第三方系统
