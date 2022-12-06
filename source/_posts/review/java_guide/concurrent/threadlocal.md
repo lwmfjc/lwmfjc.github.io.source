@@ -305,13 +305,37 @@ public class ThreadLocal<T> {
 
 ThreadLocalMap.set() 原理图解
 
+往ThreadLocalMap中set数据（新增或更新数据）分为好几种
 
+1. 通过**hash计算后**的槽位对应的**Entry数据为空**
+   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/9.3269651c.png)
+   直接将数据放到该槽位即可
 
-# `ThreadLocalMap`过期 key 的探测式清理流程ThreadLocalMap扩容机制
+2. 槽位数据不为空，**key值与当前ThreadLocal通过hash**计算获取的**key值一致**
+   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/10.706954d1.png)
+   直接更新该槽位的数据
+
+3. 槽位数据不为空，往后**遍历**过程中，在找到Entry为null的槽位之前，**没有遇到过期的Entry**
+   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/11.bb4e1504.png)
+   遍历散列数组的过程中，线性往后查找，如果找到Entry为null的槽位则将数据放入槽位中；或者往后遍历过程中遇到key值相等的数据则更新
+
+4. 槽位数据不为空，在找到Entry为null的槽位之前，遇到了过期的Entry，如下图
+   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/12.7f276023.png)
+   此时会执行replaceStableEntry()方法，该方法含义是**替换过期数据的逻辑**
+
+   > ... 以下省略，太复杂 
+
+   替换完成后也是进行过期元素清理工作，清理工作主要是有两个方法：`expungeStaleEntry()`和`cleanSomeSlots()`
+
+   **经过迭代处理后，有过`Hash`冲突数据的`Entry`位置会更靠近正确位置，这样的话，查询的时候 效率才会更高。**
+
+# `ThreadLocalMap`过期 key 的探测式清理流程(略过)
+
+# ThreadLocalMap扩容机制
 
 # ThreadLocalMap.get() 详解
 
-# ThreadLocalMap过期key的启发
+# ThreadLocalMap过期key的启发式清理流程(略过)
 
 # Inheritable ThreadLocal
 
