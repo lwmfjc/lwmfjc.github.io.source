@@ -12,7 +12,7 @@ updated: 2022-10-09 11:30:05
 
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+> 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
 - 形参&&实参
 

@@ -11,7 +11,7 @@ date: 2022-10-10 14:56:26
 updated: 2022-10-10 14:56:26
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+> 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
 ### 精度的丢失
 

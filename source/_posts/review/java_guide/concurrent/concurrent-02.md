@@ -12,7 +12,7 @@ updated: 2022-11-07 16:00:06
 
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+> 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
 ## JMM（JavaMemoryModel)
 

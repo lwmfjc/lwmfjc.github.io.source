@@ -11,7 +11,7 @@ date: 2022-11-30 14:48:01
 updated: 2022-12-05 09:18:01
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+> 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
 ```Semaphore  [ˈseməfɔː(r)]```
 

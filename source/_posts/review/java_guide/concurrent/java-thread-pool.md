@@ -11,7 +11,7 @@ date: 2022-11-23 14:40:41
 updated: 2022-11-29 14:40:41
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+> 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
 ## 一 使用线程池的好处
 

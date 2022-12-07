@@ -12,7 +12,7 @@ updated: 2022-10-19 17:26:07
 
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+> 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
 ## 集合判空
 
