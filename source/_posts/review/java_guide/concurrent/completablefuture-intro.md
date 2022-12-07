@@ -382,11 +382,83 @@ INFO:阻塞结束啦
 
    **其他区别暂时不知道**
 
-## 异步处理
+## 异常处理
 
+使用handle（） 方法来处理任务执行过程中可能出现的抛出异常的情况
 
+```java
+public <U> CompletableFuture<U> handle(
+    BiFunction<? super T, Throwable, ? extends U> fn) {
+    return uniHandleStage(null, fn);
+}
+
+public <U> CompletableFuture<U> handleAsync(
+    BiFunction<? super T, Throwable, ? extends U> fn) {
+    return uniHandleStage(defaultExecutor(), fn);
+}
+
+public <U> CompletableFuture<U> handleAsync(
+    BiFunction<? super T, Throwable, ? extends U> fn, Executor executor) {
+    return uniHandleStage(screenExecutor(executor), fn);
+} 
+```
+
+代码：  
+
+```java
+
+    public static void test() throws ExecutionException, InterruptedException {
+        CompletableFuture<String> future
+                = CompletableFuture.supplyAsync(() -> {
+            if (true) {
+                throw new RuntimeException("Computation error!");
+            }
+            return "hello!";
+        }).handle((res, ex) -> {
+            // res 代表返回的结果
+            // ex 的类型为 Throwable ，代表抛出的异常
+            return res != null ? res : ex.toString()+"world!";
+        });
+        String s = future.get();
+        log.info(s);
+
+    }
+/**
+2022-12-07 11:14:44 上午 [Thread: main] 
+INFO:java.util.concurrent.CompletionException: java.lang.RuntimeException: Computation error!world!
+*/
+```
+
+通过exceptionally处理异常  
+
+```java
+CompletableFuture<String> future
+        = CompletableFuture.supplyAsync(() -> {
+    if (true) {
+        throw new RuntimeException("Computation error!");
+    }
+    return "hello!";
+}).exceptionally(ex -> {
+    System.out.println(ex.toString());// CompletionException
+    return "world!";
+});
+assertEquals("world!", future.get()); 
+```
+
+让异步的结果直接就抛异常  
+
+```java
+CompletableFuture<String> completableFuture = new CompletableFuture<>();
+// ...
+completableFuture.completeExceptionally(
+  new RuntimeException("Calculation failed!"));
+// ...
+completableFuture.get(); // ExecutionException 
+```
 
 ## 组合CompletableFuture
+
+
 
 ## 并行运行多个CompletableFuture
 
