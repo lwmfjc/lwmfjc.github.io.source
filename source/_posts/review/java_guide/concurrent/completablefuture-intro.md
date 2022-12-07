@@ -458,9 +458,56 @@ completableFuture.get(); // ExecutionException
 
 ## 组合CompletableFuture
 
+使用thenCompose() 按顺序链接两个CompletableFuture对象  
 
+```java
+public <U> CompletableFuture<U> thenCompose(
+    Function<? super T, ? extends CompletionStage<U>> fn) {
+    return uniComposeStage(null, fn);
+}
+
+public <U> CompletableFuture<U> thenComposeAsync(
+    Function<? super T, ? extends CompletionStage<U>> fn) {
+    return uniComposeStage(defaultExecutor(), fn);
+}
+
+public <U> CompletableFuture<U> thenComposeAsync(
+    Function<? super T, ? extends CompletionStage<U>> fn,
+    Executor executor) {
+    return uniComposeStage(screenExecutor(executor), fn);
+} 
+```
+
+使用示例：  
+
+```java
+CompletableFuture<String> future
+        = CompletableFuture.supplyAsync(() -> "hello!")
+        .thenCompose(s -> CompletableFuture.supplyAsync(() -> s + "world!"));
+assertEquals("hello!world!", future.get()); 
+```
+
+> 在实际开发中，这个方法还是非常有用的。比如说，我们先要获取用户信息然后再用用户信息去做其他事情。
+
+和thenCompose()方法类似的还有thenCombine()方法，thenCombine()同样可以组合两个CompletableFuture对象
+
+```java
+CompletableFuture<String> completableFuture
+        = CompletableFuture.supplyAsync(() -> "hello!")
+        .thenCombine(CompletableFuture.supplyAsync(
+                () -> "world!"), (s1, s2) -> s1 + s2)
+        .thenCompose(s -> CompletableFuture.supplyAsync(() -> s + "nice!"));
+assertEquals("hello!world!nice!", completableFuture.get()); 
+```
+
+★★ thenCompose() 和 thenCombine()有什么区别呢
+
+- `thenCompose()` 可以两个 `CompletableFuture` 对象，并将前一个任务的返回结果作为下一个任务的参数，它们之间存在着先后顺序。
+- `thenCombine()` 会在两个任务都执行完成后，把两个任务的结果合并。两个任务是并行执行的，它们之间并没有先后依赖顺序。
 
 ## 并行运行多个CompletableFuture
+
+
 
 # 后记
 
