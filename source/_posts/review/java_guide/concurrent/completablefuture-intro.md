@@ -507,7 +507,65 @@ assertEquals("hello!world!nice!", completableFuture.get());
 
 ## 并行运行多个CompletableFuture
 
+通过CompletableFuture的allOf()这个静态方法并行运行多个CompletableFuture
+
+> 实际项目中，我们经常需要并行运行多个互不相关的任务，这些任务没有依赖关系
+
+比如读取处理6个文件，没有顺序依赖关系 但我们需要返回给用户的时候将这几个文件的处理结果统计整理，示例：  
+
+```java
+CompletableFuture<Void> task1 =
+  CompletableFuture.supplyAsync(()->{
+    //自定义业务操作
+  });
+......
+CompletableFuture<Void> task6 =
+  CompletableFuture.supplyAsync(()->{
+    //自定义业务操作
+  });
+......
+ CompletableFuture<Void> headerFuture=CompletableFuture.allOf(task1,.....,task6);
+
+  try {
+    headerFuture.join();
+  } catch (Exception ex) {
+    ......
+  }
+System.out.println("all done. "); 
+```
+
+**调用join()可以让程序等future1和future2都运行完后继续执行**
+
+```java
+CompletableFuture<Void> completableFuture = CompletableFuture.allOf(future1, future2);
+completableFuture.join();
+assertTrue(completableFuture.isDone());
+System.out.println("all futures done..."); 
+/**---
+future1 done...
+future2 done...
+all futures done...
+*/
+```
+
+anyOf则其中一个执行完就立马返回
+
+```java
+CompletableFuture<Object> f = CompletableFuture.anyOf(future1, future2);
+System.out.println(f.get());
+/*
+future2 done...
+efg
+*/ //或
+/*
+future1 done...
+abc
+*/
+```
+
 
 
 # 后记
 
+京东的aysncTool框架  
+https://gitee.com/jd-platform-opensource/asyncTool#%E5%B9%B6%E8%A1%8C%E5%9C%BA%E6%99%AF%E4%B9%8B%E6%A0%B8%E5%BF%83%E4%BB%BB%E6%84%8F%E7%BC%96%E6%8E%92
