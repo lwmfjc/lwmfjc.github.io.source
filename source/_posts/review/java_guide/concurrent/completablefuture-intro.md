@@ -73,8 +73,31 @@ CompletionStage<T> 接口中的方法比较多，CompoletableFuture的函数式�
    获取异步结果，使用get() ，调用get()方法的线程会阻塞 直到CompletableFuture完成运算：
    ```rpcResponse = completableFuture.get();```
 
+   ```java
+public class CompletableFutureTest {
+       public static void main(String[] args) throws ExecutionException, InterruptedException {
+           /*CompletableFuture<Object> resultFuture=new CompletableFuture<>();
+           resultFuture.complete("hello world");
+           System.out.println(resultFuture.get());*/
+           CompletableFuture<String> stringCompletableFuture = CompletableFuture.supplyAsync(() -> {
+               try {
+                   TimeUnit.SECONDS.sleep(3);
+               } catch (InterruptedException e) {
+                e.printStackTrace();
+               }
+               return "hello,world!";
+           });
+           System.out.println("被阻塞啦----");
+           String s = stringCompletableFuture.get();
+           System.out.println("结果---"+s); 
+       }
+   }
+   ```
+   
+   
+   
    如果已经知道结果：
-
+   
    ```java
    CompletableFuture<String> future = CompletableFuture.completedFuture("hello!");
    assertEquals("hello!", future.get()); 
@@ -83,12 +106,13 @@ CompletionStage<T> 接口中的方法比较多，CompoletableFuture的函数式�
        return new CompletableFuture<U>((value == null) ? NIL : value);
    } 
    ```
-
+   
 2. 基于CompletableFuture自带的静态工厂方法：runAsync()、supplyAsync()
    
+
 ```Supplier 供应商; 供货商; 供应者; 供货方;```
    这两个方法可以帮助我们封装计算逻辑
-   
+
    ```java
    static <U> CompletableFuture<U> supplyAsync(Supplier<U> supplier);
    // 使用自定义线程池(推荐)
@@ -97,7 +121,7 @@ CompletionStage<T> 接口中的方法比较多，CompoletableFuture的函数式�
    // 使用自定义线程池(推荐)
 static CompletableFuture<Void> runAsync(Runnable runnable, Executor executor);
    ```
-   
+
    > 备注，自定义线程池使用：  
    > ![image-20221206220534852](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221206220534852.png)
    >
@@ -110,7 +134,7 @@ static CompletableFuture<Void> runAsync(Runnable runnable, Executor executor);
    >                 new ArrayBlockingQueue<>(QUEUE_CAPACITY),//100
    >                 new ThreadPoolExecutor.CallerRunsPolicy()); //主线程中运行
    > ```
-   
+
    - `runAsync()` 方法接受的参数是 `Runnable` ，这是一个函数式接口，不允许返回值。当你需要异步操作且不关心返回结果的时候可以使用 `runAsync()` 方法。
    
      ```java
@@ -154,6 +178,54 @@ static CompletableFuture<Void> runAsync(Runnable runnable, Executor executor);
 
 `thenRun` 不接受结果不产生结果
 `whenComplete()` 结束时处理结果
+
+例子：  
+
+```java
+public class CompletableFutureTest {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        CompletableFuture<String> stringCompletableFuture = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "hello,world!";
+        });
+        System.out.println("被阻塞啦----");
+         stringCompletableFuture
+                 .whenComplete((s,e)->{
+                     System.out.println("complete1----"+s);
+                 })
+                 .whenComplete((s,e)->{
+                     System.out.println("complete2----"+s);
+                 })
+                 .thenAccept(s->{
+                     System.out.println("打印结果"+s);
+                 })
+                 .thenRun(()->{
+                    System.out.println("阻塞结束啦");
+                });
+         while (true){
+
+         }
+    }
+}
+/*-------------
+2022-12-07 10:16:44 上午 [Thread: main] 
+INFO:被阻塞啦----
+2022-12-07 10:16:47 上午 [Thread: ForkJoinPool.commonPool-worker-1] 
+INFO:complete1----hello,world!
+2022-12-07 10:16:47 上午 [Thread: ForkJoinPool.commonPool-worker-1] 
+INFO:complete2----hello,world!
+2022-12-07 10:16:47 上午 [Thread: ForkJoinPool.commonPool-worker-1] 
+INFO:打印结果hello,world!
+2022-12-07 10:16:47 上午 [Thread: ForkJoinPool.commonPool-worker-1] 
+INFO:阻塞结束啦
+*/
+```
+
+
 
 1. thenApply()方法接受Function实例，用它来处理结果
 
@@ -256,9 +328,63 @@ static CompletableFuture<Void> runAsync(Runnable runnable, Executor executor);
            .thenApply(s -> s + "world!").thenApply(s -> s + "nice!").thenRun(() -> System.out.println("hello!"));//hello! 
    ```
 
-3. 
+   whenComplete()的方法参数是BiConsumer<? super T , ? super Throwable >
+
+   ```java
+   public CompletableFuture<T> whenComplete(
+       BiConsumer<? super T, ? super Throwable> action) {
+       return uniWhenCompleteStage(null, action);
+   }
+   
+   
+   public CompletableFuture<T> whenCompleteAsync(
+       BiConsumer<? super T, ? super Throwable> action) {
+       return uniWhenCompleteStage(defaultExecutor(), action);
+   }
+   // 使用自定义线程池(推荐)
+   public CompletableFuture<T> whenCompleteAsync(
+       BiConsumer<? super T, ? super Throwable> action, Executor executor) {
+       return uniWhenCompleteStage(screenExecutor(executor), action);
+   } 
+   ```
+
+   相比Consumer，BiConsumer可以接收2个输入对象然后进行"消费"
+
+   ```java
+   @FunctionalInterface
+   public interface BiConsumer<T, U> {
+       void accept(T t, U u);
+   
+       default BiConsumer<T, U> andThen(BiConsumer<? super T, ? super U> after) {
+           Objects.requireNonNull(after);
+   
+           return (l, r) -> {
+               accept(l, r);
+               after.accept(l, r);
+           };
+       }
+   } 
+   ```
+
+   使用：  
+
+   ```java
+   CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> "hello!")
+           .whenComplete((res, ex) -> {
+               // res 代表返回的结果
+               // ex 的类型为 Throwable ，代表抛出的异常
+               System.out.println(res);
+               // 这里没有抛出异常所有为 null
+               assertNull(ex);
+           });
+   assertEquals("hello!", future.get()); 
+   ```
+
+   **其他区别暂时不知道**
 
 ## 异步处理
+
+
 
 ## 组合CompletableFuture
 
