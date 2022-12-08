@@ -104,9 +104,74 @@ JDK1.8之后：
 
 ## 本地方法栈
 
+`和虚拟机栈作用相似`，区别：**虚拟机栈为虚拟机执行Java方法（字节码）服务，本地方法栈则为虚拟机使用到的Native方法服务**。HotSpot虚拟机中和Java虚拟机栈合二为一
+
+> 同上，本地方法被执行时，本地方法栈会创建一个栈帧，用于存放本地方法的局部变量表、操作数栈、动态链接、出口信息
+>
+> 方法执行完毕后相应的栈帧也会出栈并释放内存空间，也会出现StackOverFlowError和OutOfMemoryError两种错误
+
 ## 堆
 
+- Java虚拟机所管理的内存中最大的一块，Java堆是**所有线程共享**的一块区域，在虚拟机启动时创建
+
+- 此内存区域唯一目的是**存放对象实例**，**几乎**所有的**对象实例及数组**，都在这里分配内存
+
+  > “几乎”，因为随着**JIT**编译器的发展与逃逸分析技术逐渐成熟，**栈上分配**、**标量替换**导致微妙变化。从JDK1.7开始已经默认**逃逸分析**，如果某些方法的对象引用**没有被返回或者未被外面使用（未逃逸出去）**，那么对象可以**直接在栈上分配内存**。
+
+- Java堆是**垃圾收集器**管理的主要区域，因此也称GC堆（Garbage Collected Heap）
+
+- 现在收集器基本都采用**分代垃圾收集算法**，从垃圾回收的角度，Java堆还细分为：新生代和老年代。再细致：Eden，Survivor，Old等空间。> 目的是更好的回收内存，或更快地分配内存
+
+- JDK7及JDK7之前，堆内存被分为三部分
+
+  1. 新生代内存(Young Generation)，包括Eden区、两个Survivor区S0和S1【8:1:1】
+  2. 老生代(Old Generation) 【新生代 : 老年代= 1: 2】
+  3. 永久代(Permanent Generation)
+
+  ![hotspot-heap-structure](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/hotspot-heap-structure.41533631.png)
+
+- JDK8之后**PermGen（永久）**已被**Metaspace（元空间）**取代，且**元空间**使用直接内存
+
+- 大部分情况，对象都会首先在 Eden 区域分配，在一次新生代垃圾回收后，如果对象还存活，则会进入 S0 或者 S1，并且对象的年龄还会加 1(Eden 区->Survivor 区后对象的初始年龄变为 1)，当它的年龄增加到一定程度（默认为 15 岁），就会被晋升到老年代中。
+
+  > 对象晋升到老年代的年龄阈值，可以通过参数 `-XX:MaxTenuringThreshold` 来设置。 
+  >
+  >  **修正（参见：[issue552open in new window](https://github.com/Snailclimb/JavaGuide/issues/552)）** ：“Hotspot 遍历所有对象时，按照**年龄从小到大对其所占用的大小进行累积**，当**累积的某个年龄大小超过了 survivor 区的一半**时，**取这个年龄和 MaxTenuringThreshold 中更小的一个值**，作为新的晋升年龄阈值”。图解：  
+  > ![image-20221208105755268](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221208105755268.png)
+  >
+  > ---
+  >
+  > 代码如下：  
+  >
+  > ```java
+  > uint ageTable::compute_tenuring_threshold(size_t survivor_capacity) {
+  > 	//survivor_capacity是survivor空间的大小
+  > size_t desired_survivor_size = (size_t)((((double) survivor_capacity)*TargetSurvivorRatio)/100);
+  > size_t total = 0;
+  > uint age = 1;
+  > while (age < table_size) {
+  > total += sizes[age];//sizes数组是每个年龄段对象大小
+  > if (total > desired_survivor_size) break;
+  > age++;
+  > }
+  > uint result = age < MaxTenuringThreshold ? age : MaxTenuringThreshold;
+  > 	...
+  > } 
+  > ```
+
+- 堆里最容易出现OutOfMemoryError错误，出现这个错误之后的表现形式：
+
+  1. **`java.lang.OutOfMemoryError: GC Overhead Limit Exceeded`** ： 当 JVM **花太多时间执行垃圾回收并且只能回收很少的堆空间**时，就会发生此错误。
+
+  2. **`java.lang.OutOfMemoryError: Java heap space`** :假如在**创建新的对象**时, **堆内存中的空间不足以存放新创建的对象**, 就会引发此错误。
+
+     > (和配置的最大堆内存有关，且受制于物理内存大小。最大堆内存可通过`-Xmx`参数配置，若没有特别配置，将会使用默认值，详见：[Default Java 8 max heap sizeopen in new window](https://stackoverflow.com/questions/28272923/default-xmxsize-in-java-8-max-heap-size))
+
+  3. ...
+
 ## 方法区
+
+- 方法区属于**JVM运行时数据区域**的一块**逻辑区域**，是各线程共享的内存区域
 
 ## 运行时常量池
 
