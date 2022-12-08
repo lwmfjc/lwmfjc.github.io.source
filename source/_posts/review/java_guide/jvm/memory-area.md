@@ -262,6 +262,14 @@ JDK1.7之前，**运行时常量池(字符串常量池、静态变量)**存放�
 
 - > **运行时常量池、方法区、字符串常量池这些都是不随虚拟机实现而改变的逻辑概念，是公共且抽象的，Metaspace、Heap 是与具体某种虚拟机实现相关的物理概念，是私有且具体的。**
 
+## 总结
+
+![image-20221208170002491](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221208170002491.png)
+
+![image-20221208170040924](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221208170040924.png)
+
+![image-20221208170112628](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221208170112628.png)
+
 ## 直接内存
 
 - 直接内存并**不是虚拟机运行时数据区**的一部分，也**不是虚拟机规范中定义的内存**区域，但是这部分内存也被频繁使用，也可能导致OutOfMemoryError错误出现
@@ -270,9 +278,11 @@ JDK1.7之前，**运行时常量池(字符串常量池、静态变量)**存放�
 
 # HotSpot虚拟机对象探秘
 
-
+**了解一下HotSport虚拟机**在Java堆中对象分配、布局和访问的全过程
 
 ## 对象的创建
+
+
 
 ## 对象的内存布局
 
