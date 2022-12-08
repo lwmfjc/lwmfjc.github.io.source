@@ -32,7 +32,7 @@ JDK1.8之前：
    虚拟机栈、本地方法栈、程序计数器
 3. 本地内存(包括直接内存)
 
-![Java 运行时数据区域（JDK1.8 之前）](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/java-runtime-data-areas-jdk1.7.png)
+![image-20221208144045407](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221208144045407.png)
 
 JDK1.8之后：  
 ![Java 运行时数据区域（JDK1.8 之后）](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/java-runtime-data-areas-jdk1.8.png)
@@ -224,9 +224,53 @@ JDK1.8之后：
 
 ## 运行时常量池
 
+- Class文件中除了有**类的版本**、**字段**、**方法**、**接口**等描述信息外，还有用于存放编译器期生成的**各种字面量（Literal）**和**符号引用（Symbolic Reference）**的**常量池表**
+- **字面量**是源代码中的**固定值表示法**，即通过字面我们就知道其值的含义。字面量包括**整数**、**浮点数**和**字符串字面量**；**符号引用**包括**类符号引用**、**字段符号引用**、**方法符号引用**和**接口方法符号引用**。
+- **常量池表**会在类加载后存放到**方法区**的**运行时常量池**中
+- 运行时常量池的功能类似于传统编程语言的**符号表(但是包含了比典型符号表更广泛的数据)**
+- 运行时常量池是方法区的一部分，所以**受到方法区内存的限制**，当常量池无法再申请到内存时会抛出**OutOfMemoryError**的错误
+
+## 字符串常量池
+
+**字符串常量池**是JVM为了**提升性能和减少内存消耗针对字符串(String类)专门**开辟的一块区域，主要目的是为了避免字符串得重复创建
+
+```java
+// 在堆中创建字符串对象”ab“
+// 将字符串对象”ab“的引用保存在字符串常量池中
+String aa = "ab";
+// 直接返回字符串常量池中字符串对象”ab“的引用
+String bb = "ab";
+System.out.println(aa==bb);// true 
+```
+
+> HotSpot 虚拟机中字符串常量池的实现是 `src/hotspot/share/classfile/stringTable.cpp` ,`StringTable` 本质上就是一个`HashSet<String>` ,容量为 `StringTableSize`（可以通过 `-XX:StringTableSize` 参数来设置）。
+>
+> `StringTable` 中保存的是**字符串对象的引用**，字符串对象的引用**指向堆中的字符串对象**。
+
+JDK1.7之前，**运行时常量池(字符串常量池、静态变量)**存放在**永久代**。JDK1.7**字符串常量池和静态变量**从永久代移动到了Java堆中
+![method-area-jdk1.6](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/method-area-jdk1.6.png)
+
+![method-area-jdk1.7](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/method-area-jdk1.7.png)
+
+**JDK1.7为什么要将字符串常量池移动到堆中**
+
+- 因为**永久代（方法区实现）的GC回收效率太低**，只有在整堆收集（Full GC）的时候才会被执行GC。Java程序中通常有**大量的被创建的字符串等待回收**，将字符串常量池放到堆中，能够高效及时地回收字符串内存。
+
+- JVM常量池中存储的是对象还是引用
+
+  > 如果您说的确实是runtime constant pool（而不是interned string pool / StringTable之类的其他东西）的话，其中的引用类型常量（例如CONSTANT_String、CONSTANT_Class、CONSTANT_MethodHandle、CONSTANT_MethodType之类）都存的是引用，实际的对象还是存在Java heap上的。
+
+- > **运行时常量池、方法区、字符串常量池这些都是不随虚拟机实现而改变的逻辑概念，是公共且抽象的，Metaspace、Heap 是与具体某种虚拟机实现相关的物理概念，是私有且具体的。**
+
 ## 直接内存
 
+- 直接内存并**不是虚拟机运行时数据区**的一部分，也**不是虚拟机规范中定义的内存**区域，但是这部分内存也被频繁使用，也可能导致OutOfMemoryError错误出现
+- JDK1.4中新加入的NIO(New Input/Output)类，引入一种基于**通道（Channel）**与**缓冲区（Buffer）**的I/O方式，它可以直接使用**Native函数库直接分配堆外内存**，然后通过一个**存储在Java堆中的DirectByteBuffer对象作为这块内存的引用**进行操作。这样就能在一些场景中**显著提高性能**，因为避免了在**Java堆和Native堆**之间来回复制数据
+- 本机直接内存的分配不会受到Java堆的限制，但是，既然是内存就会**受到本机总内存大小**以及**处理器寻址空间**的限制
+
 # HotSpot虚拟机对象探秘
+
+
 
 ## 对象的创建
 
