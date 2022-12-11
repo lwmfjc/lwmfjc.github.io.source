@@ -254,9 +254,20 @@ public class Person{
 - 老年代是存储长期存活对象的，**占满**时就会触发我们常说的FullGC，期间会**停止所有线程**等待GC的完成。所以对于**响应要求高**的应用，应该尽量去**减少**发生FullGC从而避免响应超时的问题
 
 - 当老年区**执行full gc周仍然无法进行对象保存**操作，就会产生**OOM**。这时候就是虚拟机中堆内存不足，**原因可能会是**堆内存设置大小过小，可以通过参数**-Xms、-Xmx**来调整。也可能是**代码中创建对象大且多**，而且它们**一直在被引用**从而**长时间垃圾收集无法收集**它们
-  
+
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/c02ecba3c33f43429a765987b928e423-new-image93b46f3d-33f9-46f9-a825-ec7129b004f6.png)
+
+> 关于-XX:TargetSurvivorRatio参数的问题。其实也不一定是要满足-XX:MaxTenuringThreshold才移动到老年代。可以举个例子：如**对象年龄5的占30%，年龄6的占36%，年龄7的占34%，加入某个年龄段（如例子中的年龄6）**后，总占用超过Survivor空间*TargetSurvivorRatio的时候，从该年龄段开始及大于的年龄对象就要进入老年代（即例子中的年龄6对象，就是年龄6和年龄7晋升到老年代），这时候无需等到MaxTenuringThreshold中要求的15
 
 ### 如何判断一个对象需要被干掉
+
+首先看一下对象的虚拟机的一些流程  
+
+
+图例有点问题，**橙色是线程共享，青绿色是线程独享**
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1c1d85b5fb8b47239af2a5c0436eb2d7-new-image0cd10827-2f96-433c-9b16-93d4fe491d88.png)
+
+
 
 ### 如何宣告一个对象的真正死亡
 
