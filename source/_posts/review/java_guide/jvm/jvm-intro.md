@@ -13,7 +13,7 @@ updated: 2022-12-09 08:48:22
 
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 >
-> 原文地址： https://juejin.im/post/5e1505d0f265da5d5d744050#heading-28  
+> 原文地址： https://juejin.im/post/5e1505d0f265da5d5d744050#heading-28  感谢原作者分享！！
 
 # JVM的基本介绍
 
@@ -545,9 +545,105 @@ JVM的参数非常之多，这里只列举比较重要的几个，通过各种�
 
   此时我们再跑一下这个代码 
 
+  此时要调整垃圾收集器(```-XX:+UseG1GC```)且b、c要指向null，才能让系统回收这部分内存，即```-Xmx20m -Xms5m -XX:+PrintGCDetails -XX:+UseG1GC  ``` 
+  **注：使用``` -XX: +UseSerialGC ```或者```-XX:+UseParallelGC```都是不能达到效果的**
+
+  ```java
+  public class App {
+      public static void main(String[] args) throws InterruptedException {
   
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0   + "KB");    //系统的最大空间-Xmx--运行几次都不变
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0   + "KB");  //系统的空闲空间--每次运行都变
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0   + "KB");  //当前可用的总空间 与Xms有关--运行几次都不变
+          byte[] b = new byte[1 * 1024 * 1024];
+          System.out.println("分配了1M空间给数组");
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0 / 1024 + "M");  //系统的最大空间
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024 + "M");  //系统的空闲空间
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0 / 1024 + "M");
+  
+          byte[] c = new byte[10 * 1024 * 1024];
+          System.out.println("分配了10M空间给数组");
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0 / 1024 + "M");  //系统的最大空间
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024 + "M");  //系统的空闲空间
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0 / 1024 + "M");  //当前可用的总空间
+  
+          b=null;
+          c=null;
+          System.gc();
+          System.out.println("进行了gc");
+  
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0 / 1024 + "M");    //系统的最大空间
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024 + "M");  //系统的空闲空间
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0 / 1024 + "M");  //当前可用的总空间
+  
+  
+      }
+  }
+  /*--------
+  Xmx=20480.0KB
+  free mem=4290.3671875KB
+  total mem=6144.0KB
+  分配了1M空间给数组
+  Xmx=20.0M
+  free mem=3.1897964477539062M
+  total mem=6.0M
+  [GC pause (G1 Humongous Allocation) (young) (initial-mark), 0.0014754 secs]
+     [Parallel Time: 1.1 ms, GC Workers: 8]
+        [GC Worker Start (ms): Min: 105.0, Avg: 105.1, Max: 105.3, Diff: 0.3]
+        [Ext Root Scanning (ms): Min: 0.5, Avg: 0.5, Max: 0.8, Diff: 0.4, Sum: 4.4]
+        [Update RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+           [Processed Buffers: Min: 0, Avg: 0.0, Max: 0, Diff: 0, Sum: 0]
+        [Scan RS (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+        [Code Root Scanning (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.0]
+        [Object Copy (ms): Min: 0.1, Avg: 0.3, Max: 0.4, Diff: 0.2, Sum: 2.5]
+        [Termination (ms): Min: 0.0, Avg: 0.0, Max: 0.0, Diff: 0.0, Sum: 0.3]
+           [Termination Attempts: Min: 1, Avg: 6.0, Max: 9, Diff: 8, Sum: 48]
+        [GC Worker Other (ms): Min: 0.0, Avg: 0.0, Max: 0.1, Diff: 0.1, Sum: 0.2]
+        [GC Worker Total (ms): Min: 0.8, Avg: 0.9, Max: 1.0, Diff: 0.3, Sum: 7.4]
+        [GC Worker End (ms): Min: 106.0, Avg: 106.1, Max: 106.1, Diff: 0.0]
+     [Code Root Fixup: 0.0 ms]
+     [Code Root Purge: 0.0 ms]
+     [Clear CT: 0.1 ms]
+     [Other: 0.3 ms]
+        [Choose CSet: 0.0 ms]
+        [Ref Proc: 0.1 ms]
+        [Ref Enq: 0.0 ms]
+        [Redirty Cards: 0.1 ms]
+        [Humongous Register: 0.0 ms]
+        [Humongous Reclaim: 0.0 ms]
+        [Free CSet: 0.0 ms]
+     [Eden: 2048.0K(3072.0K)->0.0B(1024.0K) Survivors: 0.0B->1024.0K Heap: 2877.6K(6144.0K)->1955.9K(6144.0K)]
+   [Times: user=0.00 sys=0.00, real=0.00 secs] 
+  [GC concurrent-root-region-scan-start]
+  [GC concurrent-root-region-scan-end, 0.0005373 secs]
+  [GC concurrent-mark-start]
+  [GC concurrent-mark-end, 0.0000714 secs]
+  [GC remark [Finalize Marking, 0.0001034 secs] [GC ref-proc, 0.0000654 secs] [Unloading, 0.0005193 secs], 0.0007843 secs]
+   [Times: user=0.00 sys=0.00, real=0.00 secs] 
+  [GC cleanup 11M->11M(17M), 0.0003613 secs]
+   [Times: user=0.00 sys=0.00, real=0.00 secs] 
+  分配了10M空间给数组
+  Xmx=20.0M
+  free mem=5.059120178222656M
+  total mem=17.0M
+  [Full GC (System.gc())  11M->654K(6144K), 0.0031959 secs]
+     [Eden: 1024.0K(1024.0K)->0.0B(2048.0K) Survivors: 1024.0K->0.0B Heap: 11.9M(17.0M)->654.4K(6144.0K)], [Metaspace: 3152K->3152K(1056768K)]
+   [Times: user=0.00 sys=0.00, real=0.00 secs] 
+  进行了gc
+  Xmx=20.0M
+  free mem=5.2661590576171875M
+  total mem=6.0M
+  Heap
+   garbage-first heap   total 6144K, used 654K [0x00000000fec00000, 0x00000000fed00030, 0x0000000100000000)
+    region size 1024K, 1 young (1024K), 0 survivors (0K)
+   Metaspace       used 3243K, capacity 4500K, committed 4864K, reserved 1056768K
+    class space    used 351K, capacity 388K, committed 512K, reserved 1048576K
+  */
+  ```
 
 ## 调整新生代和老年代的比值
+
+
 
 ## 调整Survivor区和Eden区的比值
 
