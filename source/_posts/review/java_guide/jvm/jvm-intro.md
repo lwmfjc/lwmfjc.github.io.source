@@ -402,7 +402,150 @@ JVM的参数非常之多，这里只列举比较重要的几个，通过各种�
 
 - 开发过程中，通常会将 -Xms 与 Xmx 两个参数设置成相同的值
 
-  > 为的是能够在java垃圾回收机制清理完堆区后，**不需要重新分隔计算堆区的大小而浪费资源**
+  > 为的是能够在java垃圾回收机制清理完堆区后，**不需要重新分隔计算堆区的大小而浪费资源（向系统请求/释放内存资源）**
+
+- 代码  
+
+  ```java
+  public class App {
+      public static void main(String[] args) {
+  
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0   + "KB");    //系统的最大空间-Xmx--运行几次都不变
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0   + "KB");  //系统的空闲空间--每次运行都变
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0   + "KB");  //当前可用的总空间 与Xms有关--运行几次都不变
+  
+      }
+  }
+  /* -----
+  Xmx=7389184.0KB
+  free mem=493486.0546875KB
+  total mem=498688.0KB
+  */
+  ```
+
+  > 1. maxMemory()这个方法返回的是java虚拟机(这个进程)能构从操纵系统那里挖到的最大的内存
+  > 2. freeMemory：挖过来而又没有用上的内存，实际上就是 freeMemory()，所以freeMemory()的值一般情况下都是很小的(totalMemory一般比需要用得多一点，剩下的一点就是freeMemory)
+  > 3. totalMemory：程序运行的过程中，内存总是慢慢的从操纵系统那里挖的，基本上是用多少挖多少，直 挖到maxMemory()为止，所以totalMemory()是慢慢增大的
+  >    原文链接：https://blog.csdn.net/weixin_35671171/article/details/114189796
+
+- 编辑VM options参数后再看效果：  
+  ```-Xmx20m -Xms5m -XX:+PrintGCDetails```，堆最大以及堆初始值  20m和5m
+
+    ```java
+    /* 效果
+     [GC (Allocation Failure) [PSYoungGen: 1024K->488K(1536K)] 1024K->608K(5632K), 0.0007606 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+    Xmx=18432.0KB
+    free mem=4249.90625KB
+    total mem=5632.0KB
+    Heap
+     PSYoungGen      total 1536K, used 1326K [0x00000000ff980000, 0x00000000ffb80000, 0x0000000100000000)
+      eden space 1024K, 81% used [0x00000000ff980000,0x00000000ffa51ad0,0x00000000ffa80000)
+      from space 512K, 95% used [0x00000000ffa80000,0x00000000ffafa020,0x00000000ffb00000)
+      to   space 512K, 0% used [0x00000000ffb00000,0x00000000ffb00000,0x00000000ffb80000)
+     ParOldGen       total 4096K, used 120K [0x00000000fec00000, 0x00000000ff000000, 0x00000000ff980000)
+      object space 4096K, 2% used [0x00000000fec00000,0x00000000fec1e010,0x00000000ff000000)
+     Metaspace       used 3164K, capacity 4496K, committed 4864K, reserved 1056768K
+      class space    used 344K, capacity 388K, committed 512K, reserved 1048576K
+    */
+    ```
+  
+  1. 如上， **Allocation Failure** 因为分配失败导致YoungGen 
+  2. total mem (此时申请到的总内存)：  
+     PSYoungGen + ParOldGen = 1536 + 4096 = 5632 KB 
+  3. freeMemory (申请后没有使用的内存)  
+     1324 + 120 = 1444 KB 
+     5632 - 4249 = 1383 KB  差不多
+  
+- 使用1M后  
+
+  ```java
+  public class App {
+      public static void main(String[] args) {
+  
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0   + "KB");    //系统的最大空间-Xmx--运行几次都不变
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0   + "KB");  //系统的空闲空间--每次运行都变
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0   + "KB");  //当前可用的总空间 与Xms有关--运行几次都不变
+          byte[] b = new byte[1 * 1024 * 1024];
+          System.out.println("分配了1M空间给数组");
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0 / 1024 + "M");  //系统的最大空间
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024 + "M");  //系统的空闲空间
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0 / 1024 + "M");
+      }
+  }
+  /**
+   [GC (Allocation Failure) [PSYoungGen: 1024K->488K(1536K)] 1024K->608K(5632K), 0.0007069 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+  Xmx=18432.0KB
+  free mem=4270.15625KB
+  total mem=5632.0KB
+  分配了1M空间给数组
+  Xmx=18.0M
+  free mem=3.1700592041015625M  //少了1M
+  total mem=5.5M
+  Heap
+   PSYoungGen      total 1536K, used 1270K [0x00000000ff980000, 0x00000000ffb80000, 0x0000000100000000)
+    eden space 1024K, 76% used [0x00000000ff980000,0x00000000ffa43aa0,0x00000000ffa80000)
+    from space 512K, 95% used [0x00000000ffa80000,0x00000000ffafa020,0x00000000ffb00000)
+    to   space 512K, 0% used [0x00000000ffb00000,0x00000000ffb00000,0x00000000ffb80000)
+   ParOldGen       total 4096K, used 1144K [0x00000000fec00000, 0x00000000ff000000, 0x00000000ff980000)
+    object space 4096K, 27% used [0x00000000fec00000,0x00000000fed1e020,0x00000000ff000000)
+   Metaspace       used 3155K, capacity 4496K, committed 4864K, reserved 1056768K
+    class space    used 344K, capacity 388K, committed 512K, reserved 1048576K
+  */
+  ```
+
+  此时free memory就又缩水了，不过**total memory是没有变化**的。Java会尽可能将**total mem的值维持在最小堆内存大小**
+
+- 这时候我们创建了一个10M的字节数据，这时候最小堆内存是顶不住的。我们会发现现在的total memory已经变成了15M，这就是已经申请了一次内存的结果。
+
+  ```java
+  public class App {
+      public static void main(String[] args) {
+  
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0   + "KB");    //系统的最大空间-Xmx--运行几次都不变
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0   + "KB");  //系统的空闲空间--每次运行都变
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0   + "KB");  //当前可用的总空间 与Xms有关--运行几次都不变
+          byte[] b = new byte[1 * 1024 * 1024];
+          System.out.println("分配了1M空间给数组");
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0 / 1024 + "M");  //系统的最大空间
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024 + "M");  //系统的空闲空间
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0 / 1024 + "M");
+  
+          byte[] c = new byte[10 * 1024 * 1024];
+          System.out.println("分配了10M空间给数组");
+          System.out.println("Xmx=" + Runtime.getRuntime().maxMemory() / 1024.0 / 1024 + "M");  //系统的最大空间
+          System.out.println("free mem=" + Runtime.getRuntime().freeMemory() / 1024.0 / 1024 + "M");  //系统的空闲空间
+          System.out.println("total mem=" + Runtime.getRuntime().totalMemory() / 1024.0 / 1024 + "M");  //当前可用的总空间
+  
+      }
+  }
+  /**  ----
+  [GC (Allocation Failure) [PSYoungGen: 1024K->488K(1536K)] 1024K->600K(5632K), 0.0006681 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] 
+  Xmx=18432.0KB
+  free mem=4257.953125KB
+  total mem=5632.0KB
+  分配了1M空间给数组
+  Xmx=18.0M
+  free mem=3.1153564453125M
+  total mem=5.5M
+  分配了10M空间给数组
+  Xmx=18.0M
+  free mem=2.579681396484375M
+  total mem=15.0M
+  Heap
+   PSYoungGen      total 1536K, used 1363K [0x00000000ff980000, 0x00000000ffb80000, 0x0000000100000000)
+    eden space 1024K, 85% used [0x00000000ff980000,0x00000000ffa5acc0,0x00000000ffa80000)
+    from space 512K, 95% used [0x00000000ffa80000,0x00000000ffafa020,0x00000000ffb00000)
+    to   space 512K, 0% used [0x00000000ffb00000,0x00000000ffb00000,0x00000000ffb80000)
+   ParOldGen       total 13824K, used 11376K [0x00000000fec00000, 0x00000000ff980000, 0x00000000ff980000)
+    object space 13824K, 82% used [0x00000000fec00000,0x00000000ff71c020,0x00000000ff980000)
+   Metaspace       used 3242K, capacity 4500K, committed 4864K, reserved 1056768K
+    class space    used 351K, capacity 388K, committed 512K, reserved 1048576K
+  */
+  ```
+
+  此时我们再跑一下这个代码 
+
+  
 
 ## 调整新生代和老年代的比值
 
