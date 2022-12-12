@@ -548,6 +548,8 @@ JVM的参数非常之多，这里只列举比较重要的几个，通过各种�
   此时要调整垃圾收集器(```-XX:+UseG1GC```)且b、c要指向null，才能让系统回收这部分内存，即```-Xmx20m -Xms5m -XX:+PrintGCDetails -XX:+UseG1GC  ``` 
   **注：使用``` -XX: +UseSerialGC ```或者```-XX:+UseParallelGC```都是不能达到效果的**
 
+  > 此时我们手动执行了一次fullgc，此时total memory的内存空间又变回6.0M了，此时又是把申请的内存释放掉的结果。
+
   ```java
   public class App {
       public static void main(String[] args) throws InterruptedException {
@@ -643,16 +645,128 @@ JVM的参数非常之多，这里只列举比较重要的几个，通过各种�
 
 ## 调整新生代和老年代的比值
 
+-XX:NewRatio --- 新生代（eden+2*Survivor）和老年代（不包含永久区）的比值
 
+> 例如：-XX:NewRatio=4，表示新生代:老年代=1:4，即新生代占整个堆的1/5。在Xms=Xmx并且设置了Xmn的情况下，该参数不需要进行设置。
+> 注：Xmn为直接设置大小，如```-Xmn2G```
 
 ## 调整Survivor区和Eden区的比值
 
+-XX:SurvivorRatio（幸存代）--- 设置两个Survivor区和eden的比值
+
+例如：8，表示两个Survivor:eden=2:8，即一个Survivor占年轻代的1/10
+
 ## 设置年轻代和老年代的大小
+
+-XX:NewSize --- 设置年轻代大小
+
+-XX:MaxNewSize --- 设置年轻代最大值
+
+>  可以通过设置不同参数来测试不同的情况，反正**最优解**当然就是**官方的Eden和Survivor的占比为8:1:1**，然后在刚刚介绍这些参数的时候都已经附带了一些说明，感兴趣的也可以看看。反正**最大堆内存和最小堆内存如果数值不同会导致多次的gc**，需要注意。
+>
+> > 我的理解是**会经常调整totalMemory而导致多次gc**，避免临界条件下的[垃圾回收](https://so.csdn.net/so/search?q=垃圾回收&spm=1001.2101.3001.7020)和内存申请和分配
+>
+> 注： **最大堆内存和最小堆内存**设置成一样，为的是能够在java垃圾回收机制清理完堆区后，**不需要重新分隔计算堆区的大小而浪费资源（向系统请求/释放内存资源）**
 
 ## 小总结
 
+根据实际事情调整新生代和幸存代的大小，官方推荐**新生代占java堆的3/8**，**幸存代**占**新生代**的1/10
+
+> Java堆：新生代 **(3/8)**，老年代
+>
+> 新生代：SO **(1/10)** ，S1 ，Eden 
+
+在OOM时，记得Dump出堆，确保可以排查现场问题，通过下面命令可以输出一个.dump 文件，该文件用**VisualVM**或Java自带的JavaVisualVM 工具
+
+```shell
+-Xmx20m -Xms5m -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=你要输出的日志路径
+```
+
+一般我们也可以通过**编写脚本的方式来让OOM出现时给我们报个信**，可以**通过发送邮件**或者**重启程序**等来解决
+
 ## 永久区的设置
+
+- ```-XX:PermSize -XX:MaxPermSize```，应该说的是永久代
+
+- 初始空间（默认为物理内存的1/64）和最大空间（默认为物理内存的1/4）。也就是说，jvm启动时，永久区一开始就占用了PermSize大小的空间，如果空间还不够，可以继续扩展，但是不能超过MaxPermSize，否则会OOM。
+- 如果堆空间没有用完也抛出了OOM，有可能是永久区导致的。堆空间实际占用非常少，但是永久区溢出 一样抛出OOM
 
 ## JVM的栈参数调优
 
+### 调整每个线程栈空间的大小
+
+可以通过**-Xss**：调整每个线程栈空间的大小
+
+> JDK5.0以后每个线程堆栈大小为1M，以前每个线程堆栈大小为256K。在相同物理内存下,减小这个值能生成更多的线程。但是操作系统对一个进程内的线程数还是有限制的，不能无限生成，经验值在3000~5000左右
+
+### 设置线程栈的大小
+
+```shell
+-XXThreadStackSize：
+    #设置线程栈的大小(0 means use default stack size)
+```
+
+补充：  
+
+> -Xss是OpenJDK和Oracle JDK的-XX:ThreadStackSize的别名。
+>
+> 尽管他们对参数的解析不同：
+> -Xss可以接受带K，M或G后缀的数字；
+> -XX:ThreadStackSize=需要一个整数(无后缀)-堆栈大小(以千字节为单位)
+
+##  (可以直接跳过了)JVM其他参数介绍
+
+形形色色的参数很多，就不会说把所有都扯个遍了，因为大家其实也不会说一定要去深究到底。
+
+###  设置内存页的大小
+
+    -XXThreadStackSize：
+        设置内存页的大小，不可设置过大，会影响Perm的大小
+
+###  设置原始类型的快速优化
+
+    -XX:+UseFastAccessorMethods：
+        设置原始类型的快速优化
+
+### 设置关闭手动GC
+    -XX:+DisableExplicitGC：
+        设置关闭System.gc()(这个参数需要严格的测试)
+
+###  设置垃圾最大年龄
+    -XX:MaxTenuringThreshold
+        设置垃圾最大年龄。如果设置为0的话,则年轻代对象不经过Survivor区,直接进入年老代.
+        对于年老代比较多的应用,可以提高效率。如果将此值设置为一个较大值,
+        则年轻代对象会在Survivor区进行多次复制,这样可以增加对象再年轻代的存活时间,
+        增加在年轻代即被回收的概率。该参数只有在串行GC时才有效.
+
+###  加快编译速度
+    -XX:+AggressiveOpts
+加快编译速度
+
+###  改善锁机制性能
+    -XX:+UseBiasedLocking
+
+###  禁用垃圾回收
+    -Xnoclassgc
+
+### 设置堆空间存活时间
+    -XX:SoftRefLRUPolicyMSPerMB
+        设置每兆堆空闲空间中SoftReference的存活时间，默认值是1s。
+
+### 设置对象直接分配在老年代
+    -XX:PretenureSizeThreshold
+        设置对象超过多大时直接在老年代分配，默认值是0。
+
+### 设置TLAB占eden区的比例
+    -XX:TLABWasteTargetPercent
+        设置TLAB占eden区的百分比，默认值是1% 。 
+
+### 设置是否优先YGC
+    -XX:+CollectGen0First
+        设置FullGC时是否先YGC，默认值是false。
+
 # finally
+
+附录：
+
+> 真的扯了很久这东西，参考了多方的资料，有极客时间的《深入拆解虚拟机》和《Java核心技术面试精讲》，也有百度，也有自己在学习的一些线上课程的总结。希望对你有所帮助，谢谢。
