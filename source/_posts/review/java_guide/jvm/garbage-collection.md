@@ -61,9 +61,25 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
   ```
 
   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/28128785.jpg)
+  在给allocation2分配内存之前，Eden区内存几乎已经被分配完。所以当**Eden区没有足够空间进行分配时**，虚拟机将发起一次MinorGC。GC期间虚拟机又发现**allocation1无法存入空间**，所以只好通过**分配担保机制**，把**新生代的对象**，**提前转移到老年代**去，老年代的空间足够存放allocation1，**所以不会出现Full GC（这里可能是之前的说法，可能只是要表达老年代的GC，而不是Full GC(整堆GC) ）**　　
 
+  执行MinorGC后，**后面分配的对象如果能够存在Eden区**的话，还是会在Eden区分配内存  
+执行如下代码验证：  
   
-
+```java
+  public class GCTest {
+  
+  	public static void main(String[] args) {
+  		byte[] allocation1, allocation2,allocation3,allocation4,allocation5;
+  		allocation1 = new byte[32000*1024];
+  		allocation2 = new byte[1000*1024];
+  		allocation3 = new byte[1000*1024];
+  		allocation4 = new byte[1000*1024];
+  		allocation5 = new byte[1000*1024];
+  	}
+  } 
+  ```
+  
   
 
 ## 大对象直接进入老年代
