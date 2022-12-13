@@ -114,7 +114,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
   if (total > desired_survivor_size) {
   break;
   }
-  age++;
+  age++; //注意这里，age是递增的，最终是去某个值，而不是区间的值计算
   }
   uint result = age < MaxTenuringThreshold ? age : MaxTenuringThreshold;
   ...
