@@ -130,11 +130,33 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 
 ## 主要进行gc的区域
 
+如图：（太长跳过了，直接看下面的总结）  
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/rf-hotspot-vm-gc.69291e6e.png)
 
+总结：  
+针对HotSpotVM的实现，它里面的GC准确分类只有两大种：  
+
+1. 部分收集（Partial GC）
+   - 新生代收集（Minor GC/ Young GC ）：只对**新生代**进行垃圾收集
+   - 老年代（Major GC / Old GC )：只对**老年代**进行垃圾收集。★★：注意，MajorGC在有的语境中也用于指代**整堆收集**
+   - 混合收集（Mixed GC）：对**整个新生代**和**部分老年代**进行垃圾收集
+2. 整堆收集（Full GC）：收集整个Java堆和方法区
 
 ## 空间分配担保
 
+- 为了确保在**MinorGC**之前老年代本身还有容纳**新生代所有对象**的剩余空间
+
+- 《深入理解Java虚拟机》第三章对于空间分配担保的描述如下：
+
+  > JDK 6 Update 24 之前，在发生 Minor GC 之前，虚拟机必须先检查老年代最大可用的连续空间是否大于新生代所有对象总空间，如果这个条件成立，那这一次 Minor GC 可以确保是安全的。如果不成立，则虚拟机会先查看 -XX:HandlePromotionFailure 参数的设置值是否允许担保失败(Handle Promotion Failure);如果允许，那会继续检查老年代最大可用的连续空间是否大于历次晋升到老年代对象的平均大小，如果大于，将尝试进行一次 Minor GC，尽管这次 Minor GC 是有风险的;如果小于，或者 -XX: HandlePromotionFailure 设置不允许冒险，那这时就要改为进行一次 Full GC。
+  >
+  > **JDK6 Update24**之后，规则变为**只要老年代的连续空间**大于**新生代对象总大小**，或者**历次晋升的平均大小**，就会进行**MinorGC**，否则将进行**Full GC**
+
+  
+
 # 死亡对象判断方法
+
+
 
 ## 引用计数法
 
