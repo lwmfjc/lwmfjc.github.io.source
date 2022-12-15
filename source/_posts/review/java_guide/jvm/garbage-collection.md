@@ -327,13 +327,19 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 ## Serial 收集器
 
 - Serial 串行 收集器是**最基本**、**历史最悠久**的垃圾收集器
+
 - 这是一个**单线程收集器**，它的**单线程**意义不仅意味着它只会使用**一条垃圾收集线程**去完成垃圾收集工作，更重要的是它在**进行垃圾收集工作时**必须暂停其他所有的工作线程**（”Stop The World“）**，直到它**收集结束**。
+
   - 新生代采用**标记-复制**算法，老年代采用**标记-整理**算法
     ![ Serial 收集器 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/46873026.3a9311ec.png)
   - StopTheWorld会带来**不良用户体验**，所以在后续垃圾收集器设计中**停顿时间不断缩短**。（仍然有停顿，垃圾收集器的过程仍然在继续）
   - 优点：**简单而高效**（与其他收集器的单线程相比）  
     1. 且由于其**没有线程交互**的开销，自然可以获得**很高的单线程收集效率**
     2. Serial收集器对于**运行在Client模式**下的虚拟机来说是个不错的选择
+
+- ```shell
+  -XX:+UseSerialGC  #虚拟机运行在Client模式下的默认值，Serial+Serial Old。
+  ```
 
 ## ParNew 收集器
 
@@ -342,27 +348,68 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 - **新生代**采用**标记-复制**算法，**老年代**采用**标记-整理**算法
 
   ![ParNew 收集器 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/22018368.df835851.png)
-  这是许多运行在Server模式下的虚拟机的首要选择，除了**Serial收集器**外，只有它能与**CMS收集器**（真正意义上的**并发**收集器）配合工作
+  ★★★  这是许多运行在Server模式下的虚拟机的首要选择，除了**Serial收集器**外，只有它能与**CMS收集器**（真正意义上的**并发**收集器）配合工作
 
 - **并行和并发**概念补充
 
   - **并行（Parallel）**：指**多条垃圾收集线程**并行工作，但此时用户线程仍然处于**等待**状态
   - **并发（Concurrent）**：指**用户线程**与**垃圾收集线程** **同时**执行（不一定并行，可能会交替执行），**用户程序在继续执行**，而**收集收集器**运行在另一个CPU上
 
-## ParallelScavenge 收集器
-
-- 部分**参数** (有点争议)
-
-  ```shell
-  -XX:+UseParallelGC  # 新生代使用ParallelGC，老年代使用串行回收器
-  -XX:+UseParallelOldGC # 新生代使用ParallelGC，老年代使用ParallelOldGC
+- ```shell
+  -XX:+UseParNewGC  #ParNew+Serial Old，在JDK1.8被废弃，在JDK1.7还可以使用。
   ```
 
-- 它也是**标记-复制**算法的多线程收集器，看上去几乎和**ParNew**一样，**区别**：
+## ParallelScavenge 收集器
 
-  - 
+- 它也是**标记-复制**算法的多线程收集器，看上去几乎和**ParNew**一样，**区别**
+
+  - 部分**参数** (有点争议，先以下面为准)
+
+      ```shell
+      -XX:+UseParallelGC  # 虚拟机运行在Server模式下的默认值(1.8) 新生代使用ParallelGC，老年代使用回收器 ; ★★ JDK1.7之后，能达到UseParallelOldGC 的效果 
+      ## 参考自 https://zhuanlan.zhihu.com/p/353458348 
+      
+    
+      -XX:+UseParallelOldGC # 新生代使用ParallelGC，老年代使用ParallelOldGC
+    ```
+  
+  - **Parallel Scavenge**收集器关注点是**吞吐量（高效率利用CPU）**，**CMS**等垃圾收集器关注点是用户的**停顿时间**（提高用户体验）
+
+    > 所谓**吞吐量**就是CPU中用于**运行用户代码的时间**与**CPU**总消耗时间的**比值** 
+    > （也就是**希望**消耗少量CPU就能**运行更多代码**）
+  
+  -  Parallel Scavenge 收集器提供了很多参数供用户找到**最合适的停顿时间**或**最大吞吐量**，如果对于收集器运作不太了解，手工优化存在困难的时候，使用 **Parallel Scavenge 收集器**配合**自适应调节策略**，把**内存管理优化**交给虚拟机去完成也是一个不错的选择。
+  
+  - 新生代采用**标记-复制**，老年代采用**标记-整理**算法
+      ![image-20221215170900774](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221215170900774.png)
+  
+- 这是JDK1.8 的默认收集器
+  使用 java -XX:+PrintCommandLineFlags -version 命令查看
+  如下，两种情况：
+
+  ```shell
+  #默认
+  λ java -XX:+PrintCommandLineFlags -version
+  -XX:InitialHeapSize=531924800 -XX:MaxHeapSize=8510796800 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC
+  java version "1.8.0_202"
+  Java(TM) SE Runtime Environment (build 1.8.0_202-b08)
+  Java HotSpot(TM) 64-Bit Server VM (build 25.202-b08, mixed mode)
+  ```
+
+  第二种情况：(注意：```-XX:-UseParallelOldGC```)
+
+  ```shell
+  λ java -XX:-UseParallelOldGC -XX:+PrintCommandLineFlags -version
+  -XX:InitialHeapSize=531924800 -XX:MaxHeapSize=8510796800 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:-UseLargePagesIndividualAllocation -XX:+UseParallelGC -XX:-UseParallelOldGC
+  
+  java version "1.8.0_202"
+  Java(TM) SE Runtime Environment (build 1.8.0_202-b08)
+  Java HotSpot(TM) 64-Bit Server VM (build 25.202-b08, mixed mode)
+  ```
 
 ## SerialOld 收集器
+
+
 
 ## ParallelOld 收集器
 
