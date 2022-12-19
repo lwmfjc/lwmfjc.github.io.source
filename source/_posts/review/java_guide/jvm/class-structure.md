@@ -136,7 +136,8 @@ JDK1.4 = 48
 这个Class是**类**还是**接口**，是否为**public**或者**abstract**类型，如果是类的话是否声明为**final**等等
 
 **类访问和属性**修饰符  
-![image-20221219111039047](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221219111039047.png)
+
+【这里好像漏了一个0x0002 ，private 】![image-20221219111039047](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221219111039047.png)
 
 > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1090617-20190409135129522-1831389208.jpg)
 >
@@ -173,6 +174,55 @@ public class Employee {
 
 ## 字段表集合 （Fields）
 
+```java
+    u2             fields_count;//Class 文件的字段的个数
+    field_info     fields[fields_count];//一个类可以有多个字段 
+```
+
+- 字段表（filed info）用于描述**接口**或**类**中声明的变量
+
+- 字段包括**类级变量**以及**实例变量**，但不包括在**方法内部**声明的局部变量
+  filed info(字段表)的结构：  
+  ![image-20221219134423914](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221219134423914.png)
+
+  1. access_flag：字段的作用域（public、private、protected修饰符）、是**实例变量**还是**类变量**（static修饰符）、可否被**序列化**（transient修饰符）、**可变**性（final）、**可见**性（volatile修饰符，是否强制从主内存读写）
+  2. name_index：对常量池的**引用**，表示的字段的名称
+  3. descriptor_index：对常量池的**引用**，表示**字段和方法**的描述符
+  4. attributes_count：一个字段还会拥有**额外的属性**，attributes_count 存放属性的个数
+  5. attributes[attriutes_count]: 存放具体属性具体内容
+
+  上述这些信息中，各个**修饰符都是布尔值**，**要么有**某个修饰符，**要么没有**，很适合**使用标志位**来表示。而**字段叫什么名字**、**字段被定义为什么数据类型**这些都是无法固定的，只能**引用常量池中常量**来描述。
+
+  ![字段的 access_flag 的取值](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20201031084342859.png)
+
 ## 方法表集合（Methods）
 
+```java
+    u2             methods_count;//Class 文件的方法的数量
+    method_info    methods[methods_count];//一个类可以有个多个方法
+```
+
+- **methods_count** 表示方法的数量，而 **method_info** 表示方法表。-   
+
+- Class 文件存储格式中**对方法的描述与对字段的描述几乎采用了完全一致**的方式。方法表的结构如同字段表一样，依次包括了**访问标志**、**名称索引**、**描述符索引**、**属性表**集合几项。
+
+- **method_info（方法表的）结构**  
+  ![方法表的结构](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/%25E6%2596%25B9%25E6%25B3%2595%25E8%25A1%25A8%25E7%259A%2584%25E7%25BB%2593%25E6%259E%2584.png)
+  **方法表的 access_flag 取值：**
+  ![方法表的 access_flag 取值](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20201031084248965.png)
+
+  > 注意：因为`volatile`修饰符和`transient`修饰符不可以修饰方法，所以方法表的访问标志中没有这两个对应的标志，但是增加了`synchronized`、`native`、`abstract`等关键字修饰方法，所以也就多了这些关键字对应的标志。
+
 ## 属性表集合（Attributes）
+
+**如上，字段和方法都拥有属性**
+属性大概就是这种
+![image-20221219152310600](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221219152310600.png)
+
+```java
+   u2             attributes_count;//此类的属性表中的属性数
+   attribute_info attributes[attributes_count];//属性表集合
+```
+
+- 在 Class 文件，**字段表**，**方法表**中都可以携带自己的属性表集合，以用于描述某些场景专有的信息
+- 与 Class 文件中其它的数据项目要求的顺序、长度和内容不同，属性表集合的限制稍微宽松一些，不再要求各个属性表具有严格的顺序，并且只要不与已有的属性名重复，任何人实现的编译器都可以向属性表中写 入自己定义的属性信息，Java 虚拟机运行时会忽略掉它不认识的属性
