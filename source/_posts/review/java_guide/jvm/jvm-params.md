@@ -76,10 +76,54 @@ Java 虚拟机所管理的**内存中最大的一块**，**Java 堆**是**所有
 
 ## 显示指定永久代/元空间的大小
 
+从Java 8开始，**如果我们没有指定 Metaspace(元空间)** 的大小，随着更多类的创建，**虚拟机会耗尽**所有**可用的系统内存**（永久代并不会出现这种情况）  
 
+- **JDK 1.8 之前永久代还没被彻底移除**的时候通常通过下面这些参数来调节方法区大小
+
+  ```java
+  -XX:PermSize=N //方法区 (永久代) 初始大小
+  -XX:MaxPermSize=N //方法区 (永久代) 最大大小,超过这个值将会抛出 OutOfMemoryError 异常:java.lang.OutOfMemoryError: PermGen 
+  ```
+
+- **相对**而言，垃圾收集行为在这个区域是**比较少出现**的，但**并非数据进入方法区后就“永久存在”**了。
+
+- **JDK 1.8 的时候，方法区（HotSpot 的永久代）被彻底移除了（JDK1.7 就已经开始了），取而代之是元空间，元空间使用的是本地内存**
+
+  ```java
+  -XX:MetaspaceSize=N //设置 Metaspace 的初始（和最小大小）
+  -XX:MaxMetaspaceSize=N //设置 Metaspace 的最大大小，如果不指定大小的话，随着更多类的创建，虚拟机会耗尽所有可用的系统内存。 
+  ```
 
 # 垃圾收集相关
 
 ## 垃圾回收器
 
+为了提高应用程序的稳定性，选择正确的**垃圾收集算法**至关重要  
+JVM具有**四种类型**的GC实现：  
+
+1. 串行垃圾收集器
+2. 并行垃圾收集器
+3. CMS垃圾收集器（并发）
+4. G1垃圾收集器（并发）
+
+使用下列参数实现：  
+
+```shell
+-XX:+UseSerialGC
+-XX:+UseParallelGC
+-XX:+UseParNewGC
+-XX:+UseG1GC
+```
+
 ## GC记录
+
+为了严格**监控应用程序**的**运行状况**，应该始终**检查JVM的垃圾回收性能**。最简单的方法是**以人类可读的格式记录GC活动**  
+通过以下参数  
+
+```shell
+-XX:+UseGCLogFileRotation 
+-XX:NumberOfGCLogFiles=< number of log files > 
+-XX:GCLogFileSize=< file size >[ unit ]
+-Xloggc:/path/to/gc.log 
+```
+
