@@ -161,7 +161,15 @@ public class Employee {
 
 ## 当前类（This Class）、父类（Super Class）、接口（Interfaces）索引集合
 
+```java
+    u2             this_class;//当前类
+    u2             super_class;//父类
+    u2             interfaces_count;//接口
+    u2             interfaces[interfaces_count];//一个类可以实现多个接口 
+```
 
+- **类索引**用于确定这个类的全限定名，**父类索引**用于确定这个类的父类的全限定名，由于 Java 语言的单继承，所以**父类索引只有一个**，**除了 `java.lang.Object`** 之外，所有的 java 类都有父类，因此**除了 `java.lang.Object` 外，所有 Java 类的父类索引都不为 0**。
+- **接口索引集合**用来描述这个类实现了那些接口，这些**被实现的接口将按 `implements`** (如果这个类本身是接口的话则是`extends`) **后的接口顺序从左到右**排列在接口索引集合中。
 
 ## 字段表集合 （Fields）
 
