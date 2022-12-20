@@ -44,26 +44,123 @@ updated: 2022-12-20 13:34:59
 
 **单链表**、**双向链表**、**循环链表**、**双向循环链表**  
 
+> 假设链表中有**n个元素**  
+> 访问：O(n) //访问特地给位置的元素
+>
+> 插入删除：O(1) //必须要知道插入元素的位置
 
 ### 单链表
 
+- **单链表**只有一个方向，结点**只有一个后继指针next**指向后面的节点。因此，链表这种数据结构通常在**物理内存**上是**不连续**的
+- 我们习惯性地把**第一个结点**叫做**头结点**，链表通常有一个**不保存任何值的head节点**（头结点），通过头结点我们可以**遍历整个链表**，尾结点通常**指向null**
+- 如下图
+  ![image-20221220164125131](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220164125131.png)
+
 ### 循环链表
+
+- 循环链表是一种**特殊的单链表**，和单链表不同的是**循环链表的尾结点**不是指向null，而是**指向链表的头结点**
+- 如图
+  ![image-20221220164334567](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220164334567.png)
 
 ### 双向链表
 
+- 双向链表包含**两个指针**，一个**prev**指向**前一个节点**，另一个**next**指向
+- 如图
+  ![image-20221220164450954](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220164450954.png)
+
 ### 双向循环链表
+
+双向循环链表的**最后一个节点的next**指向head，而head的**prev**指向最后一个节点，构成一个环
+
+![image-20221220164602604](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220164602604.png)
 
 ## 应用场景
 
+- 如果需要支持**随机访问**的话，链表无法做到
+- 如果需要**存储的数据元素个数不确定**，并且需要经常**添加**和**删除**数据的话，使用**链表**比较合适
+- 如果需要**存储的数据元素**的个数确定，并且不需要**经常添加**和**删除**数据的话，使用数组比较合适
+
 ## 数组 vs 链表
+
+- 数组支持**随机访问**，链表不支持
+- 数组使用的是**连续内存空间** **对CPU缓存机制**友好，链表则**相反**
+- 数组的**大小固定**，而链表则**天然支持动态扩容**。如果生命的数组过小，需要另外申请一个**更大的内存空间**存放数组元素，然后将**原数组拷贝进去**，这个操作比较耗时
 
 # 栈
 
-## 栈介绍
+## 栈简介
+
+- 栈（stack）只允许在**有序的线性数据集合**的**一端**（称为栈顶top）进行**加入数据（push）**和**移除数据（pop）**。因而按照**后进先出（LIFO，Last In First Out）**的原理运作。
+- 栈中，**push**和**pop**的操作都发生在栈顶
+- 栈常用**一维数组**或**链表**来实现，用数组实现的叫**顺序栈**，用链表实现的叫做**链式栈**
+
+> 假设堆栈中有n个元素。
+> 访问：O（n）//最坏情况
+> 插入删除：O（1）//顶端插入和删除元素
+
+如图：  
+![image-20221220165405830](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220165405830.png)
 
 ## 栈的常见应用场景
 
+当我们要处理的数据，只涉及在一端**插入**和**删除**数据，并且满足**后进先出（LIFO，LastInFirstOut）**的特性时，我们就可以使用**栈**这个数据结构。
+
+### 实现浏览器的回退和前进功能
+
+我们只需要使用**两个栈(Stack1 和 Stack2)**和就能实现这个功能。比如你按顺序查看了 1,2,3,4 这四个页面，我们**依次把 1,2,3,4 这四个页面压入 Stack1** 中。当你**想回头看 2** 这个页面的时候，你点击回退按钮，我们**依次把 4,3 这两个页面从 Stack1 弹出**，然后**压入 Stack2** 中。假如你又想**回到页面 3**，你点击前进按钮，我们**将 3 页面从 Stack2 弹出**，然后**压入到 Stack1** 中。示例图如下  
+![image-20221220170624867](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220170624867.png)
+
+### 检查符号是否承兑出现
+
+> 给定一个**只**包括 `'('`，`')'`，`'{'`，`'}'`，`'['`，`']'` 的字符串，判断**该字符串是否有效**。
+>
+> 有效字符串需满足：
+>
+> 1. **左括号必须用相同类型的右括号**闭合。
+> 2. **左括号必须以正确的顺序闭合**。
+>
+> 比如 "()"、"()[]{}"、"{[]}" 都是有效字符串，而 "(]" 、"([)]" 则不是。
+
+这个问题实际是 Leetcode 的一道题目，我们可以**利用栈 `Stack`** 来解决这个问题。
+
+1. 首先我们将**括号间的对应规则存放在 `Map`** 中，这一点应该毋容置疑；
+2. 创建一个栈。遍历字符串，如果字符是**左括号就直接加入`stack`**中，否则**将`stack` 的栈顶元素**与**这个括号**做比较，如果不相等就直接返回 false。遍历结束，如果`stack`为空，返回 `true`。
+
+```java
+public boolean isValid(String s){
+    // 括号之间的对应规则
+    HashMap<Character, Character> mappings = new HashMap<Character, Character>();
+    mappings.put(')', '(');
+    mappings.put('}', '{');
+    mappings.put(']', '[');
+    Stack<Character> stack = new Stack<Character>();
+    char[] chars = s.toCharArray();
+    for (int i = 0; i < chars.length; i++) {
+        if (mappings.containsKey(chars[i])) {
+            char topElement = stack.empty() ? '#' : stack.pop();
+            if (topElement != mappings.get(chars[i])) {
+                return false;
+            }
+        } else {
+            stack.push(chars[i]);
+        }
+    }
+    return stack.isEmpty();
+}
+
+```
+
+### 反转字符串
+
+将字符串中的每个字符**先入栈再出栈**就可以了。
+
+### 维护函数调用
+
+**最后一个被调用**的函数**必须先完成执行**，符合栈的 **后进先出（LIFO, Last In First Out）** 特性。
+
 ## 栈的实现
+
+
 
 # 队列
 
