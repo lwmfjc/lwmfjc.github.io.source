@@ -361,3 +361,23 @@ JConsole 可以显示**当前内存的详细信息**。不仅包括**堆内存/�
 ![线程监控 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/4%25E7%25BA%25BF%25E7%25A8%258B%25E7%259B%2591%25E6%258E%25A7.4364833a.png)
 
 ## VisualVM： 多合一故障处理工具
+
+VisualVM 提供在 Java 虚拟机 (Java Virutal Machine, JVM) 上运行的 Java 应用程序的详细信息。在 VisualVM 的图形用户界面中，您可以方便、快捷地查看多个 Java 应用程序的相关信息。Visual VM 官网：[https://visualvm.github.io/open in new window](https://visualvm.github.io/) 。Visual VM 中文文档:[https://visualvm.github.io/documentation.htmlopen in new window](https://visualvm.github.io/documentation.html)。
+
+下面这段话摘自《深入理解 Java 虚拟机》。
+
+> VisualVM（All-in-One Java Troubleshooting Tool）是到目前为止随 JDK 发布的功能最强大的运行监视和故障处理程序，官方在 VisualVM 的软件说明中写上了“All-in-One”的描述字样，预示着他除了运行监视、故障处理外，还提供了很多其他方面的功能，如性能分析（Profiling）。VisualVM 的性能分析功能甚至比起 JProfiler、YourKit 等专业且收费的 Profiling 工具都不会逊色多少，而且 VisualVM 还有一个很大的优点：不需要被监视的程序基于特殊 Agent 运行，因此他对应用程序的实际性能的影响很小，使得他可以直接应用在生产环境中。这个优点是 JProfiler、YourKit 等工具无法与之媲美的。
+
+VisualVM 基于 NetBeans 平台开发，因此他一开始就具备了插件扩展功能的特性，通过插件扩展支持，VisualVM 可以做到：
+
+- **显示虚拟机进程以及进程的配置、环境信息（jps、jinfo）。**
+- **监视应用程序的 CPU、GC、堆、方法区以及线程的信息（jstat、jstack）。**
+- **dump 以及分析堆转储快照（jmap、jhat）。**
+- **方法级的程序运行性能分析，找到被调用最多、运行时间最长的方法。**
+- **离线程序快照：收集程序的运行时配置、线程 dump、内存 dump 等信息建立一个快照，可以将快照发送开发者处进行 Bug 反馈。**
+- **其他 plugins 的无限的可能性......**
+
+这里就不具体介绍 VisualVM 的使用，如果想了解的话可以看:
+
+- [https://visualvm.github.io/documentation.htmlopen in new window](https://visualvm.github.io/documentation.html)
+- https://www.ibm.com/developerworks/cn/java/j-lo-visualvm/index.html
