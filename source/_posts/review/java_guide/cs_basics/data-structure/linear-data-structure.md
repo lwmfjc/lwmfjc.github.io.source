@@ -160,7 +160,7 @@ public boolean isValid(String s){
 
 ## 栈的实现
 
-
+- 栈既可以通过**数组**实现，也可以通过**链表**实现。
 
 # 队列
 
