@@ -132,9 +132,62 @@ C:\Users\SnailClimb>jps -l
 
 ## jmap：生成堆转储快照
 
+- **jmap(Memory Map for Java )**命令用于生成**堆转储**快照。如果不使用jmap命令，要想获取java**堆转储**，可以使用```-XX:+HeapDumpOutOfMemoryError```参数，可以让虚拟机在**OOM**异常出现**之后**，自动生成dump文件，Linux命令下通过```kill -3```发送进程推出信号也能拿到dump文件
+
+- `jmap` 的作用并不仅仅是为了**获取 dump** 文件，它还可以**查询 finalizer 执行队列**、**Java 堆**和**永久代**的详细信息，如**空间使用率**、当前使用的是**哪种收集器**等。和`jinfo`一样，`jmap`有不少功能在 Windows 平台下也是受限制的。
+
+- 将指定应用程序的**堆 快照**输出到桌面，后面可以通过**jhat**、**Visual VM**等工具分析该堆文件
+
+  ```java
+  C:\Users\SnailClimb>jmap -dump:format=b,file=C:\Users\SnailClimb\Desktop\heap.hprof 17340
+  Dumping heap to C:\Users\SnailClimb\Desktop\heap.hprof ...
+  Heap dump file created
+  ```
+
 ## jhat：分析heapdump文件
 
+**`jhat`** 用于分析 heapdump 文件，它会建立一个 HTTP/HTML 服务器，让用户可以在浏览器上查看分析结果。
+
+```shell
+C:\Users\SnailClimb>jhat C:\Users\SnailClimb\Desktop\heap.hprof
+Reading from C:\Users\SnailClimb\Desktop\heap.hprof...
+Dump file created Sat May 04 12:30:31 CST 2019
+Snapshot read, resolving...
+Resolving 131419 objects...
+Chasing references, expect 26 dots..........................
+Eliminating duplicate references..........................
+Snapshot resolved.
+Started HTTP server on port 7000
+Server is ready. 
+```
+
+之后访问 http://localhost:7000/ 即可，如下：
+进入/histo  会发现，有这个东西
+![image-20221220094041210](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220094041210.png)
+这个对象创建了9次，因为我是在第9次循环后dump堆快照的
+
+```java
+//测试代码如下
+public class MyMain {
+    private byte[] x = new byte[10 * 1024 * 1024];//10M
+
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("开始循环--");
+        int i=0;
+        while (++i>0) {
+            String a=new Date().toString();
+            MyMain myMain = new MyMain();
+            System.out.println(i+"循环中---" + new Date());
+            TimeUnit.SECONDS.sleep(10);
+        }
+    }
+}
+```
+
 ## jstack： 生成虚拟机当前时刻的线程快照
+
+- **jstack (Stack Trace for Java )** 命令用于生成**虚拟机当前时刻**的**线程快照**。线程快照就是当前虚拟机内**每一条线程正在执行**的**方法堆栈**的集合
+- 
 
 # JDK可视化分析工具
 
