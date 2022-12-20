@@ -187,10 +187,177 @@ public class MyMain {
 ## jstack： 生成虚拟机当前时刻的线程快照
 
 - **jstack (Stack Trace for Java )** 命令用于生成**虚拟机当前时刻**的**线程快照**。线程快照就是当前虚拟机内**每一条线程正在执行**的**方法堆栈**的集合
-- 
+
+- 生成线程快照的目的主要是**定位线程长时间出现停顿的原因**，如**线程间死锁**、**死循环**、**请求外部资源导致的长时间等待**等都是导致线程长时间停顿的原因。**线程出现停顿**的时候**通过`jstack`来查看各个线程的调用堆栈**，就可以知道没有响应的线程到底在后台做些什么事情，或者在等待些什么资源。
+
+- 线程死锁的代码，通过**jstack** 命令进行**死锁检查**，输出**死锁信息**，找到**发生死锁的线程**
+
+  ```java
+  package com.jvm;
+  
+  public class DeadLockDemo {
+      private static Object resource1 = new Object();//资源 1
+      private static Object resource2 = new Object();//资源 2
+  
+      public static void main(String[] args) {
+          new Thread(() -> {
+              synchronized (resource1) {
+                  System.out.println(Thread.currentThread() + "get resource1");
+                  try {
+                      Thread.sleep(1000);
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }
+                  System.out.println(Thread.currentThread() + "waiting get resource2");
+                  synchronized (resource2) {
+                      System.out.println(Thread.currentThread() + "get resource2");
+                  }
+              }
+          }, "线程 1").start();
+  
+          new Thread(() -> {
+              synchronized (resource2) {
+                  System.out.println(Thread.currentThread() + "get resource2");
+                  try {
+                      Thread.sleep(1000);
+                  } catch (InterruptedException e) {
+                      e.printStackTrace();
+                  }
+                  System.out.println(Thread.currentThread() + "waiting get resource1");
+                  synchronized (resource1) {
+                      System.out.println(Thread.currentThread() + "get resource1");
+                  }
+              }
+          }, "线程 2").start();
+      }
+  }
+  /*------
+  Thread[线程 1,5,main]get resource1
+  Thread[线程 2,5,main]get resource2
+  Thread[线程 2,5,main]waiting get resource1
+  Thread[线程 1,5,main]waiting get resource2
+  */
+  ```
+
+- 分析  线程 A 通过 synchronized (resource1) 获得 resource1 的监视器锁，然后通过` Thread.sleep(1000);`让线程 A 休眠 1s 为的是让线程 B 得到执行然后获取到 resource2 的监视器锁。线程 A 和线程 B 休眠结束了都开始企图请求获取对方的资源，然后这两个线程就会陷入互相等待的状态，这也就产生了死锁。
+
+- 通过jstack 命令分析  
+
+  ```shell
+  # 先使用jps 找到思索地那个类
+  C:\Users\SnailClimb>jps
+  13792 KotlinCompileDaemon
+  7360 NettyClient2
+  17396
+  7972 Launcher
+  8932 Launcher
+  9256 DeadLockDemo
+  10764 Jps
+  17340 NettyServer
+  
+  ## 然后使用jstack命令分析
+  C:\Users\SnailClimb>jstack 9256 
+  ```
+
+  输出的部分如下
+
+  ```shell
+  Found one Java-level deadlock:
+  =============================
+  "线程 2":
+    waiting to lock monitor 0x000000000333e668 (object 0x00000000d5efe1c0, a java.lang.Object),
+    which is held by "线程 1"
+  "线程 1":
+    waiting to lock monitor 0x000000000333be88 (object 0x00000000d5efe1d0, a java.lang.Object),
+    which is held by "线程 2"
+  
+  Java stack information for the threads listed above:
+  ===================================================
+  "线程 2":
+          at DeadLockDemo.lambda$main$1(DeadLockDemo.java:31)
+          - waiting to lock <0x00000000d5efe1c0> (a java.lang.Object)
+          - locked <0x00000000d5efe1d0> (a java.lang.Object)
+          at DeadLockDemo$$Lambda$2/1078694789.run(Unknown Source)
+          at java.lang.Thread.run(Thread.java:748)
+  "线程 1":
+          at DeadLockDemo.lambda$main$0(DeadLockDemo.java:16)
+          - waiting to lock <0x00000000d5efe1d0> (a java.lang.Object)
+          - locked <0x00000000d5efe1c0> (a java.lang.Object)
+          at DeadLockDemo$$Lambda$1/1324119927.run(Unknown Source)
+          at java.lang.Thread.run(Thread.java:748)
+  
+  Found 1 deadlock.
+  ```
+
+  找到了发生死锁的线程的具体信息
 
 # JDK可视化分析工具
 
 ## JConsole：Java监视与管理控制台
+
+JConsole 是**基于 JMX 的可视化监视**、**管理工具**。可以很方便的**监视本地及远程服务器的 java 进程的内存使用情况**。你可以在控制台输出**`console`**命令启动或者在 JDK 目录下的 bin 目录**找到`jconsole.exe`然后双击启动**.
+![连接 Jconsole](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1JConsole%25E8%25BF%259E%25E6%258E%25A5.7490f097.png)
+
+对于远程连接
+
+1. 在启动方  
+
+   ```shell
+   -Djava.rmi.server.hostname=外网访问 ip 地址 
+   -Dcom.sun.management.jmxremote.port=60001   //监控的端口号
+   -Dcom.sun.management.jmxremote.authenticate=false   //关闭认证
+   -Dcom.sun.management.jmxremote.ssl=false 
+   ```
+
+   实例：  
+   
+
+   ```shell
+   java -Djava.rmi.server.hostname=192.168.200.200  -Dcom.sun.management.jmxremote  -Dcom.sun.management.jmxremote.port=60001  -Dcom.sun.management.jmxremote.ssl=false  -Dcom.sun.management.jmxremote.authenticate=false  com.jvm.DeadLockDemo
+   # 其中 192.168.200.200 为启动该类的机器的ip，而不是谁要连接 
+   ```
+
+   在使用 JConsole 连接时，远程进程地址如下：
+
+   > ```
+   > 外网访问 ip 地址:60001
+   > ```
+   >
+   > ![image-20221220103410971](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220103410971.png)
+
+2. 注意，虚拟机中（这里ip xxx.200是虚拟机ip），需要开放的端口不只是60001，还要通过 ```netstat -nltp```开放另外两个端口
+   ![image-20221220104157529](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220104157529.png)
+   centos中使用
+
+   ```shell
+   firewall-cmd --zone=public --add-port=45443/tcp --permanent
+   firewall-cmd --zone=public --add-port=36521/tcp --permanent
+   firewall-cmd --zone=public --add-port=60001/tcp --permanent
+   firewall-cmd --reload #重启firewall
+   ```
+
+   之后才能连接上
+
+   ![image-20221220104326724](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221220104326724.png)
+   ![查看 Java 程序概况 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/2%25E6%259F%25A5%25E7%259C%258BJava%25E7%25A8%258B%25E5%25BA%258F%25E6%25A6%2582%25E5%2586%25B5.9c949b67.png)
+
+### 内存监控
+
+JConsole 可以显示**当前内存的详细信息**。不仅包括**堆内存/非堆内存**的整体信息，还可以细化到 **eden 区**、**survivor 区**等的使用情况，如下图所示。
+
+点击右边的“执行 GC(G)”按钮可以强制应用程序执行一个 Full GC。
+
+>  **新生代 GC（Minor GC）**:指发生新生代的的垃圾收集动作，Minor GC 非常频繁，回收速度一般也比较快。
+>
+> **老年代 GC（Major GC/Full GC）**:指发生在老年代的 GC，出现了 Major GC 经常会伴随至少一次的 Minor GC（并非绝对），Major GC 的速度一般会比 Minor GC 的慢 10 倍以上。
+
+![内存监控 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/3%25E5%2586%2585%25E5%25AD%2598%25E7%259B%2591%25E6%258E%25A7.4f4b8a7f.png)
+
+### 线程监控
+
+类似我们前面讲的 `jstack` 命令，不过这个是可视化的。
+
+最下面有一个"检测死锁 (D)"按钮，点击这个按钮可以自动为你找到发生死锁的线程以及它们的详细信息 。
+![线程监控 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/4%25E7%25BA%25BF%25E7%25A8%258B%25E7%259B%2591%25E6%258E%25A7.4364833a.png)
 
 ## VisualVM： 多合一故障处理工具
