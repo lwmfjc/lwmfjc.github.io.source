@@ -160,12 +160,123 @@ public boolean isValid(String s){
 
 ## 栈的实现
 
-- 栈既可以通过**数组**实现，也可以通过**链表**实现。
+- 栈既可以通过**数组**实现，也可以通过**链表**实现。两种情况下，**入栈**、**出栈**的时间复杂度均为O(1)
+
+- 下面使用**数组**下实现栈，具有**push()**、**pop()** （返回栈顶元素并出栈）、**peek()** （返回栈顶元素不出栈）、**isEmpty()** 、**size()** 这些基本的方法
+
+  > 每次入栈前先判断**栈容量是否够用**，如果不够用就用Arrays.copyOf() 进行扩容
+
+  ```java
+  public class MyStack {
+      private int[] storage;//存放栈中元素的数组
+      private int capacity;//栈的容量
+      private int count;//栈中元素数量
+      private static final int GROW_FACTOR = 2;
+  
+      //不带初始容量的构造方法。默认容量为8
+      public MyStack() {
+          this.capacity = 8;
+          this.storage=new int[8];
+          this.count = 0;
+      }
+  
+      //带初始容量的构造方法
+      public MyStack(int initialCapacity) {
+          if (initialCapacity < 1)
+              throw new IllegalArgumentException("Capacity too small.");
+  
+          this.capacity = initialCapacity;
+          this.storage = new int[initialCapacity];
+          this.count = 0;
+      }
+  
+      //入栈
+      public void push(int value) {
+          if (count == capacity) {
+              ensureCapacity();
+          }
+          storage[count++] = value;
+      }
+  
+      //确保容量大小
+      private void ensureCapacity() {
+          int newCapacity = capacity * GROW_FACTOR;
+          storage = Arrays.copyOf(storage, newCapacity);
+          capacity = newCapacity;
+      }
+  
+      //返回栈顶元素并出栈
+      private int pop() {
+          if (count == 0)
+              throw new IllegalArgumentException("Stack is empty.");
+          count--;
+          return storage[count];
+      }
+  
+      //返回栈顶元素不出栈
+      private int peek() {
+          if (count == 0){
+              throw new IllegalArgumentException("Stack is empty.");
+          }else {
+              return storage[count-1];
+          }
+      }
+  
+      //判断栈是否为空
+      private boolean isEmpty() {
+          return count == 0;
+      }
+  
+      //返回栈中元素的个数
+      private int size() {
+          return count;
+      }
+  
+  }
+  /*----
+  MyStack myStack = new MyStack(3);
+  myStack.push(1);
+  myStack.push(2);
+  myStack.push(3);
+  myStack.push(4);
+  myStack.push(5);
+  myStack.push(6);
+  myStack.push(7);
+  myStack.push(8);
+  System.out.println(myStack.peek());//8
+  System.out.println(myStack.size());//8
+  for (int i = 0; i < 8; i++) {
+      System.out.println(myStack.pop());
+  }
+  System.out.println(myStack.isEmpty());//true
+  myStack.pop();//报错：java.lang.IllegalArgumentException: Stack is empty. 
+  */
+  ```
 
 # 队列
 
 ## 队列简介
 
+- 队列是**先进先出（FIFO，First In，First Out）**的线性表
+
+- 通常用**链表**或**数组**来实现，用数组实现的队列叫做**顺序队列**，用**链表**实现的队列叫做**链式队列**。
+
+- 队列只允许在**后端（rear）**进行插入操作也就是**入队enqueue**，在**前端（front）**进行删除操作也就是**出队 dequeue**
+
+- 队列的操作方式和堆栈类似，唯一的区别在于**队列**只允许**新数据在后端**进行添加（不允许在后端删除）
+
+  > 假设队列中有n个元素。
+  > 访问：O（n）//最坏情况
+  > 插入删除：O（1）//后端插入前端删除元素
+  >
+  > 
+
+
+
 ## 队列分类
+
+### 单队列
+
+### 循环队列
 
 ## 常见应用场景
