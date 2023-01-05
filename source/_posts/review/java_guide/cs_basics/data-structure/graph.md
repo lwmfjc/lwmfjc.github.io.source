@@ -65,12 +65,61 @@ updated: 2022-12-26 08:47:25
   ![image-20230102165052250](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230102165052250.png)
   无向图的邻接矩阵是一个**对称**矩阵，因为在无向图中，**顶点i**和**顶点j**有关系，则**顶点j**和**顶点i**必有关系
 - 有向图的邻接矩阵存储
-  
+  ![image-20230105105331809](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105105331809.png)
+  邻接矩阵存储的方式优点是**简单直接（直接使用一个二维数组即可）**，并且在获取两个顶点之间的关系的时候也非常高效*直接获取指定位置的**数组**元素。但是这种存储方式的确定啊也比较明显**即 比较浪费空间**
 
 ## 邻接表存储
+
+- 针对上面邻接矩阵比较浪费内存空间的问题，诞生了图的另一种存储方法--**邻接表**
+
+- 邻接链表使用一个**链表**来存储某个顶点的**所有后继相邻顶点**。对于图中每个顶点Vi ，把所有邻接于Vi 的顶点Vj 链接成一个**单链表**
+
+  - 无向图的邻接表存储
+    ![image-20230105111343599](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111343599.png)
+  - 有向图的邻接表存储
+    ![image-20230105111409045](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111409045.png)
+
+- 邻接表中存储的元素的个数（顶点数）以及图中**边的条数**
+
+  - 无向图中，**邻接表**的元素个数等于**边的条数**的两倍，如下图
+    7条边，邻接表存储的元素个数为14 （即**每条边存储了两次**）
+
+    ![image-20230105111343599](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111343599.png)
+
+  - 有向图中，邻接表元素个数等于边的条数，如图所示的有向图中，边的条数为8，邻接表
+    ![image-20230105111409045](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111409045.png)
 
 # 图的搜索
 
 ## 广度优先搜索
 
+- 广度优先搜索：像水面上的波纹一样，一层一层向外扩展，如图
+  ![image-20230105112011060](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112011060.png)
+
+- 具体实现方式，用到了**队列**，过程如下
+
+  1. **初始状态**：将要搜索的源顶点放入队列
+     ![image-20230105112201827](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112201827.png)
+
+  2. 取出**队首节点**，输出0，将0的**后继顶点（全部）（未访问过的）放入队列**
+     ![image-20230105112302751](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112302751.png)
+
+  3. 取出**队首节点**，输出1，将1的后继顶点（所有）（未访问过的）放入队列
+     ![image-20230105112423589](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112423589.png)
+
+     截止到第3步就很清楚了，就是输出**最近的一个结点**的**全部关系节点**
+
+  4. 取出队首节点，输出4，将4的后继顶点（未访问过的）放入队列
+     ![image-20230105112601860](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112601860.png)
+
+  5. 取出队首节点，输出2，将2的后继顶点（未访问过的）放入队列
+     ![image-20230105112650410](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112650410.png)
+
+  6. 取出队首节点，输出3，将3的后继顶点（未访问过的）放入队列，队列为空，结束
+     ![image-20230105112735397](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112735397.png)
+
+  7. 总结
+     先初始化首结点，之后不断**从队列取出**并将这个结点的有关系的**结点** 依次**放入队列**
+
 ## 深度优先搜索
+
