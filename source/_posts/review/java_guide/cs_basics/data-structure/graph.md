@@ -123,4 +123,27 @@ updated: 2022-12-26 08:47:25
 
 ## 深度优先搜索
 
-- 深度优先，即一条路走到黑。从**源顶点**开始，一直
+- 深度优先，即一条路走到黑。从**源顶点**开始，一直走到**后继节点**，才**回溯**到上一顶点，然后继续**一条路走到黑**
+- 和广度优先搜索类似，深度优先搜索的具体实现，用到了另一种线性数据结构---**栈**
+
+1. 初始状态，将要搜索的**源顶点**放入栈中
+   ![image-20230106103852981](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106103852981.png)
+
+2. **取出栈顶元素，输出0**，将0的**后继顶点（未访问过的）放入栈**中
+   ![image-20230106103958425](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106103958425.png)
+
+3. 取出栈顶元素，输出4（因为后进先出），将4的后继顶点（未访问过的）放入栈中
+   ![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104122419.png)
+
+4. 取出栈顶元素，输出3，将3的后继顶点（未访问过的）放入栈中
+   ![image-20230106104217788](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104217788.png)
+
+   ----------
+
+   其实到这部就非常明显了，即 **前面元素的关系元素**，大多都是被一直**压在栈底**的，会一直走走到 **源顶点**的**直系关系**顶点没有了，再往回走
+
+5. 取出栈顶元素，输出2，将2的后继顶点（为访问过的）放入栈中
+   ![image-20230106104458532](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104458532.png)
+
+6. 取出栈顶元素，输出1，将1的后继顶点（未访问过的）放入栈中，栈为空，结束
+   ![image-20230106104538533](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104538533.png)
