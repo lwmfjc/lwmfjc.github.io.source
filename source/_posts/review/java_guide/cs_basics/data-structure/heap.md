@@ -131,4 +131,46 @@ updated: 2023-01-06 10:46:19
 
 - 也就是对**所有非叶子结点**进行自顶向下
 
+  如图，红色区域分别是堆的情况下。对于T，如果只**自顶向下**到P、L这层，被换到了这层的那个元素是不一定就比其他树大的，所以还是要依次自顶向下
+
+  ![image-20230109140309966](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109140309966.png)
+  这个构建堆操作的时间复杂度为O(n)
+  ![image-20230109141141591](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109141141591.png)
+
+- 首先要了解哪些是非叶节点，**最后一个结点的父节点及它（这个父节点）之前的元素**，都是非叶节点。也就是说，如果**节点个数为n**，那么我们需要对**n/2到1的节点进行自顶向下（沉底）堆化**
+
+- 如图
+  ![image-20230109143927351](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109143927351.png)
+
+  1. 首先将初始的无序数组抽象为一棵树，图中的节点个数为6，所以4，5，6是叶子节点，1，2，3节点为非叶节点  
+  2. 对1，2，3节点进行**自顶向下（沉底）**堆化，注意，顺序是从后往前堆化，从3号开始，一直到1号节点。
+     - 3号节点堆化结果  
+       ![image-20230109153344935](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109153344935.png)
+     - 2号节点堆化结果
+       ![image-20230109153422766](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109153422766.png)
+     - 1号节点堆化结果
+       ![image-20230109153456496](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109153456496.png)
+
 ## 排序
+
+- 方法：由于堆顶元素是所有元素中最大的，所以我们**重复取出堆顶元素**，将这个最大的堆顶元素**放至数组末尾**，并**对剩下的元素进行堆化**即可
+- 现在思考两个问题：
+  - 删除堆顶元素后需要执行**自顶向下（沉底）**堆化还是**自底向上（上浮）**堆化？
+  - 取出的堆顶元素存在哪，新建一个数组存？
+- 答案
+  1. 需要使用**自顶向下（沉底）**堆化，这个堆化一开始要**将末尾元素移动至堆顶**。由于这个时候末尾的位置已经空出来了由于堆中元素已经减小，这个位置不会再被使用，所以我们可以将**取出的元素放在末尾**。
+  2. 其实是做了一次**交换**操作，将**堆顶和末尾元素调换**位置，从而将**取出堆顶元素**和**堆化的第一步(将末尾元素放至根结点位置)**进行合并
+- 步骤
+  1. 取出第一个元素并堆化
+     ![image-20230109154808329](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109154808329.png)
+  2. 取出第2个元素并堆化
+     ![image-20230109154830946](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109154830946.png)
+  3. 取出第3个元素并堆化
+     ![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109154851849.png)
+  4. 取出第4个元素并堆化
+     ![image-20230109155008000](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109155008000.png)
+  5. 取出第5个元素并堆化
+     ![image-20230109155104829](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109155104829.png)
+  6. 取出第6个元素并堆化
+     ![image-20230109155116813](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109155116813.png)
+  7. 排序完成
