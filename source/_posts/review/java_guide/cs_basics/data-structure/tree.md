@@ -67,21 +67,111 @@ updated: 2023-01-09 15:52:34
 
 ## 完全二叉树
 
+- **定义**：除最后一层外，若其余层都是满的，并且最后一层或者是满的，或者是在右边缺少连续若干节点，则这个二叉树就是 **完全二叉树** 。
 
+- 大家可以想象为一棵树从根结点开始扩展，**扩展完左子节点才能开始扩展右子节点，每扩展完一层，才能继续扩展下一层**。如下图所示：  
+  从左到右，从上到下：  
+  ![image-20230110095143413](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110095143413.png)
+
+- 完全二叉树的性质：**父结点**和**子节点**的序号有着对应关系
+
+  > 细心的小伙伴可能发现了，当根节点的值为 1 的情况下，若**父结点的序号是 i**，那么**左子节点的序号就是 2i，右子节点的序号是 2i+1**。这个性质使得完全二叉树利用数组存储时可以极大地节省空间，以及利用序号找到某个节点的父结点和子节点，后续二叉树的存储会详细介绍。
 
 ## 平衡二叉树
 
+- **平衡**二叉树是一颗二叉排序树，且具有以下性质
+
+  1. 可以是一棵空树
+  2. 如果不是空树，那么**左右两个子树的高度差**的**绝对值不超过1**，并且左右两个子树都是一棵平衡二叉树
+
+- 平衡二叉树的常用实现方法有 **红黑树**、**AVL 树**、**替罪羊树**、**加权平衡树**、**伸展树** 等。
+
+- 下面看一颗**不太正常**的树
+  ![image-20230110102326007](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110102326007.png)
+
+  > 这玩意儿还真叫树，只不过这棵树已经退化为一个链表了，我们管它叫 **斜树**。
+
+  > 1. 二叉树相比于链表，由于父子节点以及兄弟节点之间往往具有某种特殊的关系，这种关系使得我们在树中对数据进行**搜索**和**修改**时，相对于链表更加快捷便利。
+  > 2. 如果二叉树退化为一个链表了，那么那么树所具有的优秀性质就难以表现出来，效率也会大打折，为了避免这样的情况，我们希望每个做 “家长”（父结点） 的，都 **一碗水端平**，分给左儿子和分给右儿子的尽可能一样多，相差最多不超过一层，如下图所示：
+  >    ![image-20230110102451581](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110102451581.png)
+
 # 二叉树的存储
+
+- 二叉树的存储主要分为**链式存储**和**顺序存储**
 
 ## 链式存储
 
+- 和链表类似，二叉树的链式存储**依靠指针**将各个结点串联起来，不需要连续的存储空间
+- 每个节点包括三个属性
+  1. **数据data** data不一定是单一的数据，根据情况不同，可以是**多个具有不同类型的数据**
+  2. **左节点指针 left**
+  3. **右节点指针 right**
+- Java没有指针，而是直接**引用对象**
+  ![image-20230110112905083](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110112905083.png)
+
 ## 顺序存储
+
+- 就是利用**数组**进行存储，数组中每一个位置仅存储**结点的data**，不存储左右子节点的指针，子节点的索引**通过数组下标**完成（类似**堆**）
+  - 根节点的序号为1，对于每个节点 Node，假设它存储在数组中下标为 i 的位置，那么它的左子节点就存储在 2i 的位置，它的右子节点存储在下标为 2i+1 的位置。
+  - 如图
+    ![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110113652925.png)
+- 存储如下数组，会发现问题：如果要存储的二叉树不是完全二叉树，在**数组中就会出现空隙，导致内存利用率降低**
+  ![image-20230110113804700](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110113804700.png)
 
 # 二叉树的遍历
 
 ## 先序遍历
 
+- 定义：**先输出根节点，再遍历左子树，最后遍历右子树。**<遍历左子树和右子树的时候，同样遵循先序遍历的规则>。也就是说，可以使用递归实现先序遍历
+
+  ```java
+  public void preOrder(TreeNode root){
+  	if(root == null){
+  		return;
+  	}
+  	system.out.println(root.data);
+  	preOrder(root.left);
+  	preOrder(root.right);
+  } 
+  ```
+
+  ![image-20230110114031370](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114031370.png)
+
 ## 中序遍历
+
+- 定义：**先递归中序遍历左子树，再输出根结点的值，再递归中序遍历右子树**，大家可以想象成一巴掌把树压扁，父结点被拍到了左子节点和右子节点的中间（倒影、映射）
+
+  ```java
+  public void inOrder(TreeNode root){
+  	if(root == null){
+  		return;
+  	}
+  	inOrder(root.left);
+  	system.out.println(root.data);
+  	inOrder(root.right);
+  } 
+  ```
+
+- 如图所示
+  ![image-20230110114345712](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114345712.png)
+  ![image-20230110114356891](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114356891.png)
 
 ## 后续遍历
 
+- 定义：**先递归后序遍历左子树，再递归后序遍历右子树，最后输出根结点的值**
+
+- 代码  
+
+  ```java
+  public void postOrder(TreeNode root){
+  	if(root == null){
+  		return;
+  	}
+  	postOrder(root.left);
+  	postOrder(root.right);
+  	system.out.println(root.data);
+  } 
+  ```
+
+  如图  
+  ![image-20230110114443989](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114443989.png)
