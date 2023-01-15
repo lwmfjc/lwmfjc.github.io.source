@@ -78,7 +78,7 @@ updated: 2023-01-14 17:31:53
 
 - `innodb_flush_log_at_trx_commit` 参数默认为 1 ，也就是说当事务提交时会**调用 `fsync` 对 redo log 进行刷盘**
 
-- `InnoDB` 存储引擎有一个后台线程，每隔`1` 秒，就会把 `redo log buffer` 中的内容写到文件系统缓存（`page cache`），然后调用 `fsync` 刷盘。(即**没有提交事务的redo log记录，也有可能会刷盘，因为在事务执行过程 `redo log` 记录是会写入`redo log buffer` 中，这些 `redo log` 记录会被后台线程刷盘。**)  
+- `InnoDB` 存储引擎有一个后台线程，每隔`1` 秒，就会把 `redo log buffer` 中的内容写到文件系统缓存（`page cache`），然后调用 `fsync` 刷盘。(★★重要★★即**没有提交事务的redo log记录，也有可能会刷盘，因为在事务执行过程 `redo log` 记录是会写入`redo log buffer` 中，这些 `redo log` 记录会被后台线程刷盘。**)  
 
   > 除了后台线程每秒`1`次的轮询操作，还有一种情况，当 `redo log buffer` 占用的空间即将达到 `innodb_log_buffer_size` 一半的时候，后台线程会主动刷盘 
 
@@ -90,7 +90,8 @@ updated: 2023-01-14 17:31:53
 
 - #### innodb_flush_log_at_trx_commit=0（不对是否刷盘做出处理）  
 
-  > 为`0`时，如果`MySQL`挂了或宕机可能会有`1`秒数据的丢失。
+  > 为`0`时，如果`MySQL`挂了或宕机可能会有`1`秒数据的丢失。  
+  > （**由于事务提交成功也不会主动写入page cache，所以即使只有MySQL 挂了，没有宕机，也会丢失。**）
 
   ![image-20230114211255976](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230114211255976.png)
 
@@ -159,13 +160,118 @@ updated: 2023-01-14 17:31:53
 
 # binlog
 
+- **redo log**是**物理**日志，记录内容是**“在某个数据页上做了什么修改”**，属于**InnoDB 存储引擎**；而**bin log**是逻辑日志，记录内容是**语句的原始逻辑**，类似于 “给ID = 2 这一行的 c 字段加1”，属于**MYSQL Server**层  
 
+  > 无论用什么存储引擎，主要**发生了表数据更新**，都会产生于binlog 日志
+
+- MySQL的数据库的**数据备份**、**主备**、**主主**、**主从**都离不开binlog，需要依靠binlog来**同步数据**，**保证数据一致性**。
+  ![image-20230115212733316](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115212733316.png)
+
+- binlog会记录所有**涉及更新数据的逻辑操作**，而且是**顺序写**
 
 ## 记录格式
 
+- `binlog` 日志有**三种格式**，可以通过**`binlog_format`**参数指定。
+  1. **statement**
+  2. **row**
+  3. **mixed**
+
+1. 指定**`statement`**，记录的内容是**`SQL`语句原文**，比如执行一条`update T set update_time=now() where id=1`，记录的内容如下
+   ![image-20230115213035257](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115213035257.png)
+
+   > 同步数据时会执行记录的SQL语句，但有个问题，**update_time = now() **会获取当前系统时间，直接执行会导致**与原库的数据不一致**
+
+2. 为了解决上面问题，需要指定**row**，记录的不是简单的SQL语句，还包括**操作的具体数据**，记录内容如下  
+
+   > - row格式的记录内容看不到详细信息，需要用**mysqlbinlog**工具解析出来
+   > - `update_time=now()`变成了具体的时间`update_time=1627112756247`，条件后面的@1、@2、@3 都是该行数据第 1 个~3 个字段的原始值（**假设这张表只有 3 个字段**）
+
+   ![image-20230115213231813](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115213231813.png)
+
+   这样就能保证同步数据的一致性，通常情况下都是指定row，可以为**数据库的恢复与同步**带来更好的**可靠性**
+
+3. 但是由于row需要更大的容量来记录，比较**占用空间**，**恢复与同步更消耗IO**资源，**影响执行速度**。
+   折中方案，指定为**mixed**，记录内容为两者混合：MySQL会判断这条SQL语句是否引起数据不一致，如果是就用**row**格式，否则就使用**statement**格式
+
 ## 写入机制
+
+- binlog的写入时机：**事务执行过程**中，先把日志写到**binlog cache**，**事务提交的时候（这个很重要，他不像redo log，binlog只有提交的时候才会刷盘）**，再把**binlog cache**写到binlog文件中
+
+  > 因为一个事务的**`binlog`不能被拆开**，无论这个事务多大，也要确保**一次性写入**，所以系统会**给每个线程分配一个块内存作为`binlog cache`**
+
+- 我们可以通过`binlog_cache_size`参数控制**单个线程 binlog cache 大小**，如果存储内容超过了这个参数，就要暂存到磁盘（`Swap`）：  
+  binlog日志刷盘流程如下  
+  ![image-20230115215957574](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115215957574.png)
+
+  > - 上图的 write，是指把日志写入到文件系统的 **page cache**，并没有把数据持久化到磁盘，所以速度比较快
+  > - 上图的 **fsync**，才是**将数据持久化到磁盘**的操作
+
+- write和fsync的时机，由**sync_binlog**控制，默认为0
+
+  1. 为**0**时，表示每次提交的事务都只**write**，由系统自行判断什么时候执行fsync
+     ![image-20230115220404168](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115220404168.png)
+
+     > 虽然性能会提升，但是如果机器宕机，**page cache**里面的binlog会**丢失**
+
+  2. 设置为**1**，表示**每次提交事务**都会fsync ，就如同**redo log日志刷盘流程** 一样
+
+  3. 折中，可以设置为**N(N>1)**，表示每次提交事物都write，但累积**N**个事务之后才**fsync**![image-20230115220338819](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115220338819.png)
+     在出现**IO**瓶颈的场景里，将**sync_binlog**设置成一个较大的值，可以**提升性能**  
+     同理，如果机器宕机，会**丢失最近N个事务的binlog日志**
 
 # 两阶段提交
 
+1. **redo log（重做日志）**让InnoDB存储引擎拥有了**崩溃恢复**的能力
+2. **binlog（归档日志）**保证了MySQL**集群架构的数据一致性**
+
+两者都属于**持久性**的保证，但**侧重点不同**  
+
+- 更新语句过程，会记录**redo log**和**binlog**两块日志，以基本的事务为单位
+
+- **redo log**在事务执行过程中可以**不断地写入**，而**binlog**只有在**提交事务时**才写入，所以**redo log**和**binlog**写入时机不一样
+
+![image-20230115221716772](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115221716772.png)
+
+**redo log**与**binlog** 两份日志之间的逻辑不一样，会出现什么问题？
+
+- 以`update`语句为例，假设`id=2`的记录，字段`c`值是`0`，把字段`c`值更新成`1`，`SQL`语句为`update T set c=1 where id= 2`
+
+- 假设执行过程中**写完redo log**日志后，**binlog日志写期间发生了异常**，会出现什么情况
+  ![image-20230115222416227](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115222416227.png)
+
+  > 由于`binlog`没写完就异常，这时候**`binlog`里面没有对应的修改记录**。因此，之后用**`binlog`日志恢复数据**时，就会少这一次更新，恢复出来的这一行`c`值是`0`，而**原库因为`redo log`日志恢复，这一行`c`值是`1`，最终数据不一致**。
+  >
+  > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/03-20220305235104445.png)
+
+- 为了解决**两份日志之间的逻辑一致**问题，InnoDB存储引擎使用**两阶段提交**方案
+  即将redo log的写入拆成了两个步骤**prepare**和**commit**，这就是**两阶段提交**（**其实就是等binlog正式写入后redo log才正式提交**）
+  ![image-20230115222722278](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115222722278.png)
+
+  > 使用**两阶段提交**后，写入`binlog`时发生异常也不会有影响，因为**`MySQL`根据`redo log`日志恢复数据**时，**发现`redo log`还处于`prepare`阶段（也就是下图的`非commit阶段`）**，并且**没有对应`binlog`日志**，就会**回滚该事务**。
+  >
+  > 其实下图中，**是否存在对应的binlog**，就是想知道**binlog是否是完整的**，如果完整的话 redolog就可以提交 （箭头前面**是否commit阶段**，是的话就表示binlog写入期间没有出错，即binlog完整）
+  > ![image-20230115222906325](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115222906325.png)
+  >
+  > 还有个问题，**`redo log`设置`commit`阶段发生异常**，那会不会回滚事务呢？    
+  >  ![image-20230115223656461](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115223656461.png)
+  >
+  > > 并不会回滚事务，它会执行上图框住的逻辑，虽然`redo log`是处于`prepare`阶段，但是**能通过事务`id`找到对应的`binlog`日志**，所以**`MySQL`认为(binlog)是完整的**，就会**提交事务恢复数据**。
+
 # undo log
 
+- 如果想要保证**事务的原子性**，就需要在**异常发生**时，对已经执行的操作进行**回滚**，在 MySQL 中，恢复机制是通过 **回滚日志（undo log）** 实现的，**所有事务进行的修改都会先记录到这个回滚日志**中，**然后再执行相关的操作**
+- 如果**执行过程中遇到异常**的话，我们直接利用 **回滚日志** 中的信息将数据回滚到修改之前的样子即可！
+- 回滚日志会**先于数据持久化到磁盘**上。这样就保证了即使遇到数据库突然宕机等情况，当用户再次启动数据库的时候，数据库还**能够通过查询回滚日志来回滚将之前未完成的事务**。
+
+## MVCC
+
+- `MVCC` 的实现依赖于：**隐藏字段、Read View、undo log**。
+
+- 内部实现中，`InnoDB` 通过数据行的 **`DB_TRX_ID`** 和 **`Read View`** 来判断数据的可见性，如不可见，则通过数据行的 `DB_ROLL_PTR` 找到 `undo log` 中的历史版本。
+
+  > 每个事务读到的数据版本可能是不一样的，在同一个事务中，用户只能看到该事务创建 `Read View` 之前已经提交的修改和该事务本身做的修改
+
+## 总结
+
+- MySQL InnoDB 引擎使用 **redo log(重做日志)** 保证事务的**持久性**，使用 **undo log(回滚日志)** 来保证事务的**原子性**。
+- `MySQL`数据库的**数据备份、主备、主主、主从**都离不开`binlog`，需要依靠`binlog`来同步数据，保证数据一致性。
