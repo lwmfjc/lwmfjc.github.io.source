@@ -79,51 +79,104 @@ updated: 2023-01-16 01:00:44
 
 1. 事务1 ```SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;```
 
-2. 事务1 ```START TRANSACTION;```
+   1. 事务1 ```START TRANSACTION;```
 
-3. 事务1 ```SELECT salary FROM employ WHERE id = 1```
+   2. 事务1 ```SELECT salary FROM employ WHERE id = 1```
 
-   ```shell
-   # 结果
-   +--------+
-   | salary |
-   +--------+
-   |   5000 |
-   +--------+
-   ```
+      ```shell
+      # 结果
+      +--------+
+      | salary |
+      +--------+
+      |   5000 |
+      +--------+
+      ```
 
-4. 开启新连接，事务2 开启 ```START TRANSACTION;```
+2. 开启新连接，事务2 开启 ```START TRANSACTION;```
 
-5. 事务2 ``` UPDATE employ SET salary = 4500 ;```
+   1. 事务2 ``` UPDATE employ SET salary = 4500 ;```
+   2. 事务1查看 ``` SELECT salary FROM employ WHERE id = 1;```
 
-6. 事务1查看 ``` SELECT salary FROM employ WHERE id = 1;```
+       ```shell
+       +--------+
+       | salary |
+       +--------+
+       |   4500 |
+       +--------+
+       ```
 
-   ```shell
-   +--------+
-   | salary |
-   +--------+
-   |   4500 |
-   +--------+
-   ```
+3. 事务2 进行回滚 ``` ROLLBACK;```
 
-7. 事务2 进行回滚 ``` ROLLBACK;```
+   1. 使用事务1再次查看 ```SELECT salary FROM employ WHERE id = 1;```
 
-8. 使用事务1再次查看 ```SELECT salary FROM employ WHERE id = 1;```
+       ```shell
+       +--------+
+       | salary |
+       +--------+
+       |   5000 |
+       +--------+
+       ```
 
-   ```shell
-   +--------+
-   | salary |
-   +--------+
-   |   5000 |
-   +--------+
-   ```
-
-   事务二进行了回滚，但是之前事务1却读取到了4500（是个脏数据）
+       事务二进行了回滚，但是之前事务1却读取到了4500（是个脏数据）
 
 ## 避免脏读（读已提交）
 
+**不要在上面的连接里继续**
+
+1. 事务1 设置为读已提交```SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;```
+
+   1. 事务1 ```START TRANSACTION;```
+
+   2. 事务1 ```SELECT salary FROM employ WHERE id = 1```
+
+      ```shell
+      # 结果
+      +--------+
+      | salary |
+      +--------+
+      |   5000 |
+      +--------+
+      ```
+
+2. 事务2 开启：```START TRANSACTION;```
+
+   1. 事务2修改数据，但未提交 ``` UPDATE employ SET salary =  4500 ;```
+
+   2. 事务1查看数据  `` SELECT salary FROM employ WHERE id = 1;```
+      因为事务隔离级别为**读已提交**，所以不会发生脏读
+
+      ```shell
+      # 结果
+      +--------+
+      | salary |
+      +--------+
+      |   5000 |
+      +--------+
+      ```
+
+3. 事务2提交  ```COMMIT;```
+
+   1. 事务1再次读取数据 ```SELECT salary FROM employ WHERE id = 1;```
+
+      ```shell
+      +--------+ 
+      | salary | 
+      +--------+ 
+      |   4500 | 
+      +--------+ 
+      ```
+
 ## 不可重复读
 
-## 可重复度
+还是刚才**读已提交**的那些步骤，重复操作可以知道  虽然**避免了读未提交**，但是出现了，**一个事务还没结束**，就发生了**不可重复读**问题   
+
+> 同一个数据，在同一事务内读取多次但值不一样
+
+
+![image-20230116150215200](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230116150215200.png)
+
+## 可重复读
+
+
 
 ## 幻读
