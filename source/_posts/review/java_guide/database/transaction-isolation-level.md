@@ -77,47 +77,51 @@ updated: 2023-01-16 01:00:44
 
 ## 脏读（读未提交）
 
-1. 事务1 ```SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;```
+1. 事务1 设置为**读未提交**级别 ```SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;```
 
-   1. 事务1 ```START TRANSACTION;```
+   事务1开启事务并查看数据
 
-   2. 事务1 ```SELECT salary FROM employ WHERE id = 1```
+   ```shell
+   START TRANSACTION;
+   SELECT salary FROM employ WHERE id = 1;
+   
+   # 结果
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
 
-      ```shell
-      # 结果
-      +--------+
-      | salary |
-      +--------+
-      |   5000 |
-      +--------+
-      ```
+2. 开启新连接，事务2 开启事务并更新数据
 
-2. 开启新连接，事务2 开启 ```START TRANSACTION;```
+   ```shell
+   START TRANSACTION;
+   UPDATE employ SET salary = 4500 ;
+   ```
 
-   1. 事务2 ``` UPDATE employ SET salary = 4500 ;```
-   2. 事务1查看 ``` SELECT salary FROM employ WHERE id = 1;```
+3. 事务1查看 ``` SELECT salary FROM employ WHERE id = 1;```
 
-       ```shell
-       +--------+
-       | salary |
-       +--------+
-       |   4500 |
-       +--------+
-       ```
+   ```shell
+   +--------+
+   | salary |
+   +--------+
+   |   4500 |
+   +--------+
+   ```
 
-3. 事务2 进行回滚 ``` ROLLBACK;```
+4. 此时事务2 进行回滚 ``` ROLLBACK;```
+   使用事务1再次查看 ```SELECT salary FROM employ WHERE id = 1;```
 
-   1. 使用事务1再次查看 ```SELECT salary FROM employ WHERE id = 1;```
+   ```shell
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
 
-       ```shell
-       +--------+
-       | salary |
-       +--------+
-       |   5000 |
-       +--------+
-       ```
-
-       事务二进行了回滚，但是之前事务1却读取到了4500（是个脏数据）
+   事务二进行了回滚，但是之前事务1却读取到了4500（是个脏数据）
 
 ## 避免脏读（读已提交）
 
@@ -125,46 +129,51 @@ updated: 2023-01-16 01:00:44
 
 1. 事务1 设置为读已提交```SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED;```
 
-   1. 事务1 ```START TRANSACTION;```
+   事务1 开启事务并查询数据  
 
-   2. 事务1 ```SELECT salary FROM employ WHERE id = 1```
+   ```shell
+   START TRANSACTION;
+   SELECT salary FROM employ WHERE id = 1;
+   
+   # 结果
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
 
-      ```shell
-      # 结果
-      +--------+
-      | salary |
-      +--------+
-      |   5000 |
-      +--------+
-      ```
+   
 
-2. 事务2 开启：```START TRANSACTION;```
+2. 事务2 开启并修改数据(未提交)
 
-   1. 事务2修改数据，但未提交 ``` UPDATE employ SET salary =  4500 ;```
+   ```shell
+   START TRANSACTION;
+    UPDATE employ SET salary =  4500 ;
+   ```
 
-   2. 事务1查看数据  `` SELECT salary FROM employ WHERE id = 1;```
-      因为事务隔离级别为**读已提交**，所以不会发生脏读
+3. 事务1查看数据  `` SELECT salary FROM employ WHERE id = 1;```
+   因为事务隔离级别为**读已提交**，所以不会发生脏读
 
-      ```shell
-      # 结果
-      +--------+
-      | salary |
-      +--------+
-      |   5000 |
-      +--------+
-      ```
+   ```shell
+   # 结果
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
 
-3. 事务2提交  ```COMMIT;```
+4. 事务2提交  ```COMMIT;```后，事务1再次读取数据 
 
-   1. 事务1再次读取数据 ```SELECT salary FROM employ WHERE id = 1;```
-
-      ```shell
-      +--------+ 
-      | salary | 
-      +--------+ 
-      |   4500 | 
-      +--------+ 
-      ```
+   ```shell
+   SELECT salary FROM employ WHERE id = 1;
+   +--------+ 
+   | salary | 
+   +--------+ 
+   |   4500 | 
+   +--------+ 
+   ```
 
 ## 不可重复读
 
@@ -177,6 +186,130 @@ updated: 2023-01-16 01:00:44
 
 ## 可重复读
 
+断开连接后重新连接MySQL，默认就是**REPEATABLE-READ** 可重复读
+
+1. 事务1查看当前事务隔离级别 ```select @@tx_isolation;```
+
+   ```shell
+   +-----------------+
+   | @@tx_isolation  |
+   +-----------------+
+   | REPEATABLE-READ |
+   +-----------------+
+   ```
+
+   事务1 开启事务并查询数据
+
+   ```shell
+   START TRANSACTION;
+   SELECT salary FROM employ WHERE id = 1;
+   
+   # 结果
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
+
+2. 事务2 开启事务并更新数据
+
+   ```shell
+   START TRANSACTION;
+   UPDATE employ SET salary = 4500 WHERE id = 1;
+   ```
+
+3. 事务1 读取数据（结果仍不变，避免了读未提交的问题）
+
+   ```shell
+   SELECT salary FROM employ WHERE id = 1;
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
+
+4. 事务2提交事务 ```COMMIT ;```
+
+5. 提交后事务1再次读取
+
+   ```shell
+    SELECT salary FROM employ WHERE id = 1;
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
+
+6. 与MySQL建立新连接并查询数据（发现数据确实是已经更新了的）
+
+   ```shell
+   SELECT salary FROM employ WHERE id = 1;
+   +--------+
+   | salary |
+   +--------+
+   |   4500 |
+   +--------+
+   ```
+
 
 
 ## 幻读
+
+**接下来测试一下该隔离策略下是否幻读**
+
+1. 先查看一下当前数据库表的数据 
+
+   ```shell
+   SELECT * FROM test;
+   +----+--------+
+   | id | salary |
+   +----+--------+
+   |  1 |   8000 |
+   |  6 |   500 |
+   +----+--------+
+   ```
+
+2. ```use lydb;```  ---> 事务1和事务2都开启事务 ```START TRANSACTION;```
+
+3. 事务2插入一条薪资为500的数据并提交
+
+   ```shell
+   INSERT INTO test(salary) values (500);
+   COMMIT;
+   #此时数据库已经有两条500的数据了(事务2)
+    select * from test;
+   +----+--------+
+   | id | salary |
+   +----+--------+
+   |  1 |   8000 |
+   |  6 |   500 |
+   |  10 |   500 |
+   +----+--------+
+   ```
+
+4. 事务1查询500的数据(**★★如果在事务2提交之前查询 SELECT * FROM test WHERE salary = 500; 或者 SELECT * FROM test; 那么这里[快照读]就只会查出一条，但是不管怎么样 [当前读]都会查出两条**)
+
+   ```shell
+   #---------------- # 快照读------------------
+   SELECT * FROM test WHERE salary = 500;
+   +----+--------+
+   | id | salary |
+   +----+--------+
+   |  6 |    500 | 
+   +----+--------+
+   #----------------# 当前读------------------
+   SELECT * FROM test WHERE salary = 500 FOR UPDATE;
+   +----+--------+
+   | id | salary |
+   +----+--------+
+   |  6 |    500 |
+   | 11 |    500 |
+   +----+--------+
+   
+   ```
+
+   
+   
