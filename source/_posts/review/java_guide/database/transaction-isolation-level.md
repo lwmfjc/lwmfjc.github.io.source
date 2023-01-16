@@ -63,6 +63,7 @@ updated: 2023-01-16 01:00:44
   > MySQL 命令行的默认配置中事务都是自动提交的，即执行 SQL 语句后就会马上执行 COMMIT 操作。如果要显式地开启一个事务需要使用命令：**`START TRANSACTION`**
 
 - 通过下面的命令来设置隔离级别
+  session ：更改只有本次会话有效；global：更改在**所有会话都有效，且不会影响已开启的session**
 
   ```shell
   SET [SESSION|GLOBAL] TRANSACTION ISOLATION LEVEL [READ UNCOMMITTED|READ COMMITTED|REPEATABLE READ|SERIALIZABLE] 
@@ -76,7 +77,48 @@ updated: 2023-01-16 01:00:44
 
 ## 脏读（读未提交）
 
+1. 事务1 ```SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;```
 
+2. 事务1 ```START TRANSACTION;```
+
+3. 事务1 ```SELECT salary FROM employ WHERE id = 1```
+
+   ```shell
+   # 结果
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
+
+4. 开启新连接，事务2 开启 ```START TRANSACTION;```
+
+5. 事务2 ``` UPDATE employ SET salary = 4500 ;```
+
+6. 事务1查看 ``` SELECT salary FROM employ WHERE id = 1;```
+
+   ```shell
+   +--------+
+   | salary |
+   +--------+
+   |   4500 |
+   +--------+
+   ```
+
+7. 事务2 进行回滚 ``` ROLLBACK;```
+
+8. 使用事务1再次查看 ```SELECT salary FROM employ WHERE id = 1;```
+
+   ```shell
+   +--------+
+   | salary |
+   +--------+
+   |   5000 |
+   +--------+
+   ```
+
+   事务二进行了回滚，但是之前事务1却读取到了4500（是个脏数据）
 
 ## 避免脏读（读已提交）
 
