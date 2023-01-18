@@ -96,10 +96,56 @@ updated: 2023-01-16 19:23:55
   >   因为这种特殊现象的存在，所以我们认为 **MySQL Innodb 中的 MVCC 并不能完全避免幻读现象**。
 
 # InnoDB对MVCC的实现
+
+- MVCC的实现依赖于：**隐藏字段（每条记录的）**、**ReadView（当前事务生成的）**、**undo log（当前事务执行时，为每个操作（记录）生成的）**
+- **内部实现**中，InnoDB通过数据行的**DB_TRX_ID**和**Read View**来判断数据的可见性，如不可见，则通过**数据行的DB_ROLL_PTR**找到**undo log**中的历史版本。**因此**，每个事务读到的**数据版本**可能是不一样的，**在同一个事务中**，用户只能看到**该事务创建ReadView**之前**（其实这个说法不太准确，m_up_limit_id不一定大于当前事务id）**已经提交的修改和**该事务本身做的修改**
+
 ## 隐藏字段
+
+- **内部**，**InnoDB**存储引擎为**每行数据**添加了**三个隐藏字段**：  
+  1. **DB_TRX_ID(6字节)**：表示**最后一次插入**或**更新该行**的**事务id**。此外，**delete**操作在内部被视为更新，只不过会在**记录头Record header**中的**deleted_flag**字段将其标记为**已删除**  
+  2. **DB_ROLL_PTR(7字节)**：回滚指针，指向**该行的undo log**。如果该行**违背更新**，则为**空**
+  3. **DB_ROW_ID(6字节)**：如果**没有设置主键**且**该表没有唯一非空索引**时，InnoDB会使用该id来**生成聚簇索引**
+
 ## ReadView
 
+```java
+class ReadView {
+  /* ... */
+private:
+  trx_id_t m_low_limit_id;      /* 大于等于这个 ID 的事务均不可见 */
+
+  trx_id_t m_up_limit_id;       /* 小于这个 ID 的事务均可见 */
+
+  trx_id_t m_creator_trx_id;    /* 创建该 Read View 的事务ID */
+
+  trx_id_t m_low_limit_no;      /* 事务 Number, 小于该 Number 的 Undo Logs 均可以被 Purge */ 
+
+  ids_t m_ids;                  /* 创建 Read View 时的活跃事务列表 */
+
+  m_closed;                     /* 标记 Read View 是否 close */
+} 
+```
+
+- **Read View** 主要是用来做**可见性**判断，里面保存了 “**当前对本事务不可见的其他活跃事务**”  
+
+- ReadView主要有以下字段  
+
+  1. `m_low_limit_id`：目前出现过的最大的事务 ID+1，即下一个将被分配的事务 ID。大于等于这个 ID 的数据版本均不可见
+  2. `m_up_limit_id`：活跃事务列表 `m_ids` 中最小的事务 ID，如果 `m_ids` 为空，则 `m_up_limit_id` 为 `m_low_limit_id`。小于这个 ID 的数据版本均可见
+  3. `m_ids`：`Read View` 创建时其他未提交的活跃事务 ID 列表。创建 `Read View`时，将当前未提交事务 ID 记录下来，后续即使它们修改了记录行的值，对于当前事务也是不可见的。`m_ids` 不包括当前事务自己和已提交的事务（正在内存中）
+  4. `m_creator_trx_id`：创建该 `Read View` 的事务 ID
+
+- **事务可见性**示意图（这个图容易理解）：  
+
+  > 为什么不是分**大于m_low_limit_id**和**在小于m_low_limit_id里过滤存在于活跃事务列表**，应该和算法有关吧
+
+
+  ![image-20230118155617419](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230118155617419.png)
+
 ## undo-log
+
+
 
 ## 数据可见性算法
 
