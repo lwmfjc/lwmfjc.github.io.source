@@ -131,10 +131,10 @@ private:
 
 - ReadView主要有以下字段  
 
-  1. `m_low_limit_id`：目前出现过的最大的事务 ID+1，即下一个将被分配的事务 ID。大于等于这个 ID 的数据版本均不可见
-  2. `m_up_limit_id`：活跃事务列表 `m_ids` 中最小的事务 ID，如果 `m_ids` 为空，则 `m_up_limit_id` 为 `m_low_limit_id`。小于这个 ID 的数据版本均可见
-  3. `m_ids`：`Read View` 创建时其他未提交的活跃事务 ID 列表。创建 `Read View`时，将当前未提交事务 ID 记录下来，后续即使它们修改了记录行的值，对于当前事务也是不可见的。`m_ids` 不包括当前事务自己和已提交的事务（正在内存中）
-  4. `m_creator_trx_id`：创建该 `Read View` 的事务 ID
+  1. `m_low_limit_id`：**目前出现过的最大的事务 ID+1**，即下一个将被分配的事务 ID。大于等于这个 ID 的数据版本均不可见
+  2. `m_up_limit_id`：**活跃事务列表 `m_ids` 中最小的事务 ID**，如果 `m_ids` 为空，则 `m_up_limit_id` 为 `m_low_limit_id`。小于这个 ID 的数据版本均可见
+  3. `m_ids`：**`Read View` 创建时其他未提交的活跃事务 ID 列表**。创建 `Read View`时，将当前未提交事务 ID 记录下来，后续即使它们修改了记录行的值，对于当前事务也是不可见的。`m_ids` 不包括当前事务自己和已提交的事务（正在内存中）
+  4. `m_creator_trx_id`：**创建该 `Read View` 的事务 ID**
 
 - **事务可见性**示意图（这个图容易理解）：  
 
@@ -145,16 +145,92 @@ private:
 
 ## undo-log
 
+- undo log主要有两个作用
 
+  1. 当**事务回滚时用于将数据恢复**到修改前的样子
+  2. 用于**MVCC**，读取记录时，若该记录被其他事务**占用**或当前版本**对该事务不可见**，则可以**通过**undo log 读取之前的版本数据，以此实现**非锁定读**
+
+- **InnoDB**存储引擎中**undo log**分为两种：**insert undo log**和**update undo log**
+
+  1. **insert undo log**：指在**insert**操作中产生的**undo log**，因为**insert**操作的记录只对事务本身可见，对其他事务不可见，故**该undo log**可以在**事务提交后直接删除**。不需要进行**purge**操作（purge：清洗）
+
+     **insert**时的数据初始状态：(DB_ROLL_PTR为空)  
+     ![image-20230119092412325](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230119092412325.png)
+
+  2. **update undo log**：**undate**或**delete**操作产生的undo log。该undo log 可能需要**提供给MVCC机制**，因此不能在事务提交时就进行删除。提交时放入undo log链表，等待**purge线程**进行最后的删除
+
+- 数据第一次修改时  
+  ![image-20230119092627138](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230119092627138.png)
+
+- 数据第二次被修改时  
+  ![image-20230119092833856](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230119092833856.png)
+  **不同事务**或者**相同事务**的**对同一记录行的修改**，会使**该记录行**的 **`undo log` 成为一条链表**，**链首**就是**最新**的记录，**链尾**就是**最早**的旧记录。
 
 ## 数据可见性算法
 
-# RC和RR隔离级别下MVCC的区别
+- 在 `InnoDB` 存储引擎中，创建一个新事务后，**执行每个 `select` 语句前(RC下是)**，都会创建一个快照（**Read View**），**快照中保存了当前数据库系统中正处于活跃（没有 commit）的事务的 ID 号**。其实简单的说保存的是系统中**当前不应该被本事务看到的其他事务 ID 列表（即 m_ids）**。当用户在这个事务中要读取某个记录行的时候，`InnoDB` 会将该**记录行的 `DB_TRX_ID`** 与 **`Read View` 中的一些变量**及**当前事务 ID** 进行比较，判断是否满足可见性条件
+
+- 具体的比较算法  
+  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/8778836b-34a8-480b-b8c7-654fe207a8c2.3d84010e.png)
+
+  1. 如果**记录 DB_TRX_ID < m_up_limit_id**，那么表明最新修改该行的事务（DB_TRX_ID）在当前事务创建快照之前就提交了，所以该记录行的值对当前事务是**可见**的
+  2. 如果 **DB_TRX_ID >= m_low_limit_id**，那么表明最新修改该行的事务（DB_TRX_ID）在当前事务创建快照之后才修改该行，所以该记录行的值对当前事务**不可见**。跳到步骤 5
+  3. **m_ids 为空（且DB_TRX_ID < m_low_limit_id）**，则表明在当前事务创建快照之前，修改该行的事务就已经提交了，所以该记录行的值**对当前事务是可见**的
+  4. 如果 **m_up_limit_id <= DB_TRX_ID < m_low_limit_id**，表明最新修改该行的事务（DB_TRX_ID）在当前事务创建快照的时候可能处于“活动状态”或者“已提交状态”；所以就要对活跃事务列表 m_ids 进行查找（源码中是用的二分查找，因为是有序的）
+     - 如果**在活跃事务列表 m_ids 中能找到 DB_TRX_ID**，表明：① 在当前事务**创建快照前**，该记录行的值被事务 ID 为 DB_TRX_ID 的事务**修改了，但没有提交**；或者 ② 在**当前事务创建快照后**，该记录行的值**被事务 ID 为 DB_TRX_ID 的事务修改**了。这些情况下，这个记录行的值对当前事务都是不可见的。跳到步骤 5
+     - 在活跃事务列表中**找不到**，则表明“id 为 trx_id 的事务”在修改“该记录行的值”后，在**“当前事务”创建快照前就已经提交**了，所以记录行对当前事务可见
+  5. **在该记录行的 DB_ROLL_PTR 指针所指向的 `undo log` 取出快照记录**，用快照记录的 DB_TRX_ID 跳到步骤 1 重新开始判断，直到找到满足的快照版本或返回空
+
+  
+
+# RC 和 RR 隔离级别下 MVCC 的差异
+
+在事务隔离级别 **`RC` 和 `RR`** （InnoDB 存储引擎的默认事务隔离级别）下，**`InnoDB` 存储引擎使用 `MVCC`（非锁定一致性读）**，但它们**生成 `Read View` 的时机却不同**
+【**RC：Read Commit 读已提交，RR：Repeatable Read 可重复读**】
+
+- 在 RC 隔离级别下的 **`每次select`** 查询前都生成一个`Read View` (m_ids 列表)
+- 在 RR 隔离级别下只在事务开始后 **`第一次select`** 数据前生成一个`Read View`（m_ids 列表）
 
 # MVCC解决不可重复读问题
 
+虽然 RC 和 RR 都通过 `MVCC` 来读取快照数据，但由于 **生成 Read View 时机不同**，从而在 **RR 级别下实现可重复读**
+
+举例：  （Tn 表示时间线）  
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/6fb2b9a1-5f14-4dec-a797-e4cf388ed413.ea9e47d7.png)
+
 ## 在RC下ReadView生成情况
 
+**1. 假设时间线来到 T4 ，那么此时数据行 id = 1 的版本链为：**
+
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/a3fd1ec6-8f37-42fa-b090-7446d488fd04.bf41f07c.png)
+
+由于 RC 级别下每次查询都会生成`Read View` ，并且事务 101、102 并未提交，此时 `103` 事务生成的 `Read View` 中活跃的事务 **`m_ids` 为：[101,102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：101，`m_creator_trx_id` 为：103
+
+- 此时最新记录的 `DB_TRX_ID` 为 101，m_up_limit_id <= 101 < m_low_limit_id，所以要在 **`m_ids` 列表中查找**，发现 **`DB_TRX_ID` 存在列表**中，那么这个记录不可见
+- **根据 `DB_ROLL_PTR` 找到 `undo log` 中的上一版本记录**，上一条记录的 `DB_TRX_ID` 还是 101，不可见
+- 继续找**上一条 `DB_TRX_ID`为 1**，满足 **1 < m_up_limit_id，可见**，所以事务 103 查询到数据为 `name = 菜花`
+
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/6fb2b9a1-5f14-4dec-a797-e4cf388ed413.ea9e47d7.png)
+
+**2. 时间线来到 T6 ，数据的版本链为：**
+
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/528559e9-dae8-4d14-b78d-a5b657c88391.2ff79120.png)
+
+因为在 RC 级别下，重新生成 `Read View`，这时事务 **101 已经提交，102 并未提交**，所以此时 `Read View` 中活跃的事务 **`m_ids`：[102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：102，`m_creator_trx_id`为：103
+
+- 此时最新记录的 **`DB_TRX_ID` 为 102**，m_up_limit_id <= 102 < m_low_limit_id，所以要**在 `m_ids` 列表中查找**，发现 `DB_TRX_ID` 存在列表中，那么这个记录不可见
+- 根据 `DB_ROLL_PTR` 找到 `undo log` 中的上一版本记录，**上一条记录的 `DB_TRX_ID` 为 101，满足 101 < m_up_limit_id**，记录可见，所以在 `T6` 时间点查询到数据为 `name = 李四`，与时间 T4 查询到的结果不一致，不可重复读！
+
+**3. 时间线来到 T9 ，数据的版本链为：**
+
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/6f82703c-36a1-4458-90fe-d7f4edbac71a.c8de5ed7.png)
+
+重新生成 `Read View`， 这时**事务 101 和 102 都已经提交，所以 m_ids 为空**，则 m_up_limit_id = m_low_limit_id = 104，最新版本事务 ID 为 102，满足 102 < m_low_limit_id，可见，查询结果为 `name = 赵六`
+
+> **总结：** **在 RC 隔离级别下，事务在每次查询开始时都会生成并设置新的 Read View，所以导致不可重复读**
+
 ## 在RR下ReadView生成情况
+
+
 
 # MVCC+Next-key -Lock防止幻读
