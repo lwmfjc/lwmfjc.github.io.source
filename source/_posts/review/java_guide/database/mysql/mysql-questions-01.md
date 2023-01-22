@@ -8,7 +8,7 @@ tags:
   - 复习-javaGuide
   - 复习-javaGuide-database
 date: 2023-01-20 11:36:06
-updated: 2023-01-20 11:36:06
+updated: 2023-01-22 22:46:06
 ---
 
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!====
@@ -409,10 +409,82 @@ SELECT ... FOR UPDATE;
 
 ## InnoDB 有哪几类行锁
 
+**MySQL InnoDB 支持三种行锁定方式**：
 
+- **记录锁（Record Lock）** ：也被称为记录锁，属于**单个行记录上的锁**。
+- **间隙锁（Gap Lock）** ：**锁定一个范围，不包括记录本身**。
+- **临键锁（Next-key Lock）** ：Record Lock+Gap Lock，**锁定一个范围，包含记录本身**。记录锁只能锁住已经存在的记录，为了避免插入新记录，需要依赖间隙锁。
+
+InnoDB 的**默认隔离级别 RR（可重读）是可以解决幻读**问题发生的，主要有下面两种情况：
+
+- **快照读**（**一致性非锁定读**） ：由 **MVCC 机制**来保证不出现幻读。
+- **当前读** （**一致性锁定读**）： 使用 **Next-Key Lock** 进行加锁来保证不出现幻读。
 
 ## 当前读和快照读有什么区别
+
+- **快照读**（一致性非锁定读）就是**单纯的 `SELECT` 语句**，但不包括下面这两类 `SELECT` 语句：  
+
+  ```mysql
+  SELECT ... FOR UPDATE
+  SELECT ... LOCK IN SHARE MODE
+  ```
+
+  快照即**记录的历史版本**，每行记录可能存在**多个历史版本**（多版本技术）。
+
+  快照读的情况下，**如果读取的记录正在执行 UPDATE/DELETE 操作，读取操作不会因此去等待记录上 X 锁的释放，而是会去读取行的一个快照**。
+
+  只有在**事务隔离级别 RC(读取已提交，ReadCommit)** 和 **RR（可重读，RepeatableCommit）**下，InnoDB 才会使用一致性非锁定读：
+
+  - 在 RC 级别下，对于快照数据，一致性非锁定读**总是读取被锁定行的最新一份（可见）快照**数据。
+  - 在 RR 级别下，对于快照数据，一致性非锁定读总是读取**本事务开始时的行数据版本**。
+
+  快照读比较适合对于**数据一致性要求不是特别高**且**追求极致性能**的业务场景。
+
+- **当前读** （一致性锁定读）就是**给行记录加 X 锁**或 **S 锁**。（使用当前读的话在RR级别下就无法解决幻读）
+
+  当前读的一些常见 SQL 语句类型如下：  
+
+  ```mysql
+  # 对读的记录加一个X锁
+  SELECT...FOR UPDATE
+  # 对读的记录加一个S锁
+  SELECT...LOCK IN SHARE MODE
+  # 对修改的记录加一个X锁
+  INSERT...
+  UPDATE...
+  DELETE... 
+  ```
+
 # MySQL 性能优化
+
+关于 MySQL 性能优化的建议总结，请看这篇文章： MySQL 高性能优化规范建议总结 
+
 ## 能用MySQL直接存储文件（比如图片）吗
+
+- 可以是可以，直接存储文件对应的**二进制数据**即可。不过，还是建议不要在数据库中存储文件，会**严重影响数据库性能**，**消耗过多存储空间**。
+
+- **数据库只存储文件地址信息，文件由文件存储服务负责存储。**
+
+  - 可以选择使用**云服务厂商提供的开箱即用的文件存储服务**，成熟稳定，价格也比较低。
+    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/oss-search.png)
+
+  - 也可以选择**自建文件存储服务**，实现起来也不难，基于 **FastDFS**、**MinIO（推荐）** 等开源项目就可以实现**分布式文件服务**。
+
+    > 相关阅读：[Spring Boot 整合 MinIO 实现分布式文件服务](https://www.51cto.com/article/716978.html)
+
 ## MySQL如何存储IP 地址
+
+- 可以**将 IP 地址转换成整形数据**存储，**性能更好**，**占用空间也更小**。
+
+- MySQL 提供了两个方法来**处理 ip 地址**
+  - `INET_ATON()` ： 把 **ip 转为无符号整型** (4-8 位)
+  - `INET_NTOA()` :把**整型的 ip 转为地址**
+
+- **插入数据前**，先用 `INET_ATON()` 把 ip 地址转为整型，**显示数据时**，使用 `INET_NTOA()` 把整型的 ip 地址转为地址显示即可
+
 ## 有哪些常见的SQL优化手段吗
+
+>  [《Java 面试指北》open in new window](https://www.yuque.com/docs/share/f37fc804-bfe6-4b0d-b373-9c462188fec7) 的「技术面试题篇」有一篇文章详细介绍了常见的 SQL 优化手段，非常全面，清晰易懂！
+>
+> ![常见的 SQL 优化手段](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/javamianshizhibei-sql-optimization.png)
+
