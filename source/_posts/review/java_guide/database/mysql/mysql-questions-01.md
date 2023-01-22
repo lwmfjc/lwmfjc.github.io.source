@@ -196,10 +196,68 @@ select sql_no_cache count(*) from usr;
 # MySQL事务
 ## 何谓事务
 
+> 我们设想一个场景，这个场景中我们需要插入**多条相关联**的数据到数据库，不幸的是，这个**过程**可能会遇到下面这些问题：
+>
+> - 数据库中途突然因为某些原因挂掉了。
+> - 客户端突然因为网络原因连接不上数据库了。
+> - 并发访问数据库时，多个线程同时写入数据库，覆盖了彼此的更改。
+> - ......
+>
+> 上面的任何一个问题都可能会**导致数据的不一致性**。为了保证数据的一致性，系统必须能够处理这些问题。事务就是我们抽象出来简化这些问题的**首选机制**。**事务的概念起源于数据库**，目前，已经成为一个比较广泛的概念
 
+- 事务是**逻辑上的一组操作**，要么**都执行**，要么**都不执行**
+
+- 最经典的就是**转账**，假如小明要给小红转账1000元，这个转账涉及到**两个关键操作**，这两个操作必须**都成功**或者**都失败**  
+
+  1. 将小明的余额减少1000元
+  2. 将小红的余额增加1000元
+
+  事务会把两个操作看成**逻辑上的一个整体**，这个整体包含的操作**要么都成功**，**要么都失败**。这样就不会出现**小明余额减少**而**小红余额却没有增加**的情况  
+  ![image-20230122204340552](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230122204340552.png)
 
 ## 何谓数据库事务
+
+- 多数情况下，我们谈论事务的时候，如果没有特指**分布式事务**，往往指的是**数据库事务**
+
+- **数据库事务**在日常开发中**接触最多**，如果项目属于**单体架构**，接触的往往就是**数据库事务**
+
+- 数据库事务的作用  
+  可以保证**多个对数据库的操作（也就是SQL语句）构成一个逻辑上的整体**，构成这个逻辑上整体的这些数据库操作遵循：**要么全部执行成功，要么全部不执行**  
+
+  ```mysql
+  # 开启一个事务
+  START TRANSACTION;
+  # 多条 SQL 语句
+  SQL1,SQL2...
+  ## 提交事务
+  COMMIT;
+  ```
+
+  ![image-20230122210451626](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230122210451626.png)
+
+- **关系型数据库**（比如MySQL、SQLServer、Oracle等）事务都有**ACID**特性  
+  ![image-20230122210606135](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230122210606135.png)
+
+  1. **原子性**（`Atomicity`） ： 事务是**最小的执行单位**，**不允许分割**。事务的原子性确保动作**要么全部完成**，要么**完全不起作用**；
+  2. **一致性**（`Consistency`）： 执行事务前后，数据保持一致，例如转账业务中，无论事务是否成功，转账者和收款人的总额应该是不变的；（**其实一致性是结果**）
+  3. **隔离性**（`Isolation`）： **并发访问数据库**时，一个用户的事务不被其他事务所干扰，**各并发事务之间数据库是独立的**；
+  4. **持久性**（`Durability`）： 一个**事务被提交之后**。它**对数据库中数据的改变是持久的**，**即使数据库发生故障**也不应该对其有任何影响。
+
+  **只有保证了事务的持久性、原子性、隔离性之后，一致性才能得到保障。也就是说 A、I、D 是手段，C 是目的！** 想必大家也和我一样，被 ACID 这个概念被误导了很久! 我也是看周志明老师的公开课[《周志明的软件架构课》open in new window](https://time.geekbang.org/opencourse/intro/100064201)才搞清楚的（多看好书！！）  
+  ![image-20230122210804705](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230122210804705.png)
+
+- 另外，DDIA 也就是 [《Designing Data-Intensive Application（数据密集型应用系统设计）》open in new window](https://book.douban.com/subject/30329536/) 的作者在他的这本书中如是说：
+
+  > Atomicity, isolation, and durability are properties of the database, whereas consis‐ tency (in the ACID sense) is a property of the application. The application may rely on the database’s atomicity and isolation properties in order to achieve consistency, but it’s not up to the database alone.
+  >
+  > 翻译过来的意思是：**原子性**，**隔离性**和**持久性**是**数据库的属性**，而**一致性（在 ACID 意义上）是应用程序的属性**。应用可能依赖数据库的原子性和隔离属性来实现一致性，但这并不仅取决于数据库。因此，字母 C 不属于 ACID 《Designing Data-Intensive Application（数据密集型应用系统设计）》这本书强推一波，值得读很多遍！豆瓣有接近 90% 的人看了这本书之后给了五星好评。另外，中文翻译版本已经在 Github 开源，地址：[https://github.com/Vonng/ddiaopen in new window](https://github.com/Vonng/ddia)
+  >
+  > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20210526162552353.png)
+
 ## 并发事务带来了哪些问题
+
+
+
 ## 不可重复读和幻读有什么区别
 ## SQL标准定义了哪些事务隔离级别
 ## MySQL的隔离级别是基于锁实现的吗
