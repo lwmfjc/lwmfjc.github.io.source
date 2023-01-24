@@ -95,7 +95,14 @@ updated: 2022-12-16 10:06:50
   >     >    ![image-20230124214548060](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124214548060.png)
   >     >    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20141116114625218)
   
-- 解析阶段是虚拟机将**常量池内的符号引用**替换为**直接引用**的过程，也就是**得到类**或者**字段**、**方法**在内存中的**指针**或者**偏移量**。（因为此时那些class文件已经早就加载到**方法区**之中了，所以可以改成指向**方法区**的某个**内存地址**
+- 解析阶段是虚拟机将**常量池内的符号引用**替换为**直接引用**的过程，也就是**得到类**或者**字段**、**方法**在内存中的**指针**或者**偏移量**。（因为此时那些class文件已经早就加载到**方法区**之中了，所以可以改成指向**方法区**的某个**内存地址**  
+
+  > **如下，我的理解是，把下面的 com/test/Student.a ()V 修改成了直接的内存地址 类似的意思**
+
+
+  
+  ![image-20230124222222940](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124222222940.png)  
+  ![image-20230124222327948](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124222327948.png)
 
 ## 初始化
 
