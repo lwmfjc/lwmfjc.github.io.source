@@ -20,8 +20,10 @@ updated: 2022-10-08 15:23:15
   checked exceptions (非运行时异常，编译异常）  
 
 - Java异常类层次结构图
-  ![image-20221008163827798](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008163827798.png)
+  ![Exception](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/Exception.png)
 
+  ![image-20221008163827798](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008163827798.png)
+  
 - Exception和Error有什么区别
 
   - 除了RuntimeException及其子类以外，其他的Exception类极其子类都属于受检查异常
