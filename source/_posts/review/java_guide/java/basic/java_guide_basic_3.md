@@ -26,7 +26,7 @@ updated: 2022-10-08 15:23:15
   
 - Exception和Error有什么区别
 
-  - 除了RuntimeException及其子类以外，其他的Exception类极其子类都属于受检查异常
+  - 除了RuntimeException及其子类以外，其他的Exception类及其子类都属于受检查异常
 
   - Exception : 程序本身可以处理的异常（可通过catch捕获）
 
@@ -45,7 +45,7 @@ updated: 2022-10-08 15:23:15
       ```illegal 英[ɪˈliːɡl] 非法的```  
       ```Arithmetic 英[əˈrɪθmətɪk] 算术```
 
-  - Error： 程序无法处理的错误 ，不建议通过catch 捕获，已办错误发生时JVM会选择线程终止  
+  - Error： **程序无法处理**的错误 ，不建议通过catch 捕获，已办错误发生时JVM会选择线程终止  
     OutOfMemoryError （堆，Java heap space），VirtualMachineError，StackOverFlowError，AssertionError （断言），IOError 
 
 - Throwable类常用方法 
@@ -58,12 +58,27 @@ updated: 2022-10-08 15:23:15
 - try-catch-finally如何使用
   try后面必须要有catch或者finally；无论是否捕获异常，finally都会执行；当在 `try` 块或 `catch` 块中遇到 `return` 语句时，`finally` 语句块将在方法返回之前被执行。
 
-  - **不要在 finally 语句块中使用 return!** 当 try 语句和 finally 语句中都有 return 语句时，try 语句块中的 return 语句会被忽略。这是因为 try 语句中的 return 返回值会先被暂存在一个本地变量中，当执行到 finally 语句中的 return 之后，这个本地变量的值就变为了 finally 语句中的 return 返回值。
+  - **不要在 finally 语句块中使用 return!** 当 try 语句和 finally 语句中都有 return 语句时，**try 语句块中的 return 语句会被忽略**。这是因为 try 语句中的 return 返回值会先被暂存在一个本地变量中，当执行到 finally 语句中的 return 之后，这个本地变量的值就变为了 finally 语句中的 return 返回值。
 
     ```java
-    不要在 finally 语句块中使用 return! 当 try 语句和 finally 语句中都有 return 语句时，try 语句块中的 return 语句会被忽略。这是因为 try 语句中的 return 返回值会先被暂存在一个本地变量中，当执行到 finally 语句中的 return 之后，这个本地变量的值就变为了 finally 语句中的 return 返回值。
+    public static void main(String[] args) {
+        System.out.println(f(2));
+  }
+    
+    public static int f(int value) {
+        try {
+            return value * value;
+        } finally {
+            if (value == 2) {
+                return 0;
+            }
+        }
+    }
+    /*  
+     0
+    */
     ```
-
+  
 - finally中的代码不一定执行（如果finally之前虚拟机就已经被终止了）
 
   - 另外两种情况，程序所在的线程死亡；关闭CPU；都会导致代码不执行
@@ -72,7 +87,7 @@ updated: 2022-10-08 15:23:15
 
   - 适用范围：任何实现```java.lang.AutoCloseable```或者```java.io.Closeable```的对象【比如InputStream、OutputStream、Scanner、PrintWriter等需要调用close()方法的资源】
 
-  - 在try-with-resources中，任何catch或finally块在声明的资源关闭后运行
+  - 在try-with-resources中，任何**catch或finally块在声明的资源关闭后运行**
 
   - 例子
 
@@ -125,19 +140,19 @@ updated: 2022-10-08 15:23:15
 
 - 需要注意的地方  
 
-  - 不要把异常定义为静态变量，因为这样会导致异常栈信息错乱。每次手动抛出异常，我们都需要手动 new 一个异常对象抛出。
-  - 抛出的异常信息一定要有意义。
-  - 建议抛出更加具体的异常比如字符串转换为数字格式错误的时候应该抛出`NumberFormatException`而不是其父类`IllegalArgumentException`。
+  - 不要把异常定义为静态变量，因为这样会导致**异常栈信息错乱**。每次手动抛出异常，我们都需要**手动 new 一个异常对象抛出**。
+  - 抛出的**异常信息一定要有意义**。
+  - 建议抛出**更加具体的异常**比如字符串转换为数字格式错误的时候应该抛出`NumberFormatException`而不是其父类`IllegalArgumentException`。
   - 使用日志打印异常之后就不要再抛出异常了（两者不要同时存在一段代码逻辑中）。
 
 ## 泛型
 
 - 什么是泛型？有什么作用
-  Java泛型（Generics）JDK5中引入的一个新特性，使用泛型参数，可以增强代码的可读性以及稳定性
+  Java泛型（Generics）JDK5中引入的一个新特性，使用泛型参数，可以**增强代码的可读性**以及**稳定性**
 
 - 编译器可以**对泛型参数进行检测，并通过泛型参数可以指定传入的对象类型**，比如```ArrayList<Person> persons=new ArrayList<Person>()```这行代码指明该ArrayList对象只能传入Person对象，若传入其他类型的对象则会报错
 
-  - 原生List返回类型为Object，需要手动转换类型才能使用，使用泛型后编译器自动转换
+  - 原生List返回类型为Object，需要手动转换类型才能使用，**使用泛型后编译器自动转换**
 
 - 泛型使用方式  
 
@@ -213,33 +228,32 @@ updated: 2022-10-08 15:23:15
     
     ```
 
-    上面称为静态方法，Java中泛型只是一个占位符，必须在传递类型后才能使用，类在实例化时才能传递类型参数，而类型方法的加载优先于类的实例化，静态泛型方法是**没有办法使用类上声明的泛型（即上面的第二点中类名旁边的T）**的，只能使用自己生命的<E> 
-
-
-    也可以是非静态的
+    上面称为静态方法，Java中泛型只是一个占位符，必须在传递类型后才能使用，类在实例化时才能传递类型参数，而类型方法的加载优先于类的实例化，静态泛型方法是**没有办法使用类上声明的泛型（即上面的第二点中类名旁边的T）**的，只能使用自己声明的<E> 
     
+  - 也可以是非静态的  
+  
     ```java
     class A{
-        private String name;
-        private int age;
+            private String name;
+            private int age;
     
-        public <E> int  geA(E e){
-            System.out.println(e.toString());
-            return 1;
+            public <E> int  geA(E e){
+                System.out.println(e.toString());
+                return 1;
+            }
         }
-    }
-    //使用,其中 <Object> 可以省略
-    a.<Object>geA(new Object());  
+        //使用,其中 <Object> 可以省略
+        a.<Object>geA(new Object()); 
     ```
 
 ## 反射
 
-- 反射赋予了我们在运行时分析类以及执行类中方法的能力，通过反射可以获取任意一个类的所有属性和方法
+- 反射赋予了我们在**运行时分析类**以及**执行类中方法**的能力，通过反射可以**获取任意一个类的所有属性和方法**
 
-- 反射增加了安全问题，可以无视泛型参数的安全检查（泛型参数的安全检查发生在编译器），不过其对于框架来说实际是影响不大的
+- 反射**增加（导致）了安全问题**，可以**无视泛型参数的安全检查**（**泛型参数的安全检查发生在编译期**），不过其对于框架来说实际是影响不大的
 
 - 应用场景  
-  一般用于框架中，框架中大量使用了动态代理，而动态代理的实现也依赖于反射
+  一般用于框架中，框架中大量使用了**动态代理**，而**动态代理的实现也依赖于反射**
 
   ```java
   //JDK动态代理
@@ -255,7 +269,7 @@ updated: 2022-10-08 15:23:15
   
       public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
           System.out.println("before method " + method.getName());
-          Object result = method.invoke(target, args);
+          Object result = method.invoke(target, args); //通过反射调用方法
           System.out.println("after method " + method.getName());
           return result;
       }
@@ -263,7 +277,7 @@ updated: 2022-10-08 15:23:15
   ```
 
   注解也使用到了反射，比如Spring上的@Component注解。
-  可以基于反射分析类，然后获取到类/属性/方法/方法的参数上的注解，获取注解后，做进一步的处理
+  可以**基于反射分析类**，然后**获取到类/属性/方法/方法的参数上的注解**，**获取注解后，做进一步的处理**
 
 ## 注解
 
