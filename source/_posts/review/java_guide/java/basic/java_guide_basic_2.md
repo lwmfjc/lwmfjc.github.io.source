@@ -300,9 +300,9 @@ updated: 2022-09-29 10:16:13
 ### String
 
 - String、StringBuffer，StringBuilder区别
-  String是不可变的，StringBuffer和StringBuilder都继承自AbstractStringBuilder类，是可变的（提供了修改字符串的方法）
+  String是不可变的，StringBuffer和StringBuilder都继承自AbstractStringBuilder类，是可变的（提供了**修改字符串**的方法）
 
-- String中的变量不可变，所以是线程安全的，而StringBuffer对方法加了同步锁，所以是线程安全的；而StringBuilder是线程不安全的
+- String中的变量**不可变，所以是线程安全**的，而StringBuffer对方法加了**同步锁**，所以是线程安全的；而S**tringBuilder是线程不安全**的
 
 - 三者使用建议
 
@@ -321,8 +321,8 @@ updated: 2022-09-29 10:16:13
     }
     ```
 
-    - 如上，保存字符串的数组被final修饰且为私有，并且String类没有提供暴露修改该字符串的方法
-    - String类被修饰为final修饰呆滞不能被继承，避免子类破坏
+    - 如上，保存字符串的数组被**final**修饰且为**私有**，并且String类**没有提供暴露修改该字符串**的方法
+    - String类被修饰为final修饰导致不能被继承，避免子类破坏
 
   - Java9  
 
@@ -339,9 +339,10 @@ updated: 2022-09-29 10:16:13
     }
     ```
 
-    - > Java9为何String底层实现由char[] 改成了 byte[] 新版的 String 其实支持两个编码方案： Latin-1 和 UTF-16。如果字符串中包含的汉字没有超过 Latin-1 可表示范围内的字符，那就会使用 Latin-1 作为编码方案。Latin-1 编码方案下，`byte` 占一个字节(8 位)，`char` 占用 2 个字节（16），`byte` 相较 `char` 节省一半的内存空间。
+    - > Java9为何String底层实现由**char[] 改成了 byte[]** 新版的 String 其实支持两个编码方案： **Latin-1** 和 **UTF-16**。如果字符串中包含的**汉字没有超过 Latin-1** 可表示范围内的字符，那就会使用 **Latin-1** 作为编码方案。Latin-1 编码方案下，`byte` 占一个字节(8 位)，`char` 占用 2 个字节（16），**`byte` 相较 `char` 节省一半的内存空间**。
       >
-      > JDK 官方就说了绝大部分字符串对象只包含 Latin-1 可表示的字符。
+      > JDK 官方就说了绝大部分字符串对象只包含 Latin-1 可表示的字符。    
+      > ```[ˈlætɪn] ```
 
 - 字符串使用“+” 还是 Stringbuilder 
   Java本身不支持运算符重载，但 “ + ” 和 “+=” 是专门为String重载过的运算符，Java中仅有的两个  
@@ -356,7 +357,7 @@ updated: 2022-09-29 10:16:13
   对应的字节码：  
   ![image-20221008114449075](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008114449075.png)
   
-  字符串对象通过“+”的字符串拼接方式，实际上是通过 `StringBuilder` 调用 `append()` 方法实现的，拼接完成之后调用 `toString()` 得到一个 `String` 对象。因此这里就会产生问题，如下代码，会产生过多的StringBuilder对象
+  字符串对象通过“+”的字符串拼接方式，实际上是通过 `StringBuilder` 调用 `append()` 方法实现的，拼接完成之后调用 `toString()` 得到一个 `String` 对象。因此这里就会产生问题，如下代码，会**产生过多的StringBuilder对象**
   
   ```java
   String[] arr = {"he", "llo", "world"};
@@ -368,7 +369,7 @@ updated: 2022-09-29 10:16:13
   
   ```
   
-  会循环创建StringBuilder对象，建议自己创建一个新的StringBuilder并使用：  
+  会**循环创建StringBuilder**对象，建议自己创建一个新的StringBuilder并使用：  
   
   ```java
   String[] arr = {"he", "llo", "world"};
@@ -380,10 +381,10 @@ updated: 2022-09-29 10:16:13
   ```
   
 - String#equals()和Object#equals()有何区别
-  String的equals被重写过，比较的是字符串的值是否相等，而Object的equals比较的是对象的内存地址
+  String的equals被重写过，比较的是**字符串的值是否相等**，而**Object的equals**比较的是**对象的内存地址**
 
 - 字符串常量池  
-  是JVM为了提升性能和减少内存消耗针对字符串（String类）专门开辟的一块区域，主要目的是为了避免字符串的重复创建
+  是JVM为了提升性能和减少内存消耗针对字符串（String类）专门开辟的一块区域，主要目的是为了**避免字符串的重复创建**
 
   ```java
   // 在堆中创建字符串对象”ab“ (这里也可以说是在常量池中创建对象)
@@ -399,7 +400,7 @@ updated: 2022-09-29 10:16:13
     会创建 1 或 2 个字符串对象。
     如果常量池中存在值为"abc"的对象，则直接在堆中创建一个对象，并且返回该对象的引用；如果不存在，则先在常量池中创建该对象，然后再在堆中创建该对象，并且返回该对象（堆中）的引用
 
-    下面这个解释，说明常量池存储的是引用（堆中某一块区域的）![image-20221008144055351](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008144055351.png)
+    下面这个解释，说明**常量池存储的是引用**（堆中某一块区域的）![image-20221008144055351](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008144055351.png)
 
     ```java
     // 字符串常量池中已存在字符串对象“abc”的引用
@@ -408,7 +409,7 @@ updated: 2022-09-29 10:16:13
     String s2 = new String("abc");
     ```
 
-  - intern方法的作用，是一个native方法，作用是将指定的字符串对象的引用保存在字符串常量池中
+  - intern方法的作用，是一个native方法，作用是将指定的**字符串对象的引用**保存在**字符串常量池**中
 
     ```java
     // 在堆中创建字符串对象”Java“
@@ -445,7 +446,7 @@ updated: 2022-09-29 10:16:13
   - 常量折叠  
     对于 `String str3 = "str" + "ing";` 编译器会给你优化成 `String str3 = "string";` 。
 
-    并不是所有的常量都会进行折叠，只有编译器在程序编译期就可以确定值的常量才可以：
+    并不是所有的常量都会进行折叠，只有**编译器在程序编译期就可以确定值**的常量才可以：
 
     - 基本数据类型( `byte`、`boolean`、`short`、`char`、`int`、`float`、`long`、`double`)以及字符串常量。
     - `final` 修饰的基本数据类型和字符串变量
@@ -467,7 +468,7 @@ updated: 2022-09-29 10:16:13
   
   ```
 
-  但是如果编译器在运行时才能知道其确切值的话，就无法对其优化
+  但是如果编译器在**运行时才能知道**其确切值的话，就无法对其优化
 
   ```java
   final String str1 = "str";
