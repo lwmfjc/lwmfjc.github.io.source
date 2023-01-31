@@ -1,5 +1,5 @@
 ---
-title: Java代理模式
+title: ly008ly-Java代理模式
 description: proxy_pattern
 categories:
   - 学习
@@ -208,6 +208,7 @@ extends Callback{
       }
   
   }
+  ```
 ```
   
   获取代理类
@@ -233,9 +234,9 @@ extends Callback{
   //实际使用
   AliSmsService aliSmsService = (AliSmsService) CglibProxyFactory.getProxy(AliSmsService.class);
   aliSmsService.send("java");
-  ```
-  
-  
+```
+
+
 ### 对比
 
 1. 灵活性：动态代理更为灵活，且**不需要实现接口**，可以**直接代理实现类**，并且不需要针对每个对象都创建代理类；一旦添加方法，动态代理类不需要修改；

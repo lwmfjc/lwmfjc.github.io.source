@@ -1,5 +1,5 @@
 ---
-title: 语法糖
+title: ly0012ly-语法糖
 description: syntactic-sugar
 categories:
   - 学习

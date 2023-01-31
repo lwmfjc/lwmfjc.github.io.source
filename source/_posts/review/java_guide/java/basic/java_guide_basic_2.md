@@ -1,5 +1,5 @@
 ---
-title: javaGuide基础2
+title: ly002ly-javaGuide基础2
 description: javaGuide基础2
 categories:
   - 学习
