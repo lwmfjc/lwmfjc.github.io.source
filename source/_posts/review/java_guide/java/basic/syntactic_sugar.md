@@ -18,21 +18,21 @@ updated: 2022-10-12 17:36:26
 
 ## 简介
 
-语法糖（Syntactic Sugar）也称糖衣语法，指的是在计算机语言中添加的某种语法，这种语法对语言的功能并没有影响，但是更方便程序员使用，简而言之，让程序更加简洁，有更高的可读性
+语法糖（Syntactic Sugar）也称**糖衣语法**，指的是在计算机语言中添加的某种语法，这种语法对语言的功能并没有影响，但是更方便程序员使用，简而言之，让程序更加**简洁**，有更高的**可读性**
 
 ## Java中有哪些语法糖
 
-Java虚拟机并不支持这些语法糖，这些语法糖在编译阶段就会被还原成简单的基础语法结构，这个过程就是解语法糖
+Java**虚拟机并不支持**这些语法糖，这些语法糖在**编译阶段就会被还原成简单的基础语法**结构，这个过程就是解语法糖
 
-- ```javac```命令可以将后缀为```.java```的源文件编译为后缀名为```.class```的可以运行于Java虚拟机的字节码。其中，```com.sun.tools.javac.main.JavaCompiler```的源码中，```compile()```中有一个步骤就是调用```desugar()```，这个方法就是负责解语法糖的实现的
-- Java中的语法糖，包括 泛型、变长参数、条件编译、自动拆装箱、内部类等
+- ```javac```命令可以将后缀为```.java```的源文件编译为后缀名为```.class```的**可以运行于Java虚拟机的字节码**。其中，```com.sun.tools.javac.main.JavaCompiler```的源码中，```compile()```中有一个步骤就是调用```desugar()```，这个方法就是负责**解语法糖**的实现的
+- Java中的语法糖，包括 **泛型**、**变长参数**、**条件编译**、**自动拆装箱**、**内部类**等
 
 ### switch支持String与枚举
 
-switch本身原本只支持基本类型，如char、byte、short、int及其封装类，以及String、enum 
+switch本身原本只支持基本类型，如int、char  
 ![image-20221013110105262](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221013110105262.png)
 
-int是数值，而char转ascii码，所以其实对于编译器来说，都是int类型(整型)
+int是比较数值，而char则是比较其ascii码，所以其实对于编译器来说，都是int类型(整型)，比如`byte`。`short`，`char`(ackii 码是整型)以及`int`。
 ![image-20221013111130070](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221013111130070.png)
 
 ![image-20221013111255889](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221013111255889.png)
@@ -84,15 +84,18 @@ public class switchDemoString
 }
 ```
 
-即switch判断是通过equals()和hashCode()方法来实现的
+即switch判断是通过**equals()**和**hashCode()**方法来实现的
 
-equals()检查是必要的，因为有可能发生碰撞，所以性能没有直接使用枚举进行switch或纯整数常量性能高
+equals()检查是必要的，因为**有可能发生碰撞**，所以性能没有**直接使用枚举**进行switch或纯整数常量性能高
 
 ### 泛型
 
 编译器处理泛型有两种方式：`Code specialization`和`Code sharing`。C++和 C#是使用`Code specialization`的处理机制，而 Java 使用的是`Code sharing`的机制
 
-> Code sharing 方式为每个泛型类型创建唯一的字节码表示，并且将该泛型类型的实例都映射到这个唯一的字节码表示上。将多种泛型类形实例映射到唯一的字节码表示是通过类型擦除（`type erasue`）实现的。
+> Code sharing 方式**为每个泛型类型创建唯一的字节码**表示，并且将该泛型类型的实例都映射到这个唯一的字节码表示上。将多种泛型类形实例映射到唯一的字节码表示是通过**类型擦除（`type erasue`）**实现的。
+
+- 对于 Java 虚拟机来说，他根本不**认识`Map<String, String> map`**这样的语法。需要在**编译阶段**通过**类型擦除**的方式进行解语法糖
+- 类型擦除的主要过程如下： 1.将所有的**泛型参数用其最左边界（最顶级的父类型）**类型替换。 2.移除所有的**类型参数**。
 
 两个例子  
 
@@ -139,8 +142,8 @@ equals()检查是必要的，因为有可能发生碰撞，所以性能没有直
 
 - 小结
 
-  - 虚拟机中并不存在泛型，泛型类没有自己独有的Class类对象，即不存在List<String>.class 或是 List<Integer>.class ，而只有List.class
-  - 虚拟机中，只有普通类和普通方法，所有泛型类的类型参数，在编译时都会被擦除
+  - 虚拟机中并不存在泛型，**泛型类没有自己独有的Class类**对象，即不存在List<String>.class 或是 List<Integer>.class ，而只有List.class
+  - 虚拟机中，只有普通类和普通方法，所有泛型类的**类型参数**，在**编译时都会被擦除**
 
 ### 自动装箱与拆箱
 
@@ -212,11 +215,11 @@ public static transient void print(String strs[])
 }
 ```
 
-如上，可变参数在被使用的时候，会创建一个数组，数组的长度，就是调用该方法的传递的实参的个数，然后再把参数值全部放到这个数组当中，最后把这个数组作为参数传递到被调用的方法中
+如上，可变参数在被使用的时候，会**创建一个数组**，数组的长度，就是调用该方法的传递的实参的个数，然后再**把参数值全部放到这个数组**当中，最后把这个数组作为参数传递到被调用的方法中
 
 ### 枚举
 
-关键字`enum`可以将一组具名的值的有限集合创建为一种新的类型，而这些具名的值可以作为常规的程序组件使用，这是一种非常有用的功能
+关键字`enum`可以**将一组具名的值**的**有限集合**创建为一种新的类型，而这些具名的值可以作为常规的程序组件使用，这是一种非常有用的功能
 
 写一个enum类进行测试
 
@@ -284,14 +287,14 @@ public final class T extends Enum
 重要代码：  
 
 1. ```public final class T extends Enum```
-   说明该类不可继承
+   说明**该类不可继承**
 
 2. ```java
        public static final T Spring;
        public static final T SUMMER;
    ```
 
-   说明枚举类型不可修改
+   说明枚举类型**不可修改**
 
 ### 内部类
 
@@ -375,7 +378,7 @@ public class OutterClass
 
 ### 条件编译
 
-—般情况下，程序中的每一行代码都要参加编译。但有时候出于**对程序代码优化的考虑**，希望只对其中一部分内容进行编译，此时就需要在程序中加上条件，让编译器只对满足条件的代码进行编译，将不满足条件的代码舍弃，这就是条件编译。
+—般情况下，程序中的每一行代码都要参加编译。但有时候出于**对程序代码优化的考虑**，希望**只对其中一部分内容进行编译**，此时就需要在程**序中加上条件**，让编译器只对满足条件的代码进行编译，将不满足条件的代码舍弃，这就是条件编译。
 
 ```java
 public class ConditionalCompilation {
@@ -413,7 +416,7 @@ public class ConditionalCompilation
 
 ### 断言
 
-Java 在执行的时候默认是不启动断言检查的（这个时候，所有的断言语句都将忽略！），如果要开启断言检查，则需要用开关`-enableassertions`或`-ea`来开启
+Java 在执行的时候**默认是不启动断言**检查的（这个时候，所有的断言语句都将忽略！），如果要**开启断言检查**，则需要用开关`-enableassertions`或`-ea`来开启
 
 代码如下：  
 
@@ -455,12 +458,12 @@ static final boolean $assertionsDisabled = !com/hollis/suguar/AssertTest.desired
 }
 ```
 
-- 断言的底层是if语言，如果断言为true，则什么都不做；如果断言为false，则程序抛出AssertError来打断程序执行
+- **断言的底层是if**语言，如果断言为true，则什么都不做；如果**断言为false**，则**程序抛出AssertError**来打断程序执行
 - -enableassertions会设置$assertionsDisabled字段的值
 
 ### 数值字面量
 
-java7中，字面量允许在数字之间插入任意多个下划线，不会对字面值产生影响，可以方便阅读
+java7中，字面量允许在**数字之间插入任意多个下划线**，不会对字面值产生影响，可以方便阅读
 
 源代码：  
 
@@ -521,7 +524,7 @@ public static transient void main(String args[])
 }
 ```
 
-会改成普通的for语句循环，或者使用迭代器
+**会改成普通的for语句循环**，或者**使用迭代器**
 
 ### try-with-resource
 
@@ -647,11 +650,28 @@ public static transient void main(String args[])
   }
   ```
 
-- lambda表达式的实现其实是依赖了一些底层的api，在编译阶段，会把lambda表达式进行解糖，转换成调用内部api的方式
+- lambda表达式的实现其实是**依赖了一些底层的api**，在编译阶段，会把lambda表达式进行解糖，转换成**调用内部api**的方式
 
 ## 可能遇到的坑
 
 ### 泛型
+
+- 泛型遇到重载
+
+  ```java
+  public class GenericTypes {
+  
+      public static void method(List<String> list) {
+          System.out.println("invoke method(List<String> list)");
+      }
+  
+      public static void method(List<Integer> list) {
+          System.out.println("invoke method(List<Integer> list)");
+      }
+  } 
+  ```
+
+  这种方法是编译不过去的，因为参数List<Integer> 和List<String>编译之后都被擦出了，变成了一样的原生类型List，擦除动作导致这两个方法的**特征签名变得一模一样**。
 
 - 泛型的类型参数不能用在 Java 异常处理的 catch 语句中。因为异常处理是由 JVM 在运行时刻来进行的。由于类型信息被擦除，JVM 是无法区分两个异常类型`MyException<String>`和`MyException<Integer>`的
 
@@ -673,7 +693,9 @@ public static transient void main(String args[])
   }
   ```
 
+  以上代码输出结果为：2！
   
+  由于经过类型擦除，所有的**泛型类实例都关联到同一份字节码**上，**泛型类的所有静态变量**是共享的。
 
 ### 自动装箱与拆箱
 
