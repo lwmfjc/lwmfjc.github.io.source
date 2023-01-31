@@ -260,9 +260,9 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
 
 - 介绍
 
-  - 编译器和 CPU 会在保证程序输出结果一致的情况下，会对代码进行重排序，从指令优化角度提升性能
-  - 后果是，导致 CPU 的高速缓存和内存中数据的不一致
-  - 内存屏障（`Memory Barrier`）就是通过阻止屏障两边的指令重排序从而避免编译器和硬件的不正确优化情况
+  - **编译器**和 **CPU** 会在**保证程序输出结果一致**的情况下，会**对代码进行重排序**，从**指令优化**角度提升性能
+  - 后果是，导致 **CPU 的高速缓存和内存中数据**的**不一致**
+  - 内存屏障（`Memory Barrier`）就是通过**阻止屏障两边的指令重排序**从而**避免编译器和硬件的不正确优化**情况
 
 - Unsafe提供了三个内存屏障相关方法
 
@@ -275,7 +275,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   public native void fullFence();
   ```
 
-- 以loadFence方法为例，会禁止读操作重排序，保证在这个屏障之前的所有读操作都已经完成，并且将缓存数据设为无效，重新从主存中进行加载
+- 以loadFence方法为例，会禁止读操作重排序，**保证在这个屏障之前的所有读操作都已经完成**，并且**将缓存数据设为无效**，**重新从主存中进行加载**
   在某个线程修改Runnable中的flag
 
   ```java
@@ -304,10 +304,30 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
       while (true) {
           boolean flag = changeThread.isFlag();
           unsafe.loadFence(); //加入读内存屏障
+          //假设上面这句unsafe.loadFence()去掉，那么  
+          /*
+          流程：1. 这里的flag为主线程读取到的flag，且此时子线程还没有修改
+               2. 3秒后子线程进行了修改，由于没有内存屏障，主线程（注意，不是主
+                  存储，是主线程）还是原来的值，值没有刷新，导致不一致
+          */
           if (flag){
               System.out.println("detected flag changed");
               break;
           }
+          //这里不能有System.out.println语句，不然会导致同步 
+          /*
+          synchronized的规定
+  			线程解锁前,必须把共享变量刷新到主内存
+  			线程加锁前将清空工作内存共享变量的值,需要从主存中获取共享变量的值。
+          */
+          /**
+           public void println(String x) {
+          	synchronized (this) {
+              	print(x);
+            	    newLine();
+          	}
+     		 }
+          */
       }
       System.out.println("main thread end");
   }
@@ -316,7 +336,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   detected flag changed
   main thread end
   ```
-
+  
 - 如果删除上面的loadFence()方法，就会出现下面的情况，主线程无法感知flag发生的变化，会一直在while中循环
   ![image-20221011163035365](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221011163035365.png)
 
