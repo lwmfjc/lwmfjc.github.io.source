@@ -72,7 +72,7 @@ public final class Unsafe {
    }
    ```
 
-2. 通过Java命令行命令```-Xbootclasspath/a```把调用Unsafe相关方法的类A所在jar包路径追加到默认的bootstrap路径中，使得A被引导类加载器加载
+2. 通过Java命令行命令```-Xbootclasspath/a```把调用Unsafe相关方法的类A所在jar包路径追加到默认的bootstrap路径中，使得**A被引导类加载器加载**
 
    ```java
    java -Xbootclasspath/a:${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
@@ -105,7 +105,7 @@ public native void freeMemory(long address);
 private void memoryTest() {
     int size = 4;
     long addr = unsafe.allocateMemory(size);
-    long addr3 = unsafe.reallocateMemory(addr, size * 2);
+    long addr3 = unsafe.reallocateMemory(addr, size * 2); //实际操作中这个地址可能等于addr（有概率，没找到原因，这里先假设重新分配了一块）
     System.out.println("addr: "+addr);
     System.out.println("addr3: "+addr3);
     try {
@@ -118,7 +118,7 @@ private void memoryTest() {
         System.out.println(unsafe.getLong(addr3));
     }finally {
         unsafe.freeMemory(addr);
-        unsafe.freeMemory(addr3);
+        unsafe.freeMemory(addr3); //实际操作中这句话没执行
     }
 }
 //结果
