@@ -102,36 +102,98 @@ public native void freeMemory(long address);
 测试：  
 
 ```java
-private void memoryTest() {
-    int size = 4;
-    long addr = unsafe.allocateMemory(size);
-    long addr3 = unsafe.reallocateMemory(addr, size * 2); //实际操作中这个地址可能等于addr（有概率，没找到原因，这里先假设重新分配了一块）
-    System.out.println("addr: "+addr);
-    System.out.println("addr3: "+addr3);
-    try {
-        //向每个字节，写入1 首先使用allocateMemory方法申请 4 字节长度的内存空间，在循环中调用setMemory方法向每个字节写入内容为byte类型的 1
-        unsafe.setMemory(null,addr ,size,(byte)1);
-        for (int i = 0; i < 2; i++) {
-            unsafe.copyMemory(null,addr,null,addr3+size*i,4);
+package com.unsafe;
+
+import lombok.extern.slf4j.Slf4j;
+import sun.misc.Unsafe;
+
+import java.lang.reflect.Field;
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
+public class UnsafeGet {
+    private Unsafe unsafe;
+
+    public UnsafeGet() {
+
+        this.unsafe = UnsafeGet.reflectGetUnsafe();
+        ;
+    }
+
+    private static Unsafe reflectGetUnsafe() {
+        try {
+            Field field = Unsafe.class.getDeclaredField("theUnsafe");
+            field.setAccessible(true);
+            return (Unsafe) field.get(null);
+        } catch (Exception e) {
+            log.error(e.getMessage(), e);
+            return null;
         }
-        System.out.println(unsafe.getInt(addr));
-        System.out.println(unsafe.getLong(addr3));
-    }finally {
-        unsafe.freeMemory(addr);
-        unsafe.freeMemory(addr3); //实际操作中这句话没执行
+    }
+
+    public void example() throws InterruptedException {
+        int size = 4;
+        //使用allocateMemory方法申请 4 字节长度的内存空间
+        long addr = unsafe.allocateMemory(size);
+        //setMemory(Object var1, long var2, long var4, byte var6)
+        //从var1的偏移量var2处开始，每个字节都设置为var6，设置var4个字节
+        unsafe.setMemory(null, addr, size, (byte) 1);
+        //找到一个新的size*2大小的内存块，并且拷贝原来addr的值过来 
+        long addr3 = unsafe.reallocateMemory(addr, size * 2); //实际操作中这个地址可能等于addr（有概率，没找到原因，这里先假设重新分配了一块）
+        System.out.println("addr: " + addr);
+        System.out.println("addr3: " + addr3);
+        System.out.println("addr值: " + unsafe.getInt(addr));
+        System.out.println("addr3值: " + unsafe.getLong(addr3));
+
+        try {
+            for (int i = 0; i < 2; i++) {
+                // copyMemory(Object var1, long var2, Object var4, long var5, long var7);
+                // 从var1的偏移量var2处开始，拷贝数据到var4的偏移量var5上，每次拷贝var7个字节
+                //所以i = 0时，拷贝到了addr3的前4个字节；i = 1 时，拷贝到了addr3的后4个字节
+                unsafe.copyMemory(null, addr, null, addr3 + size * i, 4);
+            }
+            System.out.println(unsafe.getInt(addr));
+            System.out.println(unsafe.getLong(addr3));
+        } finally {
+            log.info("start-------");
+            unsafe.freeMemory(addr);
+            log.info("end-------");
+            unsafe.freeMemory(addr3); //实际操作中这句话没执行，不知道原因
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        long l = Long.parseLong("0000000100000001000000010000000100000001000000010000000100000001", 2);
+        System.out.println(l);
+        new UnsafeGet().example();
+        /** 输出
+         72340172838076673
+         addr: 46927104
+         addr3: 680731776
+         addr值: 16843009
+         addr3值: 16843009
+         16843009
+         72340172838076673
+         2023-01-31 14:19:28 下午 [Thread: main] 
+         INFO:start-------
+         */
     }
 }
-//结果
-addr: 2433733895744
-addr3: 2433733894944
-16843009
-72340172838076673
+
 ```
 
 对于setMemory的解释 [来源](https://www.cnblogs.com/throwable/p/9139947.html)
 
 ```java
-public native void setMemory(Object o, long offset, long bytes, byte value); 将给定内存块中的所有字节设置为固定值(通常是0)。内存块的地址由对象引用o和偏移地址共同决定，如果对象引用o为null，offset就是绝对地址。第三个参数就是内存块的大小，如果使用allocateMemory进行内存开辟的话，这里的值应该和allocateMemory的参数一致。value就是设置的固定值，一般为0(这里可以参考netty的DirectByteBuffer)。一般而言，o为null，所有有个重载方法是public native void setMemory(long offset, long bytes, byte value);，等效于setMemory(null, long offset, long bytes, byte value);。
+/**
+将给定内存块中的所有字节设置为固定值(通常是0)。
+内存块的地址由对象引用o和偏移地址共同决定，如果对象引用o为null，offset就是绝对地址。第三个参数就是内存块的大小，如果使用allocateMemory进行内存开辟的话，这里的值应该和allocateMemory的参数一致。
+value就是设置的固定值，一般为0(这里可以参考netty的DirectByteBuffer)。一般而言，o为null  
+
+所有有个重载方法是public native void setMemory(long offset, long bytes, byte value);
+等效于setMemory(null, long offset, long bytes, byte value);。
+*/
+public native void setMemory(Object o, long offset, long bytes, byte value); 
 ```
 
 
@@ -144,18 +206,18 @@ public native void setMemory(Object o, long offset, long bytes, byte value); 将
 
 对于reallocateMemory方法：  
 
->在代码中调用`reallocateMemory`方法重新分配了一块 8 字节长度的内存空间，通过比较`addr`和`addr3`可以看到和之前申请的内存地址是不同的。在代码中的第二个 for 循环里，调用`copyMemory`方法进行了两次内存的拷贝，每次拷贝内存地址`addr`开始的 4 个字节，分别拷贝到以`addr3`和`addr3+4`开始的内存空间上：
+>在代码中调用`reallocateMemory`方法重新分配了一块 8 字节长度的内存空间，通过比较`addr`和`addr3`可以看到和之前申请的内存地址是不同的。在代码中的第二个 for 循环里，调用`copyMemory`方法进行了两次内存的拷贝，每次拷贝**内存地址`addr`开始的 4 个**字节，分别拷贝到**以`addr3`和`addr3+4`开始的内存空间**上：
 >
 >拷贝完成后，使用```getLong```方法一次性读取8个字节，得到long类型的值
 >
->这种分配属于堆外内存，无法进行垃圾回收，需要我们把这些内存当作资源去手动调用freeMemory方法进行释放，否则会产生内存泄漏。通常是try-finally进行内存释放
+>这种分配属于**堆外内存，无法进行垃圾回收**，需要我们把这些内存当作资源去手动调用freeMemory方法进行释放，否则会产生**内存泄漏**。通常是try-finally进行内存释放
 
 ![image-20221011141135430](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221011141135430.png)
 
 - 为什么使用堆外内存
 
-  - 对垃圾回收停顿的改善，堆外内存直接受操作系统管理而不是JVM
-  - 提升程序I/O操作的性能。通常I/O通信过程中，存在堆内内存到堆外内存的数据拷贝操作，对于需要频繁进行内存间的数据拷贝且生命周期较短的暂存数据，建议都存储到堆外内存
+  - 对**垃圾回收停顿的改善**，堆外内存**直接受操作系统**管理而不是JVM
+  - **提升程序I/O**操作的性能。通常I/O通信过程中，存在**堆内内存**到**堆外内存**的数据拷贝操作，对于需要**频繁进行内存间的数据拷贝**且**生命周期较短**的暂存数据，建议都存储到堆外内存
 
 - 典型应用
   DirectByteBuffer，Java用于实现堆外内存的重要类，对于堆外内存的创建、使用、销毁等逻辑均由Unsafe提供的堆外内存API来实现
