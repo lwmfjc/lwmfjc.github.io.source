@@ -16,7 +16,7 @@ updated: 2022-10-10 17:10
 
 ```sun.misc.Unsafe```
 
-提供执行低级别、不安全操作的方法，如直接访问系统内存资源、自主管理内存资源等，效率快，但由于有了操作内存空间的能力，会增加指针问题风险。且这些功能的实现依赖于本地方法，Java代码中只是声明方法头，具体实现规则交给本地代码
+提供**执行低级别**、**不安全操作**的方法，如**直接访问系统内存资源**、**自主管理内存资源**等，效率快，但由于有了操作内存空间的能力，会**增加指针问题风险**。且这些功能的实现依赖于本地方法，Java代码中只是声明方法头，具体实现规则交给本地代码
 ![image-20221010172203732](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221010172203732.png)
 
 ### 为什么要使用本地方法
@@ -75,7 +75,7 @@ public final class Unsafe {
 2. 通过Java命令行命令```-Xbootclasspath/a```把调用Unsafe相关方法的类A所在jar包路径追加到默认的bootstrap路径中，使得A被引导类加载器加载
 
    ```java
-   java -Xbootclasspath/a: ${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
+   java -Xbootclasspath/a:${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
    ```
 
 ### Unsafe功能
