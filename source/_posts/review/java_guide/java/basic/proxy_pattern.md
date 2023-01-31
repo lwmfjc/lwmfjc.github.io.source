@@ -16,7 +16,7 @@ updated: 2022-10-10 14:30:02
 
 ### 代理模式
 
-使用代理对象来代替对真实对象的访问，就可以在不修改原目标对象的前提下提供额外的功能操作，扩展目标对象的功能，即在目标对象的某个方法执行前后可以增加一些自定义的操作
+使用代理对象来代替对真实对象的访问，就可以在**不修改原目标对象的前提下提供额外的功能操作**，**扩展目标对象的功能**，即在目标对象的**某个方法执行前后可以增加一些自定义的操作**
 
 ### 静态代理
 
@@ -109,7 +109,7 @@ public class DebugInvocationHandler implements InvocationHandler {
 
     public DebugInvocationHandler(Object target) {
         this.target = target;
-    }
+    }、
 
 
     public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
@@ -172,7 +172,8 @@ extends Callback{
   //定义一个类，及方法拦截器
   package github.javaguide.dynamicProxy.cglibDynamicProxy;
   
-  public class AliSmsService {
+  public class AliSmsSer
+      pvice {
       public String send(String message) {
           System.out.println("send message:" + message);
           return message;
@@ -207,8 +208,8 @@ extends Callback{
       }
   
   }
-  ```
-
+```
+  
   获取代理类
   
   ```java
@@ -237,6 +238,5 @@ extends Callback{
   
 ### 对比
 
-动态代理更为灵活，且不需要实现接口，可以直接代理实现类，并且不需要针对每个对象都创建代理类；一旦添加方法，动态代理类不需要修改；
-
-静态代理：静态代理在编译时就将接口、实现类变成实际的class对象，即运行时生成动态类字节码，并加载到JVM中
+1. 灵活性：动态代理更为灵活，且**不需要实现接口**，可以**直接代理实现类**，并且不需要针对每个对象都创建代理类；一旦添加方法，动态代理类不需要修改；
+2. JVM层面：**静态代理在编译时就将接口、实现类变成实际的class文件**，而动态代理是在**运行时生成动态类字节码**，并**加载到JVM**中
