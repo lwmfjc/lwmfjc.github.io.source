@@ -573,7 +573,7 @@ public native boolean tryMonitorEnter(Object var1);
 
 #### Class操作
 
-Unsafe对class的相关操作主要包括类加载和静态变量的操作方法
+Unsafe对class的相关操作主要包括**类加载**和**静态变量**的操作方法
 
 - 静态属性读取相关的方法
 
@@ -597,10 +597,10 @@ Unsafe对class的相关操作主要包括类加载和静态变量的操作方法
   private void staticTest() throws Exception {
       User user=new User();
       System.out.println(unsafe.shouldBeInitialized(User.class));
-      Field sexField = User.class.getDeclaredField("name");
-      long fieldOffset = unsafe.staticFieldOffset(sexField);
-      Object fieldBase = unsafe.staticFieldBase(sexField);
-      Object object = unsafe.getObject(fieldBase, fieldOffset);
+      Field sexField = User.class.getDeclaredField("name");//获取到静态属性
+      long fieldOffset = unsafe.staticFieldOffset(sexField);//获取静态属性的偏移量
+      Object fieldBase = unsafe.staticFieldBase(sexField); //获取静态属性对应的是哪个类
+      Object object = unsafe.getObject(fieldBase, fieldOffset);//获取到静态属性 对象
       System.out.println(object);
   }
   /**
@@ -608,9 +608,9 @@ Unsafe对class的相关操作主要包括类加载和静态变量的操作方法
   */
   ```
 
-  在 `Unsafe` 的对象操作中，我们学习了通过`objectFieldOffset`方法获取对象属性偏移量并基于它对变量的值进行存取，但是它不适用于类中的静态属性，这时候就需要使用`staticFieldOffset`方法。在上面的代码中，只有在获取`Field`对象的过程中依赖到了`Class`，而获取静态变量的属性时不再依赖于`Class`。
+  在 `Unsafe` 的对象操作中，我们学习了通过`objectFieldOffset`方法获取对象属性偏移量并基于它对变量的值进行存取，但是它不适用于**类中的静态属性**，这时候就需要使用`staticFieldOffset`方法。在上面的代码中，只有在**获取`Field`对象的过程中依赖到了`Class`**，而**获取静态变量的属性时不再依赖于`Class`**。
 
-  在上面的代码中首先创建一个`User`对象，这是因为如果一个类没有被实例化，那么它的静态属性也不会被初始化，最后获取的字段属性将是`null`。所以在获取静态属性前，需要调用`shouldBeInitialized`方法，判断在获取前是否需要初始化这个类。如果删除创建 User 对象的语句，运行结果会变为：```truenull```
+  在上面的代码中首先创建一个`User`对象，这是因为**如果一个类没有被实例化，那么它的静态属性也不会被初始化，最后获取的字段属性将是`null`(如果直接使用User.name ，那么是会导致类被初始化的）**。所以在获取静态属性前，需要调用`shouldBeInitialized`方法，判断在获取前是否需要初始化这个类。如果删除创建 User 对象的语句，运行结果会变为：```truenull```
 
 - ```defineClass```方法允许程序在运行时动态创建一个类
 
@@ -619,7 +619,7 @@ Unsafe对class的相关操作主要包括类加载和静态变量的操作方法
   
   ```
 
-  利用class类字节码文件，动态创建一个类
+  **利用class类字节码文件，动态创建一个类**
 
   ```java
   private static void defineTest() {
@@ -642,7 +642,7 @@ Unsafe对class的相关操作主要包括类加载和静态变量的操作方法
 
 ```java 
 //获取系统相关信息 
-//返回系统指针的大小。返回值为4（32位系统）或 8（64位系统）。
+//返回系统指针的大小。返回值为4（32位系统）或 8（64位系统）。 【应该是字节数】
 public native int addressSize();
 //内存页的大小，此值为2的幂次方。
 public native int pageSize();
