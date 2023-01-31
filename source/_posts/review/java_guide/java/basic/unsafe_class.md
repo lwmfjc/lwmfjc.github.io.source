@@ -341,15 +341,18 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   ![image-20221011163035365](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221011163035365.png)
 
 - 典型应用
-  Java8新引入的锁---```StampedLock```，乐观锁，类似于无锁的操作，完全不会阻塞写线程获取写锁，从而缓解读多写少的”饥饿“现象。由于StampedLock提供的乐观读锁不阻塞写线程获取读锁，当线程共享变量从主内存load到线程工作内存时，存在数据不一致的问题
+  Java8新引入的锁---```StampedLock```，乐观锁，类似于无锁的操作，完全不会阻塞写线程获取写锁，从而**缓解读多写少的”饥饿“现象**。由于StampedLock提供的乐观读锁不阻塞写线程获取读锁，当**线程共享变量从主内存load到线程工作内存**时，存在数据不一致的问题  
 
   ```java
+  /**
+  StampedLock 的 validate 方法会通过 Unsafe 的 loadFence 方法加入一个 load 内存屏障
+  */
   public boolean validate(long stamp) {
      U.loadFence();
-     return (stamp & SBITS) == (state & SBITS);
+   return (stamp & SBITS) == (state & SBITS);
   }
   ```
-
+  
   
 
 #### 对象操作
@@ -380,6 +383,8 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
 
   对象实例化
 
+  > 允许我们使用非常规的方式进行对象的实例化
+  
   ```java
   public void objTest() throws Exception{
       A a1=new A();
@@ -390,15 +395,15 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
       System.out.println(a3.getB());
   }
   //结果
-  1 1 0
+1 1 0
   ```
 
-  > 打印结果分别为 1、1、0，说明通过`allocateInstance`方法创建对象过程中，不会调用类的构造方法。使用这种方式创建对象时，只用到了`Class`对象，所以说如果想要跳过对象的初始化阶段或者跳过构造器的安全检查，就可以使用这种方法。在上面的例子中，如果将 A 类的构造函数改为`private`类型，将无法通过构造函数和反射创建对象，但`allocateInstance`方法仍然有效。
-
+  > 打印结果分别为 1、1、0，说明通过**`allocateInstance`方法创建对象**过程中，**不会调用类的构造方法**。使用这种方式创建对象时，只用到了`Class`对象，所以说如果想要**跳过对象的初始化阶段**或者**跳过构造器的安全检查**，就可以使用这种方法。在上面的例子中，如果将 A 类的**构造函数改为`private`**类型，将无法通过构造函数和反射创建对象，但**`allocateInstance`方法仍然有效**。
+  
 - 典型应用
 
   - 常规对象实例化方式，从本质上来说，都是通过new机制来实现对象的创建
-  - 非常规的实例化方式：Unsafe中提供allocateInstance方法，仅通过Class对象就可以创建此类的实例对象
+  - 非常规的实例化方式：Unsafe中提供allocateInstance方法，**仅通过Class对象**就可以创建此类的实例对象
 
 #### 数组操作
 
@@ -412,8 +417,13 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   public native int arrayIndexScale(Class<?> arrayClass);
   ```
 
-- 典型应用
+- 典型应用  
   
+  > 这两个与数据操作相关的方法，在 `java.util.concurrent.atomic` 包下的 `AtomicIntegerArray`（可以实现对 `Integer` 数组中每个元素的原子性操作）中有典型的应用，如下图 `AtomicIntegerArray` 源码所示，通过 `Unsafe` 的 `arrayBaseOffset` 、`arrayIndexScale` 分别获取数组首元素的偏移地址 `base` 及单个元素大小因子 `scale` 。后续相关原子性操作，均依赖于这两个值进行数组中元素的定位，如下图二所示的 `getAndAdd` 方法即通过 `checkedByteOffset` 方法获取某数组元素的偏移地址，而后通过 CAS 实现原子性操作。
+  >
+  > ------
+  >
+  > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220717144927257.png)
 
 #### CAS操作
 
@@ -435,7 +445,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   public final native boolean compareAndSwapLong(Object o, long offset, long expected, long update);
   ```
 
-- CAS，AS 即比较并替换（Compare And Swap)，是实现并发算法时常用到的一种技术。CAS 操作包含三个操作数——内存位置、预期原值及新值。执行 CAS 操作的时候，将内存位置的值与预期原值比较，如果相匹配，那么处理器会自动将该位置值更新为新值，否则，处理器不做任何操作。我们都知道，CAS 是一条 CPU 的原子指令（cmpxchg 指令），不会造成所谓的数据不一致问题，`Unsafe` 提供的 CAS 方法（如 `compareAndSwapXXX`）底层实现即为 CPU 指令 `cmpxchg`
+- CAS，AS 即**比较并替换（Compare And Swap)**，是实现并发算法时常用到的一种技术。CAS 操作包含三个操作数——**内存位置**、**预期原值**及**新值**。执行 CAS 操作的时候，将内存位置的值与预期原值比较，如果相匹配，那么处理器会自动将该位置值更新为新值，否则，处理器不做任何操作。我们都知道，CAS 是**一条 CPU 的原子指令（cmpxchg 指令）**，不会造成所谓的数据不一致问题，`Unsafe` 提供的 CAS 方法（如 `compareAndSwapXXX`）底层实现即为 CPU 指令 `cmpxchg`
 
 - 输出
 
@@ -444,6 +454,9 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   public static void main(String[] args){
       CasTest casTest=new CasTest();
       new Thread(()->{
+          /*
+           一开始a=0的时候，i=1，所以a + 1；之后 a = 1的时候，i = 2 ，所以a 又加1 ；而如果是不等于的话，就会一直原子获取a的值，知道等于 i -1 
+          */
           for (int i = 1; i < 5; i++) {
               casTest.increment(i);
               System.out.print(casTest.a+" ");
@@ -466,13 +479,13 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
           } catch (NoSuchFieldException e) {
               e.printStackTrace();
           }
-      }
+    }
   }
   //结果
-1 2 3 4 5 6 7 8 9
+  1 2 3 4 5 6 7 8 9
   ```
   
-  使用两个线程去修改int型属性a的值，并且只有在a的值等于传入的参数x减一时，才会将a的值变为x，也就是实现对a的加一的操作
+  使用两个线程去修改int型属性a的值，并且只有在**a的值**等于**传入的参数x减一**时，才会将a的值变为x，也就是实现对a的加一的操作
   ![image-20221011184828760](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221011184828760.png)
 
 #### 线程调度(多线程问题)
@@ -494,13 +507,9 @@ public native void monitorExit(Object o);
 public native boolean tryMonitorEnter(Object o);
 ```
 
-方法 `park`、`unpark` 即可实现线程的挂起与恢复，将一个线程进行挂起是通过 `park` 方法实现的，调用 `park` 方法后，线程将一直阻塞直到超时或者中断等条件出现；`unpark` 可以终止一个挂起的线程，使其恢复正常。
+方法 `park`、`unpark` 即可实现**线程的挂起**与**恢复**，将一个线程进行挂起是通过 `park` 方法实现的，调用 `park` 方法后，线程将一直阻塞**直到超时**或者**中断**等条件出现；`unpark` 可以终止一个挂起的线程，使其恢复正常。 
 
-<<<<<<< HEAD
-此外，`Unsafe` 源码中`monitor`相关的三个方法已经被标记为`deprecated`，不建议被使用：
-=======
-Unsafe源码中monitor相关的方法被标记为deprecated
->>>>>>> 01db5084445cfa1dd668fb907ec8e453c9136e03
+此外，`Unsafe` 源码中`monitor`相关的三个方法已经**被标记为`deprecated`**，不建议被使用： 
 
 ```java
 //获得对象锁
@@ -515,40 +524,52 @@ public native boolean tryMonitorEnter(Object var1);
 ```
 
 `monitorEnter`方法用于获得对象锁，`monitorExit`用于释放对象锁，如果对一个没有被`monitorEnter`加锁的对象执行此方法，会抛出`IllegalMonitorStateException`异常。`tryMonitorEnter`方法尝试获取对象锁，如果成功则返回`true`，反之返回`false`。
-<<<<<<< HEAD
 
-#### Class操作
+- 典型操作  
 
+  > Java 锁和同步器框架的核心类 **`AbstractQueuedSynchronizer` (AQS)**，就是通过调用**`LockSupport.park()`**和**`LockSupport.unpark()`**实现**线程的阻塞**和**唤醒**的，而 `LockSupport` 的 `park` 、`unpark` 方法实际是调用 `Unsafe` 的 `park` 、`unpark` 方式实现的。
 
-=======
+  ```java
+  public static void park(Object blocker) {
+      Thread t = Thread.currentThread();
+      setBlocker(t, blocker);
+      UNSAFE.park(false, 0L);
+      setBlocker(t, null);
+  }
+  public static void unpark(Thread thread) {
+      if (thread != null)
+          UNSAFE.unpark(thread);
+  } 
+  ```
 
-代码应用：  
+- `LockSupport` 的`park`方法调用了 `Unsafe` 的`park`方法来阻塞当前线程，此方法将线程阻塞后就不会继续往后执行，直到有其他线程调用`unpark`方法唤醒当前线程。下面的例子对 `Unsafe` 的这两个方法进行测试：
 
-```java
-public static void main(String[] args) {
-    Thread mainThread = Thread.currentThread();
-    new Thread(()->{
-        try {
-            TimeUnit.SECONDS.sleep(5);
-            System.out.println("subThread try to unpark mainThread");
-            unsafe.unpark(mainThread);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }).start();
+  ```java
+  public static void main(String[] args) {
+      Thread mainThread = Thread.currentThread();
+      new Thread(()->{
+          try {
+              TimeUnit.SECONDS.sleep(5);
+              //5s后唤醒main线程
+              System.out.println("subThread try to unpark mainThread");
+              unsafe.unpark(mainThread);
+          } catch (InterruptedException e) {
+              e.printStackTrace();
+          }
+      }).start();
+  
+      System.out.println("park main mainThread");
+      unsafe.park(false,0L);
+      System.out.println("unpark mainThread success");
+  }
+  //输出
+  park main mainThread
+  subThread try to unpark mainThread
+  unpark mainThread success
+  ```
 
-    System.out.println("park main mainThread");
-    unsafe.park(false,0L);
-    System.out.println("unpark mainThread success");
-}
-//输出
-park main mainThread
-subThread try to unpark mainThread
-unpark mainThread success
-```
-
-流程图如下：  
-![image-20221012090743240](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221012090743240.png)
+  流程图如下：  
+  ![image-20221012090743240](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221012090743240.png)
 
 #### Class操作
 
