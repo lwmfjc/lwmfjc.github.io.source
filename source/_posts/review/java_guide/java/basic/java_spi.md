@@ -1,5 +1,5 @@
 ---
-title: ly0011ly-java_spi
+title: ly011ly-java_spi
 description: java_spi
 categories:
   - 学习
