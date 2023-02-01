@@ -61,7 +61,7 @@ updated: 2022-10-17 08:55:24
 
 ### List
 
-- ArrayList和Vector区别：ArrayList是List主要实现类，底层使用Object[]存储线程不安全（synchronized关键字）；Vector是List古老实现类，底层使用Object[]存储，线程安全
+- ArrayList和Vector区别：ArrayList是List主要实现类，底层使用Object[]存储线程不安全；Vector是List古老实现类，底层使用Object[]存储，线程安全 （**synchronized**关键字）
 
 - ArrayList与LinkedList：
 
@@ -75,14 +75,16 @@ updated: 2022-10-17 08:55:24
 
 - 双向链表与双向循环链表
 
-  - 双向链表，首尾相连
+  - 双向链表，包含两个指针，一个 prev 指向前一个节点，一个 next 指向后一个节点。
     ![image-20221017145140450](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017145140450.png)
-  - 双向循环链表，首尾相连（头节点的前驱=尾结点，尾结点的后继=头节点）
+  - 双向循环链表，**首尾相连**（头节点的前驱=尾结点，尾结点的后继=头节点）
 
 - 补充：RandomAccess接口，这个接口只是用来**标识**：**实现这个接口的类，具有随机访问功能**，但并不是说因为实现了该接口才具有的快速随机访问机制
 
-  - Collections里面有这样一段代码
+  - Collections里面有这样一段代码  
 
+    > 在 `binarySearch（)` 方法中，它要判断传入的 list 是否 `RandomAccess` 的实例，如果是，调用`indexedBinarySearch()`方法，如果不是，那么调用`iteratorBinarySearch()`方法
+  
     ```java
         public static <T>
         int binarySearch(List<? extends Comparable<? super T>> list, T key) {
@@ -90,10 +92,10 @@ updated: 2022-10-17 08:55:24
                 return Collections.indexedBinarySearch(list, key);
             else
                 return Collections.iteratorBinarySearch(list, key);
-        }
+      }
     ```
-
-  - ArrayList实现了RandomAccess方法，而LinkedList没有。是由于ArrayList底层是数组，支持快速随机访问，时间复杂度为O(1)，而LinkedList底层是链表，不支持快速随机访问，时间复杂度为O(n)
+  
+  - ArrayList实现了RandomAccess方法，而LinkedList没有。是由于ArrayList底层是数组，支持**快速随机访问**，时间复杂度为**O(1)**，而LinkedList底层是链表，不支持快速随机访问，时间复杂度为**O(n)**
 
 ### Set
 
@@ -127,7 +129,7 @@ updated: 2022-10-17 08:55:24
   
               @Override
               public int compare(Integer o1, Integer o2) {
-                  //如果结果大于0，则两个数对调 
+                  //如果结果大于0，则两个数对调
                   //如果返回o2.compareTo(o1)，就是当o2>01时，两个结果对换，也就是降序
                   //如果返回o1.compareTo(o2)，就是当o1>o2时，两个结果对换，也就是升序   也就是当和参数顺序一致时，是升序；反之，则是降序
                   return o2.compareTo(o1); 
@@ -139,13 +141,13 @@ updated: 2022-10-17 08:55:24
 
 - 无序性和不可重复性
 
-  - 无序性，指存储的数据，在底层数据结构中，并非按照数组索引的书顺序添加（而是根据数据的哈希值决定）
-  - 不可重复性：指添加的元素按照equals()判断时，返回false。需同时填写equals()方法和hashCode() 方法
+  - 无序性，指存储的数据，在底层数据结构中，**并非按照数组索引的顺序**添加（而是**根据数据的哈希值**决定）
+  - 不可重复性：指添加的元素**按照equals()判断时，返回false**。需**同时**重写**equals()**方法和**hashCode()** 方法
 
 - 比较HashSet、LinkedHashSet和TreeSet三者异同
 
-  - 都是Set实现类，保证元素唯一，且非线程安全
-  - 三者底层数据结构不同，HashSet底层为哈希表（HashMap）; LinkedHashSet底层为链表+哈希表 ，元素的插入和取出顺序满足FIFO。TreeSet底层为红黑树，元素有序，排序方式有自然排序和定制排序
+  - 都是Set实现类，保证**元素唯一**，且**非线程安全**
+  - 三者底层数据结构不同，HashSet底层为**哈希表（HashMap）**; LinkedHashSet底层为**链表+哈希表** ，元素的插入和取出顺序满足**FIFO**。TreeSet底层为红黑树，元素**有序**，排序方式有**自然排序**和**定制排序**
     ![image-20221017170434986](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017170434986.png)
 
 ## Queue
@@ -155,32 +157,30 @@ updated: 2022-10-17 08:55:24
 ![image-20221017170659204](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017170659204.png)
 
 - Queue
-  - Queue为单端队列，只能从一端插入元素，另一端删除元素，实现上一般遵循**先进先出（FIFO）**规则【Dequeue为双端队列，在队列两端均可插入或删除元素】
+  - Queue为单端队列，只能**从一端插入**元素，**另一端删除**元素，实现上一般遵循**先进先出（FIFO）**规则【Dequeue为双端队列，在队列两端均可**插入或删除**元素】
   - Queue扩展了Collection接口，根据**因容量问题而导致操作失败后的处理方式不同**分两类，操作失败后**抛异常**或**返回特殊值**
     ![image-20221017172811954](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017172811954.png)
-  - Dequeue，双端队列，在队列两端均可插入或删除元素，也会根据失败后处理方式分两类
+  - Dequeue，双端队列，在队列**两端均可插入**或**删除**元素，也会根据失败后处理方式分两类
     Deque还有push()和pop()等其他方法，可用于模拟栈
     ![image-20221017173058398](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221017173058398.png)
 
 ### ArrayDeque与LinkedList区别
 
-- ArrayDeque和LinkedList都实现了Deque接口，两者都具有队列功能
-- ArrayDeque基于可变长的数组和双指针来实现，而LinkedList则通过链表来实现
-- ArrayDeque不支持存储NULL数据，但LinkedList支持
+- ArrayDeque和LinkedList**都实现了Deque**接口，两者**都具有队列**功能
+- ArrayDeque**基于可变长的数组**和**双指针**来实现，而**LinkedList则通过链表**来实现
+- ArrayDeque**不支持存储NULL**数据，但**LinkedList支持**
 - ArrayDeque是后面（JDK1.6)引入的，而LinkedList在JDK1.2就存在
-- `ArrayDeque` 插入时可能存在扩容过程, 不过均摊后的插入操作依然为 O(1)。虽然 `LinkedList` 不需要扩容，但是每次插入数据时均需要申请新的堆空间，均摊性能相比更慢。
+- `ArrayDeque` 插入时可能存在扩容过程, 不过**均摊后的插入操作依然为 O(1)**。虽然 `LinkedList` 不需要扩容，但是**每次插入数据时均需要申请新的堆空间**，均摊性能相比更慢。
 
-总的来说，ArrayDeque来实现队列要比Linked更好，此外，ArrayDeque也可以用于实现栈
+总的来说，ArrayDeque来实现队列要比LinkedList更好，此外，ArrayDeque也可以用于实现栈
 
 ### 说一说PriorityQueue
 
-`PriorityQueue` 是在 JDK1.5 中被引入的, 其与 `Queue` 的区别在于元素出队顺序是与优先级相关的，即总是优先级最高的元素先出队。
+`PriorityQueue` 是在 JDK1.5 中被引入的, 其与 `Queue` 的区别在于**元素出队顺序**是**与优先级相关**的，即总是**优先级最高的元素先出队**。
 
 这里列举其相关的一些要点：
 
-- `PriorityQueue` 利用了二叉堆的数据结构来实现的，底层使用可变长的数组来存储数据
-- `PriorityQueue` 通过堆元素的上浮和下沉，实现了在 O(logn) 的时间复杂度内插入元素和删除堆顶元素。
-- `PriorityQueue` 是非线程安全的，且不支持存储 `NULL` 和 `non-comparable` 的对象。
-- `PriorityQueue` 默认是小顶堆，但可以接收一个 `Comparator` 作为构造参数，从而来自定义元素优先级的先后。
-
-> 大部分转自https://github.com/Snailclimb/JavaGuide
+- `PriorityQueue` 利用了**二叉堆**的数据结构来实现的，底层使用**可变长的数组**来存储数据
+- `PriorityQueue` 通过堆元素的**上浮**和**下沉**，实现了在 **O(logn) 的时间复杂度内插入**元素和**删除**堆顶元素。
+- `PriorityQueue` 是**非线程安全**的，且不支持存储 `NULL` 和 `non-comparable` 的对象。
+- `PriorityQueue` **默认是小顶堆**，但**可以接收一个 `Comparator`** 作为构造参数，从而来自定义元素优先级的先后。
