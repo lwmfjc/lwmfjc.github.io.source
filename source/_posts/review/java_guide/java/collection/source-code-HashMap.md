@@ -230,20 +230,18 @@ updated: 2022-10-21 15:30:09
   }
   ```
 
-- put方法（对外只提供put，没有putVal)
+- put方法（**对外只提供put**，没有putVal)
   putVal方法添加元素分析
 
   - 如果定位到的数组位置没有元素直接插入
 
-  - 如果有，则比较key，如果key相同则覆盖，不同则判断是否时树节点，如果是，使用putTreeVal插入；如果不是，则遍历链表插入(链表尾部)
-    ![image-20221022181648277](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221022181648277.png)
+  - 如果有，则比较key，如果key相同则覆盖，不同则判断是否是否是一个树节点，如果是就调用`e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value)`将元素添加进入；如果不是，则遍历链表插入(链表尾部)
+    ![image-20230201153322604](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230201153322604.png)
 
-    - 注意事项1：直接覆盖则return，不会有后续操作
-
-    - 当链表长度大于8且HashMap数组长度大于64才会执行链表转红黑树，否则只是对数组扩容
+    - 
 
       ```java
-      //源码
+  //源码
       public V put(K key, V value) {
           return putVal(hash(key), key, value, false, true);
       }
@@ -317,7 +315,7 @@ updated: 2022-10-21 15:30:09
           return null;
       }
       ```
-
+    
   - 1.7中的put方法
 
     - ① 如果定位到的数组位置没有元素 就直接插入。
@@ -325,7 +323,7 @@ updated: 2022-10-21 15:30:09
     - ② 如果定位到的数组位置有元素，遍历**以这个元素为头结点的链表**，依次和插入的 key 比较，如果 key 相同就直接覆盖，不同就**采用头插法插入元素**。
 
       ```java
-      //源码
+    //源码
       public V put(K key, V value)
           if (table == EMPTY_TABLE) {
           inflateTable(threshold);
@@ -349,12 +347,12 @@ updated: 2022-10-21 15:30:09
           return null;
       }
       ```
-
+  
   - get方法
-    //先算hash值，然后算出key在数组中的index下标，然后就要在数组中取值了（先判断第一个结点(链表/树))。如果相等，则返回，如果不相等则分两种情况：在树中get或者 **链表中get（需要遍历）**
-
+  //先算hash值，然后算出key在数组中的index下标，然后就要在数组中取值了（先判断第一个结点(链表/树))。如果相等，则返回，如果不相等则分两种情况：在树中get或者 **链表中get（需要遍历）**
+  
     ```java
-    public V get(Object key) {
+  public V get(Object key) {
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
     }
@@ -383,12 +381,12 @@ updated: 2022-10-21 15:30:09
         return null;
     }
     ```
-
+  
   - resize方法
-    每次扩容，都会进行一次重新hash分配，且会遍历所有元素（非常耗时）
-
+  每次扩容，都会进行一次重新hash分配，且会遍历所有元素（非常耗时）
+  
     ```java
-    final Node<K,V>[] resize() {
+  final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
@@ -469,7 +467,7 @@ updated: 2022-10-21 15:30:09
         return newTab;
     }
     ```
-
+  
     
 
 ## HashMap常用方法测试
