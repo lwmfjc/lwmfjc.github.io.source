@@ -1,5 +1,5 @@
 ---
-title: ly005y-Java序列化详解
+title: ly0005y-Java序列化详解
 description: Java序列化详解
 categories:
   - 学习

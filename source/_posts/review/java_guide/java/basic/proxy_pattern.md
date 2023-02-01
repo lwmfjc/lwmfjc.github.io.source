@@ -1,5 +1,5 @@
 ---
-title: ly008ly-Java代理模式
+title: ly0008ly-Java代理模式
 description: proxy_pattern
 categories:
   - 学习
