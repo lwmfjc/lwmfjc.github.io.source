@@ -52,7 +52,7 @@ updated: 2022-10-20 17:01:47
       }
       ```
     
-    - LinkedList不支持搞笑随机元素访问，而ArrayList支持（通过get(int index))
+    - LinkedList**不支持高效随机元素访问**，而ArrayList支持（通过get(int index))
     
     - 内存空间占用
       ArrayList的空间浪费主要体现在list列表的结尾会预留一定的容量空间，而LinkedList的空间花费在，每个元素都需要比ArrayList更多空间（要存放直接前驱和直接后继以及(当前)数据)
@@ -117,6 +117,7 @@ updated: 2022-10-20 17:01:47
    ```
 
 2. 以无参构造参数函数为例
+   **先看下面的 add()方法扩容**
 
    得到最小扩容量( 如果空数组则为10，否则原数组大小+1 )--->确定是否扩容【**minCapacity > 此时的数组大小**】--->
    真实进行扩容 【 grow(int minCapacity) 】
@@ -149,7 +150,7 @@ updated: 2022-10-20 17:01:47
         */
        public boolean add(E e) {
       //添加元素之前，先调用ensureCapacityInternal方法
-           ensureCapacityInternal(size + 1);  // Increments modCount!!  //jdk11 移除了该方法，第一次进入时size为0
+           ensureCapacityInternal(size + 1);  // Increments modCount!!  			//jdk11 移除了该方法，第一次进入时size为0
            //这里看到ArrayList添加元素的实质就相当于为数组赋值
            elementData[size++] = e;
            return true;
@@ -161,7 +162,10 @@ updated: 2022-10-20 17:01:47
       //**得到最小扩容量**
        private void ensureCapacityInternal(int minCapacity) {
            if (elementData == DEFAULTCAPACITY_EMPTY_ELEMENTDATA) {
-                 // 获取默认的容量和传入参数的较大值
+               // 获取默认的容量和传入参数的较大值
+               //当 要 add(E) 进第 1 个元素时，minCapacity 为 1，在 Math.max()方法比较后，minCapacity 为 10。
+               //为什么不直接取DEFAULT_CAPACITY,因为这个方法不只是add(E )会用到，
+               //其次addAll(Collection<? extends E> c)也用到了
                minCapacity = Math.max(DEFAULT_CAPACITY, minCapacity);
            }
    
@@ -181,14 +185,15 @@ updated: 2022-10-20 17:01:47
                grow(minCapacity);
        }
    /*
-    if语句表示，当minCapacity（数组实际元素数量的大小）大于实际容量则进行扩容
-    添加第1个元素的时候，会进入grow方法，直到添加第10个元素
+    if语句表示，当minCapacity（数组实际*需要*容量的大小）大于实际容量则进行扩容
+    添加第1个元素的时候，会进入grow方法，直到添加第10个元素 都不会再进入grow()方法
     当添加第11个元素时，minCapacity(11)比elementData.length(10)大，进入扩容
    */
    ```
 
    ```java
-   /**
+   // grow()方法
+        /**
         * 要分配的最大数组大小
         */
        private static final int MAX_ARRAY_SIZE = Integer.MAX_VALUE - 8;
@@ -202,7 +207,7 @@ updated: 2022-10-20 17:01:47
            //将oldCapacity 右移一位，其效果相当于oldCapacity /2，
            //我们知道位运算的速度远远快于整除运算，整句运算式的结果就是将新容量更新为旧容量的1.5倍，
            int newCapacity = oldCapacity + (oldCapacity >> 1);
-           //然后检查新容量是否大于最小需要容量，若还是小于最小需要容量，那么就把最小需要容量当作数组的新容量，
+           //然后检查新容量是否大于最小需要容量，若还是小于最小需要容量，那么就把最小需要容量当作数组的新容量[1.5倍扩容后还小于，说明一次添加的大于1.5倍扩容后的大小]
            if (newCapacity - minCapacity < 0)
                newCapacity = minCapacity;
           // 如果新容量大于 MAX_ARRAY_SIZE,进入(执行) `hugeCapacity()` 方法来比较 minCapacity 和 MAX_ARRAY_SIZE，
@@ -325,10 +330,9 @@ updated: 2022-10-20 17:01:47
 6.  联系及区别
    
    - 看两者源代码可以发现 `copyOf()`内部实际调用了 `System.arraycopy()` 方法
-   - arraycopy 更能实现自
-     定义
+   - arraycopy 更能实现自定义
    
-7. ensureCapacity 方法
+7. **ensureCapacity** 方法
 最好在向 `ArrayList` 添加大量元素之前用 `ensureCapacity` 方法，以减少增量重新分配的次数
    向 `ArrayList` 添加大量元素之前使用`ensureCapacity` 方法可以提升性能。不过，这个性能差距几乎可以忽略不计。而且，实际项目根本也不可能往 `ArrayList` 里面添加这么多元素
 
@@ -840,5 +844,3 @@ public class ArrayList<E> extends AbstractList<E>
 ```
 
 
-
-> 大部分转自https://github.com/Snailclimb/JavaGuide
