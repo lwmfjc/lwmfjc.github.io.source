@@ -1,5 +1,5 @@
 ---
-title: 集合_2
+title: ly0002ly集合_2
 description: 集合_2
 categories:
   - 学习
@@ -125,10 +125,10 @@ updated: 2022-10-18 08:54:49
      /**person1
      person4
      person2
-   person3
+      person3
      **/
      ```
-  
+
 - HashSet如何检查重复
 
   - 当在HashSet加入对象时，**先计算对象hashcode值**判断加入位置，同时与其他加入对象的hashcode值比较，如果没有相同的，会假设对象没有重复出现；如果发现有**相同的hashcode值**的对象，则**调用equals()方法**检查hashcode相等的对象是否真的相等，如果相等则不会加入
