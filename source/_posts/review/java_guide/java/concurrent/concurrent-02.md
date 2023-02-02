@@ -619,6 +619,8 @@ updated: 2022-11-07 16:00:06
     
   - 此时，ThreadLocalMap中就会出现key为null的Entry，如果不做任何措施，value永远无法被GC回收，此时会产生内存泄漏。ThreadLocaMap实现中已经考虑了这种情况，在调用**set()**、**get()**、**remove()**方法时，**清理掉key为null的记录** 所以使用完ThreadLocal的方法后，最好手动调用remove()方法  
   
+    > set()方法中的cleanSomeSlots() 已经清除了部分key为null的记录。但是还不完整，还要依赖  expungeStaleEntry() 方法（**在remove中**）
+  
     ```java
     //remove()方法  
          public void remove() {
@@ -643,6 +645,53 @@ updated: 2022-11-07 16:00:06
                         return;
                     }
                 }
+            }
+    
+    /**
+             * Expunge a stale entry by rehashing any possibly colliding entries
+             * lying between staleSlot and the next null slot.  This also expunges
+             * any other stale entries encountered before the trailing null.  See
+             * Knuth, Section 6.4
+             *
+             * @param staleSlot index of slot known to have null key
+             * @return the index of the next null slot after staleSlot
+             * (all between staleSlot and this slot will have been checked
+             * for expunging).
+             */
+            private int expungeStaleEntry(int staleSlot) {
+                Entry[] tab = table;
+                int len = tab.length;
+    
+                // expunge entry at staleSlot
+                tab[staleSlot].value = null;
+                tab[staleSlot] = null;
+                size--;
+    
+                // Rehash until we encounter null
+                Entry e;
+                int i;
+                for (i = nextIndex(staleSlot, len);
+                     (e = tab[i]) != null;
+                     i = nextIndex(i, len)) {
+                    ThreadLocal<?> k = e.get();
+                    if (k == null) {
+                        e.value = null;
+                        tab[i] = null;
+                        size--;
+                    } else {
+                        int h = k.threadLocalHashCode & (len - 1);
+                        if (h != i) {
+                            tab[i] = null;
+    
+                            // Unlike Knuth 6.4 Algorithm R, we must scan until
+                            // null because multiple entries could have been stale.
+                            while (tab[h] != null)
+                                h = nextIndex(h, len);
+                            tab[h] = e;
+                        }
+                    }
+                }
+                return i;
             }
     ```
   
