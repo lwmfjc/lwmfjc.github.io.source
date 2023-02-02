@@ -16,12 +16,15 @@ updated: 2022-10-25 11:40:53
 
 ## 装饰器模式
 
-- 装饰器，Decorator，装饰器模式可以在不改变原有对象的情况下拓展其功能
+​	类图：  
+​	![image-20230202093047927](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230202093047927.png)
 
-- ★装饰器模式，通过组合替代继承来扩展原始类功能，在一些继承关系较复杂的场景（IO这一场景各种类的继承关系就比较复杂）下更加实用
+- 装饰器，Decorator，装饰器模式可以在**不改变原有对象的情况下拓展其功能**
 
-- 对于字节流，**FilterInputStream（对应输入流）和FilterOutputStream（对应输出流）**是装饰器模式的核心，分别用于增强（继承了）InputStream和OutputStream子类对象的功能
-  Filter （过滤的意思）
+- ★装饰器模式，**通过组合替代继承**来扩展原始类功能，在一些**继承关系较复杂**的场景（IO这一场景各种类的继承关系就比较复杂）下更加实用
+
+- 对于字节流，**FilterInputStream（对应输入流）和FilterOutputStream（对应输出流）**是**装饰器模式的核心**，分别用于**增强（继承了）InputStream**和**OutputStream**子类对象的功能
+  Filter （过滤的意思），中间（Closeable）下面这两条**虚线代表实现**；最下面的**实线代表继承**
   ![image-20221026092700367](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026092700367.png)
 
 - 其中BufferedInputStream（字节缓冲输入流）、DataInputStream等等都是FilterInputStream的子类，对应的BufferedOutputStream和DataOutputStream都是FilterOutputStream的子类
@@ -72,14 +75,14 @@ updated: 2022-10-25 11:40:53
 
   ![image-20221026093724390](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026093724390.png)
 
-- 装饰器模式重要的一点，就是可以对原始类嵌套使用多个装饰器，所以装饰器需要跟原始类继承相同的抽象类或实现相同接口，上面介绍的IO相关装饰器和原始类共同父类都是InputStream和OutputStream
+- 装饰器模式重要的一点，就是**可以对原始类嵌套使用多个装饰器**，所以**装饰器**需要**跟原始类继承相同**的**抽象类**或**实现相同接口**，上面介绍的IO相关装饰器和原始类共同父类都是InputStream和OutputStream
   而对于字符流来说，BufferedReader用来增强Reader（字符输入流）子类功能，BufferWriter用来增加Writer（字符输出流）子类功能
 
   ```java
   BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileName), "UTF-8"));
   ```
 
-- IO流中大量使用了装饰器模式，不需要特意记忆
+- **IO流中大量使用了装饰器模式**，不需要特意记忆
 
 ## 适配器模式
 
@@ -89,11 +92,11 @@ updated: 2022-10-25 11:40:53
 
 - IO中**字符流**和**字节流**接口不同，而他们能协调工作就是基于适配器模式来做的，具体的，是对象适配器：将**字节流对象适配成字符流对象**，然后通过**字节流对象**，**读取/写入字符**数据
 
--  InputStreamReader和OutputStreamWriter为两个适配器，也是字节流和字符流之间的桥梁
+-  **InputStreamReader**和**OutputStreamWriter**为两个适配器，也是**字节流和字符流**之间的**桥梁**
 
-  - InputStreamReader使用StreamDecode（流解码器）对字节进行解码，实现字节流到字符流的转换
+  - InputStreamReader使用**StreamDecode（流解码器）对字节进行解码**，实现**字节流**到**字符流**的转换
 
-  - OutputStreamWriter使用StreamEncoder（流编码器）对字符进行编码，实现字符到字节流的转换
+  - OutputStreamWriter使用**StreamEncoder（流编码器）对字符进行编码**，实现**字符**到**字节流**的转换
 
   - InputStream和OutputStream的子类是被适配者，InputStreamReader和OutputStreamWriter是适配器
     使用：  
@@ -158,35 +161,35 @@ updated: 2022-10-25 11:40:53
 
 - 适配器模式和装饰器模式区别
 
-  - 装饰器模式更侧重于**动态增强原始类**的功能，（为了嵌套）装饰器类需要跟原始类继承相同抽象类/或实现相同接口。装饰器模式支持对原始类嵌套
+  - 装饰器模式更侧重于**动态增强原始类**的功能，（为了**嵌套**）**装饰器类需要跟原始类继承相同抽象类**/或**实现相同接口**。装饰器模式支持对原始类嵌套
 
-  - 适配器模式侧重于**让接口不兼容而不能交互的类一起工作**，当调用适配器方法时，适配器**内部会调用适配者类或者和适配者类相关类**的方法（例如StreamDecoder 流解码器和StreamEncoder流编码器）基于InputStream和OutputStream来获取FileChannel对象并调用read/write进行字节数据读取/写入
+  - 适配器模式侧重于**让接口不兼容而不能交互的类一起工作**，当调用适配器方法时，适配器**内部会调用适配者类或者和适配者类相关类**的方法，这个过程透明的。就比如说 `StreamDecoder` （流解码器）和`StreamEncoder`（流编码器）就是分别基于 `InputStream` 和 `OutputStream` 来获取 `FileChannel`对象并调用对应的 `read` 方法和 `write` 方法进行字节数据的读取和写入。
 
     ```java
     StreamDecoder(InputStream in, Object lock, CharsetDecoder dec) {
         // 省略大部分代码
-        // 根据 InputStream 对象获取 FileChannel 对象
+      // 根据 InputStream 对象获取 FileChannel 对象
         ch = getChannel((FileInputStream)in);
     }
     ```
-
-    - 适配器和适配者两者不需要继承相同抽象类/不需要实现相同接口
-
-    - FutureTask使用了适配器模式
-      直接调用(构造器)
-
+  
+    - **适配器和适配者（注意，这里说的都是适配器模式）**两者**不需要继承相同抽象类**/**不需要实现相同接口**
+  
+  - FutureTask使用了适配器模式
+    直接调用(构造器)
+    
       ```java
-      public FutureTask(Runnable runnable, V result) {
+    public FutureTask(Runnable runnable, V result) {
           // 调用 Executors 类的 callable 方法
           this.callable = Executors.callable(runnable, result);
           this.state = NEW;
-      }
+    }
       ```
-
+  
       间接：  
-
+  
       ```java
-      // 实际调用的是 Executors 的内部类 RunnableAdapter 的构造方法
+    // 实际调用的是 Executors 的内部类 RunnableAdapter 的构造方法
       public static <T> Callable<T> callable(Runnable task, T result) {
           if (task == null)
               throw new NullPointerException();
@@ -204,9 +207,9 @@ updated: 2022-10-25 11:40:53
               task.run();
               return result;
           }
-      }
+    }
       ```
-
+    
       
 
 ## 工厂模式
@@ -214,13 +217,13 @@ updated: 2022-10-25 11:40:53
 NIO中大量出现，例如Files类的newInputStream，Paths类中的get方法，ZipFileSystem类中的getPath
 
 ```java 
-InputStream is Files.newInputStream(Paths.get(generatorLogoPath))
+InputStream is = Files.newInputStream(Paths.get(generatorLogoPath))
 ```
 
 ## 观察者模式
 
-- 比如NIO中的文件目录监听服务
-  该服务基于WatchService接口（观察者）和Watchable接口（被观察者）
+- 比如NIO中的文件目录**监听**服务
+  该服务**基于WatchService接口**（观察者）和**Watchable接口**（被观察者）
 
 - Watchable接口其中有一个register方法，用于将对象注册到WatchService（监控服务）并绑定监听事件的方法
 
@@ -339,6 +342,3 @@ InputStream is Files.newInputStream(Paths.get(generatorLogoPath))
   }
   ```
 
-  
-
-> 大部分转自https://github.com/Snailclimb/JavaGuide
