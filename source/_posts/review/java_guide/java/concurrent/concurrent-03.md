@@ -18,21 +18,40 @@ updated: 2022-11-21 10:54:33
 
 - 为什么要使用线程池
 
-  > - 池化技术：线程池、数据库连接池、Http连接池
-  > - 池化技术思想意义：为了减少每次获取资源的消耗，提高对资源的利用率
+  > - 池化技术：**线程池**、**数据库连接池**、**Http连接池**
+  > - 池化技术思想意义：为了减少每次**获取资源**的**消耗**，提高对**资源的利用率**
 
-  - 线程池提供了**限制**和**管理**资源(包括执行一个任务)的方法
-  - 每个线程池还维护基本统计信息，例如已完成任务的数量
+  - 线程池提供了**限制**和**管理** **资源**(包括执行一个任务)的方式
+  - 每个线程池还维护**基本统计信息**，例如**已完成**任务的数量
   - 好处：
-    1. **降低资源消耗**  重复利用已创建线程降低线程创建和销毁造成的消耗
-    2. 提高响应速度 任务到达时，任务可以不需等到线程创建就能继续执行
-    3. 提高线程的可管理性 线程是稀缺资源，如果无限制创建，不仅**消耗系统资源**，还会**降低系统的稳定性**，使用线程池统一**管理分配**、**调优**和**监控**。
+    1. **降低资源消耗**  **重复利用已创建线程**降低**线程创建**和**销毁**造成的消耗
+    2. 提高响应速度 任务到达时，任务可以**不需等到线程创建**就能继续执行
+    3. 提高线程的**可管理性** 线程是稀缺资源，如果无限制创建，不仅**消耗系统资源**，还会**降低系统的稳定性**，使用线程池统一**管理分配**、**调优**和**监控**。
 
 - 实现Runnable接口和Callable接口的区别
 
   - Runnable接口不会返回接口或抛出检查异常，Callable接口可以
+
   - Executors可以实现将Runnable对象转换成Callable对象  
-    Executors.callable(Runnable task)` 或 `Executors.callable(Runnable task, Object result)  //则两个方法，运行的结果是 Callable<Object> 
+    Executors.callable(Runnable task)` 或 `Executors.callable(Runnable task, Object result)  //则两个方法，运行的结果是 Callable<Object>   
+    
+    ```java
+    //一个不指定结果，另一个指定结果  
+        public static void main(String[] args) throws Exception {
+            Callable<Object> abc = Executors.callable(() -> {
+                try {
+                    TimeUnit.SECONDS.sleep(2);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                System.out.println("abc");
+            },"abcccc");//如果没有"abcccc"，则下面输出null
+            FutureTask<Object> futureTask = new FutureTask<>(abc);
+            new Thread(futureTask).start();
+            Object o = futureTask.get();
+            System.out.println("获取值："+o);
+        }
+    ```
 
   Runnable和Callable：
 
@@ -64,7 +83,7 @@ updated: 2022-11-21 10:54:33
 
   2. **submit()**方法用于提交**需要返回值的任务**，线程池会**返回一个Future类型**的对象，通过这个Future对象**可以判断任务是否返回成功**
 
-     - 这个Future的get()方法来获取返回值，get()方法会阻塞当前线程直到任务完成； 使用get(long timeout,TimeUnit unit) 方法会在阻塞当前线程一段时间后立即返回(此时任务不一定已经执行完)
+     - 这个Future的get()方法来获取返回值，**get()方法会阻塞当前线程**直到任务完成； 使用get(long timeout,TimeUnit unit) 方法会在**阻塞当前线程一段时间后立即返回(此时任务不一定已经执行完)**
        注意: 这里的get()不一定会有返回值的，例子如下
 
        ```java
@@ -104,13 +123,15 @@ updated: 2022-11-21 10:54:33
        */
        ```
 
-       当submit一个Callable对象的时候，能从submit返回的Futureget到返回值；当submit一个FutureTask对象时，没法获取返回值，因为会被当作Runnable对象submit进来
+       当submit一个Callable对象的时候，能从submit返回的Futureget到返回值；当submit一个**FutureTask对象（FutureTask有参构造函数包含Callable对象，但它本身不是Callable）**时，没法获取返回值，因为会**被当作Runnable对象**submit进来
 
        ![image-20221109103922513](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221109103922513.png)
        而入参为Runnable时返回值里是get不到结果的
 
-  3. 下面这段源码，解释了为什么当传入的类型是Runnable对象时，结果为null
+  3. 下面这段源码，解释了为什么当传入的类型是Runnable对象时，结果为null  
 
+     > 只要是submit（Runnable ），就会返回null
+     
      ```java
      //源码AbstractExecutorService 接口中的一个submit方法
      public Future<?> submit(Runnable task) {
