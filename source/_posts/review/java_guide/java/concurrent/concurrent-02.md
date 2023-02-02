@@ -16,7 +16,7 @@ updated: 2022-11-07 16:00:06
 
 ## JMM（JavaMemoryModel)
 
-详见-知识点
+[详见-知识点](/2022/11/21/review/java_guide/java/concurrent/jmm)
 
 ## volatile关键字
 
