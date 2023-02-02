@@ -154,45 +154,77 @@ updated: 2022-11-21 10:54:33
 
   - 不允许使用Executors去创建，而是通过new ThreadPoolExecutor的方式：能让写的同学明确线程池运行规则，规避资源耗尽
 
+    ```java
+    /*
+    工具的方式创建线程池
+    */
+    void test(){
+        ExecutorService executorService = Executors.newCachedThreadPool();
+            Callable<MyClass> myClassCallable = new Callable<MyClass>() 	  {
+                @Override
+                public MyClass call() throws Exception {
+                    MyClass myClass1 = new MyClass();
+                    myClass1.setName("ly-callable-测试");
+                    TimeUnit.SECONDS.sleep(2);
+                    return myClass1;
+                }
+            };
+            Future<?> submit = executorService.submit(myClassCallable);
+            //这里会阻塞
+            Object o = submit.get();
+            log.info("ly-callable-打印结果1:" + o);
+    }
+    ```
+
     > 使用Executors返回线程池对象的弊端：
+    >
+    > ```java
+    > ThreadPoolExecutor(int corePoolSize,
+    >                       int maximumPoolSize,
+    >                       long keepAliveTime,
+    >                       TimeUnit unit,
+    >                       BlockingQueue<Runnable> workQueue,
+    >                       ThreadFactory threadFactory,
+    >                       RejectedExecutionHandler handler){}
+    > ```
     >
     > ```java
     > //#####时间表示keepAliveTime#####
     > //########线程数量固定，队列长度为Integer.MAX################
     > Executors.newFixedThreadPool(3);
     > public static ExecutorService newFixedThreadPool(int nThreads) {
-    >         return new ThreadPoolExecutor(nThreads, nThreads,
-    >                                       0L, TimeUnit.MILLISECONDS,
-    >                                       new LinkedBlockingQueue<Runnable>());
-    >     }
+    >      return new ThreadPoolExecutor(nThreads, nThreads,
+    >                                    0L, TimeUnit.MILLISECONDS,
+    >                                    new LinkedBlockingQueue<Runnable>());
+    >  }
     > //############线程数量固定，队列长度为Integer.MAX############## 
     > Executors.newSingleThreadExecutor(Executors.defaultThreadFactory());
-    >  public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
-    >         return new FinalizableDelegatedExecutorService
-    >             (new ThreadPoolExecutor(1, 1,
-    >                                     0L, TimeUnit.MILLISECONDS,
-    >                                     new LinkedBlockingQueue<Runnable>(),
-    >                                     threadFactory));
+    > public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
+    >      return new FinalizableDelegatedExecutorService
+    >          (new ThreadPoolExecutor(1, 1,
+    >                                  0L, TimeUnit.MILLISECONDS,
+    >                                  new LinkedBlockingQueue<Runnable>(),
+    >                                  threadFactory));
     > //############线程数量为Integer.MAX############# 
     > Executors.newCachedThreadPool(Executors.defaultThreadFactory());
     > public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
-    >         return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-    >                                       60L, TimeUnit.SECONDS,
-    >                                       new SynchronousQueue<Runnable>(),
-    >                                       threadFactory);
-    >     }
+    >      return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+    >                                    60L, TimeUnit.SECONDS,
+    >                                    new SynchronousQueue<Runnable>(),
+    >                                    threadFactory);
+    >  }
     > //#############线程数量为Integer.MAX############# 
     > Executors.newScheduledThreadPool(3, Executors.defaultThreadFactory()); 
-    >      public static ScheduledExecutorService newScheduledThreadPool(
-    >             int corePoolSize, ThreadFactory threadFactory) {
-    >         return new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
-    >     }
-    >      ====================>
+    >   public static ScheduledExecutorService newScheduledThreadPool(
+    >          int corePoolSize, ThreadFactory threadFactory) {
+    >      return new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
+    >  }
+    >   ====================>
     > public ScheduledThreadPoolExecutor(int corePoolSize,
-    >                                        ThreadFactory threadFactory) {
-    >         super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
-    >               new DelayedWorkQueue(), threadFactory);
-    >     }
+    >                                     ThreadFactory threadFactory) {
+    >      super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+    >            new DelayedWorkQueue(), threadFactory);
+    >  }
     > 
     > ```
     >
