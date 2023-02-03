@@ -1,5 +1,5 @@
 ---
-title: java线程池详解
+title: ly0305lyjava线程池详解
 description: java线程池详解
 categories:
   - 学习
@@ -18,21 +18,62 @@ updated: 2022-11-29 14:40:41
 - 池化技术：减少每次获取资源的消耗，提高对资源的利用率
 - 线程池提供一种**限制**和**管理资源（包括执行一个任务）**的方式，每个线程池还维护一些基本统计信息，例如**已完成任务**的数量
 - 线程池的好处
-  - 降低资源消耗（重复利用，降低线程创建和销毁造成的消耗）
-  - 提高响应速度（任务到达直接执行，无需等待线程创建）
-  - 提高线程可管理性（避免无休止创建，使用线程池同一分配、调优、监控）
+  - 降低**资源消耗**（重复利用，降低**线程创建和销毁**造成的消耗）
+  - 提高**响应速度**（任务到达直接执行，**无需等待线程创建**）
+  - 提高线程**可管理性**（**避免无休止创建**，使用线程池统一**分配**、**调优**、**监控**）
 
 ## 二 Executor框架
 
-Java5之后，通过Executor启动线程，比使用Thread的start方法更好，更易于管理，效率高，还能有助于避免this逃逸的问题
+Java5之后，通过Executor启动线程，比使用Thread的start方法更好，更**易于管理**，**效率高**，还能有助于避免this逃逸的问题
 
-> this逃逸，指的是构造函数返回之前，其他线程就持有该对象的引用，会导致调用尚未构造完全的对象
+> this逃逸，指的是**构造函数返回之前**，**其他线程就持有该对象的引用**，会导致调用尚未构造完全的对象  
+> 例子：  
+>
+> ```java
+> public class ThisEscape { 
+>   public ThisEscape() { 
+>     new Thread(new EscapeRunnable()).start(); 
+>     // ... 
+>   } 
+>     
+>   private class EscapeRunnable implements Runnable { 
+>     @Override
+>     public void run() { 
+>       // 通过ThisEscape.this就可以引用外围类对象, 但是此时外围类对象可能还没有构造完成, 即发生了外围类的this引用的逃逸 
+>     } 
+>   } 
+> }
+> ```
+>
+> 处理办法  
+>
+> ```java
+> public class ThisEscape { 
+>   private Thread t; 
+>   public ThisEscape() { 
+>     t = new Thread(new EscapeRunnable()); 
+>     // ... 
+>   } 
+>     
+>   public void init() { 
+>     //也就是说对象没有构造完成前，不要调用ThisEscape.this即可
+>     t.start(); 
+>   } 
+>     
+>   private class EscapeRunnable implements Runnable { 
+>     @Override
+>     public void run() { 
+>       // 通过ThisEscape.this就可以引用外围类对象, 此时可以保证外围类对象已经构造完成 
+>     } 
+>   } 
+> }
+> ```
 
 Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**队列**以及**拒绝策略**。
 
 ### Executor框架结构
 
-主要是三大部分：任务（Runnable/Callable），任务的执行(Executor)，异步计算的结果Future
+主要是**三大部分**：**任务（Runnable/Callable）**，**任务的执行(Executor)**，**异步计算的结果Future**
 
 1. 任务
    执行任务需要的Runnable/Callable接口，他们的实现类，都可以被ThreadPoolExecutor或ScheduleThreadPoolExecutor执行

@@ -1,5 +1,5 @@
 ---
-title: 并发02
+title: ly0302ly并发02
 description: 并发02
 categories:
   - 学习
@@ -79,7 +79,7 @@ updated: 2022-11-07 16:00:06
       public native void loadFence(); //读指令屏障
       public native void storeFence(); //写指令屏障
     public native void fullFence(); //读写指令屏障
-      ```
+    ```
   
   - 例子（通过双重校验锁实现对象单例），保证线程安全
   
@@ -107,6 +107,7 @@ updated: 2022-11-07 16:00:06
               return uniqueInstance;
       }
       }
+      ```
   ```
       
       
@@ -120,6 +121,7 @@ updated: 2022-11-07 16:00:06
       
       - 就会导致可能指针非空的时候，实际该指针所指向的对象（实例）并还没有初始化
       - 例如，线程 T1 执行了 1 和 3，此时 T2 调用 `getUniqueInstance`() 后发现 `uniqueInstance` 不为空，因此返回 `uniqueInstance`，但此时 `uniqueInstance` 还未被初始化**（就会造成一些问题）**
+  ```
   
 - volatile不能保证原子性
 
@@ -601,8 +603,8 @@ updated: 2022-11-07 16:00:06
                 if (!cleanSomeSlots(i, sz) && sz >= threshold)
                     rehash();
             }
-    ```
-    
+```
+
     所以，ThreadLocal没有被外部强引用的情况下，垃圾回收的时候 key会被清理掉，而value不会
     
     ```java
@@ -616,7 +618,7 @@ updated: 2022-11-07 16:00:06
         }
     }
     ```
-    
+
   - 此时，ThreadLocalMap中就会出现key为null的Entry，如果不做任何措施，value永远无法被GC回收，此时会产生内存泄漏。ThreadLocaMap实现中已经考虑了这种情况，在调用**set()**、**get()**、**remove()**方法时，**清理掉key为null的记录** 所以使用完ThreadLocal的方法后，最好手动调用remove()方法  
   
     > set()方法中的cleanSomeSlots() 已经清除了部分key为null的记录。但是还不完整，还要依赖  expungeStaleEntry() 方法（**在remove中**）
