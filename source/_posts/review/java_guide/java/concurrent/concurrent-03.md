@@ -288,59 +288,59 @@ updated: 2022-11-21 10:54:33
     Executors工具类中的方法  
     ![image-20221110104950618](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221110104950618.png)
 
-  - ThreadPoolExecutor类分析
+  - 核心线程数和最大线程数有什么区别？
     该类提供四个构造方法，看最长那个，其余的都是（给定默认值后）调用这个方法
 
     ```java
-    /**
-     * 用给定的初始参数创建一个新的ThreadPoolExecutor。
-     */
-    public ThreadPoolExecutor(int corePoolSize,
-                          int maximumPoolSize,
-                          long keepAliveTime,
-                          TimeUnit unit,
-                          BlockingQueue<Runnable> workQueue,
-                          ThreadFactory threadFactory,
-                          RejectedExecutionHandler handler) {
-        if (corePoolSize < 0 ||
-            maximumPoolSize <= 0 ||
-            maximumPoolSize < corePoolSize ||
-            keepAliveTime < 0)
+       /**
+         * 用给定的初始参数创建一个新的ThreadPoolExecutor。
+         */
+        public ThreadPoolExecutor(int corePoolSize,//线程池的核心线程数量
+                                  int maximumPoolSize,//线程池的最大线程数
+                                  long keepAliveTime,//当线程数大于核心线程数时，多余的空闲线程存活的最长时间
+                                  TimeUnit unit,//时间单位
+                                  BlockingQueue<Runnable> workQueue,//任务队列，用来储存等待执行任务的队列
+                                  ThreadFactory threadFactory,//线程工厂，用来创建线程，一般默认即可
+                                  RejectedExecutionHandler handler//拒绝策略，当提交的任务过多而不能及时处理时，我们可以定制策略来处理任务
+                                   ) {
+            if (corePoolSize < 0 ||
+                maximumPoolSize <= 0 ||
+                maximumPoolSize < corePoolSize ||
+                keepAliveTime < 0)
                 throw new IllegalArgumentException();
-        if (workQueue == null || threadFactory == null || handler == null)
-            throw new NullPointerException();
-        this.corePoolSize = corePoolSize;
-        this.maximumPoolSize = maximumPoolSize;
-        this.workQueue = workQueue;
-        this.keepAliveTime = unit.toNanos(keepAliveTime);
-        this.threadFactory = threadFactory;
-        this.handler = handler;
-    }
+            if (workQueue == null || threadFactory == null || handler == null)
+                throw new NullPointerException();
+            this.corePoolSize = corePoolSize;
+            this.maximumPoolSize = maximumPoolSize;
+            this.workQueue = workQueue;
+            this.keepAliveTime = unit.toNanos(keepAliveTime);
+            this.threadFactory = threadFactory;
+            this.handler = handler;
+        } 
     ```
+  - 构造函数重要参数分析  
+      **corePoolSize** : 核心线程数定义**最小可以运行的线程数**量  
+      **maximumPoolSize**: 当队列中存放的任务**达到队列容量时**，当前可以同时运行的线程数量**变为最大线程数**  
+      **workQueue**：当新线程来的时候先判断当前运行线程数量是否**达到核心**线程数，如果达到的话，**新任务就会被存放在队列**中
+      ThreadPoolExecutor其他常见参数：  
 
-    构造函数重要参数分析  
-    corePoolSize : 核心线程数定义**最小可以运行的线程数**量  
-    maximumPoolSize: 当队列中存放的任务**达到队列容量时**，当前可以同时运行的线程数量**变为最大线程数**  
-    workQueue：当新线程来的时候先判断当前运行线程数量是否**达到核心**线程数，如果达到的话，**新任务就会被存放在队列**中
-    ThreadPoolExecutor其他常见参数：  
+    1. keepAliveTime：如果线程池中的线程数量大于corePoolSize时，如果这时**没有新任务提交**，**核心线程外**的线程**不会立即销毁**，而是等待，**等待的时间超过了keepAliveTime**就会被回收
     
-    1. keepAliveTime：如果线程池中的线程数量大于corePoolSize时，如果这时没有新任务提交，核心线程外的线程不会立即销毁，而是等待，等待的时间超过了keepAliveTime就会被回收
+    2. unit: keepAliveTime参数的**时间单位**
     
-    2. unit: keepAliveTime参数的时间单位
-    
-    3. threadFactory: executor创建新线程的时候会用到
+    3. **threadFactory**: **executor创建新线程**的时候会用到
     
     4. handle: 饱和策略
     
-       > 如果同时运行的线程数量达到最大线程数，且队列已经被放满任务，ThreadPoolTaskExecutor定义该情况下的策略：
+       > 如果**同时运行的线程数量**达到**最大线程数**，且**队列已经被放满**任务，ThreadPoolTaskExecutor定义该情况下的策略：
        >
-       > - **`ThreadPoolExecutor.AbortPolicy`：** 抛出 `RejectedExecutionException`来拒绝新任务的处理。
+       > - **`ThreadPoolExecutor.AbortPolicy`：** 抛出 **`RejectedExecutionException`**来**拒绝**新任务的处理。
        > - **`ThreadPoolExecutor.CallerRunsPolicy`：** 调用**执行自己的线程(如果在main方法中，那就是main线程)**运行任务，也就是直接在**调用`execute`方法的线程**中**运行(`run`)被拒绝的任务**，如果**执行程序已关闭，则会丢弃该任务**。因此这种策略会降低对于新任务提交速度，影响程序的整体性能。如果您的应用程序可以承受此延迟并且你要求任何一个任务请求都要被执行的话，你可以选择这个策略。
        > - **`ThreadPoolExecutor.DiscardPolicy`：** 不处理新任务，直接丢弃掉。
-       > - **`ThreadPoolExecutor.DiscardOldestPolicy`：** 此策略将丢弃最早的未处理的任务请求。
+       > - **`ThreadPoolExecutor.DiscardOldestPolicy`：** 此策略将**丢弃最早的未处理**的任务请求。
        
-       使用ThreadPoolTaskExecutor或ThreadPoolExecutor构造函数创建线程池时，若不指定RejectExcecutorHandler饱和策略则默认使用ThreadPoolExecutor.AbortPolicy，即抛出RejectedExecution来拒绝新来的任务；对于可伸缩程序，建议使用ThreadPoolExecutor.CallerRunsPolicy， 
-    
+       举个例子：如果在**Spring中通过ThreadPoolTaskExecutor**或**直接通过ThreadPoolExecutor**构造函数创建线程池时，若**不指定RejectExcecutorHandler**饱和策略则默认使用**ThreadPoolExecutor.AbortPolicy**，即**抛出RejectedExecution**来拒绝新来的任务；对于可伸缩程序，**建议使用ThreadPoolExecutor.CallerRunsPolicy**， 
+
   - 一个简单的线程池Demo
 
     ```java
@@ -440,10 +440,13 @@ updated: 2022-11-21 10:54:33
     */
     ```
 
-    
-
-- 线程池分析原理
-  由结果可以看出，线程池**先执行5个任务**，此时多出的任务会放到**队列**，那5个任务中**有任务执行完**的话，会拿新的任务执行
+- 线程池原理是什么？
+  
+  > 由结果可以看出，线程池**先执行5个任务**，此时多出的任务会放到**队列**，那5个任务中**有任务执行完**的话，会拿新的任务执行
+  
+  **为了搞懂线程池的原理，我们需要首先分析一下 `execute`方法。**
+  
+  我们可以使用 `executor.execute(worker)`来提交一个任务到线程池中去，这个方法非常重要，下面我们来看看它的源码：
   
   ```java
   //源码分析
@@ -495,6 +498,139 @@ updated: 2022-11-21 10:54:33
   分析上面的例子，
   
   > 我们在代码中模拟了 10 个任务，我们配置的核心线程数为 5 、等待队列容量为 100 ，所以每次只可能存在 5 个任务同时执行，剩下的 5 个任务会被放到等待队列中去。当前的5个任务中如果有任务被执行完了，线程池就会去拿新的任务执行。
+  
+  addWorker 这个方法主要用来**创建新的工作线程**，如果返回 true 说明**创建和启动工作线程成功**，否则的话返回的就是 false。
+  
+  ```java
+  // 全局锁，并发操作必备
+      private final ReentrantLock mainLock = new ReentrantLock();
+      // 跟踪线程池的最大大小，只有在持有全局锁mainLock的前提下才能访问此集合
+      private int largestPoolSize;
+      // 工作线程集合，存放线程池中所有的（活跃的）工作线程，只有在持有全局锁mainLock的前提下才能访问此集合
+      private final HashSet<Worker> workers = new HashSet<>();
+      //获取线程池状态
+      private static int runStateOf(int c)     { return c & ~CAPACITY; }
+      //判断线程池的状态是否为 Running
+      private static boolean isRunning(int c) {
+          return c < SHUTDOWN;
+      }
+  
+  
+      /**
+       * 添加新的工作线程到线程池
+       * @param firstTask 要执行
+       * @param core参数为true的话表示使用线程池的基本大小，为false使用线程池最大大小
+       * @return 添加成功就返回true否则返回false
+       */
+     private boolean addWorker(Runnable firstTask, boolean core) {
+          retry:
+          for (;;) {
+              //这两句用来获取线程池的状态
+              int c = ctl.get();
+              int rs = runStateOf(c);
+  
+              // Check if queue empty only if necessary.
+              if (rs >= SHUTDOWN &&
+                  ! (rs == SHUTDOWN &&
+                     firstTask == null &&
+                     ! workQueue.isEmpty()))
+                  return false;
+  
+              for (;;) {
+                 //获取线程池中工作的线程的数量
+                  int wc = workerCountOf(c);
+                  // core参数为false的话表明队列也满了，线程池大小变为 maximumPoolSize
+                  if (wc >= CAPACITY ||
+                      wc >= (core ? corePoolSize : maximumPoolSize))
+                      return false;
+                 //原子操作将workcount的数量加1
+                  if (compareAndIncrementWorkerCount(c))
+                      break retry;
+                  // 如果线程的状态改变了就再次执行上述操作
+                  c = ctl.get();
+                  if (runStateOf(c) != rs)
+                      continue retry;
+                  // else CAS failed due to workerCount change; retry inner loop
+              }
+          }
+          // 标记工作线程是否启动成功
+          boolean workerStarted = false;
+          // 标记工作线程是否创建成功
+          boolean workerAdded = false;
+          Worker w = null;
+          try {
+  
+              w = new Worker(firstTask);
+              final Thread t = w.thread;
+              if (t != null) {
+                // 加锁
+                  final ReentrantLock mainLock = this.mainLock;
+                  mainLock.lock();
+                  try {
+                     //获取线程池状态
+                      int rs = runStateOf(ctl.get());
+                     //rs < SHUTDOWN 如果线程池状态依然为RUNNING,并且线程的状态是存活的话，就会将工作线程添加到工作线程集合中
+                    //(rs=SHUTDOWN && firstTask == null)如果线程池状态小于STOP，也就是RUNNING或者SHUTDOWN状态下，同时传入的任务实例firstTask为null，则需要添加到工作线程集合和启动新的Worker
+                     // firstTask == null证明只新建线程而不执行任务
+                      if (rs < SHUTDOWN ||
+                          (rs == SHUTDOWN && firstTask == null)) {
+                          if (t.isAlive()) // precheck that t is startable
+                              throw new IllegalThreadStateException();
+                          workers.add(w);
+                         //更新当前工作线程的最大容量
+                          int s = workers.size();
+                          if (s > largestPoolSize)
+                              largestPoolSize = s;
+                        // 工作线程是否启动成功
+                          workerAdded = true;
+                      }
+                  } finally {
+                      // 释放锁
+                      mainLock.unlock();
+                  }
+                  //// 如果成功添加工作线程，则调用Worker内部的线程实例t的Thread#start()方法启动真实的线程实例
+                  if (workerAdded) {
+                      t.start();
+                    /// 标记线程启动成功
+                      workerStarted = true;
+                  }
+              }
+          } finally {
+             // 线程启动失败，需要从工作线程中移除对应的Worker
+              if (! workerStarted)
+                  addWorkerFailed(w);
+          }
+          return workerStarted;
+      } 
+  ```
+  
+
+**如何设定线程池的大小**  
+
+- 如果线程池中的线程太多，就会增加**上下文切换**的成本
+
+  > 多线程编程中**一般线程的个数**都**大于 CPU 核心的个数**，而**一个 CPU 核心**在**任意时刻**只能**被一个线程**使用，为了让这些线程都能得到有效执行，CPU 采取的策略是为**每个线程分配时间片并轮转**的形式。当**一个线程的时间片用完**的时候就会**重新处于就绪状态让给其他线程**使用，这个过程就属于**一次上下文切换**。概括来说就是：当前任务在执行完 CPU 时间片切换到另一个任务之前会先保存自己的状态，以便下次再切换回这个任务时，可以再加载这个任务的状态。**任务从保存到再加载的过程就是一次上下文切换**。
+  >
+  > 上下文切换通常是计算密集型的。也就是说，它需要相当可观的处理器时间，在每秒几十上百次的切换中，每次切换都需要纳秒量级的时间。所以，**上下文切换对系统来说意味着消耗大量的 CPU 时间**，事实上，可能是操作系统中时间消耗最大的操作。
+  >
+  > **Linux** 相比与其他操作系统（包括其他类 Unix 系统）有很多的优点，其中有一项就是，其**上下文切换和模式切换的时间消耗非常少**。
+
+- 过大跟过小都不行
+
+  - 如果我们设置的**线程池数量太小**的话，如果同一时间有大量任务/请求需要处理，可能会导致大**量的请求/任务在任务队列中排队等待执行**，甚至会出现**任务队列满了**之后任务/请求**无法处理**的情况，或者大量任**务堆积在任务队列导致 OOM**
+  - 设置线程**数量太大**，**大量线程可能会同时在争取 CPU 资源**，这样会导致**大量的上下文切换**，从而**增加线程的执行时间**，影响了整体执行效率
+
+- 简单且适用面较广的公式
+
+  - **CPU 密集型任务(N+1)：** 这种**任务消耗的主要是 CPU 资源**，可以将线程数设置为 N（CPU 核心数）+1，比 CPU 核心数多出来的一个线程是为了防止**线程偶发的缺页中断**，或者**其它原因导致的任务暂停**而带来的影响。**一旦任务暂停，CPU 就会处于空闲状态，而在这种情况下多出来的一个线程就可以充分利用 CPU 的空闲时间**。
+
+  - **I/O 密集型任务(2N)：** 这种任务应用起来，系统会用**大部分的时间来处理 I/O 交互**，而**线程在处理 I/O 的时间段内不会占用 CPU 来处理**，这时就可以将 CPU 交出给其它线程使用。因此**在 I/O 密集型任务的应用中，我们可以多配置一些线程**，具体的计算方法是 2N。
+
+  - > 如何判断是CPU密集任务还是IO密集任务
+    >
+    > CPU 密集型简单理解就是**利用 CPU 计算能力**的任务比如你在**内存中对大量数据进行排序**。但凡涉及到**网络读取**，**文件读取**这类都是 **IO 密集型**，这类任务的特点是 **CPU 计算耗费时间**相比于等待 **IO 操作**完成的时间来说很少，大部分时间都花在了**等待 IO 操作**完成上。
+    >
+    > 
 
 ## Atomic原子类
 
@@ -509,295 +645,11 @@ Java中存在四种原子类（基本、数组、引用、对象属性）
 
 1. 基本类型：AtomicInteger，AtomicLong，AtomicBoolean
 2. 数组类型：AtomicIntegerArray，AtomicLongArray，AtomicReferenceArray
-3. 引用类型：AtomicReference，AtomicStampedReference（原子更新带有版本号的引用类型。该类将整数值与引用关联，解决原子的更新数据和数据的版本号，解决使用CAS进行原子更新可能出现的ABA问题），AtomicMarkableReference（原子更新带有标记位的引用类型）
+3. 引用类型：AtomicReference，AtomicStampedReference（[**原子更新**] **带有版本号的引用类型**。该类将整数值与引用关联，解决原子的更新数据和数据的版本号，解决使用CAS进行原子更新可能出现的ABA问题），AtomicMarkableReference（原子更新带有标记位的引用类型）
 4. 对象属性修改类型：AtomicIntegerFiledUpdater原子更新整型字段的更新器；AtomicLongFiledUpdater；AtomicReferenceFieldUpdater
 
-### AtomicInteger的使用
+[详见](../atomic-classes) 
 
-```java
-//AtomicInteger类常用方法(下面的自增，都使用了CAS，是同步安全的)
-ublic final int get() //获取当前的值
-public final int getAndSet(int newValue)//获取当前的值，并设置新的值
-public final int getAndIncrement()//获取当前的值，并自增
-public final int getAndDecrement() //获取当前的值，并自减
-public final int getAndAdd(int delta) //获取当前的值，并加上预期的值
-boolean compareAndSet(int expect, int update) //如果输入的数值等于预期值，则以原子方式将该值设置为输入值（update）
-public final void lazySet(int newValue)//最终设置为newValue,使用 lazySet 设置之后可能导致其他线程在之后的一小段时间内还是可以读到旧的值。
-------
-//使用如下
-class AtomicIntegerTest {
-    private AtomicInteger count = new AtomicInteger();
-    //使用AtomicInteger之后，不需要对该方法加锁，也可以实现线程安全。
-    public void increment() {
-        count.incrementAndGet();
-    }
-
-    public int getCount() {
-        return count.get();
-    }
-} 
-```
-
-### 浅谈AtomicInteger实现原理
-
-1. 位于Java.util.concurrent.atomic包下，对int封装，提供**原子性的访问和更新**操作，其原子性操作的实现基于CAS（CompareAndSet）
-   - CAS，比较并交换，Java并发中lock-free机制的基础，调用Sun的Unsafe的CompareAndSwapInt完成，为native方法，**基于CPU的CAS**指令来实现的，即无阻塞；且为CAS原语
-   - CAS：三个参数，1. 当前内存值V 2.旧的预期值  3.即将更新的值，当且仅当预期值A和内存值相同时，将内存值改为 8 并返回true；否则返回false ```在JAVA中,CAS通过调用C++库实现，由C++库再去调用CPU指令集。```
-   - CAS确定
-     - ABA　问题
-       如果期间发生了 A -> B -> A 的更新，仅仅判断数值是 A，可能导致不合理的修改操作；为此，提供了AtomicStampedReference 工具类，为引用建立类似版本号ｓｔａｍｐ的方式
-     - 循环时间长，开销大。CAS适用于**竞争情况短暂**的情况，有需要的时候要限制自旋次数，以免过度消耗CPU
-     - 只能保证一个共享变量的原子操作
-       对多个共享变量操作时，循环CAS就无法保证操作的原子性，这个时候就可以用锁；或者取巧一下，比如 i = 2 , j = a ，合并后为 ij = 2a ，然后cas操作2a 
-       
-       > Java1.5开始JDK提供了**AtomicReference**类来保证引用对象之间的原子性，你可以把**多个变量放在一个对象**里来进行CAS操作，例子如下：
-       > ![image-20221118113655799](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221118113655799.png)
-       > 如图，它是同时更新了两个变量，而这两个变量都在新的对象上，所以就能解决多个共享变量的问题，即“将问题转换成，如果变量更新了，则更换一个对象”
-   
-2. AtomicInteger原理浅析
-
-   一些公共属性：
-
-   ```java
-   public class AtomicInteger extends Number implements java.io.Serializable {
-       private static final long serialVersionUID = 6214790243416807050L;
-   
-       // setup to use Unsafe.compareAndSwapInt for updates
-       private static final Unsafe unsafe = Unsafe.getUnsafe();
-       private static final long valueOffset;
-   
-       static {
-           try {
-               valueOffset = unsafe.objectFieldOffset
-                   (AtomicInteger.class.getDeclaredField("value"));
-           } catch (Exception ex) { throw new Error(ex); }
-       }
-   
-       private volatile int value;
-   }
-   ```
-
-   AtomicInteger，根据**valueOffset**代表的该变量值，**在内存中的偏移地址**，从而获取数据；且value用volatile修饰，保证多线程之间的可见性
-
-   ```java
-   public final int getAndIncrement() {
-       return unsafe.getAndAddInt(this, valueOffset, 1);
-   }
-   
-   //unsafe.getAndAddInt
-   public final int getAndAddInt(Object var1, long var2, int var4) {
-       int var5;
-       do {
-           var5 = this.getIntVolatile(var1, var2);
-       } while(!this.compareAndSwapInt(var1, var2, var5, var5 + var4));//先获取var1对象的偏移量为var2的内存地址上的值，设置为var5
-   //如果此刻还是var5，+1并赋值，否则重新获取
-   
-       return var5;
-   }
-   ```
-
-   - 假设线程1和线程2通过getIntVolatile拿到value的值都为1，线程1被挂起，线程2继续执行
-   - 线程2在compareAndSwapInt操作中由于预期值和内存值都为1，因此成功将内存值更新为2
-   - 线程1继续执行，在compareAndSwapInt操作中，预期值是1，而当前的内存值为2，CAS操作失败，什么都不做，返回false
-   - 线程1重新通过getIntVolatile拿到最新的value为2，再进行一次compareAndSwapInt操作，这次操作成功，内存值更新为3
-
-3. 原子操作的实现原理
-
-   - Java中的CAS操作正是利用了处理器提供的CMPXCHG指令实现的。自旋CAS实现的基本思路就是循环进行CAS操作直到操作成功为止。
-   - 在CAS中有三个操作数：分别是内存地址（在Java中可以简单理解为变量的内存地址，用V表示）、旧的预期值（用A表示）和新值（用B表示）。CAS指令执行时，当且仅当V符合旧的预期值A时，处理器才会用新值B更新V的值，否则他就不执行更新，但无论是否更新了V的值，都会返回V的旧值。(**这里说的三个值，指的是逻辑概念，而不是实际概念**)
-
-### Java实现CAS的原理
-
-i++是非线程安全的，因为**i++不是原子**操作；可以使用**synchronized和CAS实现加锁**
-
-**synchronized是悲观锁**，一旦获得锁，其他线程进入后就会阻塞等待锁；而**CAS是乐观锁**，执行时不会加锁，假设没有冲突，**如果因为冲突失败了就重试**，直到成功
-
-- 乐观锁和悲观锁
-
-  - 这是一种分类方式
-  - **悲观锁**，总是认为**每次访问共享资源会发生冲突**，所以**必须对每次数据操作加锁**，以**保证临界区的程序同一时间只能有一个线程**在执行
-  - 乐观锁，又称**“无锁”**，**假设对共享资源访问没有冲突**，线程可以不停的执行，无需加锁无需等待；一旦发生冲突，通常是使用一种称为CAS的技术保证线程执行安全  
-    - 无锁没有锁的存在，因此不可能发生死锁，即乐观锁天生免疫死锁
-    - 乐观锁用于“读多写少”的环境，避免加锁频繁影响性能；悲观锁用于“写多读少”，避免频繁失败及重试影响性能
-
-- CAS概念，即CompareAndSwap ，比较和交换，CAS中，有三个值（概念上）  
-  V：要更新的变量(var)；E：期望值（expected）；N：新值（new）
-  判断V是否等于E，如果等于，将V的值设置为N；如果不等，说明已经有其它线程更新了V，则当前线程放弃更新，什么都不做。
-  一般来说，预期值E本质上指的是“旧值”（判断是否修改了）
-
-  > 1. 如果有一个多个线程共享的变量`i`原本等于5，我现在在线程A中，想把它设置为新的值6;
-  > 2. 我们使用CAS来做这个事情；
-  > 3. 首先我们用i去与5对比，发现它等于5，说明没有被其它线程改过，那我就把它设置为新的值6，此次CAS成功，`i`的值被设置成了6；
-  > 4. 如果不等于5，说明`i`被其它线程改过了（比如现在`i`的值为2），那么我就什么也不做，此次CAS失败，`i`的值仍然为2。
-  >
-  > 其中i为V，5为E，6为N
-
-  CAS是一种原子操作，它是一种系统原语，是一条CPU原子指令，从CPU层面保证它的原子性（**不可能出现说，判断了i为5之后，正准备更新它的值，此时该值被其他线程改了**）
-
-  当**多个线程同时使用CAS操作一个变量**时，**只有一个会胜出，并成功更新**，**其余均会失败**，但**失败的线程并不会被挂起**，仅是**被告知失败，并且允许再次尝试**，当然也**允许失败的线程放弃**操作。
-
-- Java实现CAS的原理 - Unsafe类
-
-  - 在Java中，如果一个方法是native的，那Java就不负责具体实现它，而是交给底层的JVM使用c或者c++去实现
-
-  - Java中有一个Unsafe类，在sun.misc包中，里面有一些native方法，其中包括：  
-
-    > ```java
-    > boolean compareAndSwapObject(Object o, long offset,Object expected, Object x);
-    > boolean compareAndSwapInt(Object o, long offset,int expected,int x);
-    > boolean compareAndSwapLong(Object o, long offset,long expected,long x);
-    > //AtomicInteger.class
-    > public class AtomicInteger extends Number implements java.io.Serializable {
-    >     private static final long serialVersionUID = 6214790243416807050L;
-    > 
-    >     // setup to use Unsafe.compareAndSwapInt for updates
-    >     private static final Unsafe unsafe = Unsafe.getUnsafe();
-    >     private static final long valueOffset;
-    > 
-    >     static {
-    >         try {
-    >             valueOffset = unsafe.objectFieldOffset
-    >                 (AtomicInteger.class.getDeclaredField("value"));
-    >         } catch (Exception ex) { throw new Error(ex); }
-    >     }
-    > 
-    >     private volatile int value;
-    >     public final int getAndIncrement() {
-    >     	return unsafe.getAndAddInt(this, valueOffset, 1);
-    > 	}
-    > }
-    > ```
-
-    **Unsafe中对CAS的实现是C++**写的，它的具体实现和操作系统、CPU都有关系。Linux的X86中主要通过cmpxchgl这个指令在CPU级完成CAS操作，如果是多处理器则必须使用lock指令加锁
-
-    Unsafe类中还有park(线程挂起)和unpark(线程恢复)，LockSupport底层则调用了该方法；还有支持反射操作的allocateInstance()
-
-- 原子操作- AtomicInteger类源码简析
-  JDK提供了一些原子操作的类，在java.util.concurrent.atomic包下面，JDK11中有如下17个类
-  ![image-20221120182811204](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221120182811204.png)
-
-  - 包括 原子更新基本类型，原子更新数组，原子更新引用，原子更新字段(属性)
-
-  - 其中，AtomicInteger类的getAndAdd(int data)
-
-    ```java
-     public final int getAndAdd(int delta) {
-            return unsafe.getAndAddInt(this, valueOffset, delta);
-        }
-    //unsafe字段
-    private static final jdk.internal.misc.Unsafe U = jdk.internal.misc.Unsafe.getUnsafe();
-    //上面方法实际调用
-    @HotSpotIntrinsicCandidate
-    public final int getAndAddInt(Object o, long offset, int delta) {
-        int v;
-        do {
-            v = getIntVolatile(o, offset);
-        } while (!weakCompareAndSetInt(o, offset, v, v + delta));
-        return v;
-    }
-    //对于offset，这是一个对象偏移量，用于获取某个字段相对Java对象的起始地址的偏移量
-    /*
-    一个java对象可以看成是一段内存，各个字段都得按照一定的顺序放在这段内存里，同时考虑到对齐要求，可能这些字段不是连续放置的，
-    
-    用这个方法能准确地告诉你某个字段相对于对象的起始内存地址的字节偏移量，因为是相对偏移量，所以它其实跟某个具体对象又没什么太大关系，跟class的定义和虚拟机的内存模型的实现细节更相关。
-    */
-    public class AtomicInteger extends Number implements java.io.Serializable {
-        private static final long serialVersionUID = 6214790243416807050L;
-    
-        // setup to use Unsafe.compareAndSwapInt for updates
-        private static final Unsafe unsafe = Unsafe.getUnsafe();
-        private static final long valueOffset;
-    
-        static {
-            try {
-                valueOffset = unsafe.objectFieldOffset
-                    (AtomicInteger.class.getDeclaredField("value"));
-            } catch (Exception ex) { throw new Error(ex); }
-        }
-    
-        private volatile int value;
-        public final int getAndIncrement() {
-        	return unsafe.getAndAddInt(this, valueOffset, 1);
-    	}
-    }
-    ```
-
-    再重新看这段代码
-
-    ```java
-    @HotSpotIntrinsicCandidate
-    public final int getAndAddInt(Object o, long offset, int delta) {
-        int v;
-        do {
-            v = getIntVolatile(o, offset);
-        } while (!weakCompareAndSetInt(o, offset, v, v + delta));
-        return v;
-    }
-    ```
-
-    这里声明了v，即要返回的值，即不论如何都会返回原来的值(更新成功前的值)，然后新的值为v+delta
-
-    使用do-while保证所有循环至少执行一遍  
-    循环体的条件是一个CAS方法：  
-
-    ```java
-    public final boolean weakCompareAndSetInt(Object o, long offset,
-                                              int expected,
-                                              int x) {
-        return compareAndSetInt(o, offset, expected, x);
-    }
-    
-    public final native boolean compareAndSetInt(Object o, long offset,
-                                                 int expected,
-                                                 int x);
-    ```
-
-    最终调用了native方法：compareAndSetInt方法
-
-    > 为甚么要经过一层weakCompareAndSetInt，在JDK 8及之前的版本，这两个方法是一样的。
-    >
-    > 而在JDK 9开始，这两个方法上面增加了@HotSpotIntrinsicCandidate注解。这个注解允许HotSpot VM自己来写汇编或IR编译器来实现该方法以提供性能。也就是说虽然外面看到的在JDK9中weakCompareAndSet和compareAndSet底层依旧是调用了一样的代码，但是不排除HotSpot VM会手动来实现weakCompareAndSet真正含义的功能的可能性。
-    >
-    > 简单来说，`weakCompareAndSet`操作仅保留了`volatile`自身变量的特性，而除去了happens-before规则带来的内存语义。也就是说，`weakCompareAndSet`**无法保证处理操作目标的volatile变量外的其他变量的执行顺序( 编译器和处理器为了优化程序性能而对指令序列进行重新排序 )，同时也无法保证这些变量的可见性。**这在一定程度上可以提高性能。（没看懂）
-
-    CAS如果旧值V不等于预期值E，它就会更新失败。说明旧的值发生了变化。那我们当然需要返回的是被其他线程改变之后的旧值了，因此放在了do循环体内
-
-- CAS实现原子操作的三大问题
-
-  - ABA问题
-  
-    - 就是一个值**原来是A，变成了B，又变回了A**。这个时候使用CAS是检查不出变化的，但实际上却被更新了两次
-  
-    - 在变量前面追加上**版本号或者时间戳**。从JDK 1.5开始，JDK的atomic包里提供了一个类`AtomicStampedReference`类来解决ABA问题
-  
-    - `AtomicStampedReference`类的`compareAndSet`方法的作用是首先检查当前引用是否等于预期引用，并且检查当前标志是否等于预期标志，如果二者都相等，才使用CAS设置为新的值和标志。
-  
-      > ```java
-      > public boolean compareAndSet(V   expectedReference,
-      >                              V   newReference,
-      >                              int expectedStamp,
-      >                              int newStamp) {
-      >     Pair<V> current = pair;
-      >     return
-      >         expectedReference == current.reference &&
-      >         expectedStamp == current.stamp &&
-      >         ((newReference == current.reference &&
-      >           newStamp == current.stamp) ||
-      >          casPair(current, Pair.of(newReference, newStamp)));
-      > }
-      > ```
-  
-  - 循环时间长开销大
-    
-    - CAS多与自旋结合，如果自旋CAS长时间不成功，则会占用大量CPU资源，解决思路是让**JVM支持处理器提供的pause指令**
-    
-      > pause指令能让自旋失败时cpu睡眠一小段时间再继续自旋，从而使得读操作的频率低很多,为解决内存顺序冲突而导致的CPU流水线重排的代价也会小很多。
-    
-    - 限制次数（如果可以放弃操作的话）
-    
-  - 只能保证一个共享变量的原子操作
-    - 使用JDK 1.5开始就提供的`AtomicReference`类保证对象之间的原子性，把多个变量放到一个对象里面进行CAS操作；
-    - 使用锁。锁内的临界区代码可以保证只有当前线程能操作。
 
 ## AQS
 
