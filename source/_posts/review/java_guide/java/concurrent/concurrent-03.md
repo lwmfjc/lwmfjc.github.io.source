@@ -648,7 +648,7 @@ Java中存在四种原子类（基本、数组、引用、对象属性）
 3. 引用类型：AtomicReference，AtomicStampedReference（[**原子更新**] **带有版本号的引用类型**。该类将整数值与引用关联，解决原子的更新数据和数据的版本号，解决使用CAS进行原子更新可能出现的ABA问题），AtomicMarkableReference（原子更新带有标记位的引用类型）
 4. 对象属性修改类型：AtomicIntegerFiledUpdater原子更新整型字段的更新器；AtomicLongFiledUpdater；AtomicReferenceFieldUpdater
 
-[详见](../atomic-classes) 
+[详见](/2022/12/05/review/java_guide/java/concurrent/atomic-classes) 
 
 
 ## AQS
@@ -656,24 +656,34 @@ Java中存在四种原子类（基本、数组、引用、对象属性）
 - AQS介绍
   全程，AbstractQueuedSynchronizer抽象队列同步器，在java.util.concurrent.locks包下
   ![image-20221121094942039](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221121094942039.png)
-
-  AQS：用来构建锁和同步器的框架，能**简单且高效**地构造出大量应用广泛的同步器，例如ReentrantLock，Semaphore```[ˈseməfɔː(r)]```以及ReentrantReadWriteLock，SynchronousQueue，FutureTask都基于AQS
-
+AQS是一个抽象类，主要用来**构建锁**和**同步器**  
+  
+```java
+  public abstract class AbstractQueuedSynchronizer extends AbstractOwnableSynchronizer implements java.io.Serializable {
+  } 
+  ```
+  
+  AQS 为**构建锁**和**同步器**提供了一些通用功能的实现，能**简单且高效**地构造出大量应用广泛的同步器，例如ReentrantLock，Semaphore```[ˈseməfɔː(r)]```以及ReentrantReadWriteLock，SynchronousQueue 等等都基于AQS
+  
 - AQS原理分析
 
   **面试不是背题，大家一定要加入自己的思想，即使加入不了自己的思想也要保证自己能够通俗的讲出来而不是背出来**
 
-  AQS 核心思想是，如果被请求的共享资源空闲，则将当前请求资源的线程设置为有效的工作线程，并且将共享资源设置为锁定状态。如果被请求的共享资源被占用，那么就需要一套线程阻塞等待以及被唤醒时锁分配的机制，这个机制 AQS 是用 **CLH 队列锁**实现的，即**将暂时获取不到锁的线程加入到队列**中。 
+  AQS 核心思想是，如果**被请求的共享资源空闲**，则将**当前请求资源的线程**设置为**有效**的工作线程，并且将**共享资源**设置为**锁定**状态。如果被请求的共享资源**被占用**，那么就需要**一套线程阻塞等待**以及**被唤醒时锁分配的机制**，这个机制 AQS 是用 **CLH 队列锁**实现的，即**将暂时获取不到锁的线程加入到队列**中。 
 
     > CLH(Craig,Landin and Hagersten)队列是一个**虚拟的双向队列**（虚拟的双向队列即不存在队列实例，仅存在结点之间的关联关系）。AQS 是**将每条请求共享资源的线程封装成一个 CLH 锁队列的一个结点**（Node）来实现锁的分配。
     > 搜索了一下，CLH好像是人名
 
+  CLH队列结构如下图所示  
+  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/40cb932a64694262993907ebda6a0bfe%7Etplv-k3u1fbpfcp-zoom-1.image)
+  
     AQS（AbstractQueuedSynchronized）原理图   
     ![image-20221120193141243](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221120193141243.png)
   
-  AQS使用一个**int成员变量来表示同步状态**，通过内置的FIFO队列来获取资源线程的排队工作。AQS**使用CAS对同步状态进行原子操作**并实现对其值的修改
+  AQS 使用 **int 成员变量 `state` 表示同步状态**，通过内置的 **线程等待队列** 来完成获取资源线程的**排队**工作。
   
   ```java
+  //state 变量由 volatile 修饰，用于展示当前临界资源的获锁情况。
   private volatile int state;//共享变量，使用volatile修饰保证线程可见性
   ```
   
@@ -694,13 +704,7 @@ Java中存在四种原子类（基本、数组、引用、对象属性）
   }
   ```
   
-- AQS对资源的共享方式
-
-  - AQS定义两种资源共享方式
-    - Exclusive 独占：**只有一个线程**能执行，如ReentrantLock，又分公平锁（按照线程在队列中排队顺序，先到者先拿到锁）及非公平锁（当线程要获取锁时，无视队列顺序直接去抢锁，谁抢到就是谁的）
-    - Share 共享：**多个线程可同时执行**，如CountDownLatch、Semaphore、CyclicBarrier、ReadWriteLock
-  - ReentrantReadWriteLock是组合式，读写锁允许**多个线程同时对某一资源**进行读
-  - ★不同定义器同步器征用共享资源的方式不同，**自定义同步器在实现时只需要实现共享资源state的获取与释放方法**，至于具体线程等待队列的维护（获取资源失败入队/唤醒出队等），AQS已经在顶层实现好
+- - 
 
 - AQS底层使用了模板方法模式
   使用方式  
