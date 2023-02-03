@@ -30,6 +30,43 @@ updated: 2022-11-21 10:54:33
 
 - 实现Runnable接口和Callable接口的区别
 
+  ```java
+  //Callable的用法 
+  public class TestLy {
+  
+      //如果加上volatile,就能保证可见性，线程1 才能停止
+        boolean stop = false;//对象属性
+  
+      public static void main(String[] args) throws InterruptedException, ExecutionException {
+          FutureTask<String> futureTask=new FutureTask<>(new Callable<String>() {
+              @Override
+              public String call() throws Exception {
+                  System.out.println("等3s再把结果给你");
+                  TimeUnit.SECONDS.sleep(3);
+                  return "hello world";
+              }
+          });
+          new Thread(futureTask).start();
+          String s = futureTask.get();
+          System.out.println("3s后获取到了结果"+s);
+  
+          new Thread(new Runnable() {
+              @Override
+              public void run() {
+                  System.out.println("abc");
+              }
+          }).start();
+      }
+  }
+  /*
+  等3s再把结果给你
+  3s后获取到了结果hello world
+  abc
+  */
+  ```
+
+  
+
   - Runnable接口不会返回接口或抛出检查异常，Callable接口可以
 
   - Executors可以实现将Runnable对象转换成Callable对象  
@@ -123,8 +160,10 @@ updated: 2022-11-21 10:54:33
        */
        ```
 
-       当submit一个Callable对象的时候，能从submit返回的Futureget到返回值；当submit一个**FutureTask对象（FutureTask有参构造函数包含Callable对象，但它本身不是Callable）**时，没法获取返回值，因为会**被当作Runnable对象**submit进来
+       当submit一个Callable对象的时候，能从submit返回的Futureget到返回值；当submit一个**FutureTask对象（FutureTask有参构造函数包含Callable对象，但它本身不是Callable）**时，没法获取返回值，因为会**被当作Runnable对象**submit进来  
 
+       > 虚线是实现，实线是继承。
+       
        ![image-20221109103922513](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221109103922513.png)
        而入参为Runnable时返回值里是get不到结果的
 
@@ -152,7 +191,9 @@ updated: 2022-11-21 10:54:33
 
 - 如何创建线程池
 
-  - 不允许使用Executors去创建，而是通过new ThreadPoolExecutor的方式：能让写的同学明确线程池运行规则，规避资源耗尽
+  > ```executor [ɪɡˈzekjətə(r)] 遗嘱执行人(或银行等)```
+
+  - 不允许使用Executors去创建，而是通过new ThreadPoolExecutor的方式：能让写的同学**明确线程池运行规则**，**规避资源耗尽**
 
     ```java
     /*
@@ -180,12 +221,12 @@ updated: 2022-11-21 10:54:33
     >
     > ```java
     > ThreadPoolExecutor(int corePoolSize,
-    >                       int maximumPoolSize,
-    >                       long keepAliveTime,
-    >                       TimeUnit unit,
-    >                       BlockingQueue<Runnable> workQueue,
-    >                       ThreadFactory threadFactory,
-    >                       RejectedExecutionHandler handler){}
+    >                    int maximumPoolSize,
+    >                    long keepAliveTime,
+    >                    TimeUnit unit,
+    >                    BlockingQueue<Runnable> workQueue,
+    >                    ThreadFactory threadFactory,
+    >                    RejectedExecutionHandler handler){}
     > ```
     >
     > ```java
@@ -193,40 +234,42 @@ updated: 2022-11-21 10:54:33
     > //########线程数量固定，队列长度为Integer.MAX################
     > Executors.newFixedThreadPool(3);
     > public static ExecutorService newFixedThreadPool(int nThreads) {
-    >      return new ThreadPoolExecutor(nThreads, nThreads,
-    >                                    0L, TimeUnit.MILLISECONDS,
-    >                                    new LinkedBlockingQueue<Runnable>());
-    >  }
+    >   return new ThreadPoolExecutor(nThreads, nThreads,
+    >                                 0L, TimeUnit.MILLISECONDS,
+    >                                 new LinkedBlockingQueue<Runnable>());
+    > }
     > //############线程数量固定，队列长度为Integer.MAX############## 
     > Executors.newSingleThreadExecutor(Executors.defaultThreadFactory());
     > public static ExecutorService newSingleThreadExecutor(ThreadFactory threadFactory) {
-    >      return new FinalizableDelegatedExecutorService
-    >          (new ThreadPoolExecutor(1, 1,
-    >                                  0L, TimeUnit.MILLISECONDS,
-    >                                  new LinkedBlockingQueue<Runnable>(),
-    >                                  threadFactory));
+    >   return new FinalizableDelegatedExecutorService
+    >       (new ThreadPoolExecutor(1, 1,
+    >                               0L, TimeUnit.MILLISECONDS,
+    >                               new LinkedBlockingQueue<Runnable>(),
+    >                               threadFactory));
     > //############线程数量为Integer.MAX############# 
     > Executors.newCachedThreadPool(Executors.defaultThreadFactory());
     > public static ExecutorService newCachedThreadPool(ThreadFactory threadFactory) {
-    >      return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
-    >                                    60L, TimeUnit.SECONDS,
-    >                                    new SynchronousQueue<Runnable>(),
-    >                                    threadFactory);
-    >  }
+    >   return new ThreadPoolExecutor(0, Integer.MAX_VALUE,
+    >                                 60L, TimeUnit.SECONDS,
+    >                                 new SynchronousQueue<Runnable>(),
+    >                                 threadFactory);
+    > }
     > //#############线程数量为Integer.MAX############# 
     > Executors.newScheduledThreadPool(3, Executors.defaultThreadFactory()); 
-    >   public static ScheduledExecutorService newScheduledThreadPool(
-    >          int corePoolSize, ThreadFactory threadFactory) {
-    >      return new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
-    >  }
-    >   ====================>
+    > public static ScheduledExecutorService newScheduledThreadPool(
+    >       int corePoolSize, ThreadFactory threadFactory) {
+    >   return new ScheduledThreadPoolExecutor(corePoolSize, threadFactory);
+    > }
+    > ====================>
     > public ScheduledThreadPoolExecutor(int corePoolSize,
-    >                                     ThreadFactory threadFactory) {
-    >      super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
-    >            new DelayedWorkQueue(), threadFactory);
-    >  }
+    >                                  ThreadFactory threadFactory) {
+    >   super(corePoolSize, Integer.MAX_VALUE, 0, NANOSECONDS,
+    >         new DelayedWorkQueue(), threadFactory);
+    > }
     > 
     > ```
+    >
+    > 
     >
     > - **FixedThreadPool**和**SingleThreadExecutor**：这两个方案允许请求的队列长度为Integer.MAX_VALUE，可能**堆积大量请求**，导致OOM
     > - **CachedThreadPool**和**ScheduledThreadPool**：允许创建的线程数量为Integer.MAX_VALUE，可能**创建大量线程**，导致OOM
