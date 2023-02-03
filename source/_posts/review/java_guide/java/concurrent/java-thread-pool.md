@@ -1,6 +1,6 @@
 ---
-title: java线程池
-description: java线程池
+title: java线程池详解
+description: java线程池详解
 categories:
   - 学习
 tags:
