@@ -1,5 +1,5 @@
 ---
-title: Atomic原子类介绍
+title: ly0309lyAtomic原子类介绍
 description: Atomic原子类介绍
 categories:
   - 学习
@@ -237,7 +237,7 @@ updated: 2022-12-05 09:24:36
         private volatile int value; 
     ```
 
-    1. AtomicInteger类主要利用CAS（compare and swap) + volatile 和 native方法来保证原子操作，从而避免synchronized高开销，提高执行效率
+    1. AtomicInteger类主要利用**CAS（compare and swap)** + **volatile** 和 **native**方法来保证原子操作，从而避免synchronized高开销，提高执行效率
     2. CAS的原理是拿期望的值和原本的值做比较，如果相同则更新成新值
        UnSafe类的objectFieldOffset()方法是一个本地方法，这个方法用来拿到**"原来的值"的内存地址**
     3. value是一个volatile变量，在内存中可见，因此JVM可以保证任何时刻任何线程总能拿到该变量的最新值
@@ -292,7 +292,9 @@ public class AtomicIntegerArrayTest {
 
 基本类型原子类只能更新一个变量，如果需要**原子更新多个变量**，则需要使用**引用类型原子类**
 
-AtomicReference 引用类型原子类；AtomicStampedReference 原子更新带有版本号的引用类型，该类将整数值与引用关联起来，可用于解决**原子的更新数据和数据的版本号**，该类将boolean标记与引用关联**（注：无法解决ABA问题）**  
+**AtomicReference** 引用类型原子类；  
+**AtomicStampedReference** 原子更新带有**版本号**的引用类型，该类将整数值与引用关联起来，可用于解决**原子的更新数据和数据的版本号**，可以解决使用CAS进行原子更新时可能出现的ABA问题；  
+**AtomicMarkableReference**：原子更新带有**标记**的引用类型。该类将boolean标记与引用关联**（注：无法解决ABA问题）**  
 
 下面以AtomicReference为例介绍  
 
@@ -349,7 +351,7 @@ class Person {
 > 20
 > ```
 
-AtomicStampedReference类使用示例  
+AtomicStampedReference类使用示例  【**没看**】
 
 ```java
 import java.util.concurrent.atomic.AtomicStampedReference;

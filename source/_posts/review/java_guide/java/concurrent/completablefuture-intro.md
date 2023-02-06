@@ -1,5 +1,5 @@
 ---
-title: completablefuture-intro
+title: ly0311lycompletablefuture-intro
 description: completablefuture-intro
 categories:
   - 学习
@@ -13,7 +13,7 @@ updated: 2022-12-06 17:13:41
 
 > 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
-Java8被引入的一个非常有用恶用于异步编程的类
+Java8被引入的一个非常有用的用于异步编程的类【**没看**】
 
 # 简单介绍
 
@@ -44,10 +44,10 @@ CompletionStage<T> 接口中的方法比较多，CompoletableFuture的函数式�
 
 ## 创建CompletableFuture
 
-两种方法：new或静态方法
+两种方法：new关键字或 CompletableFuture自带的静态工厂方法 ```runAysnc()```或```supplyAsync()```
 
 1. 通过new关键字
-   这个方式，可以看作是将CompletableFuture当作Future来使用，如下：  
+   这个方式，可以看作是将**CompletableFuture当作Future**来使用，如下：  
 
    > 我们通过创建了一个结果值类型为 `RpcResponse<Object>` 的 `CompletableFuture`，你可以把 `resultFuture` 看作是异步运算结果的载体
    >

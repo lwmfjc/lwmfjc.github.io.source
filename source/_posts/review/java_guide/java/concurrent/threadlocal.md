@@ -1,5 +1,5 @@
 ---
-title: ThreadLocal详解
+title: ly0310lyThreadLocal详解
 description: ThreadLocal详解
 categories:
   - 学习
