@@ -346,7 +346,7 @@ Process finished with exit code 0
   2. 调用`semaphore.release();` ，线程尝试释放许可证，并使用 CAS 操作去修改 `state` 的值 `state=state+1`。释放许可证成功之后，同时会**唤醒同步队列中的一个线程**。被唤醒的线程会重新尝试去修改 `state` 的值 `state=state-1` ，如果 `state>=0` 则获取令牌成功，否则重新进入阻塞队列，挂起线程。  
 
       ```java
-    // 释放一个许可证
+      // 释放一个许可证
       public void release() {
         	sync.releaseShared(1);
       }
@@ -466,8 +466,36 @@ public class CountDownLatchExample1 {
 - CyclicBarrier和CountDownLatch类似，可以实现线程间的技术等待，主要应用场景和CountDownLatch类似，但更复杂强大 主要应用场景和 `CountDownLatch` 类似。
 
   > CountDownLatch基于**AQS**，而CycliBarrier基于**ReentrantLock**（ReentrantLock属于AQS同步器）和**Condition**
+  
 - `CyclicBarrier` 的字面意思是**可循环**使用（Cyclic）的屏障（Barrier）。它要做的事情是：让**一组线程(中的一个)到达一个屏障（也可以叫同步点）时**被阻塞，直到**最后一个线程到达屏障**时，**屏障才会开门**，所有被屏障拦截的线程才会继续干活。
-- `CyclicBarrier` 默认的构造方法是 `CyclicBarrier(int parties)`，其参数表示屏障拦截的线程数量，每个线程调用 `await()` 方法**告诉 `CyclicBarrier` 我已经到达了屏障，然后当前线程被阻塞**。
+
+### 原理 
+
+`CyclicBarrier` 内部通过一个 `count` 变量作为计数器，`count` 的初始值为 `parties` 属性的初始化值，每当一个线程到了栅栏这里了，那么就将计数器减 1。如果 count 值为 0 了，表示这是这一代最后一个线程到达栅栏，就**尝试执行我们构造方法中输入的任务（之后再释放所有阻塞的线程）**。  
+
+```java
+//每次拦截的线程数
+private final int parties;
+//计数器
+private int count;
+```
+
+`CyclicBarrier` 默认的构造方法是 `CyclicBarrier(int parties)`，其参数表示屏障拦截的线程数量，每个线程调用 `await()` 方法**告诉 `CyclicBarrier` 我已经到达了屏障，然后当前线程被阻塞**。  
+
+```java
+public CyclicBarrier(int parties) {
+    this(parties, null);
+}
+
+public CyclicBarrier(int parties, Runnable barrierAction) {
+    if (parties <= 0) throw new IllegalArgumentException();
+    this.parties = parties;
+    this.count = parties;
+    this.barrierCommand = barrierAction;
+} 
+```
+
+先看一个例子
 
 ```java
 /**
@@ -480,8 +508,10 @@ public class CyclicBarrierExample2 {
   // 请求的数量
   private static final int threadCount = 550;
   // 需要同步的线程数量
-  private static final CyclicBarrier cyclicBarrier = new CyclicBarrier(5);
-
+  private static final CyclicBarrier cyclicBarrier = new CyclicBarrier(5, () -> {
+    System.out.println("------当线程数达到之后，优先执行------");
+  });
+    
   public static void main(String[] args) throws InterruptedException {
     // 创建线程池
     ExecutorService threadPool = Executors.newFixedThreadPool(10);
@@ -541,7 +571,10 @@ threadnum:7is finish
 threadnum:6is finish
 ...... 
 */
-
+/*
+ 1.可以看到当线程数量也就是请求数量达到我们定义的 5 个的时候， await() 方法之后的方法才被执行。
+ 2.另外，CyclicBarrier 还提供一个更高级的构造函数 CyclicBarrier(int parties, Runnable barrierAction)，用于在线程到达屏障时，优先执行 barrierAction，方便处理更复杂的业务场景。 
+*/
 //注意这里，如果把Thread.sleep(1000)去掉，顺序(情况之一)为：
 //也就是说，上面的代码，导致的现象：所有的ready都挤在一起了(而且不分先后，随时执行，而某5个的finish，会等待那5个的ready执行完才会执行，且finish没有顺序的)
 //★如上，ready也是没有顺序的
@@ -555,7 +588,7 @@ threadnum:4is ready
 threadnum:2is ready
 threadnum:1is ready
 threadnum:6is ready
-------当线程数达到之后，优先执行------
+------当线程数达到之后，优先执行------    当ready数量为5的倍数时（栅栏是5个，就会执行这个）
 threadnum:3is finish
 threadnum:10is ready
 ------当线程数达到之后，优先执行------
@@ -669,10 +702,10 @@ public class BarrierTest1 {
 }
 /*
  数量2222====1
-数量33 await前====2
-数量33 await后====0
+数量33 await前====2 (第1、2个处于wait状态)
+数量33 await后====0 （得到栅栏数量3，wait线程数重置为0）
 333
-数量11====0
+数量11====0 （此时第1、2个线程都会释放，且数量重置为0）
 111
 222
 */
@@ -778,9 +811,7 @@ public class BarrierTest1 {
 
   > 总结：`CyclicBarrier` 内部通过一个 count 变量作为计数器，count 的初始值为 parties 属性的初始化值，每当一个线程到了栅栏这里了，那么就将计数器减一。如果 count 值为 0 了，表示这是这一代最后一个线程到达栅栏，就尝试执行我们构造方法中输入的任务
   >
-  > ------
-  >
-  > 著作权归所有 原文链接：https://javaguide.cn/java/concurrent/aqs.html
+  > 
 
 ## CyclicBarrier和CountDownLatch区别
 
@@ -792,8 +823,8 @@ public class BarrierTest1 {
    >
    > **需要结合上面的代码示例，CyclicBarrier示例是这个意思**
 
-3. 对于 `CountDownLatch` 来说，重点是“一个线程（多个线程）等待”，而其他的 N 个线程在完成“某件事情”之后，可以终止，也可以等待。【强调的是某个(组)等另一组线程完成】  
-   而对于 `CyclicBarrier`，重点是多个线程，在任意一个线程没有完成，所有的线程都必须等待。【强调的是互相】
+3. 对于 `CountDownLatch` 来说，重点是“**一个线程（多个线程）等待**”，而其他的 N 个线程在完成“某件事情”之后，可以终止，也可以等待。【强调的是**某个(组)等另一组线程完成**】  
+   而对于 `CyclicBarrier`，重点是多个线程，在**任意一个线程没有完成**，**所有的线程都必须等待**。【强调的是互相】
 
 4. `CountDownLatch` 是**计数器**，线程完成一个记录一个，只不过计数不是递增而是递减，而 `CyclicBarrier` 更像是一个**阀门**，需要所有线程都到达，阀门才能打开，然后继续执行。
 
