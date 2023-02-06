@@ -45,8 +45,8 @@ updated: 2022-12-05 09:24:36
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                atomicMarkableReference.compareAndSet(100, 101, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());
-                atomicMarkableReference.compareAndSet(101, 100, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());
+                atomicMarkableReference.compareAndSet(100, 101, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());//根据期望值100和false 修改为101和true
+                atomicMarkableReference.compareAndSet(101, 100, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());//根据期望值101和true 修改为100和false
             });
     
             Thread refT2 = new Thread(() -> {
@@ -60,7 +60,7 @@ updated: 2022-12-05 09:24:36
                 }
                 boolean c3 = atomicMarkableReference.compareAndSet(100, 101, marked, !marked);
                 System.out.println(c3); // 返回true,实际应该返回false
-            });
+            }); //导致了ABA问题
     
             refT1.start();
             refT2.start();
