@@ -1,5 +1,5 @@
 ---
-title:  Atomic预备知识
+title:  ly030301lyAtomic预备知识
 description: Atomic预备知识
 categories:
   - 学习

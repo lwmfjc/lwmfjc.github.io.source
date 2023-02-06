@@ -1,5 +1,5 @@
 ---
-title: java线程池详解
+title: ly0305lyjava线程池详解
 description: java线程池详解
 categories:
   - 学习
@@ -18,24 +18,65 @@ updated: 2022-11-29 14:40:41
 - 池化技术：减少每次获取资源的消耗，提高对资源的利用率
 - 线程池提供一种**限制**和**管理资源（包括执行一个任务）**的方式，每个线程池还维护一些基本统计信息，例如**已完成任务**的数量
 - 线程池的好处
-  - 降低资源消耗（重复利用，降低线程创建和销毁造成的消耗）
-  - 提高响应速度（任务到达直接执行，无需等待线程创建）
-  - 提高线程可管理性（避免无休止创建，使用线程池同一分配、调优、监控）
+  - 降低**资源消耗**（重复利用，降低**线程创建和销毁**造成的消耗）
+  - 提高**响应速度**（任务到达直接执行，**无需等待线程创建**）
+  - 提高线程**可管理性**（**避免无休止创建**，使用线程池统一**分配**、**调优**、**监控**）
 
 ## 二 Executor框架
 
-Java5之后，通过Executor启动线程，比使用Thread的start方法更好，更易于管理，效率高，还能有助于避免this逃逸的问题
+Java5之后，通过Executor启动线程，比使用Thread的start方法更好，更**易于管理**，**效率高**，还能有助于避免this逃逸的问题
 
-> this逃逸，指的是构造函数返回之前，其他线程就持有该对象的引用，会导致调用尚未构造完全的对象
+> this逃逸，指的是**构造函数返回之前**，**其他线程就持有该对象的引用**，会导致调用尚未构造完全的对象  
+> 例子：  
+>
+> ```java
+> public class ThisEscape { 
+>   public ThisEscape() { 
+>     new Thread(new EscapeRunnable()).start(); 
+>     // ... 
+>   } 
+>     
+>   private class EscapeRunnable implements Runnable { 
+>     @Override
+>     public void run() { 
+>       // 通过ThisEscape.this就可以引用外围类对象, 但是此时外围类对象可能还没有构造完成, 即发生了外围类的this引用的逃逸 
+>     } 
+>   } 
+> }
+> ```
+>
+> 处理办法  
+>
+> ```java
+> public class ThisEscape { 
+>   private Thread t; 
+>   public ThisEscape() { 
+>     t = new Thread(new EscapeRunnable()); 
+>     // ... 
+>   } 
+>     
+>   public void init() { 
+>     //也就是说对象没有构造完成前，不要调用ThisEscape.this即可
+>     t.start(); 
+>   } 
+>     
+>   private class EscapeRunnable implements Runnable { 
+>     @Override
+>     public void run() { 
+>       // 通过ThisEscape.this就可以引用外围类对象, 此时可以保证外围类对象已经构造完成 
+>     } 
+>   } 
+> }
+> ```
 
 Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**队列**以及**拒绝策略**。
 
 ### Executor框架结构
 
-主要是三大部分：任务（Runnable/Callable），任务的执行(Executor)，异步计算的结果Future
+主要是**三大部分**：**任务（Runnable/Callable）**，**任务的执行(Executor)**，**异步计算的结果Future**
 
 1. 任务
-   执行任务需要的Runnable/Callable接口，他们的实现类，都可以被ThreadPoolExecutor或ScheduleThreadPoolExecutor执行
+   执行的任务需要的**Runnable/Callable**接口，他们的实现类，都可以被**ThreadPoolExecutor**或**ScheduleThreadPoolExecutor**执行
 
 2. 任务的执行
    ![image-20221123163721335](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221123163721335.png)
@@ -103,8 +144,56 @@ Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**�
 ![image-20221123173130638](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221123173130638.png)
 
 1. **主线程首先要创建实现 `Runnable` 或者 `Callable` 接口的任务对象。**
+
 2. **把创建完成的实现 `Runnable`/`Callable`接口的 对象直接交给 `ExecutorService` 执行**: `ExecutorService.execute（Runnable command）`）或者也可以把 `Runnable` 对象或`Callable` 对象提交给 `ExecutorService` 执行（`ExecutorService.submit（Runnable task）`或 `ExecutorService.submit（Callable <T> task）`）。
-3. **如果执行 `ExecutorService.submit（…）`，`ExecutorService` 将返回一个实现`Future`接口的对象**（我们刚刚也提到过了执行 `execute()`方法和 `submit()`方法的区别，`submit()`会返回一个 `FutureTask 对象）。由于 FutureTask` 实现了 `Runnable`，我们也可以创建 `FutureTask`，然后直接交给 `ExecutorService` 执行。
+
+3. **如果执行 `ExecutorService.submit（…）`，`ExecutorService` 将返回一个实现`Future`接口的对象**（我们刚刚也提到过了执行 `execute()`方法和 `submit()`方法的区别，`submit()`会返回一个 `FutureTask 对象）。由于 FutureTask` 实现了 `Runnable`，我们也可以创建 `FutureTask`，然后直接交给 `ExecutorService` 执行（FutureTask实现了Runnable，不是一个Callable 所以直接使用```future.get()```获取的是null）。  
+
+   ```java
+   
+   public class MyMain {
+       private byte[] x = new byte[10 * 1024 * 1024];//10M
+   
+       public static void main(String[] args) throws Exception {
+           Callable<Object> abc = Executors.callable(() -> {
+               try {
+                   TimeUnit.SECONDS.sleep(2);
+               } catch (InterruptedException e) {
+                   e.printStackTrace();
+               }
+               System.out.println("aaa");//输出aaa
+           }, "abcccc");//如果没有"abcccc"，则下面输出null
+           FutureTask<Object> futureTask = new FutureTask<>(abc);
+           /*new Thread(futureTask).start();
+           Object o = futureTask.get();
+           System.out.println("获取值："+o); //输出abc
+           */
+           ExecutorService executorService = Executors.newSingleThreadExecutor();
+           Future<?> future = executorService.submit(futureTask);
+           Future<?> future1 = executorService.submit(new Callable<String>() {
+               @Override
+               public String call() throws Exception {
+                   try {
+                       TimeUnit.SECONDS.sleep(2);
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();
+                   }
+                   return "hello";
+               }
+           });
+           /*System.out.println(future.get());//输出null*/
+           System.out.println(future1.get()); //输出hello
+           //System.out.println(futureTask.get());//输出abcccc
+   
+           System.out.println("阻塞结束");
+           executorService.shutdown();
+       }
+   }
+   
+   ```
+
+   
+
 4. **最后，主线程可以执行 `FutureTask.get()`方法来等待任务执行完成。主线程也可以执行 `FutureTask.cancel（boolean mayInterruptIfRunning）`来取消此任务的执行。**
 
 ## 三 (重要)ThreadPoolExecutor类简单介绍
@@ -555,12 +644,12 @@ execute方法源码
 - shutdown() VS shutdownNow()
   ![image-20221124135602080](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124135602080.png)
 
-  - **`shutdown（）`** :关闭线程池，线程池的状态变为 `SHUTDOWN`。线程池不再接受新任务了，但是队列里的任务得执行完毕。
-  - **`shutdownNow（）`** :关闭线程池，线程的状态变为 `STOP`。线程池会终止当前正在运行的任务，并停止处理排队的任务并返回正在等待执行的 List。
+  - **`shutdown（）`** :关闭线程池，线程池的状态变为 `SHUTDOWN`。线程池**不再接受新任务**了，但是**队列里的任务得执行完毕**。
+  - **`shutdownNow（）`** :关闭线程池，线程的状态变为 `STOP`。线程池会**终止当前正在运行的任务**，并**停止处理排队的任务**并**返回正在等待执行的 List**。
 
 - isTerminated() VS isshutdown()
 
-  - **`sShutDown`** 当调用 `shutdown()` 方法后返回为 true。
+  - **`isShutDown`** 当调用 `shutdown()` 方法后返回为 true。
   - **`isTerminated`** 当调用 `shutdown()` 方法后，并且**所有提交的任务完成**后返回为 true
 
 - callable+ThreadPoolExecutor示例代码
@@ -669,10 +758,10 @@ execute方法源码
      3. 线程池中的线程执行完 手头的任务后，会在循环中反复从 `LinkedBlockingQueue` 中获取任务来执行；
    - 为什么不推荐使用FixedThreadPool
      主要原因，FixedThreadPool**使用无界队列LinkedBlockingQueue（队列容量为Integer.MAX_VALUE)作为线程池的工作队列**
-     1. 线程池的线程数达到corePoolSize后，新任务在无界队列中等待，因此线程池中线程数不超过corePoolSize
-     2. 由于使用无界队列时 `maximumPoolSize` 将是一个无效参数，因为不可能存在任务队列满的情况。所以，【不需要空闲线程，因为corePool，然后Queue，最后才是空闲线程】通过创建 `FixedThreadPool`的源码可以看出创建的 `FixedThreadPool` 的 `corePoolSize` 和 `maximumPoolSize` 被设置为同一个值。
-     3. 又由于1、2原因，使用无界队列时，keepAliveTime将是无效参数
-     4. 运行中的FixedThreadPool（如果未执行shutdown()或shutdownNow()）则不会拒绝任务，因此在任务较多时会导致OOM（内存溢出,Out Of Memory）
+     1. 线程池的线程数达到corePoolSize后，新任务在**无界队列**中等待，因此线程池中**线程数不超过corePoolSize**
+     2. 由于使用无界队列时 `maximumPoolSize` 将是一个无效参数，因为**不可能存在任务队列满**的情况。所以，【不需要空闲线程，因为corePool，然后Queue，最后才是空闲线程】通过创建 `FixedThreadPool`的源码可以看出创建的 `FixedThreadPool` 的 **`corePoolSize` 和 `maximumPoolSize` 被设置为同一个值**。
+     3. 又由于1、2原因，使用无界队列时，**keepAliveTime将是无效参数**
+     4. 运行中的FixedThreadPool（如果未执行shutdown()或shutdownNow()）则不会拒绝任务，因此在任务较多时会导致**OOM**（**内存溢出,Out Of Memory**）
 
 2. SingleThreadExecutor
 
@@ -705,7 +794,7 @@ execute方法源码
      如果当前运行线程数少于corePoolSize（1），则创建一个新的线程执行任务；当前线程池有一个运行的线程后，将任务加入LinkedBlockingQueue；线程执行完当前的任务后，会在循环中反复从LinkedBlockingQueue中获取任务执行
      
    - 为什么不推荐使用SingleThreadExecutor
-     SingleThreadExecutor使用无界队列LinkedBlockingQueue作为线程池的工作队列（容量为Integer.MAX_VALUE) 。SingleThreadExecutor使用无界队列作为线程池的工作队列会对线程池带来的影响与FixedThreadPoll相同，即导致OOM
+     SingleThreadExecutor使用**无界队列LinkedBlockingQueue**作为线程池的工作队列（容量为Integer.MAX_VALUE) 。SingleThreadExecutor使用无界队列作为线程池的工作队列会对线程池带来的影响与FixedThreadPoll相同，即导致OOM
 
 3. CachedThreadPool
    CachedThreadPool是一个会根据需要创建新线程的线程池，源码：
@@ -728,7 +817,7 @@ execute方法源码
        } 
    ```
 
-   `CachedThreadPool` 的`corePoolSize` 被设置为空（0），`maximumPoolSize`被设置为 `Integer.MAX.VALUE`，即它是无界的，这也就意味着如果主线程提交任务的速度高于 `maximumPool` 中线程处理任务的速度时，`CachedThreadPool` 会不断创建新的线程。极端情况下，这样会导致耗尽 cpu 和内存资源
+   `CachedThreadPool` 的**`corePoolSize` 被设置为空（0）**，**`maximumPoolSize`被设置为 `Integer.MAX.VALUE`**，即它是无界的，这也就意味着如果主线程提交任务的速度高于 `maximumPool` 中线程处理任务的速度时，`CachedThreadPool` 会**不断创建新的线程**。极端情况下，这样会导致**耗尽 cpu** 和**内存资源**
 
    ★：SynchronousQueue队列只能容纳单个元素
    执行过程（execute()示意图）
@@ -737,10 +826,10 @@ execute方法源码
    ![image-20221128163237634](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221128163237634.png)
    上图说明：
 
-   1. 首先执行 `SynchronousQueue.offer(Runnable task)` 提交任务到任务队列。如果当前 `maximumPool` 中有闲线程正在执行 `SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)`，那么主线程执行 offer 操作与空闲线程执行的 `poll` 操作配对成功，主线程把任务交给空闲线程执行，`execute()`方法执行完成，否则执行下面的步骤 2；
-   2. 当初始 `maximumPool` 为空，或者 `maximumPool` 中没有空闲线程时，将没有线程执行 `SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)`。这种情况下，步骤 1 将失败，此时 `CachedThreadPool` 会创建新线程执行任务，execute 方法执行完成；
+   1. 首先执行 `SynchronousQueue.offer(Runnable task)` 提交任务到任务队列。如果当前 `maximumPool` 中有闲线程正在执行 `SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)`，那么**主线程执行 offer 操作**与空**闲线程执行的 `poll`** 操作配对成功，主线程**把任务交给空闲线程**执行，`execute()`方法执行完成，否则执行下面的步骤 2；
+   2. 当初始 `maximumPool` 为空，或者 `maximumPool` 中没有空闲线程时，将没有线程执行 `SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)`。这种情况下，步骤 1 将失败，此时 `CachedThreadPool` 会**创建新线程**执行任务，execute 方法执行完成；
 
-   不推荐使用CachedThreadPool? 因为它允许创建的线程数量为Integer.MAX_VALUE,可能创建大量线程，从而导致OOM
+   不推荐使用CachedThreadPool? 因为它允许**创建的线程数量为Integer.MAX_VALUE**,可能创建大量线程，从而导致OOM
 
 ## ScheduledThreadPoolExecutor详解
 
@@ -839,13 +928,12 @@ execute方法源码
   ![image-20221129092155589](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129092155589.png)![image-20221129092022551](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129092022551.png)
 
   - Timer对系统时钟变化敏感，ScheduledThreadPoolExecutor不是
+  
+    > Timer使用的是**System.currentTime()**，而ScheduledThreadPoolExecutor使用的是**System.nanoTime()**
 
+  - Timer**只有一个线程**（导致长时间运行的任务延迟其他任务），ScheduleThreadPoolExecutor**可以配置任意数量线程**
 
-    Timer使用的是**System.currentTime()**，而ScheduledThreadPoolExecutor使用的是**System.nanoTime()**
-
-  - Timer只有一个线程（导致长时间运行的任务延迟其他任务），ScheduleThreadPoolExecutor可以配置任意数量线程
-
-  - TimerTask中抛出运行时异常会杀死一个线程，从而导致Timer死机（即计划任务将不在运行）；而**ScheduleThreadExecutor**不仅**捕获运行时异常**，还允许**需要时处理（afterExecute方法）**，抛出异常的任务会被取消而**其他任务将继续运行**
+  - TimerTask中抛出运行时异常会杀死一个线程，从而导致Timer死机（即计划任务将不在运行）；而**ScheduleThreadExecutor**不仅**捕获运行时异常**，还允许**需要时处理（afterExecute方法）**，**抛出异常的任务会被取消**而**其他任务将继续运行**
 
   JDK1.5 之后，没有理由再使用Timer进行任务调度
 
@@ -858,12 +946,12 @@ execute方法源码
 
   为了执行周期性任务，对ThreadPoolExecutor做了如下修改：
 
-  - 使用DelayQueue作为任务队列
+  - 使用**DelayQueue**作为任务队列
   - 获取任务的方式不同
   - 获取周期任务**后做了额外处理**
 
   ![image-20221129104234412](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129104234412.png)
-  获取任务，执行任务，修改任务(time)，回放任务
+  **获取任务**，**执行任务**，**修改任务(time)**，**回放(添加)任务**
 
   > 1. 线程 1 从 `DelayQueue` 中获取已到期的 `ScheduledFutureTask（DelayQueue.take()）`。到期任务是指 `ScheduledFutureTask`的 time 大于等于当前系统的时间；
   > 2. 线程 1 执行这个 `ScheduledFutureTask`；

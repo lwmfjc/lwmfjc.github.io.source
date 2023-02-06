@@ -1,5 +1,5 @@
 ---
-title: aqs详解
+title: ly0308lyaqs详解
 description: aqs详解
 categories:
   - 学习
