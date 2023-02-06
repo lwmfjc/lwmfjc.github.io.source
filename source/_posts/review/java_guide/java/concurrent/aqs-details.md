@@ -37,6 +37,8 @@ AQS **为构建锁和同步器提供了一些通用功能**的实现，因此，
 
 # AQS原理
 
+## AQS核心思想
+
 **面试不是背题，大家一定要加入自己的思想，即使加入不了自己的思想也要保证自己能够通俗的讲出来而不是背出来**
 
 AQS 核心思想是，如果被请求的**共享资源（AQS内部）**空闲，则将**当前请求资源的线程**设置为**有效**的工作线程，并且将**共享资源**设置为**锁定**状态。如果被请求的共享资源**被占用**，那么就需要一套**线程阻塞等待**以及**被唤醒时锁分配**的机制，这个机制 AQS 是用 **CLH 队列锁**实现的，即**将暂时获取不到锁的线程加入到队列**中。 
@@ -56,67 +58,67 @@ AQS 核心思想是，如果被请求的**共享资源（AQS内部）**空闲，
   ```java
   private volatile int state;//共享变量，使用volatile修饰保证线程可见性
   ```
-```
   
-状态信息的操作     
+  状态信息的操作     
   
-  > 通过 `protected` 类型的`getState()`、`setState()`和`compareAndSetState()` 进行操作。并且，这几个方法都是 `final` 修饰的，在子类中无法被重写。
+    > 通过 `protected` 类型的`getState()`、`setState()`和`compareAndSetState()` 进行操作。并且，这几个方法都是 `final` 修饰的，在子类中无法被重写。
   
-  ```java
-  //返回同步状态的当前值
-  protected final int getState() {
-      return state;
-  }
-  //设置同步状态的值
-  protected final void setState(int newState) {
-      state = newState;
-  }
-  //原子地（CAS操作）将同步状态值设置为给定值update如果当前同步状态的值等于expect（期望值）
-  protected final boolean compareAndSetState(int expect, int update) {
-    return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
+    ```java
+    //返回同步状态的当前值
+    protected final int getState() {
+        return state;
     }
-```
-
-    以 `ReentrantLock` 为例，**`state`** 初始值为 **0**，表示**未锁定**状态。A 线程 **`lock()`** 时，会调用 **`tryAcquire()`** 独占该锁并将 **`state+1`** 。此后，其他线程再 `tryAcquire()` 时就会失败，直到 A 线程 **`unlock()` 到 `state=`0**（即释放锁）为止，**其它线程**才有机会获取该锁。当然，**释放锁之前**，A 线程**自己是可以重复获取**此锁的（`state` 会累加），这就是可重入的概念。但要注意，获取多少次就要释放多少次，这样才能保证 state 是能回到零态的。
-    
-    再以 `CountDownLatch` 以例，任务分为 N 个子线程去执行，`state` 也**初始化为 N**（注意 N 要与线程个数一致）。这 **N 个子线程是并行执行**的，每个子线程执行完后`countDown()` 一次，**state 会 CAS(Compare and Swap) 减 1**。等到**所有子线程都执行完后(即 `state=0` )**，会 **`unpark()` 主调用线程**，然后**主调用线程**就会**从 `await()` 函数**返回，继续后余动作。
+    //设置同步状态的值
+    protected final void setState(int newState) {
+        state = newState;
+    }
+    //原子地（CAS操作）将同步状态值设置为给定值update如果当前同步状态的值等于expect（期望值）
+    protected final boolean compareAndSetState(int expect, int update) {
+      return unsafe.compareAndSwapInt(this, stateOffset, expect, update);
+      }
+    ```
+  
+  以 `ReentrantLock` 为例，**`state`** 初始值为 **0**，表示**未锁定**状态。A 线程 **`lock()`** 时，会调用 **`tryAcquire()`** 独占该锁并将 **`state+1`** 。此后，其他线程再 `tryAcquire()` 时就会失败，直到 A 线程 **`unlock()` 到 `state=`0**（即释放锁）为止，**其它线程**才有机会获取该锁。当然，**释放锁之前**，A 线程**自己是可以重复获取**此锁的（`state` 会累加），这就是可重入的概念。但要注意，获取多少次就要释放多少次，这样才能保证 state 是能回到零态的。
+  
+  再以 `CountDownLatch` 以例，任务分为 N 个子线程去执行，`state` 也**初始化为 N**（注意 N 要与线程个数一致）。这 **N 个子线程是并行执行**的，每个子线程执行完后`countDown()` 一次，**state 会 CAS(Compare and Swap) 减 1**。等到**所有子线程都执行完后(即 `state=0` )**，会 **`unpark()` 主调用线程**，然后**主调用线程**就会**从 `await()` 函数**返回，继续后余动作。
 
 
 ​    
-- AQS对资源的共享方式
+## AQS资源共享方式
 
-  - 包括Exclusive（独占，**只有一个线程**能执行，如ReentrantLock）和Share（共享，**多个线程**可同时执行，如`Semaphore`/`CountDownLatch`）  
+- 包括Exclusive（独占，**只有一个线程**能执行，如ReentrantLock）和Share（共享，**多个线程**可同时执行，如`Semaphore`/`CountDownLatch`）  
 
-    > 从另一个角度讲，就是**只有一个**线程能操作**state**变量以及**有n个线程**能操作**state变量**的区别  
-    >
-  > 一般来说，自定义同步器的共享方式**要么是独占**，**要么是共享**，他们也只需实现**`tryAcquire-tryRelease`**、**`tryAcquireShared-tryReleaseShared`**中的一种即可。但 AQS 也支持自定义同步器**同时实现独占**和**共享**两种方式，如**`ReentrantReadWriteLock`**。
-  
-- 自定义同步器
-    同步器的设计是基于**模板方法模式**的，如果需要**自定义同步器**一般的方式是这样（模板方法模式很经典的一个应用）：
+  > 从另一个角度讲，就是**只有一个**线程能操作**state**变量以及**有n个线程**能操作**state变量**的区别  
+  >
+    > 一般来说，自定义同步器的共享方式**要么是独占**，**要么是共享**，他们也只需实现**`tryAcquire-tryRelease`**、**`tryAcquireShared-tryReleaseShared`**中的一种即可。但 AQS 也支持自定义同步器**同时实现独占**和**共享**两种方式，如**`ReentrantReadWriteLock`**。
 
-    1. 使用者继承 **`AbstractQueuedSynchronizer`** 并**重写**指定的方法。【**使用者**】
-    2. 将 **AQS 组合**在**自定义同步组件的实现**中，并**调用其模板方法**，而这些模板方法会**调用使用者重写**的方法。【**AQS内部**】
 
-    这和我们以往通过实现接口的方式有很大区别，这是模板方法模式很经典的一个运用。  
+## 自定义同步器
+同步器的设计是基于**模板方法模式**的，如果需要**自定义同步器**一般的方式是这样（模板方法模式很经典的一个应用）：
 
-    ```java
-    //独占方式。尝试获取资源，成功则返回true，失败则返回false。
-    protected boolean tryAcquire(int)
-    //独占方式。尝试释放资源，成功则返回true，失败则返回false。
-    protected boolean tryRelease(int)
-    //共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
-    protected int tryAcquireShared(int)
-    //共享方式。尝试释放资源，成功则返回true，失败则返回false。
-    protected boolean tryReleaseShared(int)
-    //该线程是否正在独占资源。只有用到condition才需要去实现它。
-    protected boolean isHeldExclusively() 
-    ```
+1. 使用者继承 **`AbstractQueuedSynchronizer`** 并**重写**指定的方法。【**使用者**】
+2. 将 **AQS 组合**在**自定义同步组件的实现**中，并**调用其模板方法**，而这些模板方法会**调用使用者重写**的方法。【**AQS内部**】
 
-    **什么是钩子方法呢？** 钩子方法是一种**被声明在抽象类中的方法**，一般使用 `protected` 关键字修饰，它**可以是空方法（由子类实现）**，**也可以是默认**实现的方法。模板设计模式**通过钩子方法控制固定步骤**的实现。
+这和我们以往通过实现接口的方式有很大区别，这是模板方法模式很经典的一个运用。  
 
-    > 篇幅问题，这里就不详细介绍模板方法模式了，不太了解的小伙伴可以看看这篇文章：[用 Java8 改造后的模板方法模式真的是 yyds!open in new window](https://mp.weixin.qq.com/s/zpScSCktFpnSWHWIQem2jg)。
-    >
-    > 除了上面提到的钩子方法之外，**AQS 类中的其他方法都是 `final`** ，所以**无法被其他类重写**。
+```java
+//独占方式。尝试获取资源，成功则返回true，失败则返回false。
+protected boolean tryAcquire(int)
+//独占方式。尝试释放资源，成功则返回true，失败则返回false。
+protected boolean tryRelease(int)
+//共享方式。尝试获取资源。负数表示失败；0表示成功，但没有剩余可用资源；正数表示成功，且有剩余资源。
+protected int tryAcquireShared(int)
+//共享方式。尝试释放资源，成功则返回true，失败则返回false。
+protected boolean tryReleaseShared(int)
+//该线程是否正在独占资源。只有用到condition才需要去实现它。
+protected boolean isHeldExclusively() 
+```
+
+**什么是钩子方法呢？** 钩子方法是一种**被声明在抽象类中的方法**，一般使用 `protected` 关键字修饰，它**可以是空方法（由子类实现）**，**也可以是默认**实现的方法。模板设计模式**通过钩子方法控制固定步骤**的实现。
+
+> 篇幅问题，这里就不详细介绍模板方法模式了，不太了解的小伙伴可以看看这篇文章：[用 Java8 改造后的模板方法模式真的是 yyds!open in new window](https://mp.weixin.qq.com/s/zpScSCktFpnSWHWIQem2jg)。
+>
+> 除了上面提到的钩子方法之外，**AQS 类中的其他方法都是 `final`** ，所以**无法被其他类重写**。
 
 # 常见同步类
 
