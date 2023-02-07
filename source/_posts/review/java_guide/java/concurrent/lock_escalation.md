@@ -1,5 +1,5 @@
 ---
-title: 锁升级
+title: ly03122ly锁升级
 description: 锁升级
 categories:
   - 学习
@@ -129,7 +129,6 @@ HotSpot虚拟机中，对象在内存中的布局分为三块区域：**对象�
 
 1. MarkWord
    
-
 2. 类型指针
    虚拟机通过这个指针确定该对象是哪个类的实例
 
