@@ -21,19 +21,19 @@ updated: 2023-02-07 16:48:03
 
 ### 什么是 Spring 框架?
 
-Spring 是一款开源的轻量级 Java 开发框架，旨在提高开发人员的开发效率以及系统的可维护性。
+Spring 是一款**开源**的**轻量级 Java 开发框架**，旨在提高开发人员的**开发效率**以及系统的**可维护性**。
 
-我们一般说 Spring 框架指的都是 Spring Framework，它是很多模块的集合，使用这些模块可以很方便地协助我们进行开发，比如说 Spring 支持 IoC（Inversion of Control:控制反转） 和 AOP(Aspect-Oriented Programming:面向切面编程)、可以很方便地对数据库进行访问、可以很方便地集成第三方组件（电子邮件，任务，调度，缓存等等）、对单元测试支持比较好、支持 RESTful Java 应用程序的开发。
+我们一般说 Spring 框架指的都是 Spring Framework，它是很**多模块的集合**，使用这些模块可以很方便地协助我们进行开发，比如说 Spring 支持 **IoC**（**Inversion of Control:控制反转**） 和 **AOP**(**Aspect-Oriented Programming:面向切面编程**)、可以很方便地**对数据库进行访问**、可以很**方便地集成第三方组件**（**电子邮件**，**任务**，**调度**，缓存等等）、对**单元测试**支持比较好、支持 **RESTful Java 应用程序**的开发。
 
 [![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f33386566313232313232646534333735616263643237633364653866363062342e706e67)
 
-Spring 最核心的思想就是不重新造轮子，开箱即用，提高开发效率。
+Spring 最核心的思想就是不重新造轮子，**开箱即用**，提高开发效率。
 
 Spring 翻译过来就是春天的意思，可见其目标和使命就是为 Java 程序员带来春天啊！感动！
 
 🤐 多提一嘴 ： **语言的流行通常需要一个杀手级的应用，Spring 就是 Java 生态的一个杀手级的应用框架。**
 
-Spring 提供的核心功能主要是 IoC 和 AOP。学习 Spring ，一定要把 IoC 和 AOP 的核心思想搞懂！
+Spring 提供的核心功能主要是 **IoC** 和 **AOP**。学习 Spring ，一定要把 IoC 和 AOP 的核心思想搞懂！
 
 - Spring 官网：https://spring.io/
 - Github 地址： https://github.com/spring-projects/spring-framework
@@ -48,38 +48,38 @@ Spring 提供的核心功能主要是 IoC 和 AOP。学习 Spring ，一定要�
 
 [![Spring5.x主要模块](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f6672616d65776f726b2f737072696e672f32303230303833313137353730382e706e67)](https://camo.githubusercontent.com/29c4744c19142975a5205c977bc6b322591549d3b80ca429655bc9cae073cc05/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f6672616d65776f726b2f737072696e672f32303230303833313137353730382e706e67)
 
-Spring5.x 版本中 Web 模块的 Portlet 组件已经被废弃掉，同时增加了用于异步响应式处理的 WebFlux 组件。
+Spring5.x 版本中 Web 模块的 Sertlet (**应该是Servlet 吧**)组件已经被废弃掉，同时增加了用于异步响应式处理的 WebFlux 组件。
 
 Spring 各个模块的依赖关系如下： ![image-20230207165524155](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230207165524155.png)
 
 #### Core Container
 
-Spring 框架的核心模块，也可以说是基础模块，主要提供 IoC 依赖注入功能的支持。Spring 其他所有的功能基本都需要依赖于该模块，我们从上面那张 Spring 各个模块的依赖关系图就可以看出来。
+Spring 框架的核心模块，也可以说是**基础模块**，主要提供 **IoC 依赖注入**功能的支持。Spring 其他所有的功能基本都需要依赖于该模块，我们从上面那张 Spring 各个模块的依赖关系图就可以看出来。
 
-- **spring-core** ：Spring 框架基本的核心工具类。
-- **spring-beans** ：提供对 bean 的创建、配置和管理等功能的支持。
-- **spring-context** ：提供对国际化、事件传播、资源加载等功能的支持。
-- **spring-expression** ：提供对表达式语言（Spring Expression Language） SpEL 的支持，只依赖于 core 模块，不依赖于其他模块，可以单独使用。
+- **spring-core** ：Spring 框架**基本的核心工具**类。
+- **spring-beans** ：提供对 **bean 的创建**、**配置**和**管理**等功能的支持。
+- **spring-context** ：提供对**国际化**、事件传播、资源加载等功能的支持。
+- **spring-expression** ：提供对**表达式语言（Spring Expression Language） SpEL** 的支持，只依赖于 core 模块，不依赖于其他模块，可以单独使用。
 
 #### AOP
 
-- **spring-aspects** ：该模块为与 AspectJ 的集成提供支持。
-- **spring-aop** ：提供了面向切面的编程实现。
+- **spring-aspects** ：该模块为**与 AspectJ 的集成**提供支持。
+- **spring-aop** ：提供了**面向切面**的编程实现。
 - **spring-instrument** ：提供了为 JVM 添加代理（agent）的功能。 具体来讲，它为 Tomcat 提供了一个织入代理，能够为 Tomcat 传递类文 件，就像这些文件是被类加载器加载的一样。没有理解也没关系，这个模块的使用场景非常有限。
 
 #### Data Access/Integration
 
-- **spring-jdbc** ：提供了对数据库访问的抽象 JDBC。不同的数据库都有自己独立的 API 用于操作数据库，而 Java 程序只需要和 JDBC API 交互，这样就屏蔽了数据库的影响。
-- **spring-tx** ：提供对事务的支持。
-- **spring-orm** ： 提供对 Hibernate、JPA 、iBatis 等 ORM 框架的支持。
+- **spring-jdbc** ：提供了**对数据库访问的抽象 JDBC**。不同的数据库都有自己独立的 API 用于操作数据库，而 **Java 程序只需要和 JDBC API 交互**，这样就屏蔽了数据库的影响。
+- **spring-tx** ：提供对**事务**的支持。
+- **spring-orm** ： 提供对 **Hibernate**、**JPA** 、**iBatis** 等 ORM 框架的支持。
 - **spring-oxm** ：提供一个抽象层支撑 OXM(Object-to-XML-Mapping)，例如：JAXB、Castor、XMLBeans、JiBX 和 XStream 等。
-- **spring-jms** : 消息服务。自 Spring Framework 4.1 以后，它还提供了对 spring-messaging 模块的继承。
+- **spring-jms** : **消息**服务。自 Spring Framework 4.1 以后，它还提供了对 spring-messaging 模块的继承。
 
 #### Spring Web
 
 - **spring-web** ：对 Web 功能的实现提供一些最基础的支持。
-- **spring-webmvc** ： 提供对 Spring MVC 的实现。
-- **spring-websocket** ： 提供了对 WebSocket 的支持，WebSocket 可以让客户端和服务端进行双向通信。
+- **spring-webmvc** ： 提供对 **Spring MVC** 的实现。
+- **spring-websocket** ： 提供了对 **WebSocket** 的支持，WebSocket 可以让客户端和服务端进行双向通信。
 - **spring-webflux** ：提供对 WebFlux 的支持。WebFlux 是 Spring Framework 5.0 中引入的新的响应式框架。与 Spring MVC 不同，它不需要 Servlet API，是完全异步。
 
 #### Messaging
@@ -88,25 +88,25 @@ Spring 框架的核心模块，也可以说是基础模块，主要提供 IoC �
 
 #### Spring Test
 
-Spring 团队提倡测试驱动开发（TDD）。有了控制反转 (IoC)的帮助，单元测试和集成测试变得更简单。
+Spring 团队提倡**测试驱动开发**（TDD）。有了控制反转 (IoC)的帮助，**单元测试**和**集成测试**变得更简单。
 
-Spring 的测试模块对 JUnit（单元测试框架）、TestNG（类似 JUnit）、Mockito（主要用来 Mock 对象）、PowerMock（解决 Mockito 的问题比如无法模拟 final, static， private 方法）等等常用的测试框架支持的都比较好。
+Spring 的测试模块对 JUnit（单元测试框架）、TestNG（类似 JUnit）、Mockito（主要用来 Mock 对象）、PowerMock（解决 Mockito 的问题比如无法模拟 final, static， private 方法）等等**常用的测试框架**支持的都比较好。
 
 ### Spring,Spring MVC,Spring Boot 之间什么关系?
 
 很多人对 Spring,Spring MVC,Spring Boot 这三者傻傻分不清楚！这里简单介绍一下这三者，其实很简单，没有什么高深的东西。
 
-Spring 包含了多个功能模块（上面刚刚提到过），其中最重要的是 Spring-Core（主要提供 IoC 依赖注入功能的支持） 模块， Spring 中的其他模块（比如 Spring MVC）的功能实现基本都需要依赖于该模块。
+Spring 包含了多个功能模块（上面刚刚提到过），其中最重要的是 **Spring-Core（主要提供 IoC 依赖注入功能的支持）** 模块， Spring 中的其他模块（比如 **Spring MVC**）的功能实现基本都需要依赖于该模块。
 
 下图对应的是 Spring4.x 版本。目前最新的 5.x 版本中 Web 模块的 Portlet 组件已经被废弃掉，同时增加了用于异步响应式处理的 WebFlux 组件。
 
 ![Spring主要模块](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f6a766d65306336306234363036373131666334613062366661663033323330323437612e706e67) 
 
-Spring MVC 是 Spring 中的一个很重要的模块，主要赋予 Spring 快速构建 MVC 架构的 Web 程序的能力。MVC 是模型(Model)、视图(View)、控制器(Controller)的简写，其核心思想是通过将业务逻辑、数据、显示分离来组织代码。
+Spring MVC 是 Spring 中的一个很重要的模块，主要赋予 **Spring 快速构建 MVC 架构的 Web 程序的能力**。MVC 是**模型(Model)**、**视图(View)**、**控制器(Controller)**的简写，其核心思想是通过将**业务逻辑**、**数据**、**显示**分离来组织代码。
 
   
 
-使用 Spring 进行开发各种配置过于麻烦比如开启某些 Spring 特性时，需要用 XML 或 Java 进行显式配置。于是，Spring Boot 诞生了！
+使用 Spring 进行开发各种**配置过于麻烦**比如开启某些 Spring 特性时，需要用 **XML** 或 **Java** 进行显式配置。于是，Spring Boot 诞生了！
 
 Spring 旨在简化 J2EE 企业应用程序开发。Spring Boot 旨在简化 Spring 开发（减少配置文件，开箱即用！）。
 
