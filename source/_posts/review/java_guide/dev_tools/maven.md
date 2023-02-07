@@ -23,9 +23,9 @@ updated: 2023-02-07 13:28:19
 
 > Apache Maven is a software project management and comprehension tool. Based on the concept of a project object model (POM), Maven can manage a project's build, reporting and documentation from a central piece of information.
 >
-> Apache Maven 的本质是一个**软件项目管理**和**理解**工具。基于项目对象模型 (Project Object Model，POM) 的概念，Maven 可以从一条中心信息管理项目的构建、报告和文档。
+> Apache Maven 的本质是一个**软件项目管理**和**理解**工具。基于**项目对象模型** (**Project Object Model**，POM) 的概念，Maven 可以从**一条中心信息**管理项目的**构建**、**报告**和**文档**。
 
-**什么是 POM？** 每一个 Maven 工程都有一个 `pom.xml` 文件，位于根目录中，包含项目构建生命周期的详细信息。通过 `pom.xml` 文件，我们可以定义项目的坐标、项目依赖、项目信息、插件信息等等配置。
+**什么是 POM？** 每一个 Maven 工程都有一个 **`pom.xml`** 文件，位于根目录中，包含项目构建生命周期的详细信息。通过 `pom.xml` 文件，我们可以定义项目的坐标、项目依赖、项目信息、插件信息等等配置。
 
 对于开发者来说，Maven 的主要作用主要有 3 个：
 
