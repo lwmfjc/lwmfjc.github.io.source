@@ -140,9 +140,9 @@ Spring 时代我们**一般通过 XML** 文件来**配置 Bean**，后来开发�
 
 ### 什么是 Spring Bean？
 
-简单来说，Bean 代指的就是那些被 IoC 容器所管理的对象。
+简单来说，Bean 代指的就是**那些被 IoC 容器所管理的对象**。
 
-我们需要告诉 IoC 容器帮助我们管理哪些对象，这个是通过配置元数据来定义的。配置元数据可以是 XML 文件、注解或者 Java 配置类。
+我们需要告诉 IoC 容器帮助我们管理哪些对象，这个是**通过配置元数据**来定义的。配置元数据可以是 **XML 文件**、**注解**或者 **Java 配置类**。
 
 ```
 <!-- Constructor-arg with 'value' attribute -->
@@ -151,7 +151,7 @@ Spring 时代我们**一般通过 XML** 文件来**配置 Bean**，后来开发�
 </bean>
 ```
 
-下图简单地展示了 IoC 容器如何使用配置元数据来管理对象。
+下图简单地展示了 IoC 容器如何使用**配置元数据**来管理对象。
 
   
 
@@ -159,16 +159,16 @@ Spring 时代我们**一般通过 XML** 文件来**配置 Bean**，后来开发�
 
 ### 将一个类声明为 Bean 的注解有哪些?
 
-- `@Component` ：通用的注解，可标注任意类为 `Spring` 组件。如果一个 Bean 不知道属于哪个层，可以使用`@Component` 注解标注。
-- `@Repository` : 对应持久层即 Dao 层，主要用于数据库相关操作。
-- `@Service` : 对应服务层，主要涉及一些复杂的逻辑，需要用到 Dao 层。
-- `@Controller` : 对应 Spring MVC 控制层，主要用户接受用户请求并调用 Service 层返回数据给前端页面。
+- `@Component` ：**通用**的注解，可标注任意类为 `Spring` 组件。如果一个 Bean 不知道属于哪个层，可以使用`@Component` 注解标注。
+- `@Repository` : 对应持久层即 Dao 层，主要用于**数据库**相关操作。
+- `@Service` : 对应服务层，主要**涉及一些复杂的逻辑**，需要用到 Dao 层。
+- `@Controller` : 对应 **Spring MVC 控制层**，主要用户**接受用户请求**并**调用 Service 层返回数据**给前端页面。
 
 ### @Component 和 @Bean 的区别是什么？
 
-- `@Component` 注解作用于类，而`@Bean`注解作用于方法。
-- `@Component`通常是通过类路径扫描来自动侦测以及自动装配到 Spring 容器中（我们可以使用 `@ComponentScan` 注解定义要扫描的路径从中找出标识了需要装配的类自动装配到 Spring 的 bean 容器中）。`@Bean` 注解通常是我们在标有该注解的方法中定义产生这个 bean,`@Bean`告诉了 Spring 这是某个类的实例，当我需要用它的时候还给我。
-- `@Bean` 注解比 `@Component` 注解的自定义性更强，而且很多地方我们只能通过 `@Bean` 注解来注册 bean。比如当我们引用第三方库中的类需要装配到 `Spring`容器时，则只能通过 `@Bean`来实现。
+- `@Component` 注解作用于**类**，而`@Bean`注解作用于**方法**。
+- `@Component`通常是**通过类路径扫描**来**自动侦测**以及**自动装配到 Spring 容器**中（我们可以使用 **`@ComponentScan`** 注解**定义要扫描的路径**从中找出标识了需要装配的类自动装配到 Spring 的 bean 容器中）。`@Bean` 注解通常是我们在**标有该注解的方法中定义产生这个 bean**,`@Bean`**告诉了 Spring 这是某个类的实例**，当我需要用它的时候还给我。
+- `@Bean` 注解比 `@Component` 注解的自定义性更强，而且**很多地方我们只能通过 `@Bean` 注解来注册 bean**。比如当我们**引用第三方库**中的类需要装配到 `Spring`容器时，则只能通过 `@Bean`来实现。
 
 `@Bean`注解使用示例：
 
@@ -191,7 +191,7 @@ public class AppConfig {
 </beans>
 ```
 
-下面这个例子是通过 `@Component` 无法实现的。
+下面这个例子是通过 **`@Component` 无法实现**的。（**带有逻辑**）
 
 ```
 @Bean
@@ -249,9 +249,9 @@ private SmsService smsServiceImpl1;
 private SmsService smsService;
 ```
 
-我们还是建议通过 `@Qualifier` 注解来显式指定名称而不是依赖变量的名称。
+我们还是**建议通过 `@Qualifier` 注解来显式指定名称**而**不是依赖变量的名称**。
 
-`@Resource`属于 JDK 提供的注解，默认注入方式为 `byName`。如果无法通过名称匹配到对应的 Bean 的话，注入方式会变为`byType`。
+**`@Resource`属于 JDK 提供的注解**，默认注入方式为 `byName`。如果无法通过名称匹配到对应的 Bean 的话，注入方式会变为`byType`。
 
 `@Resource` 有两个比较重要且日常开发常用的属性：`name`（名称）、`type`（类型）。
 
@@ -279,19 +279,19 @@ private SmsService smsService;
 简单总结一下：
 
 - `@Autowired` 是 Spring 提供的注解，`@Resource` 是 JDK 提供的注解。
-- `Autowired` 默认的注入方式为`byType`（根据类型进行匹配），`@Resource`默认注入方式为 `byName`（根据名称进行匹配）。
-- 当一个接口存在多个实现类的情况下，`@Autowired` 和`@Resource`都需要通过名称才能正确匹配到对应的 Bean。`Autowired` 可以通过 `@Qualifier` 注解来显式指定名称，`@Resource`可以通过 `name` 属性来显式指定名称。
+- `Autowired` **默认**的注入方式为**`byType`（根据类型进行匹配）**，`@Resource`**默认**注入方式为 **`byName`（根据名称进行匹配）**。
+- 当一个接口存在多个实现类的情况下，`@Autowired` 和`@Resource`都**需要通过名称**才能正确匹配到对应的 Bean。**`Autowired` 可以通过 `@Qualifier` 注解来显式指定名称**，**`@Resource`可以通过 `name` 属性来显式指定名称**。
 
 ### Bean 的作用域有哪些?
 
 Spring 中 Bean 的作用域通常有下面几种：
 
-- **singleton** : IoC 容器中只有唯一的 bean 实例。Spring 中的 bean 默认都是单例的，是对单例设计模式的应用。
-- **prototype** : 每次获取都会创建一个新的 bean 实例。也就是说，连续 `getBean()` 两次，得到的是不同的 Bean 实例。
-- **request** （仅 Web 应用可用）: 每一次 HTTP 请求都会产生一个新的 bean（请求 bean），该 bean 仅在当前 HTTP request 内有效。
-- **session** （仅 Web 应用可用） : 每一次来自新 session 的 HTTP 请求都会产生一个新的 bean（会话 bean），该 bean 仅在当前 HTTP session 内有效。
-- **application/global-session** （仅 Web 应用可用）： 每个 Web 应用在启动时创建一个 Bean（应用 Bean），该 bean 仅在当前应用启动时间内有效。
-- **websocket** （仅 Web 应用可用）：每一次 WebSocket 会话产生一个新的 bean。
+- **singleton** : IoC 容器中只有**唯一**的 bean 实例。Spring 中的 bean 默认都是单例的，是对单例设计模式的应用。
+- **prototype** : **每次获取都会创建一个新的** bean 实例。也就是说，连续 `getBean()` 两次，得到的是不同的 Bean 实例。
+- **request** （仅 Web 应用可用）: **每一次 HTTP 请求**都会产生一个新的 bean（请求 bean），该 bean 仅在当前 HTTP request 内有效。
+- **session** （仅 Web 应用可用） : **每一次来自新 session 的 HTTP 请求**都会产生一个新的 bean（会话 bean），该 bean 仅在当前 HTTP session 内有效。
+- **application/global-session** （仅 Web 应用可用）： **每个 Web 应用在启动时**创建一个 Bean（应用 Bean），该 bean 仅在当前应用启动时间内有效。
+- **websocket** （仅 Web 应用可用）：**每一次 WebSocket 会话**产生一个新的 bean。
 
 **如何配置 bean 的作用域呢？**
 
@@ -313,14 +313,14 @@ public Person personPrototype() {
 
 ### 单例 Bean 的线程安全问题了解吗？
 
-大部分时候我们并没有在项目中使用多线程，所以很少有人会关注这个问题。单例 Bean 存在线程问题，主要是因为当多个线程操作同一个对象的时候是存在资源竞争的。
+大部分时候我们并没有在项目中使用多线程，所以很少有人会关注这个问题。单例 Bean 存在线程问题，主要是因为当**多个线程操作同一个对象**的时候是存在资源竞争的。
 
 常见的有两种解决办法：
 
-1. 在 Bean 中尽量避免定义可变的成员变量。
-2. 在类中定义一个 `ThreadLocal` 成员变量，将需要的可变成员变量保存在 `ThreadLocal` 中（推荐的一种方式）。
+1. 在 Bean 中**尽量避免定义可变的成员变量**。
+2. 在类中定义一个 **`ThreadLocal` 成员变量**，将需要的可变成员变量保存在 `ThreadLocal` 中（推荐的一种方式）。
 
-不过，大部分 Bean 实际都是无状态（没有实例变量）的（比如 Dao、Service），这种情况下， Bean 是线程安全的。
+不过，**大部分 Bean 实际都是无状态**（**没有实例变量**）的（比如 Dao、Service），这种情况下， Bean 是**线程安全**的。
 
 ### Bean 的生命周期了解么?
 
