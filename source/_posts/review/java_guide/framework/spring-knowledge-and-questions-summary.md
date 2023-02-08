@@ -844,6 +844,8 @@ public class UserServiceImpl implements UserService {
 
 ### Spring 事务中的隔离级别有哪几种?
 
+**//这个注解应该是用来修改session级别的隔离级别**
+
 和事务传播行为这块一样，为了方便使用，Spring 也相应地定义了一个枚举类：`Isolation`
 
 ```
