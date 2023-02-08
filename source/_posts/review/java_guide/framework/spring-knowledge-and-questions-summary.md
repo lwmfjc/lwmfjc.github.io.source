@@ -880,13 +880,46 @@ public enum Isolation {
 - **`TransactionDefinition.ISOLATION_REPEATABLE_READ`** : 对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，**可以阻止脏读和不可重复读，但幻读仍有可能发生。**
 - **`TransactionDefinition.ISOLATION_SERIALIZABLE`** : 最高的隔离级别，完全服从 ACID 的隔离级别。所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，**该级别可以防止脏读、不可重复读以及幻读**。但是这将严重影响程序的性能。通常情况下也不会用到该级别。
 
+> 注意，这个注解的使用方法，下面写了两个方法分别模拟两个不同的线程操作（供不同的controller使用）  
+>
+> ```java
+>     @Transactional(
+>             isolation = Isolation.READ_COMMITTED
+>     )
+>     public User isolation1() {
+>         //读取userid=1的值
+>         User byId = this.getById(1L);
+>         return byId;
+> 
+>     }
+> ```
+>
+> ```java
+>     @Transactional
+>     public User isolation2() throws InterruptedException {
+> 
+>         //10s后修改
+>         TimeUnit.SECONDS.sleep(10);
+>         User user=new User();
+>         user.setId(1L);
+>         user.setName("1被修改了");
+>         this.saveOrUpdate(user);
+>         //10s后提交
+>         TimeUnit.SECONDS.sleep(10);
+>         return null;
+>     }
+> ```
+>
+> 1. 当isolation1为读已提交时，只要isolation2方法没有执行完毕（没有提交），那么isolation1只会读取到未修改的值；
+> 2. 当isolation1为读为提交时，即使isolation2方法没有执行完毕（没有提交），那么isolation1也会立马读取到最新的值；
+
 ### @Transactional(rollbackFor = Exception.class)注解了解吗？
 
-`Exception` 分为运行时异常 `RuntimeException` 和非运行时异常。事务管理对于企业应用来说是至关重要的，即使出现异常情况，它也可以保证数据的一致性。
+`Exception` 分为运行时异常 **`RuntimeException`** 和**非运行时异常**。事务管理对于企业应用来说是至关重要的，即使出现异常情况，它也可以保证数据的一致性。
 
-当 `@Transactional` 注解作用于类上时，该类的所有 public 方法将都具有该类型的事务属性，同时，我们也可以在方法级别使用该标注来覆盖类级别的定义。如果类或者方法加了这个注解，那么这个类里面的方法抛出异常，就会回滚，数据库里面的数据也会回滚。
+当 `@Transactional` 注解作用于类上时，该类的所有 public 方法将都具有该类型的事务属性，同时，我们也可以在方法级别**使用该标注来覆盖类级别的定义**。如果类或者方法加了这个注解，那么这个类里面的方法**抛出异常**，**就会回滚**，数据库里面的数据也会回滚。
 
-在 `@Transactional` 注解中如果不配置`rollbackFor`属性,那么事务只会在遇到`RuntimeException`的时候才会回滚，加上 `rollbackFor=Exception.class`,可以让事务在遇到非运行时异常时也回滚。
+在 `@Transactional` 注解中如果不配置`rollbackFor`属性,那么事务只会在遇到**`RuntimeException`**的时候才会回滚，加上 `rollbackFor=Exception.class`,可以让事务在遇到**非运行时异常时**也回滚。
 
 ## Spring Data JPA
 
