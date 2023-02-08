@@ -21,7 +21,7 @@ updated: 2023-02-08 20:18:14
 
 ## 控制反转(IoC)和依赖注入(DI)
 
-**IoC(Inversion of Control,控制反转)** 是 Spring 中一个非常非常重要的概念，它不是什么技术，而是一种解耦的设计思想。IoC 的主要目的是借助于“第三方”(Spring 中的 IoC 容器) 实现具有依赖关系的对象之间的解耦(IOC 容器管理对象，你只管使用即可)，从而降低代码之间的耦合度。
+**IoC(Inversion of Control,控制反转)** 是 Spring 中一个非常非常重要的概念，它不是什么技术，而是一种**解耦的设计思想**。IoC 的主要目的是借助于“第三方”(Spring 中的 IoC 容器) 实现**具有依赖关系的对象之间的解耦**(IOC 容器管理对象，你只管使用即可)，从而降低代码之间的耦合度。
 
 **IoC 是一个原则，而不是一个模式，以下模式（但不限于）实现了 IoC 原则。**
 
@@ -29,32 +29,34 @@ updated: 2023-02-08 20:18:14
 
 **Spring IoC 容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件/注解即可，完全不用考虑对象是如何被创建出来的。** IoC 容器负责创建对象，将对象连接在一起，配置这些对象，并从创建中处理这些对象的整个生命周期，直到它们被完全销毁。
 
-在实际项目中一个 Service 类如果有几百甚至上千个类作为它的底层，我们需要实例化这个 Service，你可能要每次都要搞清这个 Service 所有底层类的构造函数，这可能会把人逼疯。如果利用 IOC 的话，你只需要配置好，然后在需要的地方引用就行了，这大大增加了项目的可维护性且降低了开发难度。
+在实际项目中一个 Service 类如果有几百甚至上千个类作为它的底层，我们需要实例化这个 Service，你可能要每次都要搞清这个 Service 所有底层类的构造函数，这可能会把人逼疯。如果利用 IOC 的话，你**只需要配置好，然后在需要的地方引用**就行了，这大大增加了项目的可维护性且降低了开发难度。
 
 > 关于 Spring IOC 的理解，推荐看这一下知乎的一个回答：https://www.zhihu.com/question/23277575/answer/169698662 ，非常不错。
 
-**控制反转怎么理解呢?** 举个例子："对象 a 依赖了对象 b，当对象 a 需要使用 对象 b 的时候必须自己去创建。但是当系统引入了 IOC 容器后， 对象 a 和对象 b 之前就失去了直接的联系。这个时候，当对象 a 需要使用 对象 b 的时候， 我们可以指定 IOC 容器去创建一个对象 b 注入到对象 a 中"。 对象 a 获得依赖对象 b 的过程,由主动行为变为了被动行为，控制权反转，这就是控制反转名字的由来。
+**控制反转怎么理解呢?** 举个例子："**对象 a 依赖了对象 b，当对象 a 需要使用 对象 b 的时候必须自己去创建。但是当系统引入了 IOC 容器后， 对象 a 和对象 b 之前就失去了直接的联系。这个时候，当对象 a 需要使用 对象 b 的时候， 我们可以指定 IOC 容器去创建一个对象 b 注入到对象 a 中**"。 对象 a 获得依赖对象 b 的过程,由**主动**行为变为了**被动**行为，控制权反转，这就是控制反转名字的由来。
 
 **DI(Dependecy Inject,依赖注入)是实现控制反转的一种设计模式，依赖注入就是将实例变量传入到一个对象中去。**
 
 ## 工厂设计模式
 
-Spring 使用工厂模式可以通过 `BeanFactory` 或 `ApplicationContext` 创建 bean 对象。
+Spring 使用工厂模式可以通过 **`BeanFactory`** 或 **`ApplicationContext`** 创建 bean 对象。  
+
+> **ApplicationContext继承了ListableBeanFactory，ListableBeanFactory继承了BeanFactory** 
 
 **两者对比：**
 
-- `BeanFactory` ：延迟注入(使用到某个 bean 的时候才会注入),相比于`ApplicationContext` 来说会占用更少的内存，程序启动速度更快。
-- `ApplicationContext` ：容器启动的时候，不管你用没用到，一次性创建所有 bean 。`BeanFactory` 仅提供了最基本的依赖注入支持，`ApplicationContext` 扩展了 `BeanFactory` ,除了有`BeanFactory`的功能还有额外更多功能，所以一般开发人员使用`ApplicationContext`会更多。
+- `BeanFactory` ：**延迟注入**(使用到某个 bean 的时候才会注入),相比于`ApplicationContext` 来说会占用更少的内存，程序启动速度更快。
+- `ApplicationContext` ：容器启动的时候，不管你用没用到，**一次性创建所有 bean** 。`BeanFactory` 仅提供了**最基本**的依赖注入支持，`ApplicationContext` 扩展了 **`BeanFactory`** ,除了有`BeanFactory`的功能还有额外更多功能，所以一般开发人员使用`ApplicationContext`会更多。
 
 `ApplicationContext` 的三个实现类：
 
-1. `ClassPathXmlApplication`：把上下文文件当成类路径资源。
-2. `FileSystemXmlApplication`：从文件系统中的 XML 文件载入上下文定义信息。
-3. `XmlWebApplicationContext`：从 Web 系统中的 XML 文件载入上下文定义信息。
+1. **`ClassPathXmlApplication`**：把**上下文**文件当成类路径资源。
+2. **`FileSystemXmlApplication`**：从**文件系统**中的 XML 文件载入上下文定义信息。
+3. **`XmlWebApplicationContext`**：从 **Web 系统**中的 XML 文件载入上下文定义信息。
 
 Example:
 
-```
+```java
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
