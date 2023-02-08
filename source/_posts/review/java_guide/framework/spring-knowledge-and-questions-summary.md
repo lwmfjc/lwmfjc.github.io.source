@@ -758,27 +758,83 @@ public class UserServiceImpl implements UserService {
 
 **事务传播行为是为了解决业务层方法之间互相调用的事务问题**。
 
-当事务方法被另一个事务方法调用时，必须指定事务应该如何传播。例如：方法可能继续在现有事务中运行，也可能开启一个新事务，并在自己的事务中运行。
+当事务方法被另一个事务方法调用时，必须指定事务应该如何传播。例如：方法可能继续在现有事务中运行，也可能开启一个新事务，并在自己的事务中运行。  
 
-正确的事务传播行为可能的值如下:
+> 注意几点，下面这个值都是**内方法**上的注解的值，且两个方法必须属于不同类  
+>
+> ```java
+> @Service
+> public class MyClassServiceImpl extends ServiceImpl<MyClassMapper, MyClass> implements MyClassService {
+>     @Autowired
+>     private UserService userService;
+> 
+>     //外方法 
+>     @Override
+>     public void methodOuter() throws Exception {
+>         //新增一条记录
+>         MyClass myClass=new MyClass();
+>         myClass.setName("class_name");
+>         this.saveOrUpdate(myClass);
+> 
+>         //调用内方法
+>         userService.methodInner();
+>         //抛出异常
+>         //throw new Exception("hello");
+>     }
+> }
+> ```
+>
+> ```java
+> @Service
+> public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
+> 
+>     //内方法
+>     @Transactional(
+>             rollbackFor = Exception.class
+>             ,propagation = Propagation.REQUIRED
+>     )
+>     @Override
+>     public void methodInner() throws Exception {
+>         //新增一条记录
+>         User user = new User();
+>         user.setName("outer_name");
+>         this.saveOrUpdate(user);
+>         //抛出异常
+>         //throw new Exception("hello");
+>     }
+> }
+> ```
+
+正确的事务传播行为可能的值如下:  
+
+> 注：**如果外方法不存在事务，则内外方法完全独立，自己(方法内)抛异常不影响另一方法**
 
 **1.`TransactionDefinition.PROPAGATION_REQUIRED`**
 
 使用的最多的一个事务传播行为，我们平时经常使用的`@Transactional`注解**默认**使用就是这个事务传播行为。如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。  
 
+> 如果外方法存在事务，则不论 外方法或内方法抛出异常，都会导致外内所在事务（同一个）回滚
+
 **`2.TransactionDefinition.PROPAGATION_REQUIRES_NEW`**
 
-创建一个新的事务，如果当前存在事务，则把当前事务挂起。也就是说不管外部方法是否开启事务，`Propagation.REQUIRES_NEW`修饰的内部方法会新开启自己的事务，且开启的事务相互独立，互不干扰。
+创建一个新的事务，如果当前存在事务，则把当前事务挂起。也就是说不管外部方法是否开启事务，`Propagation.REQUIRES_NEW`修饰的内部方法会新开启自己的事务，且开启的事务相互独立，互不干扰。  
+
+> 如果外方法存在事务，如果仅内方法抛异常，会导致外方法回滚；如果仅外方法抛异常，则不会回滚内方法
 
 **3.`TransactionDefinition.PROPAGATION_NESTED`**
 
-如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于`TransactionDefinition.PROPAGATION_REQUIRED`。
+如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于`TransactionDefinition.PROPAGATION_REQUIRED`。  
+
+> 如果外方法存在事务，**（效果和1一样）**， 不论 外方法或内方法抛出异常，都会导致外内所在事务（**和1唯一不同的是，他们是不同事务**）回滚
+>
 
 **4.`TransactionDefinition.PROPAGATION_MANDATORY`**
 
 如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常。（mandatory：强制性）
 
-这个使用的很少。
+这个使用的很少。    
+
+> 如果外方法存在事务，**（效果和1一样）**， 不论 外方法或内方法抛出异常，都会导致外内所在事务（**和1唯一不同的是，如果外方法不存在事务，调用该方法前就直接抛异常**）回滚
 
 若是错误的配置以下 3 种事务传播行为，事务将不会发生回滚：
 
