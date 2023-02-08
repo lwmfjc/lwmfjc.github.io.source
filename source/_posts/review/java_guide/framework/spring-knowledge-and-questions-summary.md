@@ -566,6 +566,194 @@ public class GlobalExceptionHandler {
 - **编程式事务** ： 在代码中硬编码(不推荐使用) : 通过 **`TransactionTemplate`**或者 **`TransactionManager`** **手动管理**事务，实际应用中很少使用，但是对于你理解 Spring 事务管理原理有帮助。
 - **声明式事务** ： 在 **XML 配置文件中配置**或者**直接基于注解**（推荐使用） : 实际是通过 AOP 实现（基于`@**Transactional`** 的全注解方式使用最多）
 
+### Spring事务失效的几种情况（非javaguide）
+
+#### 1.spring事务实现方式及原理
+
+Spring 事务的本质其实就是数据库对事务的支持，没有数据库的事务支持，spring 是无法提供事务功能的。真正的数据库层的事务提交和回滚是在binlog提交之后进行提交的 通过 redo log 来重做， undo log来回滚。
+
+一般我们在程序里面使用的都是在方法上面加`@Transactional ` 注解，这种属于**声明式事务**。
+
+**声明式事务本质是通过 AOP 功能**，**对方法前后进行拦截**，将事务处理的功能**编织**到拦截的**方法中**，也就是**在目标方法开始之前加入一个事务**，在**执行完目标方法之后根据执行情况提交**或者**回滚**事务。
+
+#### 2.数据库本身不支持事务
+
+这里以 MySQL 为例，其 MyISAM 引擎是不支持事务操作的，InnoDB 才是支持事务的引擎，一般要支持事务都会使用 InnoDB
+
+#### 3.当前类的调用
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+
+    public void update(User user) {
+        updateUser(user);
+    }
+    
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUser(User user) {
+        // update user
+    }
+    
+}
+复制代码
+```
+
+上面的这种情况下是不会有事务管理操作的。
+
+通过看声明式事务的原理可知，spring使用的是AOP切面的方式，本质上使用的是动态代理来达到事务管理的目的，当前类调用的方法上面加`@Transactional` 这个是没有任何作用的，因为调用这个方法的是`this`.
+
+OK， 我们在看下面的一种例子。
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Transactional(rollbackFor = Exception.class)
+    public void update(User user) {
+        updateUser(user);
+    }
+    
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void updateUser(User user) {
+        // update user
+    }
+    
+}
+复制代码
+```
+
+这次在 update 方法上加了 `@Transactional`，updateUser 加了 `REQUIRES_NEW` 新开启一个事务，那么新开的事务管用么？
+
+答案是：不管用！
+
+因为它们**发生了自身调用**，就**调该类自己的方法**，而**没有经过 Spring 的代理类**，默认**只有在外部调用事务才会生效**，这也是老生常谈的经典问题了。
+
+#### 4.方法不是public的
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Transactional(rollbackFor = Exception.class)
+    private void updateUser(User user) {
+        // update user
+    }
+    
+}
+复制代码
+```
+
+**`private` 方法是不会被spring代理**的，因此是不会有事务产生的，这种做法是无效的。
+
+#### 5.没有被spring管理
+
+```java
+//@Service
+public class UserServiceImpl implements UserService {
+
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUser(User user) {
+        // update user
+    }
+    
+}
+复制代码
+```
+
+没有被spring管理的bean， spring连代理对象都无法生成，当然无效咯。
+
+#### 6.配置的事务传播性有问题
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Transactional(propagation = Propagation.NOT_SUPPORTED)
+    public void update(User user) {
+        // update user
+    }    
+}
+复制代码
+```
+
+回顾一下spring的事务传播行为
+
+Spring 事务的传播行为说的是，当多个事务同时存在的时候， Spring 如何处理这些事务的行为。
+
+1. PROPAGATION_REQUIRED：如果当前没有事务，就创建一个新事务，如果当前存在事务，就加入该事务，该设置是最常用的设置。
+2. PROPAGATION_SUPPORTS：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就以非事务执行
+3. PROPAGATION_MANDATORY：支持当前事务，如果当前存在事务，就加入该事务，如果当前不存在事务，就抛出异常。
+4. PROPAGATION_REQUIRES_NEW：创建新事务，无论当前存不存在事务，都创建新事务。
+5. PROPAGATION_NOT_SUPPORTED：以非事务方式执行操作，如果当前存在事务，就把当前事务挂起。
+6. PROPAGATION_NEVER： 以非事务方式执行，如果当前存在事务，则抛出异常。
+7. PROPAGATION_NESTED：如果当前存在事务，则在嵌套事务内执行。如果当前没有事务，则按 REQUIRED 属性执行
+
+当传播行为设置了PROPAGATION_NOT_SUPPORTED，PROPAGATION_NEVER，PROPAGATION_SUPPORTS这三种时，就有可能存在事务不生效
+
+#### 7.异常被你 "抓住"了
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Transactional(rollbackFor = Exception.class)
+    public void update(User user) {
+        
+      try{
+        // update user
+      }catch(Execption e){
+         log.error("异常",e)
+      }
+    }    
+}
+复制代码
+```
+
+异常被抓了，这样子代理类就没办法知道你到底有没有错误，需不需要回滚，所以这种情况也是没办法回滚的哦。
+
+#### 8.接口层声明式事务使用cglib代理
+
+> 注意，这是个前后关系，说的是：如果在接口层使用了**声明式事务**，结果用的是cglib代理，那么事务就不会生效
+
+```java
+public interface UserService   {
+
+    @Transactional(rollbackFor = Exception.class)
+    public void update(User user)  
+}
+复制代码
+@Service
+public class UserServiceImpl implements UserService {
+
+    
+    public void update(User user) {
+        // update user
+    }    
+}
+复制代码
+```
+
+通过元素的 "proxy-target-class" 属性值来控制是基于接口的还是基于类的代理被创建。如果 "proxy-target-class" 属值被设置为 "true"，那么**基于类的代理**将起作用（这时需要CGLIB库cglib.jar在CLASSPATH中）。如果 "proxy-target-class" 属值被设置为 "false" 或者这个属性被省略，那么**标准的JDK基于接口**的代理将起作用
+
+注解@Transactional cglib与java动态代理最大区别是**代理目标对象不用实现接口**,那么注解要是写到接口方法上，要是使用cglib代理，这时注解事务就失效了，为了保持兼容注解最好**都写到实现类方法**上。
+
+#### 9.rollbackFor异常指定错误
+
+```java
+@Service
+public class UserServiceImpl implements UserService {
+
+    @Transactional
+    public void update(User user) {
+        // update user
+    }    
+}
+复制代码
+```
+
+上面这种没有指定回滚异常，这个时候默认的回滚异常是`RuntimeException` ，如果出现其他异常那么就不会回滚事务 
+
 ### Spring 事务中哪几种事务传播行为?
 
 **事务传播行为是为了解决业务层方法之间互相调用的事务问题**。
@@ -576,7 +764,7 @@ public class GlobalExceptionHandler {
 
 **1.`TransactionDefinition.PROPAGATION_REQUIRED`**
 
-使用的最多的一个事务传播行为，我们平时经常使用的`@Transactional`注解默认使用就是这个事务传播行为。如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。
+使用的最多的一个事务传播行为，我们平时经常使用的`@Transactional`注解**默认**使用就是这个事务传播行为。如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务。  
 
 **`2.TransactionDefinition.PROPAGATION_REQUIRES_NEW`**
 
