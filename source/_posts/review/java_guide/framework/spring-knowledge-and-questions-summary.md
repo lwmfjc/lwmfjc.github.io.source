@@ -326,19 +326,22 @@ public Person personPrototype() {
 
 > 下面的内容整理自：https://yemengying.com/2016/07/14/spring-bean-life-cycle/ ，除了这篇文章，再推荐一篇很不错的文章 ：https://www.cnblogs.com/zrtqsk/p/3735273.html 。
 
-- Bean 容器找到配置文件中 Spring Bean 的定义。
-- Bean 容器利用 Java Reflection API 创建一个 Bean 的实例。
-- 如果涉及到一些属性值 利用 `set()`方法设置一些属性值。
-- 如果 Bean 实现了 `BeanNameAware` 接口，调用 `setBeanName()`方法，传入 Bean 的名字。
-- 如果 Bean 实现了 `BeanClassLoaderAware` 接口，调用 `setBeanClassLoader()`方法，传入 `ClassLoader`对象的实例。
-- 如果 Bean 实现了 `BeanFactoryAware` 接口，调用 `setBeanFactory()`方法，传入 `BeanFactory`对象的实例。
+- Bean 容器**找到配置文件**中 Spring Bean 的**定义**。
+- Bean 容器**利用 Java Reflection API** 创建一个 Bean 的实例。【**反射**】
+- 如果涉及到一些属性值 **利用 `set()`方法设置**一些属性值。
+
+> ```aware 英[əˈweə(r)] adj. 意识到的,发觉,发现```
+
+- 如果 Bean 实现了 **`BeanNameAware`** 接口，调用 `setBeanName()`方法，传入 **Bean 的名字**。
+- 如果 Bean 实现了 **`BeanClassLoaderAware`** 接口，调用 `setBeanClassLoader()`方法，传入 **`ClassLoader`对象的实例**。
+- 如果 Bean 实现了 **`BeanFactoryAware`** 接口，调用 `setBeanFactory()`方法，传入 **`BeanFactory`对象的实例**。
 - 与上面的类似，如果实现了其他 `*.Aware`接口，就调用相应的方法。
-- 如果有和加载这个 Bean 的 Spring 容器相关的 `BeanPostProcessor` 对象，执行`postProcessBeforeInitialization()` 方法
-- 如果 Bean 实现了`InitializingBean`接口，执行`afterPropertiesSet()`方法。
-- 如果 Bean 在配置文件中的定义包含 init-method 属性，执行指定的方法。
-- 如果有和加载这个 Bean 的 Spring 容器相关的 `BeanPostProcessor` 对象，执行`postProcessAfterInitialization()` 方法
-- 当要销毁 Bean 的时候，如果 Bean 实现了 `DisposableBean` 接口，执行 `destroy()` 方法。
-- 当要销毁 Bean 的时候，如果 Bean 在配置文件中的定义包含 destroy-method 属性，执行指定的方法。
+- 如果有和加载这个 Bean 的 Spring 容器相关的 **`BeanPostProcessor`** 对象，执行`postProcessBeforeInitialization()` 方法
+- 如果 Bean 实现了**`InitializingBean`**接口，执行**`afterPropertiesSet()`**方法。
+- 如果 Bean 在配置文件中的定义包含 **init-method** 属性，执行指定的方法。
+- 如果有和加载这个 Bean 的 Spring 容器相关的 **`BeanPostProcessor`** 对象，执行`postProcessAfterInitialization()` 方法
+- 当要销毁 Bean 的时候，如果 Bean 实现了 **`DisposableBean`** 接口，执行 **`destroy()`** 方法。
+- 当要销毁 Bean 的时候，如果 Bean 在配置文件中的定义包含 **destroy-method** 属性，执行指定的方法。
 
 图示：
 
@@ -352,33 +355,37 @@ public Person personPrototype() {
 
 ### 谈谈自己对于 AOP 的了解
 
-AOP(Aspect-Oriented Programming:面向切面编程)能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。
+> ```aspect  英[ˈæspekt] 方位 n.``` 
+>
+> ```oriented  英[ˈɔːrientɪd] 朝向 v.```
 
-Spring AOP 就是基于动态代理的，如果要代理的对象，实现了某个接口，那么 Spring AOP 会使用 **JDK Proxy**，去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候 Spring AOP 会使用 **Cglib** 生成一个被代理对象的子类来作为代理，如下图所示：
+AOP(**Aspect-Oriented Programming:面向切面编程**)能够将那些与业务无关，却为业务模块所**共同调用**的逻辑或责任（例如**事务处理**、**日志管理**、**权限控制**等）封装起来，便于**减少系统的重复代码**，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。
 
-  
+Spring AOP 就是**基于动态代理**的，如果要代理的对象，实现了某个接口，那么 Spring AOP 会使用 **JDK Proxy**，去**创建代理对象**，而对于没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候 Spring AOP 会使用 **Cglib** 生成一个**被代理对象的子类**来作为代理，如下图所示：
 
-当然你也可以使用 **AspectJ** ！Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。
+  ![image-20230208093647267](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230208093647267.png)
+
+当然你也可以使用 **AspectJ** ！Spring AOP 已经集成了 AspectJ ，**AspectJ** 应该算的上是 **Java 生态系统中最完整的 AOP 框架**了。
 
 AOP 切面编程设计到的一些专业术语：
 
 | 术语              | 含义                                                         |
 | ----------------- | ------------------------------------------------------------ |
-| 目标(Target)      | 被通知的对象                                                 |
-| 代理(Proxy)       | 向目标对象应用通知之后创建的代理对象                         |
-| 连接点(JoinPoint) | 目标对象的所属类中，定义的所有方法均为连接点                 |
-| 切入点(Pointcut)  | 被切面拦截 / 增强的连接点（切入点一定是连接点，连接点不一定是切入点） |
-| 通知(Advice)      | 增强的逻辑 / 代码，也即拦截到目标对象的连接点之后要做的事情  |
-| 切面(Aspect)      | 切入点(Pointcut)+通知(Advice)                                |
-| Weaving(织入)     | 将通知应用到目标对象，进而生成代理对象的过程动作             |
+| 目标(**Target**)  | **被通知的对象**                                             |
+| 代理(**Proxy**)   | 向目标对象应用通知之后创建的**代理对象**                     |
+| 连接点(JoinPoint) | **目标对象的所属类**中，定义的**所有方法**均为连接点         |
+| 切入点(Pointcut)  | 被切面拦截 / 增强的连接点（**切入点一定是连接点，连接点不一定是切入点**） |
+| 通知(Advice)      | 增强的**逻辑** / **代码**，也即拦截到目标对象的连接点之后要做的事情 |
+| 切面(Aspect)      | **切入点(Pointcut)+通知(Advice)**                            |
+| Weaving(织入)     | 将**通知应用**到目标对象，进而生成代理对象的**过程动作**     |
 
 ### Spring AOP 和 AspectJ AOP 有什么区别？
 
-**Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。** Spring AOP 基于代理(Proxying)，而 AspectJ 基于字节码操作(Bytecode Manipulation)。
+**Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。** Spring AOP 基于**代理**(Proxying)，而 AspectJ 基于**字节码**操作(Bytecode Manipulation)。
 
 Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。AspectJ 相比于 Spring AOP 功能更加强大，但是 Spring AOP 相对来说更简单，
 
-如果我们的切面比较少，那么两者性能差异不大。但是，当切面太多的话，最好选择 AspectJ ，它比 Spring AOP 快很多。
+如果我们的切面比较少，那么两者性能差异不大。但是，当**切面太多**的话，最好选择 **AspectJ** ，它比 Spring AOP 快很多。
 
 ### AspectJ 定义的通知类型有哪些？
 
@@ -390,7 +397,7 @@ Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系�
 
 ### 多个切面的执行顺序如何控制？
 
-1、通常使用`@Order` 注解直接定义切面顺序
+1、通常使用**`@Order` 注解**直接定义切面顺序
 
 ```
 // 值越小优先级越高
@@ -421,11 +428,11 @@ public class LoggingAspect implements Ordered {
 
 ### 说说自己对于 Spring MVC 了解?
 
-MVC 是模型(Model)、视图(View)、控制器(Controller)的简写，其核心思想是通过将业务逻辑、数据、显示分离来组织代码。
+MVC 是**模型(Model)**、**视图(View)**、**控制器(Controller)**的简写，其核心思想是通过将**业务逻辑**、**数据**、**显示**分离来组织代码。
 
  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f696d6167652d32303231303830393138313435323432312e706e67) 
 
-网上有很多人说 MVC 不是设计模式，只是软件设计规范，我个人更倾向于 MVC 同样是众多设计模式中的一种。**[java-design-patterns](https://github.com/iluwatar/java-design-patterns)** 项目中就有关于 MVC 的相关介绍。
+网上有很多人说 MVC 不是设计模式，只是软件设计规范，我个人更倾向于 **MVC 同样是众多设计模式中的一种**。**[java-design-patterns](https://github.com/iluwatar/java-design-patterns)** 项目中就有关于 MVC 的相关介绍。
 
  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f31353962336433653730646434356536616661383162663036643039323634652e706e67) 
 
@@ -433,31 +440,31 @@ MVC 是模型(Model)、视图(View)、控制器(Controller)的简写，其核心
 
 **Model 1 时代**
 
-很多学 Java 后端比较晚的朋友可能并没有接触过 Model 1 时代下的 JavaWeb 应用开发。在 Model1 模式下，整个 Web 应用几乎全部用 JSP 页面组成，只用少量的 JavaBean 来处理数据库连接、访问等操作。
+很多学 Java 后端比较晚的朋友可能并没有接触过 Model 1 时代下的 JavaWeb 应用开发。在 Model1 模式下，整个 Web 应用几**乎全部用 JSP 页面**组成，**只用少量的 JavaBean** 来**处理数据库连接**、**访问**等操作。
 
-这个模式下 JSP 即是控制层（Controller）又是表现层（View）。显而易见，这种模式存在很多问题。比如控制逻辑和表现逻辑混杂在一起，导致代码重用率极低；再比如前端和后端相互依赖，难以进行测试维护并且开发效率极低。
+这个模式下 **JSP** 即是**控制层（Controller）**又是**表现层（View）**。显而易见，这种模式存在很多问题。比如**控制逻辑**和**表现逻辑**混杂在一起，导致代码重用率极低；再比如前端和后端相互依赖，难以进行测试维护并且开发效率极低。
 
   
 
 **Model 2 时代**
 
-学过 Servlet 并做过相关 Demo 的朋友应该了解“Java Bean(Model)+ JSP（View）+Servlet（Controller） ”这种开发模式，这就是早期的 JavaWeb MVC 开发模式。
+学过 Servlet 并做过相关 Demo 的朋友应该了解“**Java Bean(Model)**+ **JSP（View）**+**Servlet（Controller）** ”这种开发模式，这就是早期的 JavaWeb MVC 开发模式。
 
-- Model:系统涉及的数据，也就是 dao 和 bean。
-- View：展示模型中的数据，只是用来展示。
-- Controller：处理用户请求都发送给 ，返回数据给 JSP 并展示给用户。
+- Model:系统涉及的数据，也就是 **dao** 和 **bean**。
+- View：**展示模型中的数据**，只是用来展示。
+- Controller：**处理用户请求**都发送给 **Servlet**，返回数据给 JSP 并展示给用户。
 
 [![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f6d76632d6d6f64656c322e706e67)](https://camo.githubusercontent.com/b36a90d56dae552146126cf76f8de218f5d545d9df9d65a7eb84283157f46475/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f6d76632d6d6f64656c322e706e67)
 
-Model2 模式下还存在很多问题，Model2 的抽象和封装程度还远远不够，使用 Model2 进行开发时不可避免地会重复造轮子，这就大大降低了程序的可维护性和复用性。
+Model2 模式下还存在很多问题，**Model2 的抽象**和**封装程度**还远远不够，使用 Model2 进行开发时不可避免地会**重复造轮子**，这就大大降低了程序的**可维护性**和**复用性**。
 
-于是，很多 JavaWeb 开发相关的 MVC 框架应运而生比如 Struts2，但是 Struts2 比较笨重。
+于是，很多 JavaWeb 开发相关的 MVC 框架应运而生比如 **Struts2**，但是 Struts2 比较笨重。
 
 **Spring MVC 时代**
 
 随着 Spring 轻量级开发框架的流行，Spring 生态圈出现了 Spring MVC 框架， Spring MVC 是当前最优秀的 MVC 框架。相比于 Struts2 ， Spring MVC 使用更加简单和方便，开发效率更高，并且 Spring MVC 运行速度更快。
 
-MVC 是一种设计模式，Spring MVC 是一款很优秀的 MVC 框架。Spring MVC 可以帮助我们进行更简洁的 Web 层的开发，并且它天生与 Spring 框架集成。Spring MVC 下我们一般把后端项目分为 Service 层（处理业务）、Dao 层（数据库操作）、Entity 层（实体类）、Controller 层(控制层，返回数据给前台页面)。
+MVC 是一种设计模式，Spring MVC 是一款很优秀的 MVC 框架。Spring MVC 可以帮助我们进行更简洁的 Web 层的开发，并且它天生与 Spring 框架集成。Spring MVC 下我们一般把后端项目分为 **Service 层（处理业务）**、**Dao 层（数据库操作）**、**Entity 层（实体类）**、**Controller 层(控制层**，返回数据给前台页面)。
 
 ### Spring MVC 的核心组件有哪些？
 
@@ -479,13 +486,13 @@ MVC 是一种设计模式，Spring MVC 是一款很优秀的 MVC 框架。Spring
 
 **流程说明（重要）：**
 
-1. 客户端（浏览器）发送请求， `DispatcherServlet`拦截请求。
-2. `DispatcherServlet` 根据请求信息调用 `HandlerMapping` 。`HandlerMapping` 根据 uri 去匹配查找能处理的 `Handler`（也就是我们平常说的 `Controller` 控制器） ，并会将请求涉及到的拦截器和 `Handler` 一起封装。
-3. `DispatcherServlet` 调用 `HandlerAdapter`适配执行 `Handler` 。
-4. `Handler` 完成对用户请求的处理后，会返回一个 `ModelAndView` 对象给`DispatcherServlet`，`ModelAndView` 顾名思义，包含了数据模型以及相应的视图的信息。`Model` 是返回的数据对象，`View` 是个逻辑上的 `View`。
-5. `ViewResolver` 会根据逻辑 `View` 查找实际的 `View`。
-6. `DispaterServlet` 把返回的 `Model` 传给 `View`（视图渲染）。
-7. 把 `View` 返回给请求者（浏览器）
+1. 客户端（浏览器）发送请求， **`DispatcherServlet`拦截**请求。
+2. `DispatcherServlet` 根据请求信息调用 **`HandlerMapping`** 。**`HandlerMapping` 根据 uri 去匹配**查找能处理的 `Handler`（也就是我们平常说的 `Controller` 控制器） ，并会将请求涉及到的拦截器和 `Handler` 一起封装。
+3. `DispatcherServlet` 调用 **`HandlerAdapter`**适配执行 `Handler` 。
+4. `Handler` 完成对用户请求的处理后，会**返回一个 `ModelAndView`** 对象给`DispatcherServlet`，`ModelAndView` 顾名思义，包含了**数据模型**以及**相应的视图的信息**。`Model` 是返回的数据对象，`View` 是个逻辑上的 `View`。
+5. `ViewResolver` 会**根据逻辑 `View` 查找实际的 `View`**。
+6. `DispaterServlet` 把**返回的 `Model` 传给 `View`（视图渲染**）。
+7. 把 **`View` 返回**给请求者（浏览器）
 
 ### 统一异常处理怎么做？
 
@@ -508,9 +515,9 @@ public class GlobalExceptionHandler {
 }
 ```
 
-这种异常处理方式下，会给所有或者指定的 `Controller` 织入异常处理的逻辑（AOP），当 `Controller` 中的方法抛出异常的时候，由被`@ExceptionHandler` 注解修饰的方法进行处理。
+这种异常处理方式下，会给**所有**或者**指定**的 `Controller` **织入异常处理的逻辑**（AOP），当 `Controller` 中的方法抛出异常的时候，由被`@ExceptionHandler` 注解修饰的方法进行处理。
 
-`ExceptionHandlerMethodResolver` 中 `getMappedMethod` 方法决定了异常具体被哪个被 `@ExceptionHandler` 注解修饰的方法处理异常。
+`ExceptionHandlerMethodResolver` 中 `getMappedMethod` 方法**决定了异常具体被哪个**被 `@ExceptionHandler` 注解修饰的方法处理异常。【**这个是框架里的源码，不是自己写的**】
 
 ```
 @Nullable
@@ -541,13 +548,13 @@ public class GlobalExceptionHandler {
 
 > 关于下面这些设计模式的详细介绍，可以看我写的 [Spring 中的设计模式详解](https://javaguide.cn/system-design/framework/spring/spring-design-patterns-summary.html) 这篇文章。
 
-- **工厂设计模式** : Spring 使用工厂模式通过 `BeanFactory`、`ApplicationContext` 创建 bean 对象。
-- **代理设计模式** : Spring AOP 功能的实现。
-- **单例设计模式** : Spring 中的 Bean 默认都是单例的。
-- **模板方法模式** : Spring 中 `jdbcTemplate`、`hibernateTemplate` 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。
-- **包装器设计模式** : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。
-- **观察者模式:** Spring 事件驱动模型就是观察者模式很经典的一个应用。
-- **适配器模式** : Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配`Controller`。
+- **工厂设计模式** : Spring 使用工厂模式通过 **`BeanFactory`**、**`ApplicationContext`** 创建 bean 对象。
+- **代理设计模式** : Spring **AOP** 功能的实现。
+- **单例设计模式** : Spring 中的 **Bean 默认都是单例**的。
+- **模板方法模式** : Spring 中 **`jdbcTemplate`**、**`hibernateTemplate`** 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。
+- **包装器设计模式** : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够**动态切换不同的数据源**。
+- **观察者模式:** Spring **事件驱动**模型就是**观察者模式**很经典的一个应用。
+- **适配器模式** : Spring AOP 的**增强或通知(Advice)**使用到了适配器模式、spring MVC 中也是用到了适配器模式**适配`Controller`**。
 - ......
 
 ## Spring 事务
@@ -556,8 +563,8 @@ public class GlobalExceptionHandler {
 
 ### Spring 管理事务的方式有几种？
 
-- **编程式事务** ： 在代码中硬编码(不推荐使用) : 通过 `TransactionTemplate`或者 `TransactionManager` 手动管理事务，实际应用中很少使用，但是对于你理解 Spring 事务管理原理有帮助。
-- **声明式事务** ： 在 XML 配置文件中配置或者直接基于注解（推荐使用） : 实际是通过 AOP 实现（基于`@Transactional` 的全注解方式使用最多）
+- **编程式事务** ： 在代码中硬编码(不推荐使用) : 通过 **`TransactionTemplate`**或者 **`TransactionManager`** **手动管理**事务，实际应用中很少使用，但是对于你理解 Spring 事务管理原理有帮助。
+- **声明式事务** ： 在 **XML 配置文件中配置**或者**直接基于注解**（推荐使用） : 实际是通过 AOP 实现（基于`@**Transactional`** 的全注解方式使用最多）
 
 ### Spring 事务中哪几种事务传播行为?
 
