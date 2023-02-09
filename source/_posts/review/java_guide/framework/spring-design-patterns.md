@@ -154,19 +154,19 @@ public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 
 ### 代理模式在 AOP 中的应用
 
-**AOP(Aspect-Oriented Programming，面向切面编程)** 能够将那些与业务无关，却为业务模块所共同调用的逻辑或责任（例如事务处理、日志管理、权限控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。
+**AOP(Aspect-Oriented Programming，面向切面编程)** 能够将那些**与业务无**关，却**为业务模块所共同调用**的**逻辑**或责任（例如**事务**处理、**日志**管理、**权限**控制等）封装起来，便于减少系统的重复代码，降低模块间的耦合度，并有利于未来的可拓展性和可维护性。
 
 **Spring AOP 就是基于动态代理的**，如果要代理的对象，实现了某个接口，那么 Spring AOP 会使用 **JDK Proxy** 去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候 Spring AOP 会使用 **Cglib** 生成一个被代理对象的子类来作为代理，如下图所示：
 
 ![SpringAOPProcess](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d362f537072696e67414f5050726f636573732e6a7067)
 
-当然，你也可以使用 AspectJ ,Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。
+当然，你也可以使用 AspectJ ,Spring AOP 已经**集成了 AspectJ** ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。
 
-使用 AOP 之后我们可以把一些通用功能抽象出来，在需要用到的地方直接使用即可，这样大大简化了代码量。我们需要增加新功能时也方便，这样也提高了系统扩展性。日志功能、事务管理等等场景都用到了 AOP 。
+使用 AOP 之后我们可以把一些**通用功能抽象**出来，在需要用到的地方直接使用即可，这样大大简化了代码量。我们需要增加新功能时也方便，这样也提高了系统扩展性。**日志功能**、**事务管理**等等场景都用到了 AOP 。
 
 ### Spring AOP 和 AspectJ AOP 有什么区别?
 
-**Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。** Spring AOP 基于代理(Proxying)，而 AspectJ 基于字节码操作(Bytecode Manipulation)。
+**Spring AOP 属于运行时增强，而 AspectJ 是编译时增强。** Spring AOP 基于代理(Proxying)，而 AspectJ 基于字节码操作(**Bytecode Manipulation**)。
 
 Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。AspectJ 相比于 Spring AOP 功能更加强大，但是 Spring AOP 相对来说更简单，
 
@@ -174,9 +174,9 @@ Spring AOP 已经集成了 AspectJ ，AspectJ 应该算的上是 Java 生态系�
 
 ## 模板方法
 
-模板方法模式是一种行为设计模式，它定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。 模板方法使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤的实现方式。
+模板方法模式是一种**行为设计模式**，它定义**一个操作中的算法的骨架**，而将**一些步骤延迟到子类**中。 模板方法使得子类可以不改变一个算法的结构即可重定义**该算法的某些特定步骤的实现方式**。
 
-```
+```java
 public abstract class Template {
     //这是我们的模板方法
     public final void TemplateMethod(){
@@ -208,32 +208,115 @@ public class TemplateImpl extends Template {
 }
 ```
 
-Spring 中 `JdbcTemplate`、`HibernateTemplate` 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。一般情况下，我们都是使用继承的方式来实现模板模式，但是 Spring 并没有使用这种方式，而是使用 Callback 模式与模板方法模式配合，既达到了代码复用的效果，同时增加了灵活性。
+Spring 中 `JdbcTemplate`、`HibernateTemplate` 等**以 Template 结尾的对数据库操作**的类，它们就使用到了模板模式。一般情况下，我们都是**使用继承的方式来实现模板模式**，但是 Spring 并没有使用这种方式，而是使用 **Callback 模式**与**模板方法模式**配合，既达到了**代码复用**的效果，同时增加了**灵活性**。  
+
+> 什么是Callback模式  
+>
+> ```java
+> //纯模板方法模式
+> public abstract class JdbcTemplate {  
+>         
+>       public final Object execute（String sql）{  
+>             Connection con=null;  
+>             Statement stmt=null;  
+>              try  
+>              {  
+>                  con=getConnection（）;  
+>                  stmt=con.createStatement（）;  
+>                  Object retValue=executeWithStatement（stmt,sql）;  
+>                  return retValue;  
+>              }  
+>              catch（SQLException e）{  
+>                  ...  
+>              }  
+>              finally  
+>              {  
+>                closeStatement（stmt）;  
+>                releaseConnection（con）;  
+>              }  
+>        }  
+>   
+>        protected abstract Object executeWithStatement（Statement   stmt, String sql）;  
+> }  
+> ```
+>
+> Callback类  
+>
+> ```java
+> public interface StatementCallback{  
+>       Object doWithStatement（Statement stmt）;  
+> }
+> ```
+>
+> 使用  
+>
+> ```java
+> //结合Callback模式
+> public class JdbcTemplate {  
+>         
+>       //主要是传入了一个类
+>       public final Object execute（StatementCallback callback）{  
+>             Connection con=null;  
+>             Statement stmt=null;  
+>              try  
+>              {  
+>                  con=getConnection（）;  
+>                  stmt=con.createStatement（）;  
+>                  Object retValue=callback.doWithStatement（stmt）;  
+>                  return retValue;  
+>              }  
+>              catch（SQLException e）{  
+>                  ...  
+>              }  
+>              finally  
+>              {  
+>                closeStatement（stmt）;  
+>                releaseConnection（con）;  
+>              }  
+>        }  
+>   
+>        ...//其它方法定义  
+> }  
+> ```
+>
+> ```java
+> JdbcTemplate jdbcTemplate=...;  
+> final String sql=...;  
+> StatementCallback callback=new StatementCallback(){  
+>       public Object=doWithStatement(Statement stmt){  
+>              return ...;  
+>       }  
+> }  
+>   
+> jdbcTemplate.execute(callback); 
+> ```
 
 ## 观察者模式
 
-观察者模式是一种对象行为型模式。它表示的是一种对象与对象之间具有依赖关系，当一个对象发生改变的时候，这个对象所依赖的对象也会做出反应。Spring 事件驱动模型就是观察者模式很经典的一个应用。Spring 事件驱动模型非常有用，在很多场景都可以解耦我们的代码。比如我们每次添加商品的时候都需要重新更新商品索引，这个时候就可以利用观察者模式来解决这个问题。
+观察者模式是一种**对象行为型**模式。它表示的是一种**对象与对象之间具有依赖**关系，当**一个对象发生改变**的时候，这个**对象所依赖的对象也会做出反**应。Spring 事件**驱动模型**就是观察者模式很经典的一个应用。Spring 事件驱动模型非常有用，在很多场景都可以解耦我们的代码。比如我们**每次添加商品**的时候都需要**重新更新商品索引**，这个时候就可以利用观察者模式来解决这个问题。
 
 ### Spring 事件驱动模型中的三种角色
 
 #### 事件角色
 
-`ApplicationEvent` (`org.springframework.context`包下)充当事件的角色,这是一个抽象类，它继承了`java.util.EventObject`并实现了 `java.io.Serializable`接口。
+`ApplicationEvent` (`org.springframework.context`包下)充当**事件的角色**,这是一个抽象类，它继承了`java.util.EventObject`并实现了 `java.io.Serializable`接口。
 
 Spring 中默认存在以下事件，他们都是对 `ApplicationContextEvent` 的实现(继承自`ApplicationContextEvent`)：
 
-- `ContextStartedEvent`：`ApplicationContext` 启动后触发的事件;
-- `ContextStoppedEvent`：`ApplicationContext` 停止后触发的事件;
-- `ContextRefreshedEvent`：`ApplicationContext` 初始化或刷新完成后触发的事件;
-- `ContextClosedEvent`：`ApplicationContext` 关闭后触发的事件。
+- **`ContextStartedEvent`**：`ApplicationContext` 启动后触发的事件;
+- **`ContextStoppedEvent`**：`ApplicationContext` 停止后触发的事件;
+- **`ContextRefreshedEvent`**：`ApplicationContext` 初始化或刷新完成后触发的事件;
+- **`ContextClosedEvent`**：`ApplicationContext` 关闭后触发的事件。
 
 ![image-20230208202054082](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230208202054082.png)
 
 #### 事件监听者角色
 
-`ApplicationListener` 充当了事件监听者角色，它是一个接口，里面只定义了一个 `onApplicationEvent（）`方法来处理`ApplicationEvent`。`ApplicationListener`接口类源码如下，可以看出接口定义看出接口中的事件只要实现了 `ApplicationEvent`就可以了。所以，在 Spring 中我们只要实现 `ApplicationListener` 接口的 `onApplicationEvent()` 方法即可完成监听事件
+`ApplicationListener` 充当了事件监听者角色，它是一个接口，里面只定义了一个 `onApplicationEvent（）`方法来处理`ApplicationEvent`。`ApplicationListener`接口类源码如下，可以看出接口定义看出接口中的事件只要实现了 `ApplicationEvent`就可以了。所以，在 Spring 中我们只要实现 `ApplicationListener` 接口的 `onApplicationEvent()` 方法即可完成监听事件  
 
-```
+> 注意代码，**E extends ApplicationEvent** , 对某类事件进行监听
+
+```java
 package org.springframework.context;
 import java.util.EventListener;
 @FunctionalInterface
@@ -244,7 +327,7 @@ public interface ApplicationListener<E extends ApplicationEvent> extends EventLi
 
 #### 事件发布者角色
 
-`ApplicationEventPublisher` 充当了事件的发布者，它也是一个接口。
+`ApplicationEventPublisher` 充当了**事件的发布者**，它也是一个接口。
 
 ```
 @FunctionalInterface
@@ -257,17 +340,17 @@ public interface ApplicationEventPublisher {
 }
 ```
 
-`ApplicationEventPublisher` 接口的`publishEvent（）`这个方法在`AbstractApplicationContext`类中被实现，阅读这个方法的实现，你会发现实际上事件真正是通过`ApplicationEventMulticaster`来广播出去的。具体内容过多，就不在这里分析了，后面可能会单独写一篇文章提到。
+`ApplicationEventPublisher` 接口的`publishEvent（）`这个方法**在`AbstractApplicationContext`类中被实现(这个类继承了ApplicationEventPublisher)**，阅读这个方法的实现，你会发现实际上事件真正是通过`ApplicationEventMulticaster`来广播出去的。具体内容过多，就不在这里分析了，后面可能会单独写一篇文章提到。
 
 ### Spring 的事件流程总结
 
-1. 定义一个事件: 实现一个继承自 `ApplicationEvent`，并且写相应的构造函数；
-2. 定义一个事件监听者：实现 `ApplicationListener` 接口，重写 `onApplicationEvent()` 方法；
-3. 使用事件发布者发布消息: 可以通过 `ApplicationEventPublisher` 的 `publishEvent()` 方法发布消息。
+1. 定义一个事件: 实现一个**继承自 `ApplicationEvent`**，并且写相应的构造函数；
+2. 定义一个事件监听者：**实现 `ApplicationListener` 接口**，重写 `onApplicationEvent()` 方法；
+3. 使用事件发布者发布消息: 可以**通过 `ApplicationEventPublisher` 的 `publishEvent()` 方法发布**消息。
 
 Example:
 
-```
+```java
 // 定义一个事件,继承自ApplicationEvent并且写相应的构造函数
 public class DemoEvent extends ApplicationEvent{
     private static final long serialVersionUID = 1L;
@@ -282,6 +365,7 @@ public class DemoEvent extends ApplicationEvent{
     public String getMessage() {
          return message;
           }
+}
 
 
 // 定义一个事件监听者,实现ApplicationListener接口，重写 onApplicationEvent() 方法；
