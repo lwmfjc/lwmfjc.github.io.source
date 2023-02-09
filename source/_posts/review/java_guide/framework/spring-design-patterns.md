@@ -39,6 +39,22 @@ updated: 2023-02-08 20:18:14
 
 ## 工厂设计模式
 
+```java
+        //方式一 spring3.1后,XmlBeanFactory被弃用
+        XmlBeanFactory factory = new XmlBeanFactory (new ClassPathResource("beans.xml"));
+        User bean = factory.getBean(User.class);
+        System.out.println(bean);
+        
+        /*
+        //方式二
+        ApplicationContext context=new ClassPathXmlApplicationContext("beans.xml");
+        User bean = context.getBean(User.class);
+        System.out.println(bean);*/
+
+```
+
+
+
 Spring 使用工厂模式可以通过 **`BeanFactory`** 或 **`ApplicationContext`** 创建 bean 对象。  
 
 > **ApplicationContext继承了ListableBeanFactory，ListableBeanFactory继承了BeanFactory** 
@@ -73,26 +89,26 @@ public class App {
 
 ## 单例设计模式
 
-在我们的系统中，有一些对象其实我们只需要一个，比如说：线程池、缓存、对话框、注册表、日志对象、充当打印机、显卡等设备驱动程序的对象。事实上，这一类对象只能有一个实例，如果制造出多个实例就可能会导致一些问题的产生，比如：程序的行为异常、资源使用过量、或者不一致性的结果。
+在我们的系统中，**有一些对象**其实我们**只需要一个**，比如说：**线程池**、**缓存**、**对话框**、**注册表**、**日志对象**、充当**打印机、显卡等设备驱动程序**的对象。事实上，这一类对象只能有一个实例，如果制造出多个实例就可能会导致一些问题的产生，比如：程序的**行为异常**、**资源使用过量**、或者**不一致性**的结果。
 
 **使用单例模式的好处** :
 
-- 对于频繁使用的对象，可以省略创建对象所花费的时间，这对于那些重量级对象而言，是非常可观的一笔系统开销；
-- 由于 new 操作的次数减少，因而对系统内存的使用频率也会降低，这将减轻 GC 压力，缩短 GC 停顿时间。
+- 对于**频繁使用**的对象，可以**省略创建对象所花费的时间**，这对于那些**重量级对象**而言，是非常可观的一笔系统开销；
+- 由于 **new 操作的次数减少**，因而对系统**内存的使用频率也会降低**，这将**减轻 GC 压力**，**缩短 GC 停顿**时间。
 
 **Spring 中 bean 的默认作用域就是 singleton(单例)的。** 除了 singleton 作用域，Spring 中 bean 还有下面几种作用域：
 
-- **prototype** : 每次获取都会创建一个新的 bean 实例。也就是说，连续 `getBean()` 两次，得到的是不同的 Bean 实例。
-- **request** （仅 Web 应用可用）: 每一次 HTTP 请求都会产生一个新的 bean（请求 bean），该 bean 仅在当前 HTTP request 内有效。
-- **session** （仅 Web 应用可用） : 每一次来自新 session 的 HTTP 请求都会产生一个新的 bean（会话 bean），该 bean 仅在当前 HTTP session 内有效。
-- **application/global-session** （仅 Web 应用可用）： 每个 Web 应用在启动时创建一个 Bean（应用 Bean），，该 bean 仅在当前应用启动时间内有效。
-- **websocket** （仅 Web 应用可用）：每一次 WebSocket 会话产生一个新的 bean。
+- **prototype** : **每次获取都会创建**一个新的 bean 实例。也就是说，连续 `getBean()` 两次，得到的是不同的 Bean 实例。
+- **request** （仅 Web 应用可用）: **每一次 HTTP 请求**都会产生一个新的 bean（请求 bean），该 bean 仅在当前 HTTP request 内有效。
+- **session** （仅 Web 应用可用） : **每一次来自新 session 的 HTTP 请求**都会产生一个新的 bean（会话 bean），该 bean 仅在当前 HTTP session 内有效。
+- **application/global-session** （仅 Web 应用可用）： **每个 Web 应用在启动时创建一个 Bean**（应用 Bean），，该 bean 仅在当前应用启动时间内有效。
+- **websocket** （仅 Web 应用可用）：**每一次 WebSocket 会话产生一个新的** bean。
 
-Spring 通过 `ConcurrentHashMap` 实现单例注册表的特殊方式实现单例模式。
+Spring 通过 **`ConcurrentHashMap` 实现单例注册表**的特殊方式实现单例模式。
 
 Spring 实现单例的核心代码如下：
 
-```
+```java
 // 通过 ConcurrentHashMap（线程安全） 实现单例注册表
 private final Map<String, Object> singletonObjects = new ConcurrentHashMap<String, Object>(64);
 
@@ -125,12 +141,12 @@ public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 
 **单例 Bean 存在线程安全问题吗？**
 
-大部分时候我们并没有在项目中使用多线程，所以很少有人会关注这个问题。单例 Bean 存在线程问题，主要是因为当多个线程操作同一个对象的时候是存在资源竞争的。
+大部分时候我们并没有在项目中使用多线程，所以很少有人会关注这个问题。**单例 Bean 存在线程问题**，主要是因为当**多个线程操作同一个对象**的时候是存在资源竞争的。
 
 常见的有两种解决办法：
 
-1. 在 Bean 中尽量避免定义可变的成员变量。
-2. 在类中定义一个 `ThreadLocal` 成员变量，将需要的可变成员变量保存在 `ThreadLocal` 中（推荐的一种方式）。
+1. 在 Bean 中尽量**避免定义可变的成员变量**。
+2. 在类中**定义一个 `ThreadLocal` 成员变量**，将需要的可变成员变量保存在 `ThreadLocal` 中（推荐的一种方式）。
 
 不过，大部分 Bean 实际都是无状态（没有实例变量）的（比如 Dao、Service），这种情况下， Bean 是线程安全的。
 
