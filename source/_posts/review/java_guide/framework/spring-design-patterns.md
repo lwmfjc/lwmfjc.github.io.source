@@ -297,6 +297,11 @@ Spring 中 `JdbcTemplate`、`HibernateTemplate` 等**以 Template 结尾的对�
 
 ### Spring 事件驱动模型中的三种角色
 
+> 事件角色：是一种属性（物品）  
+> 事件监听者：（注册到事件发布者上）  
+> 事件发布者：当发布的时候，通知指定的监听者（观察者）  
+>
+
 #### 事件角色
 
 `ApplicationEvent` (`org.springframework.context`包下)充当**事件的角色**,这是一个抽象类，它继承了`java.util.EventObject`并实现了 `java.io.Serializable`接口。
@@ -344,9 +349,9 @@ public interface ApplicationEventPublisher {
 
 ### Spring 的事件流程总结
 
-1. 定义一个事件: 实现一个**继承自 `ApplicationEvent`**，并且写相应的构造函数；
-2. 定义一个事件监听者：**实现 `ApplicationListener` 接口**，重写 `onApplicationEvent()` 方法；
-3. 使用事件发布者发布消息: 可以**通过 `ApplicationEventPublisher` 的 `publishEvent()` 方法发布**消息。
+1. **定义一个事件**: 实现一个**继承自 `ApplicationEvent`**，并且写相应的构造函数；
+2. **定义一个事件监听者**：**实现 `ApplicationListener` 接口**，重写 `onApplicationEvent()` 方法；
+3. **使用事件发布者发布消息**: 可以**通过 `ApplicationEventPublisher` 的 `publishEvent()` 方法发布**消息。
 
 Example:
 
@@ -398,25 +403,25 @@ public class DemoPublisher {
 
 ## 适配器模式
 
-适配器模式(Adapter Pattern) 将一个接口转换成客户希望的另一个接口，适配器模式使接口不兼容的那些类可以一起工作。
+适配器模式(Adapter Pattern) 将**一个接口转换成客户希望的另一个接口**，适配器模式使接口不兼容的那些类可以一起工作。
 
 ### Spring AOP 中的适配器模式
 
-我们知道 Spring AOP 的实现是基于代理模式，但是 Spring AOP 的增强或通知(Advice)使用到了适配器模式，与之相关的接口是`AdvisorAdapter` 。
+我们知道 Spring AOP 的实现是基于代理模式，但是 **Spring AOP 的增强**或**通知(Advice)**使用到了适配器模式，与之相关的接口是**`AdvisorAdapter`** 。
 
 Advice 常用的类型有：`BeforeAdvice`（目标方法调用前,前置通知）、`AfterAdvice`（目标方法调用后,后置通知）、`AfterReturningAdvice`(目标方法执行结束后，return 之前)等等。每个类型 Advice（通知）都有对应的拦截器:`MethodBeforeAdviceInterceptor`、`AfterReturningAdviceInterceptor`、`ThrowsAdviceInterceptor` 等等。
 
-Spring 预定义的通知要通过对应的适配器，适配成 `MethodInterceptor` 接口(方法拦截器)类型的对象（如：`MethodBeforeAdviceAdapter` 通过调用 `getInterceptor` 方法，将 `MethodBeforeAdvice` 适配成 `MethodBeforeAdviceInterceptor` ）。
+Spring 预定义的通知要通过对应的适配器，**适配成 `MethodInterceptor` 接口(方法拦截器)类型的对象**（如：`MethodBeforeAdviceAdapter` 通过调用 `getInterceptor` 方法，将 `MethodBeforeAdvice` 适配成 `MethodBeforeAdviceInterceptor` ）。
 
 ### Spring MVC 中的适配器模式
 
-在 Spring MVC 中，`DispatcherServlet` 根据请求信息调用 `HandlerMapping`，解析请求对应的 `Handler`。解析到对应的 `Handler`（也就是我们平常说的 `Controller` 控制器）后，开始由`HandlerAdapter` 适配器处理。`HandlerAdapter` 作为期望接口，具体的适配器实现类用于对目标类进行适配，`Controller` 作为需要适配的类。
+在 Spring MVC 中，`DispatcherServlet` 根据请求信息调用 `HandlerMapping`，解析请求对应的 `Handler`。**解析到对应的 `Handler`**（也就是我们平常说的 `Controller` 控制器）后，开始**由`HandlerAdapter` 适配器处理**。`HandlerAdapter` 作为期望接口，**具体的适配器实现类用于对目标类进行适配**，`Controller` 作为需要适配的类。
 
 **为什么要在 Spring MVC 中使用适配器模式？**
 
-Spring MVC 中的 `Controller` 种类众多，不同类型的 `Controller` 通过不同的方法来对请求进行处理。如果不利用适配器模式的话，`DispatcherServlet` 直接获取对应类型的 `Controller`，需要的自行来判断，像下面这段代码一样：
+Spring MVC 中的 `Controller` 种类众多，不同类型的 `Controller` 通过不同的方法来对请求进行处理。**如果不利用适配器模式的话，`DispatcherServlet` 直接获取对应类型的 `Controller`，需要的自行来判断**，像下面这段代码一样：
 
-```
+```java
 if(mappedHandler.getHandler() instanceof MultiActionController){
    ((MultiActionController)mappedHandler.getHandler()).xxx
 }else if(mappedHandler.getHandler() instanceof XXX){
@@ -430,11 +435,11 @@ if(mappedHandler.getHandler() instanceof MultiActionController){
 
 ## 装饰者模式
 
-装饰者模式可以动态地给对象添加一些额外的属性或行为。相比于使用继承，装饰者模式更加灵活。简单点儿说就是当我们需要修改原有的功能，但我们又不愿直接去修改原有的代码时，设计一个 Decorator 套在原有代码外面。其实在 JDK 中就有很多地方用到了装饰者模式，比如 `InputStream`家族，`InputStream` 类下有 `FileInputStream` (读取文件)、`BufferedInputStream` (增加缓存,使读取文件速度大大提升)等子类都在不修改`InputStream` 代码的情况下扩展了它的功能。
+装饰者模式可以**动态地给对象添加一些额外的属性**或**行为**。相比于使用继承，装饰者模式更加灵活。简单点儿说就是当我们**需要修改原有**的功能，但我们又**不愿直接去修改原有的代**码时，设计一个 Decorator 套在原有代码外面。其实在 JDK 中就有很多地方用到了装饰者模式，比如 `InputStream`家族，`InputStream` 类下有 `FileInputStream` (读取文件)、`BufferedInputStream` (增加缓存,使读取文件速度大大提升)等子类都在不修改`InputStream` 代码的情况下扩展了它的功能。
 
  ![image-20230208202144491](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230208202144491.png)
 
-Spring 中配置 DataSource 的时候，DataSource 可能是不同的数据库和数据源。我们能否根据客户的需求在少修改原有类的代码下动态切换不同的数据源？这个时候就要用到装饰者模式(这一点我自己还没太理解具体原理)。Spring 中用到的包装器模式在类名上含有 `Wrapper`或者 `Decorator`。这些类基本上都是动态地给一个对象添加一些额外的职责
+Spring 中配置 DataSource 的时候，DataSource 可能是不同的数据库和数据源。我们能否根据客户的需求在少修改原有类的代码下动态切换不同的数据源？这个时候就要用到装饰者模式(这一点我自己还没太理解具体原理)。Spring 中用到的包装器模式在类名上含有 **`Wrapper`**或者 **`Decorator`**。这些类基本上都是**动态地给一个对象添加一些额外的职责**
 
 ## 总结
 
@@ -445,7 +450,7 @@ Spring 框架中用到了哪些设计模式？
 - **单例设计模式** : Spring 中的 Bean 默认都是单例的。
 - **模板方法模式** : Spring 中 `jdbcTemplate`、`hibernateTemplate` 等以 Template 结尾的对数据库操作的类，它们就使用到了模板模式。
 - **包装器设计模式** : 我们的项目需要连接多个数据库，而且不同的客户在每次访问中根据需要会去访问不同的数据库。这种模式让我们可以根据客户的需求能够动态切换不同的数据源。
-- **观察者模式:** Spring 事件驱动模型就是观察者模式很经典的一个应用。
+- **观察者模式:** Spring **事件驱动模型**就是观察者模式很经典的一个应用。
 - **适配器模式** :Spring AOP 的增强或通知(Advice)使用到了适配器模式、spring MVC 中也是用到了适配器模式适配`Controller`。
 - ......
 
