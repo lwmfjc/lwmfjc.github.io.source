@@ -159,6 +159,8 @@ updated: 2023-02-09 15:38:01
 
 ## 方向2：3个maven项目(建议用这个理解)
 
+> 注意，这里可能还漏了一个问题，那就是 这个conditional_on_class1 的configuration之所以能够被自动装配，是因为和 conditional_on_class_main1的Application类是同一个包，所以不用特殊处理。如果是其他包名的话，那么是需要用到spring boot的自动装配机制的：在conditional_on_class1 工程的 resources 包下创建`META-INF/spring.factories`，并写上Config类的全类名
+
 > 详见 git上的 conditional_on_class_main1,  conditional_on_class1 项目以及 conditional_on_class2 项目
 
 1. 基础 conditional_on_class2  
