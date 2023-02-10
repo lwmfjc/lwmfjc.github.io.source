@@ -13,11 +13,11 @@ updated: 2023-02-10 11:04:31
 
 > 转载自https://www.jianshu.com/p/7d6b891180a3（添加小部分笔记）感谢作者!
 
-> 在上篇文章中，我们举了一个例子如何使用MyBatis，但是对其中dao层，entity层，mapper层间的关系不得而知，从此篇文章开始，笔者将**从MyBatis的启动流程**着手，真正的开始研究MyBatis源码了。
+> 在上篇文章中，我们举了一个例子如何使用MyBatis，但是对其中**dao层**，**entity层**，**mapper层**间的关系不得而知，从此篇文章开始，笔者将**从MyBatis的启动流程**着手，真正的开始研究MyBatis源码了。
 
 #### 1. MyBatis启动代码示例
 
-在上篇文章中，介绍了MyBatis的相关配置和各层代码编写，本文将以下代码展开描述和介绍MyBatis的启动流程，并简略的介绍各个模块的作用，各个模块的细节部分将在其它文章中呈现。
+在上篇文章中，介绍了MyBatis的相关配置和各层代码编写，本文将以下代码展开描述和介绍MyBatis的启动流程，并简略的介绍各个模块的作用，**各个模块的细节部分将在其它文章中呈现**。
 
 回顾下上文中使用mybatis的部分代码，包括七步。每步虽然都是一行代码，但是隐藏了很多细节。接下来我们将围绕这起步展开了解。
 
@@ -61,7 +61,7 @@ public class MyBatisBootStrap {
 InputStream inputStream = Resources.getResourceAsStream("mybatis-config.xml");
 ```
 
-在mybatis-config.xml中我们配置了属性，环境，映射文件路径等，其实不仅可以配置以上内容，还可以配置插件，反射工厂，类型处理器等等其它内容。在启动流程中的第一步我们就需要读取这个配置文件，并获取一个输入流为下一步解析配置文件作准备。
+在**mybatis-config.xml**中我们配置了**属性**，**环境**，**映射文件路径**等，其实不仅可以配置以上内容，还可以配置**插件**，**反射工厂**，**类型处理器**等等其它内容。在启动流程中的第一步我们就需要**读取这个配置文件**，并获取一个输入流为下一步解析配置文件作准备。
 
 mybatis-config.xml 内容如下
 
@@ -123,7 +123,7 @@ mybatis-config.xml 内容如下
 SqlSessionFactory sqlSessionFactory = new SqlSessionFactoryBuilder().build(inputStream);
 ```
 
-我们在学习Java的设计模式时，会学到工厂模式，工厂模式又分为简单工厂模式，工厂方法模式，抽象工厂模式等等。工厂模式就是为了创建对象提供接口，并将创建对象的具体细节屏蔽起来，从而可以提高灵活性。
+我们在学习Java的设计模式时，会学到**工厂模式**，工厂模式又分为**简单工厂模式**，**工厂方法模式**，**抽象工厂模式**等等。工厂模式就是**为了创建对象提供接口**，并**将创建对象的具体细节屏蔽**起来，从而可以提高灵活性。
 
 
 
@@ -151,13 +151,13 @@ public interface SqlSessionFactory {
 }
 ```
 
-由此可知SqlSessionFactory工厂是为了创建一个对象而生的，其产出的对象就是SqlSession对象。SqlSession是MyBatis面向数据库的高级接口，其提供了执行查询sql，更新sql，提交事物，回滚事物，获取映射代理类等等方法。
+由此可知**SqlSessionFactory工厂是为了创建一个对象而生**的，其产出的对象就是**SqlSession对象**。**SqlSession**是MyBatis面向数据库的高级接口，其提供了**执行查询sql**，**更新sql**，**提交事物**，**回滚事物**，**获取映射代理类(也就是Mapper)**等等方法。
 
 在此笔者列出了主要方法，一些重载的方法就过滤掉了。
 
 
 
-```dart
+```java
 public interface SqlSession extends Closeable {
 
   /**
@@ -227,11 +227,11 @@ public interface SqlSession extends Closeable {
 }
 ```
 
-回到开始，SqlSessionFactory工厂是怎么创建的出来的呢？SqlSessionFactoryBuilder就是创建者，以Builder结尾我们很容易想到了Java设计模式中的建造者模式，一个对象的创建是由众多复杂对象组成的，建造者模式就是一个创建复杂对象的选择，它与工厂模式相比，建造者模式更加关注零件装配的顺序。
+回到开始，SqlSessionFactory工厂是怎么创建的出来的呢？**SqlSessionFactoryBuilder就是创建者**，以Builder结尾我们很容易想到了Java设计模式中的**建造者**模式，一个对象的创建是**由众多复杂对象组成**的，建造者模式就是一个**创建复杂对象**的选择，它与工厂模式相比，建造者模式更加**关注零件装配的顺序**。
 
 
 
-```csharp
+```java
 public class SqlSessionFactoryBuilder {
 
   public SqlSessionFactory build(InputStream inputStream, String environment, Properties properties) {
@@ -253,7 +253,7 @@ public class SqlSessionFactoryBuilder {
 }
 ```
 
-其中XMLConfigBuilder就是解析mybatis-config.xml中每个标签的内容，parse()方法返回的就是一个Configuration对象.Configuration也是MyBatis中一个很重要的组件，包括插件，对象工厂，反射工厂，映射文件，类型解析器等等都存储在Configuration对象中。
+其中**XMLConfigBuilder**就是**解析mybatis-config.xml**中每个标签的内容，parse()方法**返回**的就是一个**Configuration**对象.Configuration也是MyBatis中一个很重要的组件，包括**插件**，**对象工厂**，**反射工厂**，**映射文件**，**类型解析器**等等都**存储在Configuration**对象中。
 
 
 
@@ -292,7 +292,7 @@ public Configuration parse() {
   }
 ```
 
-在获取到Configuration对象后，SqlSessionFactoryBuilder就会创建一个DefaultSqlSessionFactory对象，DefaultSqlSessionFactory是SqlSessionFactory的一个默认实现，还有一个实现是SqlSessionManager。
+在获取到Configuration对象后，SqlSessionFactoryBuilder就会**创建一个DefaultSqlSessionFactory**对象，DefaultSqlSessionFactory是SqlSessionFactory的一个**默认实现**，还有一个实现是**SqlSessionManager**。
 
 
 
@@ -302,23 +302,22 @@ public Configuration parse() {
   }
 ```
 
-![img]()
-
-创建SqlSessionFactory过程
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1183379-7878f46b525e5eb5.png)
 
 #### 4. 获取sqlSession
-
-
 
 ```cpp
   // 3. 获取sqlSession
  SqlSession sqlSession = sqlSessionFactory.openSession();
 ```
 
-在前面我们讲到，sqlSession是操作数据库的高级接口，我们操作数据库都是通过这个接口操作的。获取sqlSession有两种方式，一种是从数据源中获取的，还有一种是从连接中获取。
- 获取到的都是DefaultSqlSession对象，也就是sqlSession的默认实现。
+在前面我们讲到，sqlSession是**操作数据库的高级接口**，我们**操作数据库**都是**通过这个接口**操作的。获取sqlSession有两种方式，一种是**从数据源中获取**的，还有一种是**从连接中**获取。
 
+> 貌似默认是从数据源获取
 
+ 获取到的都是**DefaultSqlSession**对象，也就是sqlSession的默认实现。
+
+> 注意，过程中有个Executor---执行器
 
 ```java
 private SqlSession openSessionFromDataSource(ExecutorType execType, TransactionIsolationLevel level, boolean autoCommit) {
@@ -360,9 +359,10 @@ private SqlSession openSessionFromConnection(ExecutorType execType, Connection c
   }
 ```
 
-![img]()
+获取SqlSession步骤   
 
-获取SqlSession步骤
+
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1183379-eeb14e57446c8a35.png)
 
 #### 5. 获取Mapper代理类
 
@@ -397,7 +397,7 @@ Configuration 的 getMapper 方法
     }
 ```
 
-MapperRegistry 中有个getMapper方法，实际上是从成员变量knownMappers中获取的，这个knownMappers是个key-value形式的缓存，key是mapper接口的class对象，value是MapperProxyFactory代理工厂，这个工厂就是用来创建MapperProxy代理类的。
+MapperRegistry 中有个getMapper方法，实际上是从成员变量knownMappers中获取的，这个knownMappers是个key-value形式的缓存，key是mapper接口的class对象，value是**MapperProxyFactory代理工厂**，**这个工厂就是用来创建MapperProxy代理类**的。
 
 
 
@@ -425,7 +425,7 @@ public class MapperRegistry {
 }
 ```
 
-如果对java动态代理了解的同学就知道，Proxy.newProxyInstance()方法可以创建出一个目标对象一个代理对象。由此可知每次调用getMapper方法都会创建出一个代理类出来。
+如果对java动态代理了解的同学就知道，**Proxy.newProxyInstance()**方法可以创建出一个目标对象一个代理对象。由此可知**每次调用getMapper方法都会创建出一个代理类**出来。
 
 
 
@@ -459,7 +459,7 @@ public class MapperProxyFactory<T> {
 
 回到上面，那这个MapperProxyFactory是怎么加载到MapperRegistry的knownMappers缓存中的呢？
 
-在上面的Configuration类的parseConfiguration方法中，我们会解析 mappers标签，mapperElement方法就会解析mapper接口。
+在上面的**Configuration类的parseConfiguration**方法中，我们会**解析 mappers标签**，mapperElement方法就会解析mapper接口。
 
 
 
@@ -524,7 +524,7 @@ private void parseConfiguration(XNode root) {
   }
 ```
 
-解析完后，就讲这个mapper接口加到 mapperRegistry中，
+解析完后，就**将这个mapper接口加到 mapperRegistry**中，
 
 
 
@@ -570,7 +570,7 @@ Configuration的addMapper方法
   }
 ```
 
-![img](https:////upload-images.jianshu.io/upload_images/1183379-a4d935d1159e3cad.png?imageMogr2/auto-orient/strip|imageView2/2/w/1200/format/webp)
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1183379-a4d935d1159e3cad.png)
 
 获取mapper代理类过程
 
@@ -583,7 +583,7 @@ Configuration的addMapper方法
  TTestUser userInfo = userMapper.selectByPrimaryKey(16L);
 ```
 
-selectByPrimaryKey是TTestUserMapper接口中定义的一个方法，但是我们没有编写TTestUserMapper接口的的实现类，那么Mybatis是怎么帮我们执行的呢？前面讲到，获取mapper对象时，是会获取到一个MapperProxyFactory工厂类，并创建一个MapperProxy代理类，在执行Mapper接口的方法时，会调用MapperProxy的invoke方法。
+selectByPrimaryKey是TTestUserMapper接口中定义的一个方法，但是我们没有编写TTestUserMapper接口的的实现类，那么Mybatis是怎么帮我们执行的呢？前面讲到，获取mapper对象时，是**会获取到一个MapperProxyFactory工厂类**，并**创建一个MapperProxy代理类**，在**执行Mapper接口的方法**时，会**调用MapperProxy的invoke方法**。
 
 
 
@@ -602,8 +602,8 @@ selectByPrimaryKey是TTestUserMapper接口中定义的一个方法，但是我�
   }
 ```
 
-如果是Object的方法就直接执行，否则执行cachedInvoker(method).invoke(proxy, method, args, sqlSession); 这行代码，到这里，想必有部分同学已经头晕了吧。怎么又来了个invoke方法。
- cachedInvoker 是返回缓存的MapperMethodInvoker对象，MapperMethodInvoker的invoke方法会执行MapperMethod的execute方法。
+如果是Object的方法就直接执行，否则**执行cachedInvoker(method).invoke(proxy, method, args, sqlSession);** 这行代码，到这里，想必有部分同学已经头晕了吧。怎么又来了个invoke方法。
+ **cachedInvoker** 是返回**缓存的MapperMethodInvoker**对象，**MapperMethodInvoker**的invoke方法会执行**MapperMethod的execute**方法。
 
 
 
@@ -670,18 +670,18 @@ public class MapperMethod {
 }
 ```
 
-然后根据执行的接口找到mapper.xml中配置的sql，并处理参数，然后执行返回结果处理结果等步骤。
+然后**根据执行的接口找到mapper.xml中配置的sql**，并**处理参数**，然后执行返回结果处理结果等步骤。
 
-#### 7. 提交事物
+#### 7. 提交事务
 
 
 
 ```cpp
-// 6. 提交事物
+// 6. 提交事务
 sqlSession.commit();
 ```
 
-事物就是将若干数据库操作看成一个单元，要么全部成功，要么全部失败，如果失败了，则会执行执行回滚操作，恢复到开始执行的数据库状态。
+事务就是将若干数据库操作看成一个单元，要么全部成功，要么全部失败，如果失败了，则会执行执行回滚操作，恢复到开始执行的数据库状态。
 
 #### 8. 关闭资源
 
@@ -697,11 +697,5 @@ sqlSession是种共用资源，用完了要返回到池子中，以供其它地�
 
 #### 9. 总结
 
-至此我们已经大致了解了Mybatis启动时的大致流程，很多细节都还没有详细介绍，这是因为涉及到的层面又深又广，如果在一篇文章中介绍，反而会让读者如置云里雾里，不知所云。因此，在接下来我将每个模块的详细介绍。如果文章有什么错误或者需要改进的，希望同学们指出来，希望对大家有帮助。
+至此我们已经大致了解了**Mybatis启动时的大致流程**，很多细节都还没有详细介绍，这是因为涉及到的层面又深又广，如果在一篇文章中介绍，反而会让读者如置云里雾里，不知所云。因此，在接下来我将每个模块的详细介绍。如果文章有什么错误或者需要改进的，希望同学们指出来，希望对大家有帮助。
 
-
-
-作者：Renaissance_
-链接：https://www.jianshu.com/p/7d6b891180a3
-来源：简书
-著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。
