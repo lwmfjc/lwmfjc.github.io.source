@@ -6,7 +6,7 @@ categories:
 tags:
   - 复习
   - 复习-javaGuide
-  - 复习-javaGuide-framework
+  - 复习-javaGuide-distributed_system
 date: 2023-02-10 17:10:36
 updated: 2023-02-10 17:10:36
 ---
