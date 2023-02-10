@@ -24,25 +24,102 @@ updated: 2023-02-09 16:34:39
 - `${}`是 Properties **文件中的变量占位符**，它可以用于**标签属性值**和 **sql 内部**，属于**静态文本替换**，比如${driver}会被静态替换为`com.mysql.jdbc. Driver`。
 - `#{}`是 sql 的参数占位符，MyBatis 会**将 sql 中的`#{}`**替换为**? 号**，在 sql 执行前会使用 **PreparedStatement 的参数设置**方法，**按序给 sql 的? 号占位符设置参数值**，比如 ps.setInt(0, parameterValue)，`#{item.name}` 的取值方式为使用**反射从参数对象中获取 item 对象的 name 属性值**，相当于 **`param.getItem().getName()`**。 [**这里用到了反射**]
 
+> 在**底层构造完整SQL**语句时，MyBatis的两种**传参方式**所采取的方式不同。`#{Parameter}`采用**预编译**的方式构造SQL，**避免了 SQL注入** 的产生。而**`${Parameter}`采用拼接**的方式构造SQL，在**对用户输入过滤不严格**的前提下，此处很可能存在SQL注入
+
 ### xml 映射文件中，除了常见的 select、insert、update、delete 标签之外，还有哪些标签？
 
 注：这道题是京东面试官面试我时问的。
 
-答：还有很多其他的标签， `<resultMap>` 、 `<parameterMap>` 、 `<sql>` 、 `<include>` 、 `<selectKey>` ，加上动态 sql 的 9 个标签， `trim|where|set|foreach|if|choose|when|otherwise|bind` 等，其中 `<sql>` 为 sql 片段标签，通过 `<include>` 标签引入 sql 片段， `<selectKey>` 为不支持自增的主键生成策略标签。
+答：还有很多其他的标签， **`<resultMap>`** 、 **`<parameterMap>`** 、 **`<sql>`** 、 **`<include>`** 、 **`<selectKey>`** ，加上动态 sql 的 9 个标签， **`trim|where|set|foreach|if|choose|when|otherwise|bind`** 等，其中 `<sql>` 为 sql 片段标签，通过 `<include>` 标签引入 sql 片段， `<selectKey>` 为不支持自增的主键生成策略标签。  
+
+> set标签，是update用的  
+>
+> ```xml
+> <update id="updateUserById" parameterType="user">
+>      update user
+>      <set>
+>          <if test="uid!=null">
+>            uid=#{uid} 
+>          </if> 
+>  	</set>
+> </update>
+> ```
+>
+> -----
+>
+> 1. **ResultMap（结果集映射）：**  
+>    假设我们的**数据库字段**和**映射pojo类的属性字段不一致**，那么查询结果，不一致的字段值会为null  
+>    这时可以使用Mybatis `ResultMap` 结果集映射
+>
+> 2. **parameterMap（参数类型映射）：**  
+>
+>    > 很少使用，基本都用**parameterType**替代
+>
+>    `parameterMap`标签可以用来定义参数组，可以为参数组**指定ID**、**参数类型**
+>
+>    例如有一个bean是这样的：  
+>
+>    ```java
+>    public class ArgBean {
+>        private String name;
+>        private int age;
+>        // 忽略 getter 和 setter
+>    }
+>    ```
+>
+>    下面使用 `<parameterMap>` 将参数 ArgBean 对象进行映射
+>
+>    ```xml
+>    <parameterMap id="PARAM_MAP" type="com.hxstrive.mybatis.parameter.demo2.ArgBean">
+>        <parameter property="age" javaType="integer" />
+>        <parameter property="name" javaType="String" />
+>    </parameterMap> 
+>    ```
+>
+> 3. **sql（sql片段标签）/include（片段插入标签）：**  重复的SQL预计永远不可避免，`<sql>`标签就是用来解决这个问题的
+>
+>    其中 `<sql>` 为 sql 片段标签，通过 `<include>` 标签引入 sql 片段
+>
+>    例如：  
+>
+>    ```xml
+>    <mapper namespace="com.klza.dao.UserMapper">
+>        <sql id="sqlUserParameter">id,username,password</sql>
+>        <select id="getUserList" resultType="user">
+>            select
+>            <include refid="sqlUserParameter"/>
+>            from test.user
+>        </select>
+>    </mapper> 
+>    ```
+>
+>    **`<selectKey>` 为不支持自增的主键生成策略标签**  
+>
+>    ```xml
+>    <insert id="insert" parameterType="com.pinyougou.pojo.TbGoods" >
+>        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+>          SELECT LAST_INSERT_ID() AS id
+>        </selectKey>
+>        insert into tb_goods (id, seller_id )
+>        values (#{id,jdbcType=BIGINT}, #{sellerId,jdbcType=VARCHAR} 
+>      </insert>
+>    ```
+>
+>    
 
 ### Dao 接口的工作原理是什么？Dao 接口里的方法，参数不同时，方法能重载吗？
 
 注：这道题也是京东面试官面试我被问的。
 
-答：最佳实践中，通常一个 xml 映射文件，都会写一个 Dao 接口与之对应。Dao 接口就是人们常说的 `Mapper` 接口，接口的全限名，就是映射文件中的 namespace 的值，接口的方法名，就是映射文件中 `MappedStatement` 的 id 值，接口方法内的参数，就是传递给 sql 的参数。 `Mapper` 接口是没有实现类的，当调用接口方法时，接口全限名+方法名拼接字符串作为 key 值，可唯一定位一个 `MappedStatement` ，举例： `com.mybatis3.mappers. StudentDao.findStudentById` ，可以唯一找到 namespace 为 `com.mybatis3.mappers. StudentDao` 下面 `id = findStudentById` 的 `MappedStatement` 。在 MyBatis 中，每一个 `<select>` 、 `<insert>` 、 `<update>` 、 `<delete>` 标签，都会被解析为一个 `MappedStatement` 对象。
+答：最佳实践中，通常**一个 xml 映射**文件，都会写**一个 Dao 接口**与之对应。Dao 接口就是人们常说的 `Mapper` **接口**，接口的全限名，就是**映射文件中的 namespace 的值**，**接口的方法名**，就是**映射文件中 `MappedStatement` 的 id 值**，接口方法内的**参数**，就是**传递给 sql 的参数**。 `Mapper` 接口是没有实现类的，当**调用接口方法**时，**接口全限名+方法名拼接字符串作为 key** 值，可**唯一定位一个 `MappedStatement`** ，举例： `com.mybatis3.mappers. StudentDao.findStudentById` ，可以唯一找到 namespace 为 `com.mybatis3.mappers. StudentDao` 下面 `id = findStudentById` 的 `MappedStatement` 。在 MyBatis 中，**每一个 `<select>`** 、 **`<insert>`** 、 **`<update>`** 、 **`<delete>`** 标签，都会被解析为一个 **`MappedStatement`** 对象。
 
 ~~Dao 接口里的方法，是不能重载的，因为是全限名+方法名的保存和寻找策略。~~
 
-Dao 接口里的方法可以重载，但是 Mybatis 的 xml 里面的 ID 不允许重复。
+Dao 接口里的**方法可以重载**，但是 Mybatis 的 **xml 里面的 ID 不允许重复**。
 
 Mybatis 版本 3.3.0，亲测如下：
 
-```
+```java
 /**
  * Mapper接口里面方法重载
  */
@@ -56,7 +133,7 @@ public interface StuMapper {
 
 然后在 `StuMapper.xml` 中利用 Mybatis 的动态 sql 就可以实现。
 
-```
+```xml
 	<select id="getAllStu" resultType="com.pojo.Student">
  		select * from student
 		<where>
@@ -73,18 +150,18 @@ public interface StuMapper {
 
 相关 issue ：[更正：Dao 接口里的方法可以重载，但是 Mybatis 的 xml 里面的 ID 不允许重复！](https://github.com/Snailclimb/JavaGuide/issues/1122)。
 
-Dao 接口的工作原理是 JDK 动态代理，MyBatis 运行时会使用 JDK 动态代理为 Dao 接口生成代理 proxy 对象，代理对象 proxy 会拦截接口方法，转而执行 `MappedStatement` 所代表的 sql，然后将 sql 执行结果返回。
+Dao 接口的工作原理是 **JDK 动态代理**，MyBatis 运行时会**使用 JDK 动态代理为 Dao 接口生成代理 proxy 对象**，代理对象 proxy 会**拦截接口方法**，转而**执行 `MappedStatement` 所代表的 sql**，然后**将 sql 执行结果返回**。
 
 **补充** ：
 
 Dao 接口方法可以重载，但是需要满足以下条件：
 
-1. 仅有一个无参方法和一个有参方法
-2. 多个有参方法时，参数数量必须一致。且使用相同的 `@Param` ，或者使用 `param1` 这种
+1. **仅有一个无参方法**和**一个有参方法**
+2. **(多个参数)的方法中，参数数量必须(和xml中的)一致**。且使用**相同的 `@Param`** ，或者使用 `param1` 这种
 
 **测试如下** ：
 
-```
+```java
 PersonDao.java
 Person queryById();
 
@@ -101,16 +178,18 @@ PersonMapper.xml
             id = #{id}
         </if>
         <if test="name != null and name != ''">
-            name = #{name}
+            and name = #{name}
         </if>
     </where>
     limit 1
 </select>
 ```
 
-`org.apache.ibatis.scripting.xmltags. DynamicContext. ContextAccessor#getProperty` 方法用于获取 `<if>` 标签中的条件值
+`org.apache.ibatis.scripting.xmltags. DynamicContext. ContextAccessor#getProperty` 方法用于获取 `<if>` 标签中的条件值  
 
-```
+> ContextAccessor 这个修饰符为默认（同一个包内）
+
+```java
 public Object getProperty(Map context, Object target, Object name) {
   Map map = (Map) target;
 
@@ -132,7 +211,7 @@ public Object getProperty(Map context, Object target, Object name) {
 
 `((Map)parameterObject).get(name)` 方法如下
 
-```
+```java
 public V get(Object key) {
   if (!super.containsKey(key)) {
     throw new BindingException("Parameter '" + key + "' not found. Available parameters are " + keySet());
@@ -141,17 +220,19 @@ public V get(Object key) {
 }
 ```
 
-1. `queryById()`方法执行时，`parameterObject`为 null，`getProperty`方法返回 null 值，`<if>`标签获取的所有条件值都为 null，所有条件不成立，动态 sql 可以正常执行。
-2. `queryById(1L)`方法执行时，`parameterObject`为 map，包含了`id`和`param1`两个 key 值。当获取`<if>`标签中`name`的属性值时，进入`((Map)parameterObject).get(name)`方法中，map 中 key 不包含`name`，所以抛出异常。
-3. `queryById(1L,"1")`方法执行时，`parameterObject`中包含`id`,`param1`,`name`,`param2`四个 key 值，`id`和`name`属性都可以获取到，动态 sql 正常执行。
+1. `queryById()`方法执行时，**`parameterObject`为 null**，**`getProperty`方法返回 null 值**，**`<if>`标签获取的所有条件值都为 null**，所有条件不成立，动态 sql 可以正常执行。
+2. `queryById(1L)`方法执行时，`parameterObject`为 map，包含了**`id`和`param1`**两个 key 值。当获取`<if>`标签中`name`的属性值时，**进入`((Map)parameterObject).get(name)`方法中，map 中 key 不包含`name`，所以抛出异常**。
+3. `queryById(1L,"1")`方法执行时，**`parameterObject`中包含`id`,`param1`,`name`,`param2`四个 key 值，`id`和`name`属性都可以获取到**，动态 sql 正常执行。
+
+> 也就是说，if**的test一定是会进行判断**的(**除非整个parameterObject为null)**。但是如果这里面的param 不存在，那么就会抛异常 (BindingException)
 
 ### MyBatis 是如何进行分页的？分页插件的原理是什么？
 
 注：我出的。
 
-答：**(1)** MyBatis 使用 RowBounds 对象进行分页，它是针对 ResultSet 结果集执行的内存分页，而非物理分页；**(2)** 可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能，**(3)** 也可以使用分页插件来完成物理分页。
+答：**(1)** MyBatis 使用 RowBounds 对象进行分页，它是针对 ResultSet 结果集执行的**内存分页**，而非物理分页；**(2)** **可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能**，**(3)** 也可以**使用分页插件**来完成物理分页。
 
-分页插件的基本原理是使用 MyBatis 提供的插件接口，实现自定义插件，在插件的拦截方法内拦截待执行的 sql，然后重写 sql，根据 dialect 方言，添加对应的物理分页语句和物理分页参数。
+分页插件的基本原理是使用 MyBatis 提供的插件接口，实现自定义插件，在**插件的拦截方法内拦截待执行的 sql**，然后**重写 sql**，根据 dialect 方言，添加**对应的物理分页语句**和**物理分页参数**。
 
 举例： `select _ from student` ，拦截 sql 后重写为： `select t._ from （select \* from student）t limit 0，10`
 
