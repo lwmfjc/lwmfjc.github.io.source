@@ -272,19 +272,91 @@ for (User user : userListLimit) {
 > [Blog{id=2, name='n2', age=20}, Blog{id=3, name='n3', age=30}]
 > ```
 
-**(2)** **可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能**，**(3)** 也可以**使用分页插件**来完成物理分页。
-
+**(2)** **可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能**   
+**(3)** 也可以**使用分页插件**来完成物理分页  
 分页插件的基本原理是使用 MyBatis 提供的插件接口，实现自定义插件，在**插件的拦截方法内拦截待执行的 sql**，然后**重写 sql**，根据 dialect 方言，添加**对应的物理分页语句**和**物理分页参数**。
 
-举例： `select _ from student` ，拦截 sql 后重写为： `select t._ from （select \* from student）t limit 0，10`
+举例： `select _ from student` ，拦截 sql 后重写为： `select t._ from （select \* from student）t limit 0，10`  
+
+> 分页插件的使用  
+> 接下来介绍PageHelper插件的使用：
+>
+> 第一步，引入依赖：
+>
+> ```xml
+> <!-- https://mvnrepository.com/artifact/com.github.pagehelper/pagehelper -->
+> <dependency>
+>     <groupId>com.github.pagehelper</groupId>
+>     <artifactId>pagehelper</artifactId>
+>     <version>5.3.2</version>
+> </dependency>
+> ```
+>
+> 第二步，mybatis-config.xml配置拦截器：
+>
+> ```xml
+> <!-- 配置pageHelper拦截器 -->
+> <plugins>
+>     <plugin interceptor="com.github.pagehelper.PageInterceptor"/>
+> </plugins>
+> ```
+>
+> 第三步，代码编写：
+>
+> Mapper接口类：
+>
+> ```java
+> List<User> getUserListByPageHelper();
+> ```
+>
+> Mapper.xml：  
+>
+> ```xml
+> <select id="getUserListByPageHelper" resultType="user">
+>     select * from test.user
+> </select>
+> ```
+>
+> 测试程序：
+>
+> ```java
+> // 开启分页功能
+> int pageNum = 1;  // 当前页码
+> int pageSize = 2;  // 每页的记录数
+> PageHelper.startPage(pageNum, pageSize);
+> List<User> userListByPageHelper = userMapper.getUserListByPageHelper();
+> userListByPageHelper.forEach(System.out::println); 
+> ```
+>
+> 第四步：获取pageInfo信息：
+>
+> pageHelper真正强大的地方在于它的pageInfo功能，它可以为我们提供详细的分页数据：
+>
+> 例如：
+>
+> ```java
+> // 开启分页功能
+> int pageNum = 2;  // 当前页码
+> int pageSize = 5;  // 每页的记录数
+> PageHelper.startPage(pageNum, pageSize);
+> List<User> userListByPageHelper = userMapper.getUserListByPageHelper();
+> // 设置导航的卡片数为3
+> PageInfo<User> userPageInfo = new PageInfo<>(userListByPageHelper, 3);
+> System.out.println(userPageInfo);
+> /*
+>  * PageInfo{pageNum=2, pageSize=5, size=5, startRow=6, endRow=10, total=1004, pages=201,
+>  * list=Page{count=true, pageNum=2, pageSize=5, startRow=5, endRow=10, total=1004, pages=201, reasonable=false, pageSizeZero=false}
+>  * [User(id=6, username=Cheng Zhennan, password=Jx3SLGXeS4), User(id=7, username=Thelma Hernandez, password=VxVO6dEgym), User(id=8, username=Emma Wood, password=XljUnUrnFZ), User(id=9, username=Kikuchi Akina, password=IgditeatR7), User(id=10, username=Miura Kenta, password=2CbmTGczZv)],
+>  * prePage=1, nextPage=3, isFirstPage=false, isLastPage=false, hasPreviousPage=true, hasNextPage=true, navigatePages=3, navigateFirstPage=1, navigateLastPage=3, navigatepageNums=[1, 2, 3]} 
+> ```
 
 ### 简述 MyBatis 的插件运行原理，以及如何编写一个插件。
 
 注：我出的。
 
-答：MyBatis 仅可以编写针对 `ParameterHandler` 、 `ResultSetHandler` 、 `StatementHandler` 、 `Executor` 这 4 种接口的插件，MyBatis 使用 JDK 的动态代理，为需要拦截的接口生成代理对象以实现接口方法拦截功能，每当执行这 4 种接口对象的方法时，就会进入拦截方法，具体就是 `InvocationHandler` 的 `invoke()` 方法，当然，只会拦截那些你指定需要拦截的方法。
+答：MyBatis 仅可以编写针对 **`ParameterHandler`** 、 **`ResultSetHandler`** 、 **`StatementHandler`** 、 **`Executor`** 这 4 种接口的插件，MyBatis **使用 JDK 的动态代理**，为**需要拦截的接口生成代理对象**以实现接口方法拦截功能，**每当执行这 4 种接口**对象的方法时，就会进入拦截方法，具体就是 **`InvocationHandler` 的 `invoke()`** 方法，当然，只会**拦截那些你指定需要拦截的方法**。
 
-实现 MyBatis 的 `Interceptor` 接口并复写 `intercept()` 方法，然后在给插件编写注解，指定要拦截哪一个接口的哪些方法即可，记住，别忘了在配置文件中配置你编写的插件。
+实现 MyBatis 的 `Interceptor` 接口并复写 `intercept()` 方法，然后在**给插件编写注解**，**指定要拦截哪一个接口的哪些方法**即可，记住，别忘了**在配置文件中配置你编写的插件**。
 
 ### MyBatis 执行批量插入，能返回数据库主键列表吗？
 
@@ -296,7 +368,7 @@ for (User user : userListLimit) {
 
 注：我出的。
 
-答：MyBatis 动态 sql 可以让我们在 xml 映射文件内，以标签的形式编写动态 sql，完成逻辑判断和动态拼接 sql 的功能。其执行原理为，使用 OGNL 从 sql 参数对象中计算表达式的值，根据表达式的值动态拼接 sql，以此来完成动态 sql 的功能。
+答：MyBatis 动态 sql 可以让我们在 xml 映射文件内，**以标签的形式编写动态 sql**，完成**逻辑判断**和**动态拼接 sql** 的功能。其执行原理为，使用 **OGNL 从 sql 参数对象中计算表达式的值**，**根据表达式的值动态拼接 sql**，**以此来完成动态 sql 的功能**。
 
 MyBatis 提供了 9 种动态 sql 标签:
 
@@ -314,15 +386,15 @@ MyBatis 提供了 9 种动态 sql 标签:
 
 注：我出的。
 
-答：第一种是使用 `<resultMap>` 标签，逐一定义列名和对象属性名之间的映射关系。第二种是使用 sql 列的别名功能，将列别名书写为对象属性名，比如 T_NAME AS NAME，对象属性名一般是 name，小写，但是列名不区分大小写，MyBatis 会忽略列名大小写，智能找到与之对应对象属性名，你甚至可以写成 T_NAME AS NaMe，MyBatis 一样可以正常工作。
+答：第一种是使用 **`<resultMap>`** 标签，逐一定义列名和对象属性名之间的映射关系。第二种是使用 **sql 列的别名**功能，将列别名书写为**对象属性名**，比如 T_NAME AS NAME，对象属性名一般是 name，小写，但是**列名不区分大小写**，MyBatis 会忽略列名大小写，智能找到**与之对应对象属性名**，你甚至可以写成 T_NAME AS NaMe，MyBatis 一样可以正常工作。
 
-有了列名与属性名的映射关系后，MyBatis 通过反射创建对象，同时使用反射给对象的属性逐一赋值并返回，那些找不到映射关系的属性，是无法完成赋值的。
+有了列名与属性名的映射关系后，MyBatis 通过反射创建对象，同时**使用反射** 给对象的属性逐一赋值并返回，那些找不到映射关系的属性，是无法完成赋值的。
 
-### MyBatis 能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。
+### MyBatis 能执行一对一、一对多的关联查询吗？都有哪些实现方式，以及它们之间的区别。【实际没有用过】
 
 注：我出的。
 
-答：能，MyBatis 不仅可以执行一对一、一对多的关联查询，还可以执行多对一，多对多的关联查询，多对一查询，其实就是一对一查询，只需要把 `selectOne()` 修改为 `selectList()` 即可；多对多查询，其实就是一对多查询，只需要把 `selectOne()` 修改为 `selectList()` 即可。
+答：能，MyBatis 不仅可以执行**一对一**、**一对多**的关联查询，还可以执行**多对一**，**多对多**的关联查询，多对一查询，其实就是一对一查询，只需要把 `selectOne()` 修改为 `selectList()` 即可；多对多查询，其实就是一对多查询，只需要把 `selectOne()` 修改为 `selectList()` 即可。
 
 关联对象查询，有两种实现方式，一种是单独发送一个 sql 去查询关联对象，赋给主对象，然后返回主对象。另一种是使用嵌套查询，嵌套查询的含义为使用 join 查询，一部分列是 A 对象的属性值，另外一部分列是关联对象 B 的属性值，好处是只发一个 sql 查询，就可以把主对象和其关联对象查出来。
 
@@ -345,7 +417,7 @@ MyBatis 提供了 9 种动态 sql 标签:
 
 注：我出的。
 
-答：MyBatis 仅支持 association 关联对象和 collection 关联集合对象的延迟加载，association 指的就是一对一，collection 指的就是一对多查询。在 MyBatis 配置文件中，可以配置是否启用延迟加载 `lazyLoadingEnabled=true|false。`
+答：MyBatis **仅支持 association 关联对象**和 **collection 关联集合对象**的**延迟加载**，association 指的就是一对一，collection 指的就是一对多查询。在 MyBatis 配置文件中，可以配置是否启用延迟加载 `lazyLoadingEnabled=true|false。`
 
 它的原理是，使用 `CGLIB` 创建目标对象的代理对象，当调用目标方法时，进入拦截器方法，比如调用 `a.getB().getName()` ，拦截器 `invoke()` 方法发现 `a.getB()` 是 null 值，那么就会单独发送事先保存好的查询关联 B 对象的 sql，把 B 查询上来，然后调用 a.setB(b)，于是 a 的对象 b 属性就有值了，接着完成 `a.getB().getName()` 方法的调用。这就是延迟加载的基本原理。
 
@@ -355,15 +427,15 @@ MyBatis 提供了 9 种动态 sql 标签:
 
 注：我出的。
 
-答：不同的 xml 映射文件，如果配置了 namespace，那么 id 可以重复；如果没有配置 namespace，那么 id 不能重复；毕竟 namespace 不是必须的，只是最佳实践而已。
+答：**不同的 xml 映射文件，如果配置了 namespace，那么 id 可以重复；如果没有配置 namespace，那么 id 不能重复**；毕竟 namespace 不是必须的，只是最佳实践而已。
 
-原因就是 namespace+id 是作为 `Map<String, MappedStatement>` 的 key 使用的，如果没有 namespace，就剩下 id，那么，id 重复会导致数据互相覆盖。有了 namespace，自然 id 就可以重复，namespace 不同，namespace+id 自然也就不同。
+原因就是 namespace+id 是作为 `Map<String, MappedStatement>` 的 key 使用的，如果没有 namespace，就剩下 id，那么，id 重复会导致数据互相覆盖。有了 namespace，自然 id 就可以重复，**namespace 不同，namespace+id 自然也就不同**。
 
 ### MyBatis 中如何执行批处理？
 
 注：我出的。
 
-答：使用 `BatchExecutor` 完成批处理。
+答：使用 **`BatchExecutor`** 完成批处理。
 
 ### MyBatis 都有哪些 Executor 执行器？它们之间的区别是什么？
 
@@ -371,9 +443,9 @@ MyBatis 提供了 9 种动态 sql 标签:
 
 答：MyBatis 有三种基本的 `Executor` 执行器：
 
-- **`SimpleExecutor`：** 每执行一次 update 或 select，就开启一个 Statement 对象，用完立刻关闭 Statement 对象。
-- **`ReuseExecutor`：** 执行 update 或 select，以 sql 作为 key 查找 Statement 对象，存在就使用，不存在就创建，用完后，不关闭 Statement 对象，而是放置于 Map<String, Statement>内，供下一次使用。简言之，就是重复使用 Statement 对象。
-- **`BatchExecutor`** ：执行 update（没有 select，JDBC 批处理不支持 select），将所有 sql 都添加到批处理中（addBatch()），等待统一执行（executeBatch()），它缓存了多个 Statement 对象，每个 Statement 对象都是 addBatch()完毕后，等待逐一执行 executeBatch()批处理。与 JDBC 批处理相同。
+- **`SimpleExecutor`：** **每执行**一次 **update** 或 **select**，就开启一个 Statement 对象，**用完立刻关闭** Statement 对象。
+- **`ReuseExecutor`：** 执行 update 或 select，**以 sql 作为 key 查找 Statement 对象**，存在就使用，不存在就创建，用完后，不关闭 Statement 对象，而是**放置于 Map<String, Statement>内，供下一次使用**。简言之，就是重复使用 Statement 对象。
+- **`BatchExecutor`** ：执行 update（没有 select，JDBC 批处理不支持 select），**将所有 sql 都添加到批处理中**（addBatch()），等待统一执行（executeBatch()），它缓存了多个 Statement 对象，每个 Statement 对象都是 addBatch()完毕后，等待逐一执行 executeBatch()批处理。与 JDBC 批处理相同。
 
 作用范围：`Executor` 的这些特点，都严格限制在 SqlSession 生命周期范围内。
 
@@ -381,13 +453,13 @@ MyBatis 提供了 9 种动态 sql 标签:
 
 注：我出的
 
-答：在 MyBatis 配置文件中，可以指定默认的 `ExecutorType` 执行器类型，也可以手动给 `DefaultSqlSessionFactory` 的创建 SqlSession 的方法传递 `ExecutorType` 类型参数。
+答：在 MyBatis 配置文件中，可以**指定默认的 `ExecutorType`** 执行器类型，也可以手动给 **`DefaultSqlSessionFactory` 的创建 SqlSession 的方法传递 `ExecutorType` 类型参**数。
 
 ### MyBatis 是否可以映射 Enum 枚举类？
 
 注：我出的
 
-答：MyBatis 可以映射枚举类，不单可以映射枚举类，MyBatis 可以映射任何对象到表的一列上。映射方式为自定义一个 `TypeHandler` ，实现 `TypeHandler` 的 `setParameter()` 和 `getResult()` 接口方法。 `TypeHandler` 有两个作用：
+答：MyBatis 可以映射枚举类，不单可以映射枚举类，MyBatis 可以**映射任何对象到表的一列**上。映射方式为自定义一个 `TypeHandler` ，实现 `TypeHandler` 的 `setParameter()` 和 `getResult()` 接口方法。 `TypeHandler` 有两个作用：
 
 - 一是完成从 javaType 至 jdbcType 的转换；
 - 二是完成 jdbcType 至 javaType 的转换，体现为 `setParameter()` 和 `getResult()` 两个方法，分别代表设置 sql 问号占位符参数和获取列查询结果。
@@ -396,20 +468,20 @@ MyBatis 提供了 9 种动态 sql 标签:
 
 注：我出的
 
-答：虽然 MyBatis 解析 xml 映射文件是按照顺序解析的，但是，被引用的 B 标签依然可以定义在任何地方，MyBatis 都可以正确识别。
+答：虽然 MyBatis 解析 xml 映射文件是按照顺序解析的，但是，**被引用的 B 标签依然可以定义在任何地方**，MyBatis 都可以正确识别。
 
-原理是，MyBatis 解析 A 标签，发现 A 标签引用了 B 标签，但是 B 标签尚未解析到，尚不存在，此时，MyBatis 会将 A 标签标记为未解析状态，然后继续解析余下的标签，包含 B 标签，待所有标签解析完毕，MyBatis 会重新解析那些被标记为未解析的标签，此时再解析 A 标签时，B 标签已经存在，A 标签也就可以正常解析完成了。
+**原理是，MyBatis 解析 A 标签，发现 A 标签引用了 B 标签，但是 B 标签尚未解析到，尚不存在，此时，MyBatis 会将 A 标签标记为未解析状态，然后继续解析余下的标签，包含 B 标签，待所有标签解析完毕，MyBatis 会重新解析那些被标记为未解析的标签，此时再解析 A 标签时，B 标签已经存在，A 标签也就可以正常解析完成了。**
 
-### 简述 MyBatis 的 xml 映射文件和 MyBatis 内部数据结构之间的映射关系？
+### 简述 MyBatis 的 xml 映射文件和 MyBatis 内部数据结构之间的映射关系？[不懂]
 
 注：我出的
 
-答：MyBatis 将所有 xml 配置信息都封装到 All-In-One 重量级对象 Configuration 内部。在 xml 映射文件中， `<parameterMap>` 标签会被解析为 `ParameterMap` 对象，其每个子元素会被解析为 ParameterMapping 对象。 `<resultMap>` 标签会被解析为 `ResultMap` 对象，其每个子元素会被解析为 `ResultMapping` 对象。每一个 `<select>、<insert>、<update>、<delete>` 标签均会被解析为 `MappedStatement` 对象，标签内的 sql 会被解析为 BoundSql 对象。
+答：MyBatis 将所有 xml 配置信息都封装到 All-In-One 重量级对象 Configuration 内部。在 xml 映射文件中， `<parameterMap>` 标签会被解析为 `ParameterMap` 对象，其每个子元素会被解析为 ParameterMapping 对象。 `<resultMap>` 标签会被解析为 `ResultMap` 对象，其每个子元素会被解析为 `ResultMapping` 对象。每一个 `<select>、<insert>、<update>、<delete>` 标签均会被解析为 **`MappedStatement`** 对象，**标签内的 sql 会被解析为 BoundSql 对象**。
 
 ### 为什么说 MyBatis 是半自动 ORM 映射工具？它与全自动的区别在哪里？
 
 注：我出的
 
-答：Hibernate 属于全自动 ORM 映射工具，使用 Hibernate 查询关联对象或者关联集合对象时，可以根据对象关系模型直接获取，所以它是全自动的。而 MyBatis 在查询关联对象或关联集合对象时，需要手动编写 sql 来完成，所以，称之为半自动 ORM 映射工具。
+答：Hibernate 属于全自动 ORM 映射工具，使用 **Hibernate 查询关联对象**或者**关联集合对象**时，可以**根据对象关系模型直接获**取，所以它是全自动的。而 MyBatis 在查询关联对象或关联集合对象时，需要**手动编写 sql 来完成**，所以，称之为**半自动 ORM 映射工具**。
 
 面试题看似都很简单，但是想要能正确回答上来，必定是研究过源码且深入的人，而不是仅会使用的人或者用的很熟的人，以上所有面试题及其答案所涉及的内容，在我的 MyBatis 系列博客中都有详细讲解和原理分析。
