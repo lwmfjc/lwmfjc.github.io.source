@@ -230,7 +230,49 @@ public V get(Object key) {
 
 注：我出的。
 
-答：**(1)** MyBatis 使用 RowBounds 对象进行分页，它是针对 ResultSet 结果集执行的**内存分页**，而非物理分页；**(2)** **可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能**，**(3)** 也可以**使用分页插件**来完成物理分页。
+答：**(1)** MyBatis 使用 RowBounds 对象进行分页，它是**针对 ResultSet 结果集**执行的**内存分页**，而非物理分页；  
+
+```java
+//使用 
+//Mapper中  
+List<User> getUserListLimit(RowBounds rowBounds);
+//Mapper.xml定义 （不变）  
+<select id="getUserListLimit" resultType="user">
+    select * from test.user
+</select>
+//使用, 将会从index为0的记录开始，取两条记录
+
+List<User> userListLimit = userMapper.getUserListLimit(new RowBounds(0, 2));
+for (User user : userListLimit) {
+    System.out.println(user);
+} 
+```
+
+> 想要使用mybatis日志，只要加上日志模块的依赖即可  
+>
+> ```xml
+> 		<dependency>
+>             <groupId>org.slf4j</groupId>
+>             <artifactId>slf4j-api</artifactId>
+>             <version>1.7.30</version>
+>         </dependency>
+>         <!-- https://mvnrepository.com/artifact/ch.qos.logback/logback-classic -->
+>         <dependency>
+>             <groupId>ch.qos.logback</groupId>
+>             <artifactId>logback-classic</artifactId>
+>             <version>1.2.3</version>
+>         </dependency>
+> ```
+>
+> 查看上面的日志可以发现，实际查找的是全部的数据(没有使用物理分页)  
+>
+> ```shell
+> 14:28:14.938 [main] DEBUG org.mybatis.example.BlogMapper.selectBlog - ==>  Preparing: select * from Blog
+> 14:28:14.996 [main] DEBUG org.mybatis.example.BlogMapper.selectBlog - ==> Parameters: 
+> [Blog{id=2, name='n2', age=20}, Blog{id=3, name='n3', age=30}]
+> ```
+
+**(2)** **可以在 sql 内直接书写带有物理分页的参数来完成物理分页功能**，**(3)** 也可以**使用分页插件**来完成物理分页。
 
 分页插件的基本原理是使用 MyBatis 提供的插件接口，实现自定义插件，在**插件的拦截方法内拦截待执行的 sql**，然后**重写 sql**，根据 dialect 方言，添加**对应的物理分页语句**和**物理分页参数**。
 
