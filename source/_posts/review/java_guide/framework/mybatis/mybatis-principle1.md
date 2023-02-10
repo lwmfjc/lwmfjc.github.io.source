@@ -6,7 +6,7 @@ categories:
 tags:
   - 复习
   - 复习-javaGuide
-  - 复习-javaGuide-database
+  - 复习-javaGuide-framework
 date: 2023-02-10 08:54:26
 updated: 2023-02-10 08:54:26
 ---
@@ -784,5 +784,5 @@ public class MyBatisBootStrap {
 
 ##### 4. 总结
 
-这篇文章简单的介绍了下MyBatis的**基本概念**，并提供了简单的栗子，接下来几篇文章打算写下Mybatis的启动流程，让我们更好的了解下mybatis的各模块协作。
+这篇文章简单的介绍了下MyBatis的**基本概念**，并提供了简单的栗子，**接下来几篇文章打算写下Mybatis的启动流程**，让我们更好的了解下**mybatis的各模块协作**。
 
