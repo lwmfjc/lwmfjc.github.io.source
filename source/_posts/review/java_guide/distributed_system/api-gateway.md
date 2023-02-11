@@ -15,11 +15,11 @@ updated: 2023-02-10 22:26:59
 
 ## 什么是网关？有什么用？
 
-微服务背景下，一个系统被拆分为多个服务，但是像安全认证，流量控制，日志，监控等功能是每个服务都需要的，没有网关的话，我们就需要在每个服务中单独实现，这使得我们做了很多重复的事情并且没有一个全局的视图来统一管理这些功能。
+微服务背景下，一个系统被**拆分为多个服务**，但是像**安全认证**，**流量控制**，**日志**，**监控**等功能是每个服务都需要的，没有网关的话，我们就需要在**每个服务**中单独实现，这使得我们做了很多重复的事情并且没有一个**全局的视图来统一管理**这些功能。
 
 ![网关示意图](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f64697374726962757465642d73797374656d2f6170692d676174657761792d6f766572766965772e706e67)
 
-一般情况下，网关可以为我们提供请求转发、安全认证（身份/权限认证）、流量控制、负载均衡、降级熔断、日志、监控等功能。
+一般情况下，网关可以为我们提供**请求转发**、**安全认证（身份/权限认证）**、**流量控制**、**负载均衡**、**降级熔断**、**日志**、**监控**等功能。
 
 上面介绍了这么多功能，实际上，网关主要做了一件事情：**请求过滤** 。
 
@@ -27,9 +27,9 @@ updated: 2023-02-10 22:26:59
 
 ### Netflix Zuul
 
-Zuul 是 Netflix 开发的一款提供动态路由、监控、弹性、安全的网关服务。
+Zuul 是 Netflix 开发的一款提供**动态路由**、**监控**、**弹性**、**安全**的网关服务。
 
-Zuul 主要通过过滤器（类似于 AOP）来过滤请求，从而实现网关必备的各种功能。
+Zuul 主要通过**过滤器（类似于 AOP）来过滤请求**，从而实现网关必备的各种功能。
 
 ![Zuul架构](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f696d675f636f6e766572742f38363539393165333466363966386362333435623461666639313865393436652e706e67)
 
@@ -47,20 +47,20 @@ Zuul 主要通过过滤器（类似于 AOP）来过滤请求，从而实现网�
 </dependency>
 ```
 
-Zuul 1.x 基于同步 IO，性能较差。Zuul 2.x 基于 Netty 实现了异步 IO，性能得到了大幅改进。
+Zuul 1.x **基于同步 IO，性能较差**。Zuul 2.x **基于 Netty 实现了异步 IO**，性能得到了大幅改进。
 
 - Github 地址 ： https://github.com/Netflix/zuul
 - 官方 Wiki ： https://github.com/Netflix/zuul/wiki
 
 ### Spring Cloud Gateway
 
-SpringCloud Gateway 属于 Spring Cloud 生态系统中的网关，其诞生的目标是为了替代老牌网关 **Zuul **。准确点来说，应该是 Zuul 1.x。SpringCloud Gateway 起步要比 Zuul 2.x 更早。
+SpringCloud Gateway 属于 Spring Cloud 生态系统中的网关，其诞生的目标是为了替代老牌网关 **Zuul **。准确点来说，应该是 **Zuul 1.x**。SpringCloud Gateway 起步要比 Zuul 2.x 更早。
 
-为了提升网关的性能，SpringCloud Gateway 基于 Spring WebFlux 。Spring WebFlux 使用 Reactor 库来实现响应式编程模型，底层基于 Netty 实现异步 IO。
+为了提升网关的性能，SpringCloud Gateway **基于 Spring WebFlux** 。Spring WebFlux 使用 Reactor 库来实现**响应式编程模型**，**底层基于 Netty 实现异步 IO**。
 
-Spring Cloud Gateway 的目标，不仅提供统一的路由方式，并且基于 Filter 链的方式提供了网关基本的功能，例如：安全，监控/指标，和限流。
+Spring Cloud Gateway 的目标，不仅**提供统一的路由**方式，并且基于 Filter 链的方式提供了网关基本的功能，例如：**安全**，**监控/指标**，和**限流**。
 
-Spring Cloud Gateway 和 Zuul 2.x 的差别不大，也是通过过滤器来处理请求。不过，目前更加推荐使用 Spring Cloud Gateway 而非 Zuul，Spring Cloud 生态对其支持更加友好。
+Spring Cloud Gateway 和 Zuul 2.x 的差别不大，也是**通过过滤器**来处理请求。不过，目前更加推荐使用 Spring Cloud Gateway 而非 Zuul，**Spring Cloud 生态对其支持更加友好**。
 
 - Github 地址 ： https://github.com/spring-cloud/spring-cloud-gateway
 - 官网 ： https://spring.io/projects/spring-cloud-gateway
@@ -85,11 +85,11 @@ $ curl -X POST http://kong:8001/services/{service}/plugins \
 
 ### APISIX
 
-APISIX 是一款基于 Nginx 和 etcd 的高性能、云原生、可扩展的网关系统。
+APISIX 是一款**基于 Nginx 和 etcd** 的高性能、云原生、可扩展的网关系统。
 
-> *etcd*是使用 Go 语言开发的一个开源的、高可用的分布式 key-value 存储系统，使用 Raft 协议做分布式共识。
+> *etcd*是使用 **Go 语言**开发的一个开源的、高可用的分布式 key-value 存储系统，使用 Raft 协议做分布式共识。
 
-与传统 API 网关相比，APISIX 具有动态路由和插件热加载，特别适合微服务系统下的 API 管理。并且，APISIX 与 SkyWalking（分布式链路追踪系统）、Zipkin（分布式链路追踪系统）、Prometheus（监控系统） 等 DevOps 生态工具对接都十分方便。
+与传统 API 网关相比，APISIX 具有**动态路由**和**插件热加载**，特别适合微服务系统下的 API 管理。并且，APISIX 与 SkyWalking（分布式链路追踪系统）、Zipkin（分布式链路追踪系统）、Prometheus（监控系统） 等 DevOps 生态工具对接都十分方便。
 
 ![apisix架构图](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f696d675f636f6e766572742f37323737333266616432653934336264643263353032623833646462316238392e706e67)
 
@@ -108,11 +108,11 @@ APISIX 是一款基于 Nginx 和 etcd 的高性能、云原生、可扩展的网
 
 ### Shenyu
 
-Shenyu 是一款基于 WebFlux 的可扩展、高性能、响应式网关，Apache 顶级开源项目。
+Shenyu 是一款**基于 WebFlux 的可扩展、高性能、响应式网关**，**Apache 顶级开源项目**。
 
 ![Shenyu架构](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f31313034656234313363626134363863626134646365313139313635653834652e706e67)
 
-Shenyu 通过插件扩展功能，插件是 ShenYu 的灵魂，并且插件也是可扩展和热插拔的。不同的插件实现不同的功能。Shenyu 自带了诸如限流、熔断、转发 、重写、重定向、和路由监控等插件。
+Shenyu 通过插件扩展功能，**插件**是 ShenYu 的灵魂，并且插件也是可扩展和热插拔的。不同的插件实现不同的功能。Shenyu 自带了诸如**限流、熔断、转发 、重写、重定向、和路由监控**等插件。
 
 - Github 地址： https://github.com/apache/incubator-shenyu
 - 官网地址 ： https://shenyu.apache.org/
