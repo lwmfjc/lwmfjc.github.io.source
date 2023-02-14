@@ -173,7 +173,7 @@ numChildren = 1
 
 ## 3. ZooKeeper Java客户端 Curator简单使用
 
-Curator 是Netflix公司开源的一套 ZooKeeper Java客户端框架，相比于 Zookeeper 自带的客户端 zookeeper 来说，Curator 的封装更加完善，各种 API 都可以比较方便地使用。
+**Curator** 是Netflix公司开源的一套 ZooKeeper Java客户端框架，相比于 Zookeeper 自带的客户端 zookeeper 来说，Curator 的**封装更加完善**，**各种 API** 都可以比较方便地使用。
 
 [![img](https://github.com/Snailclimb/JavaGuide/raw/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/curator.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/curator.png)
 
@@ -181,7 +181,7 @@ Curator 是Netflix公司开源的一套 ZooKeeper Java客户端框架，相比�
 
 Curator4.0+版本对ZooKeeper 3.5.x支持比较好。开始之前，请先将下面的依赖添加进你的项目。
 
-```java
+```xml
 <dependency>
     <groupId>org.apache.curator</groupId>
     <artifactId>curator-framework</artifactId>
@@ -198,7 +198,7 @@ Curator4.0+版本对ZooKeeper 3.5.x支持比较好。开始之前，请先将下
 
 通过 `CuratorFrameworkFactory` 创建 `CuratorFramework` 对象，然后再调用 `CuratorFramework` 对象的 `start()` 方法即可！
 
-```
+```java
 private static final int BASE_SLEEP_TIME = 1000;
 private static final int MAX_RETRIES = 3;
 
@@ -206,7 +206,7 @@ private static final int MAX_RETRIES = 3;
 RetryPolicy retryPolicy = new ExponentialBackoffRetry(BASE_SLEEP_TIME, MAX_RETRIES);
 CuratorFramework zkClient = CuratorFrameworkFactory.builder()
     // the server to connect to (can be a server list)
-    .connectString("127.0.0.1:2181")
+    .connectString("127.0.0.1:2181").
     .retryPolicy(retryPolicy)
     .build();
 zkClient.start();
@@ -223,7 +223,7 @@ zkClient.start();
 
 #### 3.2.1. 创建节点
 
-我们在 [ZooKeeper常见概念解读](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/distributed-process-coordination/zookeeper/zookeeper-intro.md) 中介绍到，我们通常是将 znode 分为 4 大类：
+我们在 [ZooKeeper常见概念解读](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/distributed-process-coordination/zookeeper/zookeeper-intro.md) 中介绍到，我们**通常**是将 znode 分为 4 大类：
 
 - **持久（PERSISTENT）节点** ：一旦创建就一直存在即使 ZooKeeper 集群宕机，直到将其删除。
 - **临时（EPHEMERAL）节点** ：临时节点的生命周期是与 **客户端会话（session）** 绑定的，**会话消失则节点消失** 。并且，临时节点 **只能做叶子节点** ，不能创建子节点。
@@ -236,7 +236,7 @@ zkClient.start();
 
 你可以通过下面两种方式创建持久化的节点。
 
-```
+```java
 //注意:下面的代码会报错，下文说了具体原因
 zkClient.create().forPath("/node1/00001");
 zkClient.create().withMode(CreateMode.PERSISTENT).forPath("/node1/00002");
@@ -252,26 +252,26 @@ zkClient.create().forPath("/node1");
 
 更推荐的方式是通过下面这行代码， **`creatingParentsIfNeeded()` 可以保证父节点不存在的时候自动创建父节点，这是非常有用的。**
 
-```
+```java
 zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.PERSISTENT).forPath("/node1/00001");
 ```
 
 **b.创建临时节点**
 
-```
+```java
 zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath("/node1/00001");
 ```
 
 **c.创建节点并指定数据内容**
 
-```
+```java
 zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath("/node1/00001","java".getBytes());
 zkClient.getData().forPath("/node1/00001");//获取节点的数据内容，获取到的是 byte数组
 ```
 
 **d.检测节点是否创建成功**
 
-```
+```java
 zkClient.checkExists().forPath("/node1/00001");//不为null的话，说明节点创建成功
 ```
 
@@ -279,19 +279,19 @@ zkClient.checkExists().forPath("/node1/00001");//不为null的话，说明节点
 
 **a.删除一个子节点**
 
-```
+```java
 zkClient.delete().forPath("/node1/00001");
 ```
 
 **b.删除一个节点以及其下的所有子节点**
 
-```
+```java
 zkClient.delete().deletingChildrenIfNeeded().forPath("/node1");
 ```
 
 #### 3.2.3. 获取/更新节点数据内容
 
-```
+```java
 zkClient.create().creatingParentsIfNeeded().withMode(CreateMode.EPHEMERAL).forPath("/node1/00001","java".getBytes());
 zkClient.getData().forPath("/node1/00001");//获取节点的数据内容
 zkClient.setData().forPath("/node1/00001","c++".getBytes());//更新节点数据内容
@@ -299,6 +299,6 @@ zkClient.setData().forPath("/node1/00001","c++".getBytes());//更新节点数据
 
 #### 3.2.4. 获取某个节点的所有子节点路径
 
-```
+```java
 List<String> childrenPaths = zkClient.getChildren().forPath("/node1");
 ```
