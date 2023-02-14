@@ -25,13 +25,13 @@ updated: 2023-02-14 10:45:39
 
 **a.使用 Docker 下载 ZooKeeper**
 
-```
+```shell
 docker pull zookeeper:3.5.8
 ```
 
 **b.运行 ZooKeeper**
 
-```
+```shell
 docker run -d --name zookeeper -p 2181:2181 zookeeper:3.5.8
 ```
 
@@ -43,13 +43,13 @@ docker run -d --name zookeeper -p 2181:2181 zookeeper:3.5.8
 
 **b.先进入 bin 目录,然后通过 `./zkCli.sh -server 127.0.0.1:2181`命令连接ZooKeeper 服务**
 
-```
+```shell
 root@eaf70fc620cb:/apache-zookeeper-3.5.8-bin# cd bin
 ```
 
 如果你看到控制台成功打印出如下信息的话，说明你已经成功连接 ZooKeeper 服务。
 
-[![img](https://github.com/Snailclimb/JavaGuide/raw/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/连接ZooKeeper服务.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/连接ZooKeeper服务.png)
+ ![连接ZooKeeper服务.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/%25E8%25BF%259E%25E6%258E%25A5ZooKeeper%25E6%259C%258D%25E5%258A%25A1.png)
 
 ### 2.3. 常用命令演示
 
@@ -65,7 +65,9 @@ root@eaf70fc620cb:/apache-zookeeper-3.5.8-bin# cd bin
 [zk: 127.0.0.1:2181(CONNECTED) 34] create /node1 “node1”
 ```
 
-通过 `create` 命令在根目录创建了 node1 节点，与它关联的内容是数字 123
+通过 `create` 命令在根目录创建了 node1  节点，与它关联的内容是数字 123    
+
+> 这个是不是写错了，应该是在node1目录下 ，创建了 node1.1节点
 
 ```
 [zk: 127.0.0.1:2181(CONNECTED) 1] create /node1/node1.1 123
@@ -113,11 +115,11 @@ numChildren = 1
 [node1.1]
 ```
 
-ZooKeeper 中的 ls 命令和 linux 命令中的 ls 类似， 这个命令将列出绝对路径 path 下的所有子节点信息（列出 1 级，并不递归）
+ZooKeeper 中的 ls 命令和 linux 命令中的 ls 类似， 这个命令将列出绝对路径 path 下的所有子节点信息（**列出 1 级，并不递归**）
 
 #### 2.3.6. 查看节点状态(stat 命令)
 
-通过 `stat` 命令查看节点状态
+通过 `stat` **命令查看节点状态**
 
 ```
 [zk: 127.0.0.1:2181(CONNECTED) 10] stat /node1
@@ -140,8 +142,8 @@ numChildren = 1
 
 `ls2` 命令更像是 `ls` 命令和 `stat` 命令的结合。 `ls2` 命令返回的信息包括 2 部分：
 
-1. 子节点列表
-2. 当前节点的 stat 信息。
+1. **子节点列表**
+2. **当前节点的 stat 信息**。
 
 ```
 [zk: 127.0.0.1:2181(CONNECTED) 7] ls2 /node1
@@ -179,7 +181,7 @@ Curator 是Netflix公司开源的一套 ZooKeeper Java客户端框架，相比�
 
 Curator4.0+版本对ZooKeeper 3.5.x支持比较好。开始之前，请先将下面的依赖添加进你的项目。
 
-```
+```java
 <dependency>
     <groupId>org.apache.curator</groupId>
     <artifactId>curator-framework</artifactId>
