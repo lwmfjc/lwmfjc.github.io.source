@@ -19,7 +19,7 @@ updated: 2023-02-15 09:58:20
 
 一个消息中心，最基本的需要支持多生产者、多消费者，例如下：
 
-```
+```java
 class Scratch {
 
     public static void main(String[] args) {
