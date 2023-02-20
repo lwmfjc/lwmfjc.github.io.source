@@ -45,7 +45,7 @@ updated: 2023-02-17 17:22:14
 
 **为什么命名很重要呢？** 这是因为 **好的命名即是注释，别人一看到你的命名就知道你的变量、方法或者类是做什么的！**
 
-简单来说就是 **别人根据你的命名就能知道你的代码要表达的意思** （不过，前提这个人也要有基本的英语知识，对于一些编程中常见的单词比较熟悉）。
+简单来说就是 **别人根据你的命名就能知道你的代码要表达的意思** （不过，前提这个人也要有**基本的英语**知识，对于一些编程中常见的单词比较熟悉）。
 
 简单举个例子说明一下命名的重要性。
 
@@ -57,16 +57,16 @@ updated: 2023-02-17 17:22:14
 >
 > 举个例子：
 >
-> 去掉下面复杂的注释，只需要创建一个与注释所言同一事物的函数即可
+> 去掉下面复杂的注释，只需要创建一个**与注释所言同一事物的函数**即可
 >
-> ```
+> ```java
 > // check to see if the employee is eligible for full benefits
 > if ((employee.flags & HOURLY_FLAG) && (employee.age > 65))
 > ```
 >
 > 应替换为
 >
-> ```
+> ```java
 > if (employee.isEligibleForFullBenefits())
 > ```
 
@@ -76,7 +76,7 @@ updated: 2023-02-17 17:22:14
 
 ### 驼峰命名法（CamelCase）
 
-驼峰命名法应该我们最常见的一个，这种命名方式使用大小写混合的格式来区别各个单词，并且单词之间不使用空格隔开或者连接字符连接的命名方式
+驼峰命名法应该我们最常见的一个，这种命名方式使用大小写混合的格式来区别各个单词，并且单词之间**不使用空格**隔开或者**连接字符**连接的命名方式
 
 #### 大驼峰命名法（UpperCamelCase）
 
@@ -84,13 +84,13 @@ updated: 2023-02-17 17:22:14
 
 正例：
 
-```
+```java
 ServiceDiscovery、ServiceInstance、LruCacheFactory
 ```
 
 反例：
 
-```
+```java
 serviceDiscovery、Serviceinstance、LRUCacheFactory
 ```
 
@@ -100,7 +100,7 @@ serviceDiscovery、Serviceinstance、LRUCacheFactory
 
 正例：
 
-```
+```java
 getUserInfo()
 createCustomThreadPool()
 setNameFormat(String nameFormat)
@@ -109,7 +109,7 @@ Uservice userService;
 
 反例：
 
-```
+```java
 GetUserInfo()、CreateCustomThreadPool()、setNameFormat(String NameFormat)
 Uservice user_service
 ```
@@ -118,9 +118,9 @@ Uservice user_service
 
 **测试方法名、常量、枚举名称需要使用蛇形命名法（snake_case）**
 
-在蛇形命名法中，各个单词之间通过下划线“_”连接，比如`should_get_200_status_code_when_request_is_valid`、`CLIENT_CONNECT_SERVER_FAILURE`。
+在蛇形命名法中，各个单词之间通过**下划线“_”**连接，比如`should_get_200_status_code_when_request_is_valid`、`CLIENT_CONNECT_SERVER_FAILURE`。
 
-蛇形命名法的优势是命名所需要的单词比较多的时候，比如我把上面的命名通过小驼峰命名法给大家看一下：“shouldGet200StatusCodeWhenRequestIsValid”。
+蛇形命名法的优势是**命名所需要的单词比较多**的时候，比如我把上面的命名通过小驼峰命名法给大家看一下：“shouldGet200StatusCodeWhenRequestIsValid”。
 
 感觉如何？ 相比于使用蛇形命名法（snake_case）来说是不是不那么易读？
 
@@ -146,9 +146,9 @@ void shouldGet200StatusCodeWhenRequestIsValid() {
 
 在串式命名法中，各个单词之间通过连接符“-”连接，比如`dubbo-registry`。
 
-建议项目文件夹名称使用串式命名法（kebab-case），比如 dubbo 项目的各个模块的命名是下面这样的。
+建议**项目文件夹名称**使用**串式命名法**（kebab-case），比如 dubbo 项目的各个模块的命名是下面这样的。
 
-[![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f647562626f2d6e616d696e672e706e67)](https://camo.githubusercontent.com/276e1bd0ee015ec35aa3a00fa5ff6ecf1e9f9064a8694405015d8459d5115688/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f647562626f2d6e616d696e672e706e67)
+ ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f647562626f2d6e616d696e672e706e67) 
 
 ## 常见命名规范
 
@@ -168,7 +168,7 @@ void shouldGet200StatusCodeWhenRequestIsValid() {
 
 **5、抽象类命名使用 Abstract 开头**。
 
-```
+```java
 //为远程传输部分抽象出来的一个抽象类（出处：Dubbo源码）
 public abstract class AbstractClient extends AbstractEndpoint implements Client {
 
@@ -177,7 +177,7 @@ public abstract class AbstractClient extends AbstractEndpoint implements Client 
 
 **6、异常类命名使用 Exception 结尾。**
 
-```
+```java
 //自定义的 NoSuchMethodException（出处：Dubbo源码）
 public class NoSuchMethodException extends RuntimeException {
     private static final long serialVersionUID = -2725364246023268766L;
@@ -194,7 +194,7 @@ public class NoSuchMethodException extends RuntimeException {
 
 **7、测试类命名以它要测试的类的名称开始，以 Test 结尾。**
 
-```
+```java
 //为 AnnotationUtils 类写的测试类（出处：Dubbo源码）
 public class AnnotationUtilsTest {
   ......
@@ -219,7 +219,7 @@ POJO 类中布尔类型的变量，都不要加 is 前缀，否则部分框架�
 
 **4、避免命名过长（50 个字符以内最好），过长的命名难以阅读并且丑陋。**
 
-**5、不要使用拼音，更不要使用中文。** 不过像 alibaba 、wuhan、taobao 这种国际通用名词可以当做英文来看待。
+**5、不要使用拼音，更不要使用中文。** 不过像 **alibaba** 、**wuhan**、taobao 这种**国际通用名词**可以当做英文来看待。
 
 正例：discount
 
@@ -233,11 +233,11 @@ Codelf 提供了在线网站版本，网址：https://unbug.github.io/codelf/，
 
 我选择了 Java 编程语言，然后搜索了“序列化”这个关键词，然后它就返回了很多关于序列化的命名。
 
-[![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/Codelf.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/system-design/basis/pictures/Codelf.png)
+ ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/Codelf.png) 
 
 并且，Codelf 还提供了 VS code 插件，看这个评价，看来大家还是很喜欢这款命名工具的。
 
-[![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/vscode-codelf.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/system-design/basis/pictures/vscode-codelf.png)
+ ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/vscode-codelf.png) 
 
 ## 相关阅读推荐
 
@@ -248,9 +248,9 @@ Codelf 提供了在线网站版本，网址：https://unbug.github.io/codelf/，
 
 ## 总结
 
-作为一个合格的程序员，小伙伴们应该都知道代码表义的重要性。想要写出高质量代码，好的命名就是第一步！
+作为一个合格的程序员，小伙伴们应该都知道代码表义的重要性。想要写出高质量代码，**好的命名**就是第一步！
 
-好的命名对于其他人（包括你自己）理解你的代码有着很大的帮助！你的代码越容易被理解，可维护性就越强，侧面也就说明你的代码设计的也就越好！
+好的命名对于其他人（包括你自己）理解你的代码有着很大的帮助！你的代码越**容易被理解**，**可维护性**就越强，侧面也就说明你的代码设计的也就越好！
 
 在日常编码过程中，我们需要谨记常见命名规范比如类名需要使用大驼峰命名法、不要使用拼音，更不要使用中文......。
 
