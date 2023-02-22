@@ -1,5 +1,5 @@
 ---
-title: 类加载器详解
+title: ly0405ly类加载器详解
 description: 类加载器详解
 categories:
   - 学习
@@ -8,7 +8,7 @@ tags:
   - 复习-javaGuide
   - 复习-javaGuide-jvm
 date: 2022-12-17 22:39:21
-updated: 2022-12-18 08:23:21
+updated: 2022-12-18 08:23:215
 ---
 
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
@@ -61,7 +61,7 @@ JVM 中内置了**三个重要的 ClassLoader**，除了 **BootstrapClassLoader*
 
   **AppClassloader的父类加载器**为**ExtClassloader**，**ExtClassloader的父类加载器**为**null**，**null不代表ExtClassLoader没有父类加载器**，而是**BootstrapClassloader**。
 
-- 其实这个双亲翻译的容易让别人误解，我们一般理解的双亲都是父母，**这里的双亲更多地表达的是“父母这一辈”的人而已**，并不是说真的有一个 Mother ClassLoader 和一个 Father ClassLoader 。另外，**类加载器之间的“父子”关系**也**不是通过继承**来体现的，**是由“优先级”**来决定。官方 API 文档对这部分的描述如下:
+- 其实这个双亲翻译的容易让别人误解，我们一般理解的双亲都是父母，**这里的双亲更多地表达的是“父母这一辈”的人而已**，并不是说真的有一个 Mother ClassLoader 和一个 Father ClassLoader 。另外，**类加载器之间的“父子”关系**也**不是通过继承**来**体现(定义)**的，**是由“优先级”**来决定。官方 API 文档对这部分的描述如下:
 
   > The Java platform uses a delegation model for loading classes. **The basic idea is that every class loader has a "parent" class loader.** When loading a class, a class loader **first "delegates" the search for the class to its parent class loader before attempting to find the class itself(优先级)**.
 
@@ -113,7 +113,8 @@ protected Class<?> loadClass(String name, boolean resolve)
 
 ## 双亲委派模型的好处
 
-双亲委派模型保证了 Java 程序的稳定运行，可以**避免类的重复加载**（**JVM 区分不同类的方式不仅仅根据类名，相同的类文件被不同的类加载器加载产生的是两个不同的类**），也**保证了 Java 的核心 API** 不被篡改。**如果没有**使用双亲委派模型，而是每个类加载器加载自己的话就会出现一些问题，比如我们**编写一个称为 `java.lang.Object` 类**的话，那么程序运行的时候，系统就会出现多个不同的 `Object` 类
+1. 双亲委派模型保证了 Java 程序的稳定运行，可以**避免类的重复加载**（**JVM 区分不同类的方式不仅仅根据类名，相同的类文件被不同的类加载器加载产生的是两个不同的类**），也**保证了 Java 的核心 API** 不被篡改。  
+2. **如果没有**使用双亲委派模型，而是每个类加载器加载自己的话就会出现一些问题，比如我们**编写一个称为 `java.lang.Object` 类**的话，那么程序运行的时候，系统就会出现多个不同的 `Object` 类
 
 ## 如果我们不想用双清委派模型
 
