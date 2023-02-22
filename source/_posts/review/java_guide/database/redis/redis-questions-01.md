@@ -17,9 +17,9 @@ updated: 2023-02-22 11:31:11
 
 ### 什么是 Redis？
 
-[Redis](https://redis.io/) 是一个基于 C 语言开发的开源数据库（BSD 许可），与传统数据库不同的是 Redis 的数据是存在内存中的（内存数据库），读写速度非常快，被广泛应用于缓存方向。并且，Redis 存储的是 KV 键值对数据。
+[Redis](https://redis.io/) 是一个基于 C 语言开发的开源数据库（BSD 许可），与传统数据库不同的是 Redis 的数据是存在**内存**中的（内存数据库），**读写**速度非常**快**，被广泛应用于缓存方向。并且，Redis 存储的是 **KV 键值对**数据。
 
-为了满足不同的业务场景，Redis 内置了多种数据类型实现（比如 String、Hash、Sorted Set、Bitmap）。并且，Redis 还支持事务 、持久化、Lua 脚本、多种开箱即用的集群方案（Redis Sentinel、Redis Cluster）。
+为了满足不同的业务场景，Redis 内置了多种数据类型实现（比如 **String**、**Hash**、**Sorted Set**、**Bitmap**）。并且，Redis 还支持事务 、持久化、Lua 脚本、多种开箱即用的集群方案（Redis Sentinel、Redis Cluster）。
 
 Redis 没有外部依赖，Linux 和 OS X 是 Redis 开发和测试最多的两个操作系统，官方推荐生产环境使用 Linux 部署 Redis。
 
