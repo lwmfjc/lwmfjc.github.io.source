@@ -17,15 +17,15 @@ updated: 2023-02-22 11:31:11
 
 ### 什么是 Redis？
 
-[Redis](https://redis.io/) 是一个基于 C 语言开发的开源数据库（BSD 许可），与传统数据库不同的是 Redis 的数据是存在**内存**中的（内存数据库），**读写**速度非常**快**，被广泛应用于缓存方向。并且，Redis 存储的是 **KV 键值对**数据。
+[Redis](https://redis.io/) 是一个基于 C 语言开发的开源数据库（BSD 许可），与传统数据库不同的是 Redis 的数据是存在**内存**中的（内存数据库），**读写**速度非常**快**，被广泛应用于**缓存方向**。并且，Redis 存储的是 **KV 键值对**数据。
 
-为了满足不同的业务场景，Redis 内置了多种数据类型实现（比如 **String**、**Hash**、**Sorted Set**、**Bitmap**）。并且，Redis 还支持事务 、持久化、Lua 脚本、多种开箱即用的集群方案（Redis Sentinel、Redis Cluster）。
+为了满足不同的业务场景，Redis 内置了多种数据类型实现（比如 **String**、**Hash**、【**List**、**Set**、】**Sorted Set**、**Bitmap**）。并且，Redis 还支持**事务** 、**持久化**、**Lua 脚本**、多种开箱即用的**集群**方案（R**edis Sentinel**、**Redis Cluster**）。
 
 Redis 没有外部依赖，Linux 和 OS X 是 Redis 开发和测试最多的两个操作系统，官方推荐生产环境使用 Linux 部署 Redis。
 
 个人学习的话，你可以自己本机安装 Redis 或者通过 Redis 官网提供的[在线 Redis 环境](https://try.redis.io/)来实际体验 Redis。
 
-[![try-redis](https://camo.githubusercontent.com/0c61fa32037c39ac60f89e14e200d3f8a5cf8a86d2fac772b2d075d828922589/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f7472792e72656469732e696f2e706e67)](https://camo.githubusercontent.com/0c61fa32037c39ac60f89e14e200d3f8a5cf8a86d2fac772b2d075d828922589/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f7472792e72656469732e696f2e706e67)
+![image-20230222135114608](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230222135114608.png)
 
 全世界有非常多的网站使用到了 Redis ，[techstacks.io](https://techstacks.io/) 专门维护了一个[使用 Redis 的热门站点列表](https://techstacks.io/tech/redis) ，感兴趣的话可以看看。
 
@@ -33,13 +33,13 @@ Redis 没有外部依赖，Linux 和 OS X 是 Redis 开发和测试最多的两�
 
 Redis 内部做了非常多的性能优化，比较重要的主要有下面 3 点：
 
-- Redis 基于内存，内存的访问速度是磁盘的上千倍；
-- Redis 基于 Reactor 模式设计开发了一套高效的事件处理模型，主要是单线程事件循环和 IO 多路复用（Redis 线程模式后面会详细介绍到）；
-- Redis 内置了多种优化过后的数据结构实现，性能非常高。
+- Redis 基于**内存**，内存的访问速度是磁盘的上千倍；
+- Redis **基于 Reactor 模式**设计开发了一套**高效的事件处理模型**，主要是**单线程事件循环**和 **IO 多路复用**（Redis 线程模式后面会详细介绍到）；
+- Redis 内置了多种**优化过后的数据结构**实现，性能非常高。
 
 下面这张图片总结的挺不错的，分享一下，出自 [Why is Redis so fast?](https://twitter.com/alexxubyte/status/1498703822528544770) 。
 
-[![why-redis-so-fast](https://github.com/Snailclimb/JavaGuide/raw/main/docs/database/redis/images/why-redis-so-fast.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/database/redis/images/why-redis-so-fast.png)
+ ![image-20230222135233844](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230222135233844.png)
 
 ### 分布式缓存常见的技术选型方案有哪些？
 
@@ -47,7 +47,7 @@ Redis 内部做了非常多的性能优化，比较重要的主要有下面 3 �
 
 Memcached 是分布式缓存最开始兴起的那会，比较常用的。后来，随着 Redis 的发展，大家慢慢都转而使用更加强大的 Redis 了。
 
-另外，腾讯也开源了一款类似于 Redis 的分布式高性能 KV 存储数据库，基于知名的开源项目 [RocksDB](https://github.com/facebook/rocksdb) 作为存储引擎 ，100% 兼容 Redis 协议和 Redis4.0 所有数据模型，名为 [Tendis](https://github.com/Tencent/Tendis)。
+另外，腾讯也开源了一款类似于 Redis 的分布式高性能 KV 存储数据库，基于知名的开源项目 [RocksDB](https://github.com/facebook/rocksdb) 作为存储引擎 ，100% 兼容 Redis 协议和 Redis4.0 所有数据模型，名为 [Tendis](https://github.com/Tencent/Tendis) （腾讯的）。
 
 关于 Redis 和 Tendis 的对比，腾讯官方曾经发过一篇文章：[Redis vs Tendis：冷热混合存储版架构揭秘](https://mp.weixin.qq.com/s/MeYkfOIdnU6LYlsGb24KjQ) ，可以简单参考一下。
 
@@ -55,22 +55,25 @@ Memcached 是分布式缓存最开始兴起的那会，比较常用的。后来�
 
 ### 说一下 Redis 和 Memcached 的区别和共同点
 
-现在公司一般都是用 Redis 来实现缓存，而且 Redis 自身也越来越强大了！不过，了解 Redis 和 Memcached 的区别和共同点，有助于我们在做相应的技术选型的时候，能够做到有理有据！
+现在公司一般都是用 Redis 来实现缓存，而且 Redis 自身也越来越强大了！不过，了解 Redis 和 Memcached 的区别和共同点，有助于我们在做相应的**技术选型**的时候，能够做到有理有据！
 
 **共同点** ：
 
-1. 都是基于内存的数据库，一般都用来当做缓存使用。
-2. 都有过期策略。
-3. 两者的性能都非常高。
+1. 都是**基于内存**的数据库，一般都用来当做缓存使用。
+2. 都有**过期策略**。
+3. 两者的**性能都非常高**。
 
 **区别** ：
 
-1. **Redis 支持更丰富的数据类型（支持更复杂的应用场景）**。Redis 不仅仅支持简单的 k/v 类型的数据，同时还提供 list，set，zset，hash 等数据结构的存储。Memcached 只支持最简单的 k/v 数据类型。
+1. **Redis 支持更丰富的数据类型（支持更复杂的应用场景）**。Redis 不仅仅支持**简单（string）的 k/v 类型**的数据，同时还提供 **list**，**set**，**zset**，**hash** 等数据结构的存储。Memcached 只支持**最简单的 k/v** 数据类型。
 2. **Redis 支持数据的持久化，可以将内存中的数据保持在磁盘中，重启的时候可以再次加载进行使用,而 Memcached 把数据全部存在内存之中。**
 3. **Redis 有灾难恢复机制。** 因为可以把缓存中的数据持久化到磁盘上。
 4. **Redis 在服务器内存使用完之后，可以将不用的数据放到磁盘上。但是，Memcached 在服务器内存使用完之后，就会直接报异常。**
 5. **Memcached 没有原生的集群模式，需要依靠客户端来实现往集群中分片写入数据；但是 Redis 目前是原生支持 cluster 模式的。**
-6. **Memcached 是多线程，非阻塞 IO 复用的网络模型；Redis 使用单线程的多路 IO 复用模型。** （Redis 6.0 引入了多线程 IO ）
+6. **Memcached 是多线程，非阻塞 IO 复用的网络模型；Redis 使用单线程的多路 IO 复用模型。** （Redis 6.0 引入了多线程 IO ）  
+
+   > 非阻塞的        IO复用  
+   > 单线程的多路IO复用
 7. **Redis 支持发布订阅模型、Lua 脚本、事务等功能，而 Memcached 不支持。并且，Redis 支持更多的编程语言。**
 8. **Memcached 过期数据的删除策略只用了惰性删除，而 Redis 同时使用了惰性删除与定期删除。**
 
