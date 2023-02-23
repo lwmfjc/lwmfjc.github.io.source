@@ -453,7 +453,7 @@ typedef struct redisDb {
 
 **定期**删除对**内存**更加友好，**惰性**删除对 **CPU** 更加友好。两者各有千秋，所以 Redis 采用的是 **定期删除+惰性/懒汉式删除** 。
 
-但是，仅仅通过给 key 设置过期时间还是有问题的。因为还是可能存在定期删除和惰性删除漏掉了很多过期 key 的情况。这样就导致大量过期 key 堆积在内存里，然后就 Out of memory 了。
+但是，仅仅通过给 key 设置过期时间还是有问题的。因为还是可能存在**定期删除**和**惰性删除**漏掉了很多过期 key 的情况。这样就导致大量过期 key 堆积在内存里，然后就 **Out of memory** 了。
 
 怎么解决这个问题呢？答案就是：**Redis 内存淘汰机制。**
 
@@ -461,25 +461,124 @@ typedef struct redisDb {
 
 > 相关问题：MySQL 里有 2000w 数据，Redis 中只存 20w 的数据，如何保证 Redis 中的数据都是热点数据?
 
+> 当缓存数据越来越多，Redis 不可避免的会被写满，这时候就涉及到 Redis 的内存淘汰机制了
+
 Redis 提供 6 种数据淘汰策略：
 
-1. **volatile-lru（least recently used）**：从已设置过期时间的数据集（server.db[i].expires）中挑选最近最少使用的数据淘汰
-2. **volatile-ttl**：从已设置过期时间的数据集（server.db[i].expires）中挑选将要过期的数据淘汰
-3. **volatile-random**：从已设置过期时间的数据集（server.db[i].expires）中任意选择数据淘汰
-4. **allkeys-lru（least recently used）**：当内存不足以容纳新写入数据时，在键空间中，移除最近最少使用的 key（这个是最常用的）
-5. **allkeys-random**：从数据集（server.db[i].dict）中任意选择数据淘汰
-6. **no-eviction**：禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会报错。这个应该没人使用吧！
+1. **volatile-lru（least recently used）**：从**已设置过期时间的数据集**（server.db[i].expires）中挑选**最近最少使用的数据淘汰**
+2. **volatile-ttl**：从已设置过期时间的数据集（server.db[i].expires）中挑选**将要过期的数据**淘汰
+3. **volatile-random**：从已设置过期时间的数据集（server.db[i].expires）中**任意选择数据淘汰**
+4. **allkeys-lru（least recently used）**：当内存不足以容纳新写入数据时，在键空间中，**移除最近最少使用**的 key（这个是最常用的）
+5. **allkeys-random**：从数据集（server.db[i].dict）中**任意选择数据淘汰**
+6. **no-eviction**：禁止驱逐数据，也就是说当内存不足以容纳新写入数据时，新写入操作会**报错**。这个应该没人使用吧！
 
 4.0 版本后增加以下两种：
 
 1. **volatile-lfu（least frequently used）**：从已设置过期时间的数据集（server.db[i].expires）中挑选最不经常使用的数据淘汰
 2. **allkeys-lfu（least frequently used）**：当内存不足以容纳新写入数据时，在键空间中，移除最不经常使用的 key
 
+> 关于最近最少使用：  
+> ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/v2-71b21233c615b1ce899cd4bd3122cbab_720w.webp)
+>
+> 1. 链表尾部的数据会被丢弃  
+>
+> 2. 长期不被使用的数据，在未来被用到的几率也不大。因此，当数据所占[内存](https://so.csdn.net/so/search?q=内存&spm=1001.2101.3001.7020)达到一定阈值时，要移除掉最近最少使用的数据。  
+>
+> 3. 关于翻译问题：least，程度最轻的。recently，最近的。其实翻译应该是“非最近的，越远越要淘汰”
+>
+> 4. java算法实现  
+>
+>    ```java
+>    public class LRUCache {
+>        class DLinkedNode {
+>            int key;
+>            int value;
+>            DLinkedNode prev;
+>            DLinkedNode next;
+>            public DLinkedNode() {}
+>            public DLinkedNode(int _key, int _value) {key = _key; value = _value;}
+>        }
+>     
+>        private Map<Integer, DLinkedNode> cache = new HashMap<Integer, DLinkedNode>();
+>        private int size;
+>        private int capacity;
+>        private DLinkedNode head, tail;
+>     
+>        public LRUCache(int capacity) {
+>            this.size = 0;
+>            this.capacity = capacity;
+>            // 使用伪头部和伪尾部节点
+>            head = new DLinkedNode();
+>            tail = new DLinkedNode();
+>            head.next = tail;
+>            tail.prev = head;
+>        }
+>     
+>        public int get(int key) {
+>            DLinkedNode node = cache.get(key);
+>            if (node == null) {
+>                return -1;
+>            }
+>            // 如果 key 存在，先通过哈希表定位，再移到头部
+>            moveToHead(node);
+>            return node.value;
+>        }
+>     
+>        public void put(int key, int value) {
+>            DLinkedNode node = cache.get(key);
+>            if (node == null) {
+>                // 如果 key 不存在，创建一个新的节点
+>                DLinkedNode newNode = new DLinkedNode(key, value);
+>                // 添加进哈希表
+>                cache.put(key, newNode);
+>                // 添加至双向链表的头部
+>                addToHead(newNode);
+>                ++size;
+>                if (size > capacity) {
+>                    // 如果超出容量，删除双向链表的尾部节点
+>                    DLinkedNode tail = removeTail();
+>                    // 删除哈希表中对应的项
+>                    cache.remove(tail.key);
+>                    --size;
+>                }
+>            }
+>            else {
+>                // 如果 key 存在，先通过哈希表定位，再修改 value，并移到头部
+>                node.value = value;
+>                moveToHead(node);
+>            }
+>        }
+>     
+>        private void addToHead(DLinkedNode node) {
+>            node.prev = head;
+>            node.next = head.next;
+>            head.next.prev = node;
+>            head.next = node;
+>        }
+>     
+>        private void removeNode(DLinkedNode node) {
+>            node.prev.next = node.next;
+>            node.next.prev = node.prev;
+>        }
+>     
+>        private void moveToHead(DLinkedNode node) {
+>            removeNode(node);
+>            addToHead(node);
+>        }
+>     
+>        private DLinkedNode removeTail() {
+>            DLinkedNode res = tail.prev;
+>            removeNode(res);
+>            return res;
+>        }
+>    }
+>    ```
+
 ## Redis 持久化机制
 
 ### 怎么保证 Redis 挂掉之后再重启数据可以进行恢复？
 
-很多时候我们需要持久化数据也就是将内存中的数据写入到硬盘里面，大部分原因是为了之后重用数据（比如重启机器、机器故障之后恢复数据），或者是为了防止系统故障而将数据备份到一个远程位置。
+很多时候我们需要持久化数据也就是将**内存中的数据写入到硬盘**里面，大部分原因是为了之后**重用数据**（比如**重启**机器、机器**故障之后恢复**数据），或者是为了防止系统故障而将数据备份到一个远程位置。
 
 Redis 不同于 Memcached 的很重要一点就是，Redis 支持持久化，而且支持两种不同的持久化操作。**Redis 的一种持久化方式叫快照（snapshotting，RDB），另一种方式是只追加文件（append-only file, AOF）**。这两种方法各有千秋，下面我会详细这两种持久化方法是什么，怎么用，如何选择适合自己的持久化方法。
 
