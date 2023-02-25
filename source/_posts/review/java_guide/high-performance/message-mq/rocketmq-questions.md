@@ -13,7 +13,9 @@ updated: 2023-02-15 09:58:47
 
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
-> 本文来自读者 [PR](https://github.com/Snailclimb/JavaGuide/pull/291)。
+> 本文来自读者 [PR](https://github.com/Snailclimb/JavaGuide/pull/291)。  
+>
+> > 主要是rocket mq的几个问题
 
 ## 1 单机版消息中心
 
@@ -118,11 +120,11 @@ class Broker {
 
 问题：
 
-1. 没有实现真正执行消息存储落盘
-2. 没有实现 NameServer 去作为注册中心，定位服务
-3. 使用 LinkedBlockingQueue 作为消息队列，注意，参数是无限大，在真正 RocketMQ 也是如此是无限大，理论上不会出现对进来的数据进行抛弃，但是会有内存泄漏问题（阿里巴巴开发手册也因为这个问题，建议我们使用自制线程池）
-4. 没有使用多个队列（即多个 LinkedBlockingQueue），RocketMQ 的顺序消息是通过生产者和消费者同时使用同一个 MessageQueue 来实现，但是如果我们只有一个 MessageQueue，那我们天然就支持顺序消息
-5. 没有使用 MappedByteBuffer 来实现文件映射从而使消息数据落盘非常的快（实际 RocketMQ 使用的是 FileChannel+DirectBuffer）
+1. 没有实现真正执行**消息存储落盘**
+2. 没有**实现 NameServer 去作为注册中心**，定位服务
+3. 使用 LinkedBlockingQueue 作为消息队列，注意，参数是无限大，在真正 RocketMQ 也是如此是无限大，理论上不会出现对进来的数据进行抛弃，但是**会有内存泄漏问题**（阿里巴巴开发手册也因为这个问题，建议我们使用**自制线程池**）
+4. **没有使用多个队列**（即多个 LinkedBlockingQueue），RocketMQ 的顺序消息是通过生产者和消费者同时使用同一个 MessageQueue 来实现，但是如果我们只有一个 MessageQueue，那我们**天然就支持顺序**消息
+5. 没有使用 MappedByteBuffer 来实现**文件映射**从而使**消息数据落盘**非常的快（实际 RocketMQ 使用的是 FileChannel+DirectBuffer）
 
 ## 2 分布式消息中心
 
@@ -130,25 +132,25 @@ class Broker {
 
 #### 2.1.1 消息丢失的问题
 
-1. 当你系统需要保证百分百消息不丢失，你可以使用生产者每发送一个消息，Broker 同步返回一个消息发送成功的反馈消息
-2. 即每发送一个消息，同步落盘后才返回生产者消息发送成功，这样只要生产者得到了消息发送生成的返回，事后除了硬盘损坏，都可以保证不会消息丢失
+1. 当你系统需要保证**百分百**消息不丢失，你可以使用生产者**每发送一个**消息，Broker **同步返回一个消息发送成功**的反馈消息
+2. 即每发送一个消息，**同步落盘**后才返回生产者消息发送成功，这样只要生产者得到了消息发送生成的返回，事后除了硬盘损坏，都可以保证不会消息丢失
 3. 但是这同时引入了一个问题，同步落盘怎么才能快？
 
 #### 2.1.2 同步落盘怎么才能快
 
-1. 使用 FileChannel + DirectBuffer 池，使用堆外内存，加快内存拷贝
-2. 使用数据和索引分离，当消息需要写入时，使用 commitlog 文件顺序写，当需要定位某个消息时，查询index 文件来定位，从而减少文件IO随机读写的性能损耗
+1. 使用 **FileChannel + DirectBuffer** 池，使用**堆外内存**，**加快内存拷贝**
+2. 使用数据和索引分离，当消息需要写入时，**使用 commitlog 文件顺序写**，当需要定位某个消息时，**查询index 文件来定位**，从而**减少文件IO随机读写**的性能损耗
 
 #### 2.1.3 消息堆积的问题
 
 1. 后台定时任务每隔72小时，删除旧的没有使用过的消息信息
-2. 根据不同的业务实现不同的丢弃任务，具体参考线程池的 AbortPolicy，例如FIFO/LRU等（RocketMQ没有此策略）
-3. 消息定时转移，或者对某些重要的 TAG 型（支付型）消息真正落库
+2. 根据不同的业务实现不同的**丢弃**任务，具体**参考线程池的 AbortPolicy**，例如FIFO/LRU等（RocketMQ没有此策略）
+3. 消息**定时转移**，或者对某些重要的 TAG 型（支付型）消息真正落库
 
 #### 2.1.4 定时消息的实现
 
 1. 实际 RocketMQ 没有实现任意精度的定时消息，它只支持某些特定的时间精度的定时消息
-2. 实现定时消息的原理是：创建特定时间精度的 MessageQueue，例如生产者需要定时1s之后被消费者消费，你只需要将此消息发送到特定的 Topic，例如：MessageQueue-1 表示这个 MessageQueue 里面的消息都会延迟一秒被消费，然后 Broker 会在 1s 后发送到消费者消费此消息，使用 newSingleThreadScheduledExecutor 实现
+2. 实现定时消息的原理是：创建**特定时间精度的 MessageQueue**，例如**生产者需要定时1s之后被消费者消费**，你只需要将此消息发送到特定的 Topic，例如：MessageQueue-1 表示这个 MessageQueue 里面的消息都会延迟一秒被消费，然后 Broker 会在 1s 后发送到消费者消费此消息，使用 newSingleThreadScheduledExecutor 实现
 
 #### 2.1.5 顺序消息的实现
 
@@ -187,8 +189,8 @@ class Broker {
 
 #### 2.1.10 RocketMQ 不使用 ZooKeeper 作为注册中心的原因，以及自制的 NameServer 优缺点？
 
-1. ZooKeeper 作为支持顺序一致性的中间件，在某些情况下，它为了满足一致性，会丢失一定时间内的可用性，RocketMQ 需要注册中心只是为了发现组件地址，在某些情况下，RocketMQ 的注册中心可以出现数据不一致性，这同时也是 NameServer 的缺点，因为 NameServer 集群间互不通信，它们之间的注册信息可能会不一致
-2. 另外，当有新的服务器加入时，NameServer 并不会立马通知到 Producer，而是由 Producer 定时去请求 NameServer 获取最新的 Broker/Consumer 信息（这种情况是通过 Producer 发送消息时，负载均衡解决）
+1. ZooKeeper 作为支持顺序一致性的中间件，在某些情况下，它为了满足一致性，会丢失一定时间内的可用性，RocketMQ 需要注册中心只是为了发现组件地址，在某些情况下，RocketMQ 的**注册中心可以出现数据不一致性**，这同时也是 NameServer 的缺点，因为 NameServer 集群间互不通信，它们之间的注册信息可能会不一致
+2. 另外，当有新的服务器加入时，NameServer 并不会立马通知到 Producer，而是**由 Producer 定时去请求 NameServer 获取最新的 Broker/Consumer 信息**（这种情况是通过 Producer 发送消息时，负载均衡解决）
 
 #### 2.1.11 其它
 
