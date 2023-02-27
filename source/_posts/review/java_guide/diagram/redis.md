@@ -15,6 +15,6 @@ updated: 2023-02-27 22:11:02
 
 1. 主从复制原理
 
-   ![image-20230227221119208](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230227221119208.png)
+   ![主从复制原理](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230227221119208.png)
 
    
