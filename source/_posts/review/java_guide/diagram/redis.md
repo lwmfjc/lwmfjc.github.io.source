@@ -70,4 +70,4 @@ updated: 2023-02-27 22:11:02
        ![image-20230228155513262](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230228155513262.png)
    
    3. 故障转移  
-       
+       ![image-20230228173124506](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230228173124506.png)
