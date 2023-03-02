@@ -21,9 +21,9 @@ updated: 2022-10-10 17:10
 
 ### 为什么要使用本地方法
 
-- 需要用到Java中不具备的依赖于操作系统的特性，跨平台的同时要实现对底层控制
+- 需要用到Java中不具备的**依赖于操作系统**的特性，跨平台的同时要实现**对底层控制**
 - 对于其他语言已经完成的现成功能，可以使用Java调用
-- 对时间敏感/性能要求非常高，有必要使用更为底层的语言
+- 对**时间敏感/性能要求**非常高，有必要使用更为底层的语言
 
 对于同一本地方法，不同的操作系统可能通过不同的方式来实现的
 
@@ -53,7 +53,7 @@ public final class Unsafe {
 }
 ```
 
-会先判断当前类是否由Bootstrap classloader加载。即只有启动类加载器加载的类才能够调用Unsafe类中的方法
+会先判断当前类是否由**Bootstrap classloader**加载。即只有**启动类加载器加载的类**才能够调用Unsafe类中的方法
 
 如何使用```Unsafe```这个类  
 
@@ -72,7 +72,7 @@ public final class Unsafe {
    }
    ```
 
-2. 通过Java命令行命令```-Xbootclasspath/a```把调用Unsafe相关方法的类A所在jar包路径追加到默认的bootstrap路径中，使得**A被引导类加载器加载**
+2. 通过Java命令行命令```-Xbootclasspath/a```把**调用Unsafe相关方法的类A所在jar包路径追加到默认的bootstrap路径中**，使得**A被引导类加载器加载**
 
    ```java
    java -Xbootclasspath/a:${path}   // 其中path为调用Unsafe相关方法的类所在jar包路径
