@@ -1,5 +1,5 @@
 ---
-title: HashMap源码
+title: ly0106lyHashMap源码
 description: HashMap源码
 categories:
   - 学习
@@ -16,14 +16,15 @@ updated: 2022-10-21 15:30:09
 
 ## HashMap简介
 
-- HashMap用来存放键值对，基于哈希表的Map接口实现，是非线程安全的
+- HashMap用来存放**键值对**，基于哈希表的Map接口实现，是**非线程安全**的
 - 可以存储null的key和value，但null作为键只能有一个
-- JDK8之前，HashMap由数组和链表组成，链表是为了解决哈希冲突而存在；JDK8之后，当链表大于阈值（默认8），则会选择转为红黑树（当数组长度大于64则进行转换，否则只是扩容），以减少搜索时间
-- HashMap默认初始化大小为16，每次扩容为原容量2倍，且总是使用2的幂作为哈希表的大小
+- JDK8之前，HashMap由**数组和链表**组成，链表是为了解决哈希冲突而存在；JDK8之后，当链表大于阈值（默认8），则会选择**转为红黑树**（当数组长度大于64则进行转换，否则只是扩容），以**减少搜索时间**
+- HashMap默认初始化大小为16，每次**扩容为原容量2倍**，且总是使用2的幂作为哈希表的大小
 
 ## 底层数据结构分析
 
-- JDK8之前，HashMap底层是数组和链表，即**链表散列**；通过key的hashCode，经过扰动函数，获得hash值，然后再通过(n-1) & hash 判断当前元素存放位置（n指的是数组长度），如果当前位置存在元素，就判断元素与要存入的元素的hash值以及key是否相同，相同则覆盖，否则通过拉链法解决
+- JDK8之前，HashMap底层是**数组和链表**，即**链表散列**；通过key的hashCode，经过扰动函数，获得hash值，然后再通过(n-1) & hash 判断当前元素存放位置（n指的是数组长度），如果当前位置存在元素，就判断元素与要存入的元素的hash值以及key是否相同，相同则覆盖，否则通过**拉链法**解决  
+  ![image-20230201151506827](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230201151506827.png)
 
   - 扰动函数，即hash(Object key)方法
 
@@ -52,7 +53,9 @@ updated: 2022-10-21 15:30:09
     }
     ```
 
-- JDK1.8，当大于阈值时（默认8），会调用treefyBin()，根据HashMap数组决定是否转换为红黑树，只有当数组长度大于或等于64才转换为红黑树，减少搜索时间，否则只是调用resize()方法扩容
+- JDK1.8之后，当链表长度大于阈值（默认为 8）时，会首先调用 `treeifyBin()`方法。这个方法会根据 HashMap 数组来决定是否转换为红黑树。只有**当数组长度大于或者等于 64** 的情况下，才会执行转换红黑树操作，以减少搜索时间。**否则，就是只是执行 `resize()` 方法对数组扩容**。相关源码这里就不贴了，重点关注 `treeifyBin()`方法即可！
+
+  ![image-20230201151719559](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230201151719559.png)
 
 - HashMap一些属性
 
@@ -87,8 +90,16 @@ updated: 2022-10-21 15:30:09
   }
   ```
 
-  - LoadFactory 加载因子
-    控制数组存放数据的疏密程度，**趋于1，说明存放的数据越集中（即链表越长）**；**趋于0，数组中存放的数据少，即越稀疏**。即如果太大则导致元素效率低，太小则数组利用率低（这里的低指的是每个数组存放的元素太少）；默认为0.75
+  - LoadFactor 加载因子  
+    
+    loadFactor 加载因子是控制数组存放数据的疏密程度，loadFactor 越**趋近于 1**，那么 数组中存放的数据(entry)【**说的就是数组个数**】也就越多**，也就**越密**，也就是会让**链表的长度增加**，loadFactor 越小，也就是趋近于 0，数组中存放的数据(entry)也就越少，也就越稀疏。
+    
+    **loadFactor 太大导致查找元素效率低，太小导致数组的利用率低，存放的数据会很分散。loadFactor 的默认值为 0.75f 是官方给出的一个比较好的临界值**。
+    
+    给定的默认容量为 16，负载因子为 0.75。Map 在使用过程中不断的往里面存放数据，当数量达到了 **16 * 0.75 = 12 就需要将当前 16 的容量进行扩容**，而扩容这个过程涉及到 **rehash**、**复制数据**等操作，所以**非常消耗性能**。
+    
+    
+    
   - threshold   ```threshold 英[ˈθreʃhəʊld]```
     **threshold = capacity \* loadFactor**，即存放的元素Size 如果 > threshold ，即capacity * 0.75的时候，就要考虑扩容了
 
@@ -219,20 +230,18 @@ updated: 2022-10-21 15:30:09
   }
   ```
 
-- put方法（对外只提供put，没有putVal)
+- put方法（**对外只提供put**，没有putVal)
   putVal方法添加元素分析
 
   - 如果定位到的数组位置没有元素直接插入
 
-  - 如果有，则比较key，如果key相同则覆盖，不同则判断是否时树节点，如果是，使用putTreeVal插入；如果不是，则遍历链表插入(链表尾部)
-    ![image-20221022181648277](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221022181648277.png)
+  - 如果有，则比较key，如果key相同则覆盖，不同则判断是否是否是一个树节点，如果是就调用`e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value)`将元素添加进入；如果不是，则遍历链表插入(链表尾部)
+    ![image-20230201153322604](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230201153322604.png)
 
-    - 注意事项1：直接覆盖则return，不会有后续操作
-
-    - 当链表长度大于8且HashMap数组长度大于64才会执行链表转红黑树，否则只是对数组扩容
+    - 
 
       ```java
-      //源码
+  //源码
       public V put(K key, V value) {
           return putVal(hash(key), key, value, false, true);
       }
@@ -306,15 +315,15 @@ updated: 2022-10-21 15:30:09
           return null;
       }
       ```
-
-  - 1.7中的put方法
+    
+  - 对比1.7中的put方法
 
     - ① 如果定位到的数组位置没有元素 就直接插入。
 
     - ② 如果定位到的数组位置有元素，遍历**以这个元素为头结点的链表**，依次和插入的 key 比较，如果 key 相同就直接覆盖，不同就**采用头插法插入元素**。
 
       ```java
-      //源码
+    //源码
       public V put(K key, V value)
           if (table == EMPTY_TABLE) {
           inflateTable(threshold);
@@ -338,12 +347,12 @@ updated: 2022-10-21 15:30:09
           return null;
       }
       ```
-
+  
   - get方法
-    //先算hash值，然后算出key在数组中的index下标，然后就要在数组中取值了（先判断第一个结点(链表/树))。如果相等，则返回，如果不相等则分两种情况：在树中get或者 **链表中get（需要遍历）**
-
+  //先算hash值，然后算出key在数组中的index下标，然后就要**在数组中取值**了（先判断第一个结点(链表/树))。如果相等，则返回，如果不相等则分两种情况：在（红黑树）树中get或者 **链表中get（需要遍历）**
+  
     ```java
-    public V get(Object key) {
+  public V get(Object key) {
         Node<K,V> e;
         return (e = getNode(hash(key), key)) == null ? null : e.value;
     }
@@ -372,12 +381,12 @@ updated: 2022-10-21 15:30:09
         return null;
     }
     ```
-
+  
   - resize方法
-    每次扩容，都会进行一次重新hash分配，且会遍历所有元素（非常耗时）
-
+  每次**扩容**，都会进行一次**重新hash分配**，且**会遍历所有元素**（非常耗时）
+  
     ```java
-    final Node<K,V>[] resize() {
+  final Node<K,V>[] resize() {
         Node<K,V>[] oldTab = table;
         int oldCap = (oldTab == null) ? 0 : oldTab.length;
         int oldThr = threshold;
@@ -458,7 +467,7 @@ updated: 2022-10-21 15:30:09
         return newTab;
     }
     ```
-
+  
     
 
 ## HashMap常用方法测试

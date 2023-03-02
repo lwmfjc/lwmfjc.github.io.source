@@ -1,5 +1,5 @@
 ---
-title: ThreadLocal详解
+title: ly0310lyThreadLocal详解
 description: ThreadLocal详解
 categories:
   - 学习
@@ -22,7 +22,7 @@ updated: 2022-12-05 17:31:52
 
 # ThreadLocal代码演示
 
-简单使用
+**简单使用**
 
 ```java
 public class ThreadLocalTest {
@@ -54,6 +54,52 @@ size: 0
 */
 ```
 
+**简单使用2**  
+
+```java
+
+@Data
+class LyTest{
+    private ThreadLocal<String> threadLocal=ThreadLocal.withInitial(()->{
+        return "hello";
+    });
+}
+public class ThreadLocalTest {
+
+    public static void main(String[] args) throws InterruptedException {
+        CountDownLatch countDownLatch=new CountDownLatch(2);
+
+
+        LyTest lyTest=new LyTest();
+        ThreadLocal<String> threadLocal = lyTest.getThreadLocal();
+        new Thread(()->{
+            String name = Thread.currentThread().getName();
+            threadLocal.set(name+ "-ly");
+            System.out.println(name+"：threadLocal当前值"+threadLocal.get());
+            countDownLatch.countDown();
+        },"线程1").start();
+        new Thread(()->{
+            String name = Thread.currentThread().getName();
+            threadLocal.set(name+ "-ly");
+            System.out.println(name+"：threadLocal当前值"+threadLocal.get());
+            countDownLatch.countDown();
+        },"线程2").start();
+        /*while (true){}*/
+        countDownLatch.await();
+        System.out.println(Thread.currentThread().getName()+"：threadLocal当前值"+threadLocal.get());
+
+
+    }
+}
+/*
+线程1：threadLocal当前值线程1-ly
+线程2：threadLocal当前值线程2-ly
+main：threadLocal当前值hello
+*/
+```
+
+
+
 **`ThreadLocal`**对象可以提供**线程局部变量**，**每个线程`Thread`拥有一份自己的副本变量**，多个线程互不干扰。
 
 > 回顾之前的知识点  
@@ -78,22 +124,26 @@ size: 0
 > ```
 >
 > - 如上，实际存取都是从Thread的threadLocals （ThreadLocalMap类）中，并不是存在ThreadLocal上，ThreadLocal用来传递了变量值，只是ThreadLocalMap的封装
-> - ThreadLocal类中通过Thread.currentThread()获取到当前线程对象后，直接通过getMap(Thread t) 可以访问到该线程的ThreadLocalMap对象
-> - 每个Thread中具备一个ThreadLocalMap，而ThreadLocalMap可以存储以ThreadLocal为key，Object对象为value的键值对
+> - ThreadLocal类中通过Thread.currentThread()获取到当前线程对象后，直接通过getMap(Thread t) 可以**访问到该线程的ThreadLocalMap对象**
+> - 每个Thread中具备一个ThreadLocalMap，而**ThreadLocalMap**可以**存储以ThreadLocal为key**，**Object对象为value**的**键值对**
 
 # ThreadLocal的数据结构
 
-由上面回顾的知识点可知，value实际上都是保存在**线程类(Thread类)中的某个属性(ThreadLocalMap类)**中
+由上面回顾的知识点可知，value实际上都是保存在**线程类(Thread类)中的某个属性(ThreadLocalMap类)**中  
+
+> ThreadLocalMap的底层是一个**数组**（**map的底层是数组**）
+
+
 ![image-20221206091635103](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221206091635103.png)
 
 `Thread`类有一个类型为**`ThreadLocal.ThreadLocalMap`**的实例变量`threadLocals`，也就是说每个线程有一个自己的`ThreadLocalMap`。
 ThreadLocalMap是一个静态内部类
 
-> 没有修饰符，为包可见。比如父类有一个protected修饰的方法f()，不同包下存在子类A和其他类X，在子类中可以访问方法f()，即使在其他类X创建子类A实例a1，也不能调用a1.f() 
+> 没有修饰符，为**包可见**。比如父类有一个protected修饰的方法f()，不同包下存在子类A和其他类X，在**子类中可以访问方法f()**，即使在**其他类X创建子类A实例a1**，也不能调用**a1.f()**--> **其他包不可见** 
 >
 > ![image-20221206092433827](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221206092433827.png)
 
-ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**，**value为代码中放入的值**，（看底层代码可知，实际key不是ThreadLocal本身，而是它的一个弱引用）
+ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**，**value为代码中放入的值**，（看底层代码可知，**实际key不是ThreadLocal本身，而是它的一个弱引用**）
 
 **★每个线程**在往`ThreadLocal`里放值的时候，都会往**自己的`ThreadLocalMap`**里存，读也是**以`ThreadLocal`作为引用，在自己的`map`里找对应的`key`**，从而实现了**线程隔离**。
 
@@ -144,6 +194,8 @@ ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**
 使用反射方式查看GC后ThreadLocal中的数据情况
 
 ```java
+import java.lang.reflect.Field;
+
 /*
 t.join()方法阻塞调用此方法的线程(calling thread)进入 TIMED_WAITING 状态，直到线程t完成，此线程再继续
 */
@@ -161,7 +213,8 @@ public class ThreadLocalDemo {
 
     private static void test(String s,boolean isGC)  {
         try {
-            new ThreadLocal<>().set(s);
+            //注意这一行,这个ThreadLocal对象是不存在任何强引用的
+            new ThreadLocal<>().set(s);//当前线程设置了一个值 s
             if (isGC) {
                 System.gc();
             }
@@ -169,15 +222,31 @@ public class ThreadLocalDemo {
             Class<? extends Thread> clz = t.getClass();
             Field field = clz.getDeclaredField("threadLocals");
             field.setAccessible(true);
-            Object ThreadLocalMap = field.get(t);
-            Class<?> tlmClass = ThreadLocalMap.getClass();
+            Object threadLocalMap = field.get(t);//得到当前线程的ThreadLocalMap
+            Class<?> tlmClass = threadLocalMap.getClass();
             Field tableField = tlmClass.getDeclaredField("table");
             tableField.setAccessible(true);
-            Object[] arr = (Object[]) tableField.get(ThreadLocalMap);
+            //注意：这里获取的是threadLocalMap内部的(维护)数组 private Entry[] table; 
+            Object[] arr = (Object[]) tableField.get(threadLocalMap);
             for (Object o : arr) {
                 if (o != null) {
                     Class<?> entryClass = o.getClass();
+                    /* Entry结构
+                    static class Entry extends WeakReference<ThreadLocal<?>> {
+                        //The value associated with this ThreadLocal. 
+                        Object value;
+
+                        Entry(ThreadLocal<?> k, Object v) {
+                            super(k);
+                            value = v;
+                        }
+        			}
+                    */
+                    //获取Entry中的值（键值对的“值”）
                     Field valueField = entryClass.getDeclaredField("value");
+                    //Entry extends WeakReference 
+                    //WeakReference<T> extends Reference<T> 
+                    //Reference 里面有一个属性 referent ，指向实际的对象，即key实际的对象
                     Field referenceField = entryClass.getSuperclass().getSuperclass().getDeclaredField("referent");
                     valueField.setAccessible(true);
                     referenceField.setAccessible(true);
@@ -193,8 +262,9 @@ public class ThreadLocalDemo {
 弱引用key:java.lang.ThreadLocal@433619b6,值:abc
 弱引用key:java.lang.ThreadLocal@418a15e3,值:java.lang.ref.SoftReference@bf97a12
 --gc后--
-弱引用key:null,值:def 
+弱引用key:null,值:def
 */
+
 
 ```
 
@@ -249,6 +319,7 @@ ThreadLocalMap实现了自己的hash算法来解决**散列表数组冲突**问�
 
 ```java
 //i为当前key在散列表中对应的数组下标位置
+//即(len-1)和和斐波那契数做 与运算
 int i = key.threadLocalHashCode & (len-1);
 ```
 
@@ -287,7 +358,7 @@ public class ThreadLocal<T> {
 
 
 
-★★  说明，下面的所有示例图中，**绿色块Entry**代表为**正常数据**，**灰色块**代表Entry的**key为null**，已被垃圾回收。白色块代表Entry为null（或者说数组那个位置为null(没有指向)）
+★★  说明，下面的所有示例图中，**绿色块Entry**代表为**正常数据**，**灰色块**代表Entry的**key为null**，已被垃圾回收。白色块代表**Entry为null**（或者说**数组那个位置为null(没有指向)**）
 
 # ThreadLocalMap Hash冲突
 
@@ -317,7 +388,7 @@ ThreadLocalMap.set() 原理图解
 
 3. 槽位数据不为空，往后**遍历**过程中，在找到Entry为null的槽位之前，**没有遇到过期的Entry**
    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/11.bb4e1504.png)
-   遍历散列数组的过程中，线性往后查找，如果找到Entry为null的槽位则将数据放入槽位中；或者往后遍历过程中遇到key值相等的数据则更新
+   遍历散列数组的过程中，**线性往后查找**，如果找到Entry为null的槽位则将数据放入槽位中；或者往后遍历过程中遇到key值相等的数据则更新
 
 4. 槽位数据不为空，在找到Entry为null的槽位之前，遇到了过期的Entry，如下图
    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/12.7f276023.png)

@@ -1,5 +1,5 @@
 ---
-title: completablefuture-intro
+title: ly0311lycompletablefuture-intro
 description: completablefuture-intro
 categories:
   - 学习
@@ -13,7 +13,7 @@ updated: 2022-12-06 17:13:41
 
 > 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
 
-Java8被引入的一个非常有用恶用于异步编程的类
+Java8被引入的一个非常有用的用于异步编程的类【**没看**】
 
 # 简单介绍
 
@@ -44,10 +44,10 @@ CompletionStage<T> 接口中的方法比较多，CompoletableFuture的函数式�
 
 ## 创建CompletableFuture
 
-两种方法：new或静态方法
+两种方法：new关键字或 CompletableFuture自带的静态工厂方法 ```runAysnc()```或```supplyAsync()```
 
 1. 通过new关键字
-   这个方式，可以看作是将CompletableFuture当作Future来使用，如下：  
+   这个方式，可以看作是将**CompletableFuture当作Future**来使用，如下：  
 
    > 我们通过创建了一个结果值类型为 `RpcResponse<Object>` 的 `CompletableFuture`，你可以把 `resultFuture` 看作是异步运算结果的载体
    >
@@ -121,6 +121,66 @@ public class CompletableFutureTest {
    // 使用自定义线程池(推荐)
 static CompletableFuture<Void> runAsync(Runnable runnable, Executor executor);
    ```
+
+   ```java
+//简单使用
+public class CompletableFutureTest {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        CompletableFuture<String> completableFuture = CompletableFuture.supplyAsync(() -> {
+            //3s后返回结果
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "abc";
+        });
+        //这里会被阻塞
+        String s = completableFuture.get();
+        System.out.println(s); 
+    }
+}
+//例子2  
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
+public class CompletableFutureTest {
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
+        CountDownLatch countDownLatch=new CountDownLatch(2);
+        //相当于使用了一个线程池，开启线程，提交了任务
+        CompletableFuture<Void> a = CompletableFuture.runAsync(() -> {
+            System.out.println("a");
+            //执行了3s的任务
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            countDownLatch.countDown();
+        });
+        CompletableFuture<Void> b = CompletableFuture.runAsync(() -> {
+            System.out.println("b");
+            //执行了3s的任务
+            try {
+                TimeUnit.SECONDS.sleep(2);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            countDownLatch.countDown();
+        });
+        countDownLatch.await();
+        System.out.println("执行完毕");//3s后会执行
+
+    }
+}
+   ```
+
+
+
+
 
    > 备注，自定义线程池使用：  
    > ![image-20221206220534852](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221206220534852.png)
@@ -458,7 +518,7 @@ completableFuture.get(); // ExecutionException
 
 ## 组合CompletableFuture
 
-使用thenCompose() 按顺序链接两个CompletableFuture对象  
+使用thenCompose() 按顺序连接两个CompletableFuture对象  
 
 ```java
 public <U> CompletableFuture<U> thenCompose(
@@ -504,6 +564,39 @@ assertEquals("hello!world!nice!", completableFuture.get());
 
 - `thenCompose()` 可以两个 `CompletableFuture` 对象，并将前一个任务的返回结果作为下一个任务的参数，它们之间存在着先后顺序。
 - `thenCombine()` 会在两个任务都执行完成后，把两个任务的结果合并。两个任务是并行执行的，它们之间并没有先后依赖顺序。
+
+```java
+/*
+结果是有顺序的，但是执行的过程是无序的
+*/
+CompletableFuture<String> completableFuture
+                = CompletableFuture.supplyAsync(() -> {
+            System.out.println("执行了第1个");
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("第1个执行结束啦");
+            return "hello!";
+        })
+                .thenCombine(CompletableFuture.supplyAsync(
+                        () -> {
+                            System.out.println("执行了第2个");
+                            System.out.println("第2个执行结束啦");
+                            return "world!";
+                        }), (s1, s2) -> s1 + s2);
+        System.out.println(completableFuture.get());
+/*
+执行了第1个
+执行了第2个
+第2个执行结束啦
+ 第1个执行结束啦
+hello!world!
+*/
+```
+
+
 
 ## 并行运行多个CompletableFuture
 
@@ -561,6 +654,46 @@ efg
 future1 done...
 abc
 */
+```
+
+例子2  
+
+```java
+CompletableFuture<Object> a = CompletableFuture.supplyAsync(() -> {
+            System.out.println("a");
+            //执行了3s的任务
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "a-hello";
+        });
+        CompletableFuture<Object> b = CompletableFuture.supplyAsync(() -> {
+            System.out.println("b");
+            //执行了3s的任务
+            try {
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return "b-hello";
+        });
+        
+        /*
+        //会等两个任务都执行完才继续
+        CompletableFuture<Void> voidCompletableFuture = CompletableFuture.allOf(a, b); 
+        voidCompletableFuture.join();
+        //停顿10s
+        System.out.println("主线程继续执行");*/
+        
+        //任何一个任务执行完就会继续执行
+        CompletableFuture<Object> objectCompletableFuture = CompletableFuture.anyOf(a, b);
+        objectCompletableFuture.join();
+        //会得到最快返回值的那个CompletableFuture的值 
+        System.out.println(objectCompletableFuture.get());
+        //停顿3s
+        System.out.println("主线程继续执行");
 ```
 
 

@@ -1,5 +1,5 @@
 ---
-title: big_decimal
+title: ly0009ly-big_decimal
 description: big_decimal
 categories:
   - 学习
@@ -25,7 +25,7 @@ System.out.println(a == b);// false
 
 > 为什么会有精度丢失的风险 
 >
-> 这个和计算机保存浮点数的机制有很大关系。我们知道计算机是二进制的，而且计算机在表示一个数字时，宽度是有限的，无限循环的小数存储在计算机时，只能被截断，所以就会导致小数精度发生损失的情况。这也就是解释了为什么浮点数没有办法用二进制精确表示
+> 这个和计算机保存浮点数的机制有很大关系。我们知道计算机是**二进制**的，而且计算机在**表示一个数字时，宽度是有限**的，无限循环的小数存储在计算机时，**只能被截断**，所以就会导致**小数精度发生损失**的情况。这也就是解释了为什么浮点数没有办法用二进制精确表示
 
 使用BigDecimal来定义浮点数的值，然后再进行浮点数的运算操作即可
 
@@ -53,19 +53,19 @@ System.out.println(a == b);// false
   public enum RoundingMode {
      // 2.5 -> 3 , 1.6 -> 2
      // -1.6 -> -2 , -2.5 -> -3
-  			 UP(BigDecimal.ROUND_UP),
+  			 UP(BigDecimal.ROUND_UP), //数轴上靠近哪个取哪个
      // 2.5 -> 2 , 1.6 -> 1
      // -1.6 -> -1 , -2.5 -> -2
-  			 DOWN(BigDecimal.ROUND_DOWN),
+  			 DOWN(BigDecimal.ROUND_DOWN), //数轴上离哪个远取哪个
   			 // 2.5 -> 3 , 1.6 -> 2
      // -1.6 -> -1 , -2.5 -> -2
   			 CEILING(BigDecimal.ROUND_CEILING),
   			 // 2.5 -> 2 , 1.6 -> 1
      // -1.6 -> -2 , -2.5 -> -3
-  			 FLOOR(BigDecimal.ROUND_FLOOR),
+  			 FLOOR(BigDecimal.ROUND_FLOOR), ////数轴上 正数：远离哪个取哪个  负数：靠近哪个取哪个
      	// 2.5 -> 3 , 1.6 -> 2
      // -1.6 -> -2 , -2.5 -> -3
-  			 HALF_UP(BigDecimal.ROUND_HALF_UP),
+  			 HALF_UP(BigDecimal.ROUND_HALF_UP),// 数轴上 正数：靠近哪个取哪个  负数：远离哪个取哪个
      //......
   }
   ```

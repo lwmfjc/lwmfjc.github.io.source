@@ -1,5 +1,5 @@
 ---
-title: java-reflex
+title: ly0007ly-java-reflex
 description: java-reflex
 categories:
   - 学习
@@ -16,7 +16,7 @@ updated: 2022-10-10 11:27:04
 
 ### 何为反射
 
-赋予了我们在运行时分析类以及执行类中方法的能力；运行中获取任意一个类的所有属性和方法，以及调用这些方法和属性
+赋予了我们在**运行时分析类**以及**执行类中方法**的能力；运行中**获取任意一个类的所有属性**和**方法**，以及**调用这些方法**和**属性**
 
 ### 应用场景
 
@@ -46,10 +46,11 @@ Spring/Spring Boot 、MyBatis等框架都用了大量反射机制，以下为
       ```
 
   - 代理类 及main方法使用
-
+  ```[ˌɪnvəˈkeɪʃn] 祈祷```
+    
     ```java
-      package proxy;
-
+    package proxy;
+    
       import java.lang.reflect.InvocationHandler;
       import java.lang.reflect.Method;
       //JDK动态代理代理类 
@@ -69,12 +70,12 @@ Spring/Spring Boot 、MyBatis等框架都用了大量反射机制，以下为
           }
       }
       //main方法使用
-      package proxy;
-
-      import java.lang.reflect.Proxy;
-
-      public class main {
-
+    package proxy;
+    
+    import java.lang.reflect.Proxy;
+    
+    public class main {
+    
           public static void main(String[] args) {
               CarImpl carImpl = new CarImpl();
               CarHandler carHandler = new CarHandler(carImpl);
@@ -107,6 +108,7 @@ Spring/Spring Boot 、MyBatis等框架都用了大量反射机制，以下为
     ```
 
   - cglib代理类
+    ```[ˌɪntəˈseptə(r)]  interceptor 拦截```
 
     ```java
     package proxy;
@@ -169,7 +171,7 @@ Spring/Spring Boot 、MyBatis等框架都用了大量反射机制，以下为
     事物结束
     ```
 
-- 我们可以基于反射分析类，然后获取到类/属性/方法/方法参数上的注解，之后做进一步的处理
+- 我们可以**基于反射分析**类，然后**获取到类/属性/方法/方法参数**上的注解，之后做进一步的处理
 
 - 反射机制的优缺点
 
@@ -229,6 +231,12 @@ Spring/Spring Boot 、MyBatis等框架都用了大量反射机制，以下为
             Class<?> targetClass = Class.forName("cn.javaguide.TargetObject");
             TargetObject targetObject = (TargetObject) targetClass.newInstance();
             /**
+             (Car)Proxy.newProxyInstance(
+                      main.class.getClassLoader(), //第一个参数，获取ClassLoader
+                      carImpl.getClass().getInterfaces(), //第二个参数，获取被代理类的接口
+                      carHandler);
+            **/
+            /**
              * 获取 TargetObject 类中定义的所有方法
              */
             Method[] methods = targetClass.getDeclaredMethods();
@@ -261,12 +269,12 @@ Spring/Spring Boot 、MyBatis等框架都用了大量反射机制，以下为
             privateMethod.invoke(targetObject);
         }
     }
-    //输出
+  //输出
     publicMethod
     privateMethod
     I love JavaGuide
     value is JavaGuide
     ```
-
+  
   - 
 

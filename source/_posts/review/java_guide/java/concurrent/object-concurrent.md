@@ -1,5 +1,5 @@
 ---
-title: 对象内存布局和对象头
+title: ly03121ly对象内存布局和对象头
 description: 对象内存布局和对象头
 categories:
   - 学习
@@ -11,13 +11,13 @@ date: 2022-10-30 16:56:16
 updated: 2022-10-30 18:56:16
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
+
 
 ## 对象布局
 
-- heap （where）: new (eden ,s0 ,s1) ,old, metaspace
+- **heap** （**where**）: **new (eden ,s0 ,s1) ,old, metaspace**
 
-- 对象的构成元素（that）
+- 对象的构成元素（what）
   HotSpot虚拟机里，对象在**堆内存中的存储布局**分为三个部分
   ![image-20221030175640211](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030175640211.png)
   - 对象头（Header）
@@ -35,7 +35,7 @@ updated: 2022-10-30 18:56:16
     > 3. synchronized(o){ }  //对象被锁了多少次（可重入锁）
     > 4. System.gc(); //躲过了几次gc（次数）
 
-    上面这些，哈希码、gc标记、gc次数、同步锁标记、偏向锁持有者，都保存在**对象标记**里面
+    上面这些，**哈希码**、**gc标记**、**gc次数**、**同步锁标记**、**偏向锁持有者**，都保存在**对象标记**里面
     ![image-20221030175315204](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030175315204.png)
 
     1. 如果在64位系统中，对象头中，**mark word（对象标记）**占用8个字节（64位）；**class pointer（类元信息）**占用8个字节，总共16字节（忽略压缩指针）
@@ -54,7 +54,7 @@ updated: 2022-10-30 18:56:16
   
 - 对齐填充
   
-- 填充到长度为8字节，因为虚拟机要求对象起始地址必须是8字节的整数倍（对齐填充不一定存在）
+- 填充到长度为8字节，因为虚拟机要求**对象起始地址必须是8字节的整数倍**（对齐填充不一定存在）
   
 - 示例
 
@@ -190,7 +190,7 @@ System.out.println(VM.current().objectAlignment());
     ![image-20221030184523659](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030184523659.png)
     其中有一个, **-XX:+UseCompressedClassPointers** ，即开启了**类型指针压缩**，只需要**4字节**
 
-  - 当使用了类型指针压缩（默认）时，一个无任何属性对象是 8字节(markWord) + 4字节（classPointer) + 4字节(对齐填充) = 16字节
+  - 当使用了**类型指针压缩**（默认）时，一个无任何属性对象是 **8字节(markWord)** + **4字节（classPointer)** + **4字节(对齐填充)** = **16字节**
 
   - 下面代码，使用了 ```-XX:-UseCompressedClassPointers```进行关闭压缩指针
     一个无任何属性对象是 8字节(markWord) + 8字节（classPointer) = 16字节

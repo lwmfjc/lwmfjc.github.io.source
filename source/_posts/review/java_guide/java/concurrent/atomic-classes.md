@@ -1,5 +1,5 @@
 ---
-title: Atomic原子类介绍
+title: ly0309lyAtomic原子类介绍
 description: Atomic原子类介绍
 categories:
   - 学习
@@ -12,6 +12,123 @@ updated: 2022-12-05 09:24:36
 ---
 
 > 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者! 
+
+文章开头先用例子介绍几种类型的api使用  
+
+```java
+package com.aqs;
+
+import lombok.*;
+
+import java.util.concurrent.atomic.*;
+
+@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@ToString
+class User {
+    private String name;
+    //如果要为atomicReferenceFieldUpdater服务,必须加上volatile修饰
+    public volatile Integer age;
+}
+
+public class AtomicTest {
+    public static void main(String[] args) {
+        System.out.println("原子更新数值---------------");
+        AtomicInteger atomicInteger = new AtomicInteger();
+        int i1 = atomicInteger.incrementAndGet();
+        System.out.println("原子增加后为" + i1);
+        System.out.println("原子更新数组---------------");
+
+        int[] a = new int[3];
+        AtomicIntegerArray atomicIntegerArray = new AtomicIntegerArray(a);
+
+        int i = atomicIntegerArray.addAndGet(1, 3);
+        System.out.println("数组元素[" + 1 + "]增加后为" + i);
+        System.out.println("数组为" + atomicIntegerArray);
+        System.out.println("原子更新对象---------------");
+        User user1 = new User("ly1", 10);
+        User user2 = new User("ly2", 20);
+        User user3 = new User("ly3", 30);
+        AtomicReference<User> atomicReference = new AtomicReference<>(user1);
+        boolean b = atomicReference.compareAndSet(user2, user3);
+        System.out.println("更新" + (b ? "成功" : "失败"));
+        System.out.println("引用里值为"+atomicReference.get());
+        boolean b1 = atomicReference.compareAndSet(user1, user3);
+        System.out.println("更新" + (b1 ? "成功" : "失败"));
+        System.out.println("引用里值为"+atomicReference.get());
+        System.out.println("原子更新对象属性---------------");
+        User user4=new User("ly4",40);
+        AtomicReferenceFieldUpdater<User, Integer> atomicReferenceFieldUpdater = AtomicReferenceFieldUpdater.newUpdater(User.class, Integer.class, "age");
+        boolean b2 = atomicReferenceFieldUpdater.compareAndSet(user4, 41, 400);
+        System.out.println("更新"+(b2?"成功":"失败"));
+        System.out.println("引用里user4值为"+atomicReferenceFieldUpdater.get(user4));
+        boolean b3 = atomicReferenceFieldUpdater.compareAndSet(user4, 40, 400);
+        System.out.println("更新"+(b3?"成功":"失败"));
+        System.out.println("引用里user4值为"+atomicReferenceFieldUpdater.get(user4));
+        System.out.println("其他使用---------------");
+        User user5=new User("ly5",50);
+        User user6=new User("ly6",60);
+        User user7=new User("ly7",70);
+        AtomicMarkableReference<User> userAtomicMarkableReference=new AtomicMarkableReference<>(user5,true);
+        boolean b4 = userAtomicMarkableReference.weakCompareAndSet(user6, user7, true, false);
+        System.out.println("更新"+(b4?"成功":"失败"));
+        System.out.println("引用里值为"+userAtomicMarkableReference.getReference());
+        boolean b5 = userAtomicMarkableReference.weakCompareAndSet(user5, user7, false, true);
+        System.out.println("更新"+(b5?"成功":"失败"));
+        System.out.println("引用里值为"+userAtomicMarkableReference.getReference());
+        boolean b6 = userAtomicMarkableReference.weakCompareAndSet(user5, user7, true, false);
+        System.out.println("更新"+(b6?"成功":"失败"));
+        System.out.println("引用里值为"+userAtomicMarkableReference.getReference());
+        System.out.println("AtomicStampedReference使用---------------");
+        User user80=new User("ly8",80);
+        User user90=new User("ly9",90);
+        User user100=new User("ly10",100);
+        AtomicStampedReference<User> userAtomicStampedReference=new AtomicStampedReference<>(user80,80);//版本80
+        //...每次更改stamp都加1
+        //这里假设中途被改成81了
+        boolean b7 = userAtomicStampedReference.compareAndSet(user80, user100,81,90);
+        System.out.println("更新"+(b7?"成功":"失败"));
+        System.out.println("引用里值为"+userAtomicStampedReference.getReference());
+        boolean b8 = userAtomicStampedReference.compareAndSet(user80, user100,80,90);
+        System.out.println("更新"+(b8?"成功":"失败"));
+        System.out.println("引用里值为"+userAtomicStampedReference.getReference());
+    }
+}
+/*
+原子更新数值---------------
+原子增加后为1
+原子更新数组---------------
+数组元素[1]增加后为3
+数组为[0, 3, 0]
+原子更新对象---------------
+更新失败
+引用里值为User(name=ly1, age=10)
+更新成功
+引用里值为User(name=ly3, age=30)
+原子更新对象属性---------------
+更新失败
+引用里user4值为40
+更新成功
+引用里user4值为400
+其他使用---------------
+更新失败
+引用里值为User(name=ly5, age=50)
+更新失败
+引用里值为User(name=ly5, age=50)
+更新成功
+引用里值为User(name=ly7, age=70)
+AtomicStampedReference使用---------------
+更新失败
+引用里值为User(name=ly8, age=80)
+更新成功
+引用里值为User(name=ly10, age=100)
+
+Process finished with exit code 0
+
+*/
+```
 
 # 原子类介绍
 
@@ -45,8 +162,8 @@ updated: 2022-12-05 09:24:36
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                atomicMarkableReference.compareAndSet(100, 101, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());
-                atomicMarkableReference.compareAndSet(101, 100, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());
+                atomicMarkableReference.compareAndSet(100, 101, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());//根据期望值100和false 修改为101和true
+                atomicMarkableReference.compareAndSet(101, 100, atomicMarkableReference.isMarked(), !atomicMarkableReference.isMarked());//根据期望值101和true 修改为100和false
             });
     
             Thread refT2 = new Thread(() -> {
@@ -60,7 +177,7 @@ updated: 2022-12-05 09:24:36
                 }
                 boolean c3 = atomicMarkableReference.compareAndSet(100, 101, marked, !marked);
                 System.out.println(c3); // 返回true,实际应该返回false
-            });
+            }); //导致了ABA问题
     
             refT1.start();
             refT2.start();
@@ -185,62 +302,64 @@ updated: 2022-12-05 09:24:36
   } 
   ```
 
-- 基本数据类型原子类的优势
 
-  - 多线程环境不使用原子类保证线程安全（基本数据类型）
+## 基本数据类型原子类的优势
 
-    ```java
-    class Test {
-            private volatile int count = 0;
-            //若要线程安全执行执行count++，需要加锁
-            public synchronized void increment() {
-                      count++;
-            }
-    
-            public int getCount() {
-                      return count;
-            }
-    } 
-    ```
+- 多线程环境不使用原子类保证线程安全（基本数据类型）
 
-  - 多线程环境使用原子类保证线程安全(基本数据类型)  
+  ```java
+  class Test {
+          private volatile int count = 0;
+          //若要线程安全执行执行count++，需要加锁
+          public synchronized void increment() {
+                    count++;
+          }
+  
+          public int getCount() {
+                    return count;
+          }
+  } 
+  ```
 
-    ```java
-    class Test2 {
-            private AtomicInteger count = new AtomicInteger();
-        
-    	    //使用AtomicInteger之后，不需要加锁，也可以实现线程安全。
-            public void increment() {
-                      count.incrementAndGet();
-            }    
-            public int getCount() {
-                    return count.get();
-            }
-    } 
-    ```
+- 多线程环境使用原子类保证线程安全(基本数据类型)  
 
-  - AtomicInteger线程安全原理简单分析
-    部分源码：  
+  ```java
+  class Test2 {
+          private AtomicInteger count = new AtomicInteger();
+      
+  	    //使用AtomicInteger之后，不需要加锁，也可以实现线程安全。
+          public void increment() {
+                    count.incrementAndGet();
+          }    
+          public int getCount() {
+                  return count.get();
+          }
+  } 
+  ```
 
-    ```java
-    / setup to use Unsafe.compareAndSwapInt for updates（更新操作时提供“比较并替换”的作用）
-        private static final Unsafe unsafe = Unsafe.getUnsafe();
-        private static final long valueOffset;
-    
-        static {
-            try {
-                valueOffset = unsafe.objectFieldOffset
-                    (AtomicInteger.class.getDeclaredField("value"));
-            } catch (Exception ex) { throw new Error(ex); }
-        }
-    
-        private volatile int value; 
-    ```
 
-    1. AtomicInteger类主要利用CAS（compare and swap) + volatile 和 native方法来保证原子操作，从而避免synchronized高开销，提高执行效率
-    2. CAS的原理是拿期望的值和原本的值做比较，如果相同则更新成新值
-       UnSafe类的objectFieldOffset()方法是一个本地方法，这个方法用来拿到**"原来的值"的内存地址**
-    3. value是一个volatile变量，在内存中可见，因此JVM可以保证任何时刻任何线程总能拿到该变量的最新值
+## AtomicInteger线程安全原理简单分析
+部分源码：  
+
+```java
+/ setup to use Unsafe.compareAndSwapInt for updates（更新操作时提供“比较并替换”的作用）
+    private static final Unsafe unsafe = Unsafe.getUnsafe();
+    private static final long valueOffset;
+
+    static {
+        try {
+            valueOffset = unsafe.objectFieldOffset
+                (AtomicInteger.class.getDeclaredField("value"));
+        } catch (Exception ex) { throw new Error(ex); }
+    }
+
+    private volatile int value; 
+```
+
+1. AtomicInteger类主要利用**CAS（compare and swap)** + **volatile** 和 **native**方法来保证原子操作，从而避免synchronized高开销，提高执行效率
+2. CAS的原理是**拿期望的值**和**原本的值**做比较，如果相同则更新成新值
+   UnSafe类的objectFieldOffset()方法是一个本地方法，这个方法用来拿到**"原来的值"的内存地址**
+3. value是一个volatile变量，在内存中可见，因此JVM可以保证**任何时刻任何线程总能拿到该变量的最新值**
 
 # 数组类型原子类
 
@@ -292,7 +411,9 @@ public class AtomicIntegerArrayTest {
 
 基本类型原子类只能更新一个变量，如果需要**原子更新多个变量**，则需要使用**引用类型原子类**
 
-AtomicReference 引用类型原子类；AtomicStampedReference 原子更新带有版本号的引用类型，该类将整数值与引用关联起来，可用于解决**原子的更新数据和数据的版本号**，该类将boolean标记与引用关联**（注：无法解决ABA问题）**  
+**AtomicReference** 引用类型原子类；  
+**AtomicStampedReference** 原子更新带有**版本号**的引用类型，该类将整数值与引用关联起来，可用于解决**原子的更新数据和数据的版本号**，可以解决使用CAS进行原子更新时可能出现的ABA问题；  
+**AtomicMarkableReference**：原子更新带有**标记**的引用类型。该类将boolean标记与引用关联**（注：无法解决ABA问题）**  
 
 下面以AtomicReference为例介绍  
 
@@ -306,7 +427,7 @@ public class AtomicReferenceTest {
 		Person person = new Person("SnailClimb", 22);
 		ar.set(person);
 		Person updatePerson = new Person("Daisy", 20);
-		ar.compareAndSet(person, updatePerson);
+		ar.compareAndSet(person, updatePerson);//如果期望值为person，则替换成updatePerson
 
 		System.out.println(ar.get().getName());
 		System.out.println(ar.get().getAge());
@@ -349,7 +470,7 @@ class Person {
 > 20
 > ```
 
-AtomicStampedReference类使用示例  
+AtomicStampedReference类使用示例   
 
 ```java
 import java.util.concurrent.atomic.AtomicStampedReference;
@@ -470,7 +591,7 @@ currentValue=666, currentStamp=999, wCasResult=true
 
 原子地更新对象属性需要两步骤：  
 
-1. 对象的属性修改类型原子类都是抽象类，所以每次使用都必须使用静态方法newUpdater()创建一个更新器，且**设置**想要更新的**类**和**属性**
+1. 对象的属性修改类型原子类都是抽象类，所以每次使用都**必须使用静态方法newUpdater()创建一个更新器**，且**设置**想要更新的**类**和**属性**
 2. 更新的对象属性必须使用**public volatile**修饰符
 
 下面以AtomicIntegerFieldUpdater为例子来介绍  

@@ -1,5 +1,5 @@
 ---
-title: io基础
+title: ly0201lyio基础
 description: io基础
 categories:
   - 学习
@@ -16,17 +16,17 @@ updated: 2022-10-24 23:39:12
 
 ## 简介
 
-- IO，即Input/Output，输入和输出，输入就是数据输入到计算机内存；输出则是输出到外部存储（如数据库、文件、远程主机）
+- IO，即Input/Output，输入和输出，输入就是**数据输入到计算机内存**；输出则是**输出到外部存储**（如**数据库**、**文件**、**远程主机**）
 
-- 根据数据处理方式，又分为字节流和字符流
+- 根据数据处理方式，又分为**字节流**和**字符流**
 - 基类
-  - 字节输入流 InputStream，字符输入流 Reader
-  - 字节输出流 OutputStream, 字符输出流 Writer 
+  - 字节输入流 **InputStream**，字符输入流 **Reader**
+  - 字节输出流 **OutputStream**, 字符输出流 **Writer** 
 
 ## 字节流
 
 - 字节输入流 InputStream
-  InputStream用于从源头（通常是文件）读取数据（字节信息）到内存中，java.io.InputStream抽象类是**所有字节输入流的父类**
+  InputStream用于从源头（通常是文件）**读取数据（字节信息）到内存**中，java.io.InputStream抽象类是**所有字节输入流的父类**
 
   - 常用方法
 
@@ -41,9 +41,9 @@ updated: 2022-10-24 23:39:12
 
     > - `readAllBytes()` ：读取输入流中的所有字节，返回字节数组。
     > - `readNBytes(byte[] b, int off, int len)` ：阻塞直到读取 `len` 个字节。
-    > - `transferTo(OutputStream out)` ： 将所有字节从一个输入流传递到一个输出流。
+    > - `transferTo(OutputStream out)` ： 将所有字节**从一个输入流传递到一个输出流**。
 
-  - FileInputStream --> 字节输入流对象，可直接指定文件路径：用来读取单字节数据/或读取至字节数组中，示例如下：  
+  - FileInputStream --> **字节输入流**对象，可直接**指定文件路径**：用来读取单字节数据/或读取至字节数组中，示例如下：  
     input.txt中的字符为LLJavaGuide
 
     ```java
@@ -67,7 +67,7 @@ updated: 2022-10-24 23:39:12
     **/
     ```
 
-    一般不会单独使用FileInputStream，而是配合BufferdInputStream(字节缓冲输入流)，下面代码转为String 较为常见：  
+    一般不会单独使用FileInputStream，而是**配合BufferdInputStream(字节缓冲输入流)**，下面代码转为String 较为常见：  
 
     ```java
     // 新建一个 BufferedInputStream 对象
@@ -77,7 +77,7 @@ updated: 2022-10-24 23:39:12
     System.out.println(result);
     ```
 
-  - DataInputStream 用于读取指定类型数据，不能单独使用，必须结合FileInputStream 
+  - DataInputStream 用于**读取指定类型数据**，不能单独使用，必须结合FileInputStream 
 
     ```java
     FileInputStream fileInputStream = new FileInputStream("input.txt");
@@ -89,7 +89,7 @@ updated: 2022-10-24 23:39:12
     dataInputStream.readUTF();
     ```
 
-  - ObjectInputStream 用于从输入流读取Java对象（一般是被反序列化到文件中，或者其他介质的数据），ObjectOutputStream用于将对象写入到输出流（[将对象]序列化）
+  - ObjectInputStream 用于从**输入流读取Java对象（一般是被反序列化到文件中，或者其他介质的数据）**，ObjectOutputStream用于**将对象写入到输出流**（[将对象]序列化）
 
     ```java
     ObjectInputStream input = new ObjectInputStream(new FileInputStream("object.data"));
@@ -97,7 +97,7 @@ updated: 2022-10-24 23:39:12
     input.close();
     ```
 
-    用于序列化和反序列化的类必须实现Serializable接口，不想被序列化的属性用```transizent```修饰
+    用于序列化和反序列化的类**必须实现Serializable**接口，不想被序列化的属性用**```transizent```**修饰
 
 - 字节输出流 OutputStream
 
@@ -132,7 +132,7 @@ updated: 2022-10-24 23:39:12
     BufferedOutputStream bos = new BufferedOutputStream(fileOutputStream)
 ```
 
-- DataOutputStream用于写入指定类型数据，不能单独使用，必须结合FileOutputStream
+- DataOutputStream用于**写入指定类型**数据，不能单独使用，必须**结合FileOutputStream**
 
   ```java
   // 输出流
@@ -143,7 +143,7 @@ updated: 2022-10-24 23:39:12
   dataOutputStream.writeByte(1);
   ```
 
-  - ObjectInputStream用于从输入流中读取**Java对象**（ObjectInputStream，反序列化）；ObjectOutputStream用于将对象写入到输出流（ObjectOutputStream，序列化）
+  - ObjectInputStream用于从输入流中读取**Java对象**（ObjectInputStream，反序列化）；ObjectOutputStream用于**将对象写入到输出流**（ObjectOutputStream，序列化）
 
     ```java
     ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream("file.txt")
@@ -154,11 +154,11 @@ updated: 2022-10-24 23:39:12
 ## 字符流
 
 - 简介
-  文件读写或者网络发送接收，信息的最小存储单元都是字节，为什么I/O流操作要分为字节流操作和字符流操作呢
+  文件读写或者网络发送接收，信息的最小存储单元都是字节，**为什么**I/O流操作要分为**字节流**操作和**字符流**操作呢
 
-  - 字符流是由Java虚拟机将字节转换得到的，过程相对耗时
+  - 字符流是由**Java虚拟机将字节转换得到**的，过程相对耗时
 
-  - 如果不知道编码类型，容易出现乱码
+  - **如果不知道编码类型，容易出现乱码**
     如上面的代码，将文件内容改为 ： 你好，我是Guide
 
     ```java
@@ -182,12 +182,15 @@ updated: 2022-10-24 23:39:12
     **/
     ```
 
-    为了解决乱码问题，I/O流提供了一个直接操作字符的接口，方便对字符进行流操作；但如果音频文件、图片等媒体文件用字节流比较好，涉及字符的话使用字符流
+    为了解决乱码问题，I/O流提供了一个**直接操作字符的接口**，方便对字符进行流操作；但如果音频文件、图片等媒体文件用字节流比较好，涉及字符的话使用字符流
 
     > ★ 重要：
     >
-    > 字符流默认采用的是 `Unicode` 编码，我们可以通过构造方法自定义编码。顺便分享一下之前遇到的笔试题：常用字符编码所占字节数？`utf8` :英文占 1 字节，中文占 3 字节，`unicode`：任何字符都占 2 个字节，`gbk`：英文占 1 字节，中文占 2 字节。
-
+    > 字符流默认采用的是 `Unicode` 编码，我们可以通过构造方法自定义编码。顺便分享一下之前遇到的笔试题：常用字符编码所占字节数？  
+  > `utf8` :英文占 1 字节，中文占 3 字节，  
+    > `unicode`：任何字符都占 2 个字节，  
+    > `gbk`：英文占 1 字节，中文占 2 字节。
+  
 - Reader（字符输入流）
 
   - 用于从源头（通常是文件）读取数据（字符信息）到内存中，java.io.Reader抽象类是**所有字符输入流的父类**
@@ -247,7 +250,7 @@ updated: 2022-10-24 23:39:12
   > - `flush()` ：刷新此输出流并强制写出所有缓冲的输出字符。//相对于Reader增加的
   > - `close()`:关闭输出流释放相关的系统资源。
 
-  - OutputStreamWriter是**字符流转换为字节流**的桥梁（注意，这里没有错），其子类FileWriter是基于该基础上的封装，可以直接将字符写入到文件
+  - OutputStreamWriter是**字符流转换为字节流**的桥梁（注意，这里没有错），其子类**FileWriter是基于该基础上的封装**，可以直接将字符写入到文件
 
     ```java
     // 字符流转换为字节流的桥梁
@@ -273,8 +276,8 @@ updated: 2022-10-24 23:39:12
 
 - InputStreamWriter和OutputStreamWriter 比较
 
-  - 前者InputStreamWriter，是需要从文件中读数据出来，而文件是通过二进制（字节）保存的，所以InputStreamWriter是将（看不懂的）字节流转换为（看得懂的）字符流
-  - 后者OutputStreamWriter，是需要将（看得懂的）字符流转换为（看不懂的）字节流并保存到介质中
+  - 前者InputStreamWriter，是需要**从文件中读数据出来（读到内存中）**，而文件是通过二进制（字节）保存的，所以InputStreamWriter是**将（看不懂的）字节流转换为（看得懂的）字符流**
+  - 后者OutputStreamWriter，是需要**将（看得懂的）字符流转换为（看不懂的）字节流（然后从内存读出）**并保存到介质中
 
 ## 字节缓冲流
 
@@ -291,7 +294,7 @@ updated: 2022-10-24 23:39:12
     BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream("input.txt"));
     ```
 
-  - 字节流和字节缓冲流的性能差别主要体现在：当使用两者时都调用的是write(int b)和read() 这两个一次只读取一个字节的方法的时候，由于字节缓冲流内部有缓冲区（字节数组），因此字节缓冲流会将读取到的字节存放在缓存区，大幅减少IO次数，提高读取效率 
+  - **字节流**和**字节缓冲流**的性能差别主要体现在：当使用两者时都调用的是write(int b)和read() 这两个一次只读取一个字节的方法的时候，由于**字节缓冲流内部有缓冲区（字节数组）**，因此字节缓冲流会**将读取到的字节存放在缓存区**，大幅减少IO次数，提高读取效率 
 
     > 对比：复制524.9mb文件，缓冲流15s，普通字节流2555s(30min)
     >
@@ -335,7 +338,7 @@ updated: 2022-10-24 23:39:12
     > }
     > ```
 
-    - 但是如果是使用普通字节流的 read(byte b[] )和write(byte b[] , int off, int len) 这两个写入一个字节数组的方法的话，只要字节数组大小合适，差距性能不大
+    - 但是如果是使用普通字节流的 **read(byte b[] )**和**write(byte b[] , int off, int len)** 这两个写入一个字节数组的方法的话，只要字节数组大小合适，差距性能不大
       同理，使用read(byte b[]) 和write(byte b[] ,int off, int len)方法(字节流及缓冲字节流)，分别复制524mb文件，缓冲流需要0.7s , 普通字节流需要1s
       代码如下：  
 
@@ -413,8 +416,8 @@ updated: 2022-10-24 23:39:12
 
     
 
-- 字节缓冲输出流 BufferedOutputStream
-  `BufferedOutputStream` 将数据（字节信息）写入到目的地（通常是文件）的过程中不会一个字节一个字节的写入，而是会先将要写入的字节存放在缓存区，并从内部缓冲区中单独写入字节。这样大幅减少了 IO 次数，提高了读取效率
+- **字节缓冲输出流** BufferedOutputStream
+  `BufferedOutputStream` 将数据（字节信息）写入到目的地（通常是文件）的过程中不会**一个字节一个字节的写入**，而是会**先将要写入的字节存放在缓存区**，并**从内部缓冲区中单独写入字节**。这样大幅**减少了 IO 次数**，**提高了读取效率**
   使用  
 
   ```java
@@ -428,9 +431,9 @@ updated: 2022-10-24 23:39:12
 
 ## 字符缓冲流
 
-**`BufferedReader` （字符缓冲输入流）和 `BufferedWriter`（字符缓冲输出流）**类似于 `BufferedInputStream`（字节缓冲输入流）和`BufferedOutputStream`（字节缓冲输入流），内部都维护了一个字节数组作为缓冲区。不过，前者主要是用来操作字符信息。
+**`BufferedReader` （字符缓冲输入流）和 `BufferedWriter`（字符缓冲输出流）**类似于 `BufferedInputStream`（字节缓冲输入流）和`BufferedOutputStream`（字节缓冲输入流），内部都维护了一个**字节数组**作为缓冲区。不过，前者主要是用来操作字符信息。
 
-> 这里表述好像不太对，应该是维护了字符数组：  
+> 这里**表述好像不太对，应该是维护了字符数组**：  
 >
 > ```java
 > public class BufferedReader extends Reader {
@@ -531,11 +534,11 @@ updated: 2022-10-24 23:39:12
     //如果程序之前input.txt内容为ABCD，则运行后变为HIJK
     ```
 
-  - 常见应用：解决断点续传：上传文件中途暂停或失败（网络问题），之后不需要重新上传，只需上传未成功上传的文件分片即可 分片（先将文件切分成多个文件分片）上传是断点续传的基础。
-    使用RandomAccessFile帮助我们合并文件分片（但是下面代码好像不是必须的，因为他是单线程连续写入？？，这里附上另一篇文章的另一段话：）
+  - 常见应用：**解决断点续传**：上传文件中途暂停或失败（网络问题），之后不需要重新上传，只需**上传未成功上传的文件分片**即可 分片（先将文件切分成多个文件分片）上传是断点续传的基础。
+    **使用RandomAccessFile帮助我们合并文件分片**（但是下面代码好像不是必须的，因为他是单线程连续写入？？，这里附上另一篇文章的另一段话：）
 
-    > 但是由于 RandomAccessFile 可以自由访问文件的任意位置，**所以如果需要访问文件的部分内容，而不是把文件从头读到尾，因此 RandomAccessFile 的一个重要使用场景就是网络请求中的多线程下载及断点续传。** https://blog.csdn.net/li1669852599/article/details/122214104
+    > 但是**由于 RandomAccessFile 可以自由访问文件的任意**位置，**所以如果需要访问文件的部分内容，而不是把文件从头读到尾，因此 RandomAccessFile 的一个重要使用场景就是网络请求中的多线程下载及断点续传。** https://blog.csdn.net/li1669852599/article/details/122214104
 
     ![image-20221024233326047](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221024233326047.png)
-
-> 大部分转自https://github.com/Snailclimb/JavaGuide
+  
+  > **ly: 个人感觉，mysql数据库的写入可能也是依赖类似的规则，才能在某个位置读写**

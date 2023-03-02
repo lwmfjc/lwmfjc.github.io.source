@@ -1,5 +1,5 @@
 ---
-title: 类加载过程
+title: ly0404ly类加载过程
 description: 类加载过程
 categories:
   - 学习
@@ -25,6 +25,8 @@ updated: 2022-12-16 10:06:50
 ## 加载
 
 类加载的第一步，主要完成3件事情
+
+> 添加一个，构造与类相关联的方法表
 
 1. **通过全类名**获取定义此类的**二进制字节流**
 2. 将**字节流**所代表的**静态存储结构**，转换为**方法区**的**运行时数据结构**
@@ -69,9 +71,37 @@ updated: 2022-12-16 10:06:50
   > - 程序实际运行时，只有**符号引用**是不够的。
   > - 在程序**执行方法**时，系统需要明确知道这个方法所在的位置
   >   - Java虚拟机为**每个类**都准备了一张**方法表**来存放类中所有的方法。当需要调用一个类的方法的时候，只要知道**这个方法在方法表中的偏移量**就可以直接调用该方法了（针对**其他类X**或者当前类的方法）
-  >   - 通过**解析操作符号引用**就可以直接转变为**目标方法在类中方法表的位置**，从而使得方法可以被调用。（将当前类中代码转为 上面说的类的偏移量）
+  >   - 通过**解析操作符号引用**就可以直接转变为**目标方法在类中方法表的位置**，从而使得方法可以被调用。（将当前类中代码转为 上面说的类的偏移量）  
+  >     **对下面的内容简化一下就是，编译后的class文件中，以 [类数组] 的方式，保存了类中的方法表的位置（偏移量）（通过得到每个数组元素可以得到方法的信息）。而这里我们只能知道偏移量，但是当正式加载到方法区之后，我们就能根据偏移量，计算出具体的 [内存地址] 了。**
+  >   
+  >     >
+  >     > 具体详情https://blog.csdn.net/luanlouis/article/details/41113695 ，这里涉及到几个概念，一个是**方法表**。通过 ```javap -v xxx```查看反编译的信息（class文件的信息）  
+  >     >
+  >     > 1. class文件是这样的结构，里面有个**方法表**的概念  
+  >     >
+  >     >    ![image-20230124213133879](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124213133879.png)
+  >     >
+  >     > 2. 如下，可能会有好几个方法，所以方法表，其实是一个**类数组结构**，而每个方法信息（method_info）呢，![image-20230124213042742](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124213042742.png)
+  >     >
+  >     > 3. 进一步，对于每个method_info结构体的定义  
+  >     >    方法表的结构体由：**访问标志(\**access_flags\**)、名称索引(\**name_index\**)、描述索引(\**descriptor_index\**)、属性表(\**attribute_info\**)集合**组成。
+  >     >
+  >     >    > ![image-20230124213623779](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124213623779.png)
+  >     >
+  >     > 4. 而对于属性表，（其中：属性表集合--用来记录方法的机器指令和抛出异常等信息）  
+  >     >    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20141115145825045)
+  >     >    **Java之所以能够运行，就是从Code属性中，取出的机器码**  
+  >     >
+  >     >    ![image-20230124214548060](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124214548060.png)
+  >     >    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20141116114625218)
   
-- 解析阶段是虚拟机将**常量池内的符号引用**替换为**直接引用**的过程，也就是**得到类**或者**字段**、**方法**在内存中的**指针**或者**偏移量**。
+- 解析阶段是虚拟机将**常量池内的符号引用**替换为**直接引用**的过程，也就是**得到类**或者**字段**、**方法**在内存中的**指针**或者**偏移量**。（因为此时那些class文件已经早就加载到**方法区**之中了，所以可以改成指向**方法区**的某个**内存地址**  
+
+  > **如下，我的理解是，把下面的 com/test/Student.a ()V 修改成了直接的内存地址 类似的意思**
+
+
+  ![image-20230124222222940](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124222222940.png)  
+  ![image-20230124222327948](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124222327948.png)
 
 ## 初始化
 

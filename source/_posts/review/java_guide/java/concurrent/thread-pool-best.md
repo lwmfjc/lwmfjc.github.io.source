@@ -1,5 +1,5 @@
 ---
-title: 线程池最佳实践
+title: ly0306ly线程池最佳实践
 description: 线程池最佳实践
 categories:
   - 学习
@@ -17,8 +17,8 @@ updated: 2022-11-29 11:31:20
 
 ### 1. 为什么要使用线程池
 
-- 池化技术的思想，主要是为了减少每次获取资源的消耗，提高对资源的利用率
-- 线程池提供了一种限制和管理资源（包括执行一个任务）的方法，每个线程池还维护一些基本统计信息，例如已完成任务的数量
+- 池化技术的思想，主要是为了**减少每次获取资源（线程资源）的消耗**，提高对资源的利用率
+- 线程池提供了一种**限制**和**管理资源**（包括执行一个任务）的方法，每个线程池还维护一些**基本统计**信息，例如已完成任务的数量
 
 好处：
 
@@ -138,7 +138,7 @@ Finished all threads
 >
 > **CachedThreadPool 和 ScheduledThreadPool** ： 允许创建的线程数量为 `Integer.MAX_VALUE` ，可能会创建大量线程，从而导致 OOM。
 
-总结：使用有界队列，控制线程创建数量
+总结：使用**有界队列**，**控制线程创建数量**
 
 其他原因：
 
@@ -178,12 +178,12 @@ Finished all threads
 
 ### 3. 建议不同类别的业务用不同的线程池
 
-> 建议是不同的业务使用不同的线程池，配置线程池的时候根据当前业务的情况对当前线程池进行配置，因为不同的业务的并发以及对资源的使用情况都不同，重心优化系统性能瓶颈相关的业务
+> 建议是**不同的业务使用不同的线程池**，配置线程池的时候根据当前业务的情况对当前线程池进行配置，因为**不同的业务的并发**以及**对资源的使用情况**都不同，重心**优化系统性能瓶颈**相关的业务
 
 极端情况导致死锁：  
 ![image-20221129153400643](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129153400643.png)
 
-假如我们线程池的核心线程数为 **n**，父任务（扣费任务）数量为 **n**，父任务下面有两个子任务（扣费任务下的子任务），其中一个已经执行完成，另外一个被放在了任务队列中。由于父任务把线程池核心线程资源用完，所以子任务因为无法获取到线程资源无法正常执行，一直被阻塞在队列中。父任务等待子任务执行完成，而子任务等待父任务释放线程池资源，这也就造成了 **"死锁"**。
+假如我们线程池的核心线程数为 **n**，父任务（扣费任务）数量为 **n**，父任务下面有两个子任务（扣费任务下的子任务），其中一个已经执行完成，另外一个被放在了任务队列中。由于**父任务把线程池核心线程资源用完**，所以子任务因为无法获取到线程资源无法正常执行，一直被阻塞在队列中。父任务等待子任务执行完成，而子任务等待父任务释放线程池资源，这也就造成了 **"死锁"**。
 
 ![image-20221129154616346](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129154616346.png)
 
@@ -191,7 +191,7 @@ Finished all threads
 
 ### 4. 别忘记给线程池命名
 
-初始化线程池时显示命名（设置线程池名称前缀），有利于定位问题
+**初始化线程池时显示命名**（设置线程池名称前缀），有利于**定位问题**
 
 - 利用guava的ThreadFactoryBuilder
 
@@ -274,7 +274,7 @@ Finished all threads
   参数动态配置
   ![image-20221129154916589](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129154916589.png)
 
-  1. 格外需要注意的是`corePoolSize`， 程序运行期间的时候，我们调用 `setCorePoolSize（）`这个方法的话，线程池会首先判断当前工作线程数是否大于`corePoolSize`，如果大于的话就会回收工作线程。
-  2. 另外，你也看到了上面并没有动态指定队列长度的方法，美团的方式是自定义了一个叫做 `ResizableCapacityLinkedBlockIngQueue` 的队列（主要就是把`LinkedBlockingQueue`的 capacity 字段的 final 关键字修饰给去掉了，让它变为可变的）
+  1. 格外需要注意的是`corePoolSize`， **程序运行期间**的时候，我们**调用 `setCorePoolSize（）`**这个方法的话，线程池会**首先判断当前工作线程数是否大于`corePoolSize`**，如果**大于的话就会回收工作线程**。【**ThreadPoolExecutor里面的**】
+  2. 另外，你也看到了上面并没有动态指定队列长度的方法，美团的方式是自定义了一个叫做 `ResizableCapacityLinkedBlockIngQueue` 的队列（主要就是**把`LinkedBlockingQueue`的 capacity 字段的 final 关键字修饰给去掉了，让它变为可变的**）
 
   ![image-20221129155849107](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129155849107.png)

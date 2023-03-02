@@ -1,5 +1,5 @@
 ---
-title: 集合使用注意事项
+title: ly0103ly集合使用注意事项
 description: 集合使用注意事项
 categories:
   - 学习
@@ -20,9 +20,9 @@ updated: 2022-10-19 17:26:07
 >
 > **判断所有集合内部的元素是否为空，使用 `isEmpty()` 方法，而不是 `size()==0` 的方式。**
 
-- isEmpty()可读性更好，且绝大部分情况下时间复杂度为O(1)
+- isEmpty()可读性更好，且**绝大部分情况下时间复杂度为O(1)**
 
-- ConcurrentHashMap的size()和isEmpty() 时间复杂度均不是O(1)
+- 有例外：ConcurrentHashMap的size()和isEmpty() 时间复杂度均不是O(1)
 
   ```java
   public int size() {
@@ -67,7 +67,7 @@ bookList.add(new Person("martin",null));
 bookList.stream().collect(Collectors.toMap(Person::getName, Person::getPhoneNumber));
 ```
 
-java.util.stream.Collections类的toMap() ，里面使用到了Map接口的merge()方法, 调用了Objects.requireNonNull()方法判断value是否为空
+java.util.stream.Collections类的toMap() ，里面使用到了Map接口的**merge()**方法, 调用了**Objects.requireNonNull()**方法**判断value是否为空**
 
 ## 集合遍历
 
@@ -75,9 +75,9 @@ java.util.stream.Collections类的toMap() ，里面使用到了Map接口的merge
 >
 > **不要在 foreach 循环里进行元素的 `remove/add` 操作。remove 元素请使用 `Iterator` 方式，如果并发操作，需要对 `Iterator` 对象加锁。**
 
-- foreach语法底层依赖于Iterator （foreach是语法糖），不过remove/add 则是直接调用集合的方法，而不是Iterator的； 所以此时Iterator莫名发现自己元素被remove/add，就会抛出一个ConcurrentModificationException来提示用户发生了并发修改异常，即单线程状态下产生的fail-fast机制
+- foreach语法底层依赖于Iterator （foreach是语法糖），不过remove/add 则是**直接调用集合的方法**，而不是Iterator的； 所以此时Iterator莫名发现自己元素被remove/add，就会抛出一个**ConcurrentModificationException**来提示用户**发生了并发修改异常**，即**单线程状态下产生的fail-fast**机制
 
-- java8开始，可以使用Collection#removeIf()方法删除满足特定条件的元素，例子
+- java8开始，可以使用Collection#**removeIf()**方法删除满足特定条件的元素，例子
 
   ```java
   List<Integer> list = new ArrayList<>();
@@ -91,7 +91,7 @@ java.util.stream.Collections类的toMap() ，里面使用到了Map接口的merge
 - 其他的遍历数组的方法（注意是遍历，不是增加/删除）
   - 使用普通for循环
 
-  - 使用fail-safe集合类，java.util包下面的所有集合类都是fail-fast，而java.util.concurrent包下面的所有类是fail-safe
+  - 使用fail-safe集合类，**java.util**包下面的所有集合类都是**fail-fast**，而**java.util.concurrent**包下面的所有类是**fail-safe**
 
     ```java
     //ConcurrentHashMap源码
@@ -140,7 +140,7 @@ public static <T> List<T> removeDuplicateByList(List<T> data) {
 }
 ```
 
-Set时间复杂度为 1 * n ，而List时间复杂度为 n * n 
+Set时间复杂度为 **1 * n** ，而List时间复杂度为 **n * n** 
 
 ```java
 //Set的Contains，底层依赖于HashMap,时间复杂度为 1 
@@ -186,7 +186,7 @@ Collections.reverse(list);
 s=list.toArray(new String[0]);
 ```
 
-> 于 JVM 优化，`new String[0]`作为`Collection.toArray()`方法的参数现在使用更好，`new String[0]`就是起一个模板的作用，指定了返回数组的类型，0 是为了节省空间，因为它只是为了说明返回的类型
+> 对于 JVM 优化，`new String[0]`作为`Collection.toArray()`方法的参数现在使用更好，`new String[0]`就是起一个模板的作用，指定了返回数组的类型，0 是为了节省空间，因为它只是为了说明返回的类型
 
 ## 数组转集合
 
