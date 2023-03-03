@@ -209,11 +209,8 @@ extends Callback{
   
   }
   ```
-```
-  
-  获取代理类
-  
-  ```java
+```java
+ // 获取代理类 
   import net.sf.cglib.proxy.Enhancer;
   
   public class CglibProxyFactory {

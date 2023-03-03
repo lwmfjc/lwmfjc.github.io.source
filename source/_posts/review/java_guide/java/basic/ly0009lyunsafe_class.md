@@ -455,7 +455,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
       CasTest casTest=new CasTest();
       new Thread(()->{
           /*
-           一开始a=0的时候，i=1，所以a + 1；之后 a = 1的时候，i = 2 ，所以a 又加1 ；而如果是不等于的话，就会一直原子获取a的值，知道等于 i -1 
+           一开始a=0的时候，i=1，所以a + 1；之后 a = 1的时候，i = 2 ，所以a 又加1 ；而如果是不等于的话，就会一直原子获取a的值，直到等于 i -1 
           */
           for (int i = 1; i < 5; i++) {
               casTest.increment(i);
