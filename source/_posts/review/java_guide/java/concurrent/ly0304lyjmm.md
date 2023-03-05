@@ -1,5 +1,5 @@
 ---
-title: ly0304lyjava内存模型
+title: java内存模型
 description: java内存模型
 categories:
   - 学习

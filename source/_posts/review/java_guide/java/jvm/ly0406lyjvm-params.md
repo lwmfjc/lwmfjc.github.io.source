@@ -1,5 +1,5 @@
 ---
-title: ly0406lyjvm参数
+title: jvm参数
 description: jvm参数
 categories:
   - 学习

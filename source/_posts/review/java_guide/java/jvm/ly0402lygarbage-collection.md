@@ -1,5 +1,5 @@
 ---
-title: ly0402lyjava垃圾回收
+title: java垃圾回收
 description: java垃圾回收
 categories:
   - 学习
