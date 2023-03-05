@@ -1,5 +1,5 @@
 ---
-title: ly0202lyio设计模式
+title: io设计模式
 description: io设计模式
 categories:
   - 学习
