@@ -1,5 +1,5 @@
 ---
-title: ly0407lyjvm-intro
+title: jvm-intro
 description: jvm-intro
 categories:
   - 学习

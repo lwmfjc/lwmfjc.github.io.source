@@ -1,5 +1,5 @@
 ---
-title: ly0405ly类加载器详解
+title: 类加载器详解
 description: 类加载器详解
 categories:
   - 学习

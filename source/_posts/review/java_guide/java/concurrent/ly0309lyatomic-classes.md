@@ -1,5 +1,5 @@
 ---
-title: ly0309lyAtomic原子类介绍
+title: Atomic原子类介绍
 description: Atomic原子类介绍
 categories:
   - 学习

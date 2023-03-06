@@ -1,5 +1,5 @@
 ---
-title: ly03121ly对象内存布局和对象头
+title: 对象内存布局和对象头
 description: 对象内存布局和对象头
 categories:
   - 学习

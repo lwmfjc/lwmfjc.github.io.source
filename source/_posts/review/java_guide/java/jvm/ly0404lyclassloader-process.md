@@ -1,5 +1,5 @@
 ---
-title: ly0404ly类加载过程
+title: 类加载过程
 description: 类加载过程
 categories:
   - 学习

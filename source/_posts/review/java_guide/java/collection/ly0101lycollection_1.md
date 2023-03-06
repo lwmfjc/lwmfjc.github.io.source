@@ -1,5 +1,5 @@
 ---
-title: ly0101ly集合_1
+title:  集合_1
 description: 集合_1
 categories:
   - 学习

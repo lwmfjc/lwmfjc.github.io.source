@@ -1,5 +1,5 @@
 ---
-title: ly0305lyjava线程池详解
+title: java线程池详解
 description: java线程池详解
 categories:
   - 学习

@@ -1,5 +1,5 @@
 ---
-title: ly0307lyjava常见并发容器
+title: java常见并发容器
 description: java常见并发容器
 categories:
   - 学习

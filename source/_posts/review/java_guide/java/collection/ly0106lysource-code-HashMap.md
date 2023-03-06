@@ -1,5 +1,5 @@
 ---
-title: ly0106lyHashMap源码
+title:  HashMap源码
 description: HashMap源码
 categories:
   - 学习
@@ -236,7 +236,7 @@ updated: 2022-10-21 15:30:09
   - 如果定位到的数组位置没有元素直接插入
 
   - 如果有，则比较key，如果key相同则覆盖，不同则判断是否是否是一个树节点，如果是就调用`e = ((TreeNode<K,V>)p).putTreeVal(this, tab, hash, key, value)`将元素添加进入；如果不是，则遍历链表插入(链表尾部)
-    ![image-20230201153322604](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230201153322604.png)
+     ![image-20230304190337265](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230304190337265.png)
 
     - 
 

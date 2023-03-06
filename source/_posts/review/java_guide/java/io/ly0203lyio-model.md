@@ -1,5 +1,5 @@
 ---
-title: ly0203lyio模型
+title: io模型
 description: io模型
 categories:
   - 学习
@@ -12,6 +12,8 @@ updated: 2022-10-26 14:17:58
 ---
 
 > 转载自https://github.com/Snailclimb/JavaGuide （添加小部分笔记）感谢作者!
+
+> https://zhuanlan.zhihu.com/p/360878783 IO多路复用讲解，这是一个与系统底层有关的知识点，需要一些操作系统调用代码才知道IO多路复用省的时间。
 
 ## I/O
 

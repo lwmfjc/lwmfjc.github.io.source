@@ -1,5 +1,5 @@
 ---
-title: ly0306ly线程池最佳实践
+title: 线程池最佳实践
 description: 线程池最佳实践
 categories:
   - 学习

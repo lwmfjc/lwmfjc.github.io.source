@@ -1,5 +1,5 @@
 ---
-title: ly0311lycompletablefuture-intro
+title: completablefuture-intro
 description: completablefuture-intro
 categories:
   - 学习
