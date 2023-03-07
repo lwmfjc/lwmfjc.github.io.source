@@ -1230,3 +1230,99 @@ Process finished with exit code 0
              }
          } 
      ```
+
+### 三者区别
+
+![image-20230307233809052](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230307233809052.png)
+
+**CountDownLatch也能实现CyclicBarrier类似功能，不过它的栅栏被推到后就不会再重新存在了(CyclicBarrier会重新建立栅栏)**
+
+```java
+CountDownLatch countDownLatch=new CountDownLatch(5);
+        new Thread(()->{
+            try {
+                countDownLatch.await();
+                log.info("栅栏被推开了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        },"线程A").start();
+        new Thread(()->{
+            try {
+                countDownLatch.await();
+                log.info("栅栏被推开了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        },"线程B").start();
+        new Thread(()->{
+            try {
+                countDownLatch.await();
+                log.info("栅栏被推开了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        },"线程C").start();
+        new Thread(()->{
+            try {
+                countDownLatch.await();
+                log.info("栅栏被推开了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        },"线程D").start();
+        new Thread(()->{
+            try {
+                countDownLatch.await();
+                log.info("栅栏被推开了");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+        },"线程E").start();
+        new Thread(()->{
+                //countDownLatch.await();
+            for(int i=0;i<5;i++) {
+                //每隔一秒钟推开一个栅栏
+                try {
+                    TimeUnit.SECONDS.sleep(1);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                log.info("推开一个栅栏");
+                countDownLatch.countDown();
+            }
+
+        },"线程F").start();
+        while (true){}
+        
+/**输出
+2023-03-07 23:23:19 下午 [Thread: 线程F] 
+INFO:推开一个栅栏
+2023-03-07 23:23:20 下午 [Thread: 线程F] 
+INFO:推开一个栅栏
+2023-03-07 23:23:21 下午 [Thread: 线程F] 
+INFO:推开一个栅栏
+2023-03-07 23:23:22 下午 [Thread: 线程F] 
+INFO:推开一个栅栏
+2023-03-07 23:23:24 下午 [Thread: 线程F] 
+INFO:推开一个栅栏
+///////////////////////////////////////////推开5个栅栏后(这里是一个线程推开五个，也可以5个线程->每个各推开一个)，5个被阻塞的线程一起执行了
+2023-03-07 23:23:24 下午 [Thread: 线程A] 
+INFO:栅栏被推开了
+2023-03-07 23:23:24 下午 [Thread: 线程E] 
+INFO:栅栏被推开了
+2023-03-07 23:23:24 下午 [Thread: 线程C] 
+INFO:栅栏被推开了
+2023-03-07 23:23:24 下午 [Thread: 线程D] 
+INFO:栅栏被推开了
+2023-03-07 23:23:24 下午 [Thread: 线程B] 
+INFO:栅栏被推开了
+
+*/
+```
+
