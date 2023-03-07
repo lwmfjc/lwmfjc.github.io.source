@@ -67,7 +67,7 @@ updated: 2022-11-21 10:54:33
 
   
 
-  - Runnable接口不会返回接口或抛出检查异常，Callable接口可以
+  - Runnable接口不会返回结果或抛出检查异常，Callable接口可以
 
   - Executors可以实现将Runnable对象转换成Callable对象  
     Executors.callable(Runnable task)` 或 `Executors.callable(Runnable task, Object result)  //则两个方法，运行的结果是 Callable<Object>   
@@ -160,16 +160,18 @@ updated: 2022-11-21 10:54:33
        */
        ```
 
-       当submit一个Callable对象的时候，能从submit返回的Futureget到返回值；当submit一个**FutureTask对象（FutureTask有参构造函数包含Callable对象，但它本身不是Callable）**时，没法获取返回值，因为会**被当作Runnable对象**submit进来  
+       当submit一个Callable对象的时候，能从submit返回的Future.get到返回值；当submit一个**FutureTask对象（FutureTask有参构造函数包含Callable对象，但它本身不是Callable）**时，没法获取返回值，因为会**被当作Runnable对象**submit进来  
 
        > 虚线是实现，实线是继承。
        
        ![image-20221109103922513](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221109103922513.png)
-       而入参为Runnable时返回值里是get不到结果的
+       而入参为Runnable时返回值里是get不到结果的  
+       
+       
 
   3. 下面这段源码，解释了为什么当传入的类型是Runnable对象时，结果为null  
 
-     > 只要是submit（Runnable ），就会返回null
+     > 只要是submit（Runnable ），就会返回null  
      
      ```java
      //源码AbstractExecutorService 接口中的一个submit方法
@@ -189,9 +191,52 @@ updated: 2022-11-21 10:54:33
      }
      ```
 
+- FutureTask、Thread、Callable、Executors   
+  ![image-20230307144132470](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230307144132470.png)
+
 - 如何创建线程池
 
   > ```executor [ɪɡˈzekjətə(r)] 遗嘱执行人(或银行等)```
+
+  关于SynchronousQueue（具有0个元素的阻塞队列）：  
+
+  ```java
+          SynchronousQueue<String> synchronousQueue
+                  =new SynchronousQueue<>();
+          new Thread(()->{
+              try {
+                  log.info("放入数据A");
+                  synchronousQueue.put("A");
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+              }
+              log.info("继续执行");
+          },"子线程1").start();
+          new Thread(()->{
+              try {
+                  TimeUnit.SECONDS.sleep(3);
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+              }
+              String poll = null;
+              try {
+                  poll = synchronousQueue.take();
+              } catch (InterruptedException e) {
+                  e.printStackTrace();
+              }
+              log.info(poll);
+          },"子线程2").start();
+  /**输出
+  2023-03-07 15:20:17 下午 [Thread: 子线程1] 
+  INFO:放入数据A   ---这里会等待3s(等子线程2 task()消费掉)
+  2023-03-07 15:20:20 下午 [Thread: 子线程2] 
+  INFO:A
+  2023-03-07 15:20:20 下午 [Thread: 子线程1] 
+  INFO:继续执行
+  */
+  ```
+
+  
 
   - 不允许使用Executors去创建，而是通过new ThreadPoolExecutor的方式：能让写的同学**明确线程池运行规则**，**规避资源耗尽**
 
@@ -200,7 +245,7 @@ updated: 2022-11-21 10:54:33
     工具的方式创建线程池
     */
     void test(){
-        ExecutorService executorService = Executors.newCachedThreadPool();
+        	ExecutorService executorService = Executors.newCachedThreadPool();
             Callable<MyClass> myClassCallable = new Callable<MyClass>() 	  {
                 @Override
                 public MyClass call() throws Exception {
