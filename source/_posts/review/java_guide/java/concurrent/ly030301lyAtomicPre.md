@@ -54,30 +54,33 @@ CAS是一种原子操作，它是一种系统原语，是一条CPU原子指令�
     > boolean compareAndSwapObject(Object o, long offset,Object expected, Object x);
     > boolean compareAndSwapInt(Object o, long offset,int expected,int x);
     > boolean compareAndSwapLong(Object o, long offset,long expected,long x);
-    > //AtomicInteger.class
+    > 
+    > 
+    > //------>AtomicInteger.class
+    > 
     > public class AtomicInteger extends Number implements java.io.Serializable {
-    >  private static final long serialVersionUID = 6214790243416807050L;
+    > private static final long serialVersionUID = 6214790243416807050L;
     > 
-    >  // setup to use Unsafe.compareAndSwapInt for updates
-    >  private static final Unsafe unsafe = Unsafe.getUnsafe();
-    >  private static final long valueOffset;
+    > // setup to use Unsafe.compareAndSwapInt for updates
+    > private static final Unsafe unsafe = Unsafe.getUnsafe();
+    > private static final long valueOffset;
     > 
-    >  static {
-    >      try {
-    >          valueOffset = unsafe.objectFieldOffset
-    >              (AtomicInteger.class.getDeclaredField("value"));
-    >      } catch (Exception ex) { throw new Error(ex); }
-    >  }
-    > 
-    >  private volatile int value;
-    >  public final int getAndIncrement() {
-    >  	return unsafe.getAndAddInt(this, valueOffset, 1);
-    > 	}
+    > static {
+    >   try {
+    >       valueOffset = unsafe.objectFieldOffset
+    >           (AtomicInteger.class.getDeclaredField("value"));
+    >   } catch (Exception ex) { throw new Error(ex); }
     > }
-    > ```
-
+    > 
+    > private volatile int value;
+    > public final int getAndIncrement() {
+    > 	return unsafe.getAndAddInt(this, valueOffset, 1);
+  > 	}
+    > }
+  > ```
+    
     **Unsafe中对CAS的实现是C++**写的，它的具体实现和操作系统、CPU都有关系。Linux的X86中主要通过**cmpxchgl**这个指令在CPU级完成CAS操作，如果是多处理器则必须使用**lock指令**加锁
-
+    
     Unsafe类中还有**park(线程挂起)**和**unpark(线程恢复)**，LockSupport底层则调用了该方法；还有支持反射操作的**allocateInstance()**
 
 - 原子操作- AtomicInteger类源码简析
