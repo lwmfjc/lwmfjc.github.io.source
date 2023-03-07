@@ -92,13 +92,15 @@ updated: 2022-11-07 16:00:06
           }
       
           public  static Singleton getUniqueInstance() {
-             	//先判断对象是否已经实例过，没有实例化过才进入加锁代码
+             	//先判断对象是否已经实例过，没有实例化过才进入加锁代码(第3、4次
+              //就不需要再进来(synchronized了))
               //避免了不论如何都进行加锁的情况
               if (uniqueInstance == null) {
                   //...一些其他代码
                   //加锁，并判断如果未初始化则进行初始化
                   synchronized (Singleton.class) { 
-                      //别晕了，这个是一定要判断的
+                      //别晕了，这个是一定要判断的【判断是否已经初始化，
+                      //如果还未初始化才进行new对象】
                       if (uniqueInstance == null) {
                           uniqueInstance = new Singleton();
                       } 
@@ -114,13 +116,14 @@ updated: 2022-11-07 16:00:06
       这里，uniqueInstance采用volatile的必要性：主要分析``` uniqueInstance  = new Singleton(); ```分三步（正常情况）
   
       1. 为uniqueInstance**分配内存空间**
-  2. **初始化** uniqueInstance
+  	2. **初始化** uniqueInstance
       3. 将uniqueInstance**指向**被分配的空间
       
       由于指令重排的关系，可能会编程1->3->2 ，指令重排在单线程情况下不会出现问题，而多线程，
       
       - 就会导致可能指针非空的时候，实际该指针所指向的对象（实例）并还没有初始化
       - 例如，线程 T1 执行了 1 和 3，此时 T2 调用 `getUniqueInstance`() 后发现 `uniqueInstance` 不为空，因此返回 `uniqueInstance`，但此时 `uniqueInstance` 还未被初始化**（就会造成一些问题）**
+  	- 即可能存在1，3已经完成，2还未完成
   ```
   
 - volatile不能保证原子性
@@ -267,10 +270,67 @@ updated: 2022-11-07 16:00:06
       同步代码块的实现，使用的是**monitorenter**和**monitorexit**指令，其中**monitorenter**指令指向**同步代码块开始**的地方，**monitorexit**指向**同步代码块结束**的结束位置
       执行monitorenter指令就是获取**对象监视器monitor**的持有权
 
-    > 在HotSport虚拟机中，Monitor基于C++实现，由ObjectMonitor实现：**每个对象内置了ObjectMonitor对象**。**wait/notify等方法也基于monitor对象**，所以**只有在同步块或者方法中（获得锁）才能调用wait/notify方法**，否则会抛出java.lang.IllegalMonitorStateException异常的原因
+    > 在HotSport虚拟机中，Monitor基于C++实现，由ObjectMonitor实现：**每个对象内置了ObjectMonitor对象**。**wait/notify等方法也基于monitor对象**，所以**只有在同步块或者方法中（获得锁）才能调用wait/notify方法**，否则会抛出java.lang.IllegalMonitorStateException异常的原因  
+    > **notify()仅仅是通知，并不会释放锁；wait()会立即释放锁**，例子：  
+    >
+  > ```java
+    >         Object obj = new Object();
+    >         new Thread(() -> {
+    >             synchronized (obj) {
+    >                 try {
+    >                     log.info("运行中");
+    >                     TimeUnit.SECONDS.sleep(3);
+    >                     log.info("3s后释放锁");
+    >                     obj.wait();//会释放锁
+    >                     log.info("完成执行");
+    >                 } catch (InterruptedException e) {
+    >                     e.printStackTrace();
+    >                 }
+    >             }
+    >         }, "线程1").start();
+    >         //保证线程2在线程1之后启动
+    >         TimeUnit.SECONDS.sleep(1);
+    >         new Thread(() -> {
+    >             synchronized (obj) {
+    >                 log.info("获得锁");
+    >                 try {
+    >                     TimeUnit.SECONDS.sleep(5);
+    >                 } catch (InterruptedException e) {
+    >                     e.printStackTrace();
+    >                 }
+    >                 log.info("5s后唤醒线程1");
+    >                 obj.notify();
+    >                 try {
+    >                     TimeUnit.SECONDS.sleep(3);
+    >                 } catch (InterruptedException e) {
+    >                     e.printStackTrace();
+    >                 }
+    >                 log.info("完成执行");
+    >             }
+    >         }, "线程2").start();
+    > /**打印
+    > 2023-03-07 11:33:00 上午 [Thread: 线程1] 
+    > INFO:运行中
+    > 2023-03-07 11:33:03 上午 [Thread: 线程1] 
+    > INFO:3s后释放锁
+    > 2023-03-07 11:33:03 上午 [Thread: 线程2] 
+    > INFO:获得锁
+    > 2023-03-07 11:33:08 上午 [Thread: 线程2] 
+    > INFO:5s后唤醒线程1
+    > 2023-03-07 11:33:21 上午 [Thread: 线程2] 
+    > INFO:完成执行
+    > 2023-03-07 11:33:21 上午 [Thread: 线程1] //这段输出永远会在最后（线程2释放锁才会输出）
+    > INFO:完成执行
+    > 
+    > Process finished with exit code 0
+    > 
+    > */
+    > ```
+    >
+    > 
     
       执行monitorenter时，**尝试获取**对象的锁，如果锁计数器为0则表示所可以被获取，获取后锁计数器设为1，简单的流程  
-  ![image-20221029190656612](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029190656612.png)
+    ![image-20221029190656612](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029190656612.png)
       **只有拥有者线程**才能执行**monitorexit**来释放锁，执行monitorexit指令后，锁计数器设为0（应该是**减一**，与可重入锁有关），当计数器为0时，表明锁被释放，其他线程可以**尝试获得锁**(如果某个线程获取锁失败，那么该线程就会阻塞等待，直到锁被（另一个线程）释放)
       ![image-20221029190841776](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029190841776.png)
     
