@@ -45,7 +45,7 @@ Java5之后，通过Executor启动线程，比使用Thread的start方法更好�
 > }
 > ```
 >
-> 处理办法  
+> 处理办法  **//不要在构造函数中运行线程**
 >
 > ```java
 > public class ThisEscape { 
@@ -819,7 +819,7 @@ execute方法源码
 
    `CachedThreadPool` 的**`corePoolSize` 被设置为空（0）**，**`maximumPoolSize`被设置为 `Integer.MAX.VALUE`**，即它是无界的，这也就意味着如果主线程提交任务的速度高于 `maximumPool` 中线程处理任务的速度时，`CachedThreadPool` 会**不断创建新的线程**。极端情况下，这样会导致**耗尽 cpu** 和**内存资源**
 
-   ★：SynchronousQueue队列只能容纳单个元素
+   ★：SynchronousQueue队列只能容纳零个元素
    执行过程（execute()示意图）
 
 
@@ -937,7 +937,7 @@ execute方法源码
 
   JDK1.5 之后，没有理由再使用Timer进行任务调度
 
-- 运行机制
+- 运行机制 **//下面这块内容后面更新后原作者删除了**
   ![image-20221129103700454](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129103700454.png)
   ScheduledThreadPoolExecutor的执行分为：
 

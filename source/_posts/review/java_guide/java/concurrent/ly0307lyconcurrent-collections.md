@@ -43,7 +43,7 @@ implements List<E>, RandomAccess, Cloneable, Serializable
 
 ## CopyOnWriteArrayList是如何做到的
 
-- `CopyOnWriteArrayList` 类的**所有可变操作（add，set 等等）都是通过创建底层数组的新副本**来实现的。当 List 需要被修改的时候，我并不修改原有内容，而是**对原有数据进行一次复制，将修改的内容写入副本。写完之后，再将修改完的副本替换原来的数据**，这样就可以保证写操作不会影响读操作了。
+- `CopyOnWriteArrayList` 类的**所有可变操作（add，set 等等）都是通过创建底层数组的新副本**来实现的。当 List 需要被修改的时候，并不修改原有内容，而是**对原有数据进行一次复制，将修改的内容写入副本。写完之后，再将修改完的副本替换原来的数据**，这样就可以保证写操作不会影响读操作了。
 - 从 `CopyOnWriteArrayList` 的名字就能看出 `CopyOnWriteArrayList` 是满足 **`CopyOnWrite`** 的
 - 在计算机，如果你想要对一块内存进行修改时，我们不在原有内存块中进行写操作，而是将内存拷贝一份，在新的内存中进行写操作，写完之后呢，就**将指向原来内存指针指向新的内存(注意，是指向，而不是重新拷贝★重要★)**，原来的内存就可以被回收掉了
 
@@ -205,7 +205,7 @@ Process finished with exit code 0
   private static ArrayBlockingQueue<Integer> blockingQueue = new ArrayBlockingQueue<Integer>(10,true);
   ```
 
-## LinkedBockingQueue
+## LinkedBlockingQueue
 
 - 底层基于**单向链表**实现阻塞队列，可以当作**无界队列**也可以当作**有界队列**
 
