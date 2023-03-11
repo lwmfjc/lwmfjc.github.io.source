@@ -252,7 +252,7 @@ System.out.println(aa==bb);// true
 >
 > `StringTable` 中保存的是**字符串对象的引用**，字符串对象的引用**指向堆中的字符串对象**。
 
-JDK1.7之前，**运行时常量池(字符串常量池、静态变量)**存放在**永久代**。JDK1.7**字符串常量池和静态变量**从永久代移动到了Java堆中
+JDK1.7之前， (**字符串常量池、静态变量**)**存放在**永久代。JDK1.7**字符串常量池和静态变量**从永久代移动到了Java堆中
 ![method-area-jdk1.6](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/method-area-jdk1.6.png)
 
 ![method-area-jdk1.7](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/method-area-jdk1.7.png)
