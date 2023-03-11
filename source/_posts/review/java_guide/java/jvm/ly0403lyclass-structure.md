@@ -71,7 +71,7 @@ ClassFile {
 >
 > 这里前两个字节是```cafe 英[ˈkæfeɪ]```，后两个字节 ```babe 英[beɪb]```
 
-JAVA为 CA FE BA BE，十六进制(一个英文代表4位，即2个英文字母为1字节）
+JAVA为 CA FE BA BE，十六进制(一个英文字母[**这里说的是字母，不是英文中文之分**]代表4位，即2个英文字母为1字节）
 
 ## Class文件版本号（Minor&Major Version）
 
@@ -105,7 +105,7 @@ JDK1.4 = 48
     cp_info        constant_pool[constant_pool_count-1];//常量池 
 ```
 
-主次版本号之后的是**常量池**，常量池数量为```constant_pool_count -1 ```
+主次版本号之后的是**常量池**，常量池实际数量为```constant_pool_count -1 ```
 
 > （**常量池计数器是从 1 开始计数的，将第 0 项常量空出来是有特殊考虑的，索引值为 0 代表“不引用任何一个常量池项”**）
 

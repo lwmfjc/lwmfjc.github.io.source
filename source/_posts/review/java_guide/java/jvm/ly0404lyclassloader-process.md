@@ -15,12 +15,13 @@ updated: 2022-12-16 10:06:50
 
 # 类的声明周期
 
-![image-20221216105424418](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221216105424418.png)
+![image-20230311173515541](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230311173515541.png)
 
 # 类加载过程
 
 - Class文件，需要**加载到虚拟机中**之后才能运行和使用，那么虚拟机是**如何加载**这些Class文件呢
-- 系统加载Class类文件需要三步：**加载**->**连接**->**初始化**。连接过程又分为三步：**验证**->**准备**->**解析**
+- 系统加载Class类文件需要三步：**加载**->**连接**->**初始化**。连接过程又分为三步：**验证**->**准备**->**解析**  
+  ![image-20230311173602355](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230311173602355.png)
 
 ## 加载
 
