@@ -38,7 +38,7 @@ updated: 2023-01-22 22:46:06
 
 - MySQL的一个**简要机构图**，客户端的一条**SQL语句**在MySQL内部如何执行
   ![img](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/javaguide/13526879-3037b144ed09eb88.png)
-- MySQL主要由几部门构成
+- MySQL主要由几部分构成
   1. **连接器**：**身份认证**和**权限相关**（登录MySQL的时候）
   2. **查询缓存**：执行**查询**语句的时候，会先**查询缓存**（MySQL8.0版本后**移除**，因为这个功能不太实用）
   3. **分析器**：**没有命中缓存**的话，SQL语句就会经过分析器，分析器说白了就是要先看你的SQL语句**要干嘛**，再检查你的**SQL语句语法**是否正确
@@ -269,7 +269,7 @@ select sql_no_cache count(*) from usr;
 
    > 例如：事务 1 读取某表中的数据 A=20，事务 2 也读取 A=20，事务 1 先修改 A=A-1，事务 2 后来也修改 A=A-1，最终结果 A=19，事务 1 的修改被丢失。
    > (这里例子举得不好，用**事务2进行了A = A - 2 操作**会比较明显)
-   >  ![image-20230122213205474](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230122213205474.png)
+   >  ![image-20230313235209184](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313235209184.png)
 
 3. **不可重复读（Unrepeatable read)**  
     指在一个事务内多次读同一数据。在这个事务还没有结束时，另一个事务也访问该数据。那么，在第一个事务中的两次读数据之间，由于**第二个事务的修改导致第一个事务两次读取的数据可能不太一样**。这就发生了在**一个事务内两次读到的数据是不一样**的情况，因此称为**不可重复读**。  
@@ -316,6 +316,10 @@ MySQL 的隔离级别基于**锁**和 **MVCC** 机制共同实现的。
 
 - **SERIALIZABLE** 隔离级别，是**通过锁**来实现的。**除了 SERIALIZABLE** 隔离级别，**其他的隔离级别都是基于 MVCC** 实现。
 - 不过， SERIALIZABLE 之外的其他隔离级别可能也需要用到锁机制，就比如 **REPEATABLE-READ 在当前读情况下需要使用加锁读来保证不会出现幻读**（这就是MVCC不能解决幻读的例外之一）。
+
+## 上述总结
+
+![image-20230314000850541](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230314000850541.png)
 
 ## MySQL的默认隔离级别是什么
 
