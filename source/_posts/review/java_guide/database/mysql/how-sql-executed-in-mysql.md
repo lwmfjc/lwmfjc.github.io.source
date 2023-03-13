@@ -20,6 +20,8 @@ updated: 2023-01-19 10:20:57
 
  # MySQL基础架构分析
 
+![image-20230313164253061](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313164253061.png)
+
 ## MySQL基本架构概览
 
 - 下图是MySQL的简要架构图，从下图可以看到**用户的SQL语句**在MySQL内部是**如何执行的**
