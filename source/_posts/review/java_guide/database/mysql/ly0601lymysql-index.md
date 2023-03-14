@@ -100,7 +100,7 @@ updated: 2023-01-11 09:09:25
 
 ## MySQL底层数据结构总结
 
-![image-20230314155425307](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230314155425307.png)
+![image-20230314155659459](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230314155659459.png)
 
 ## 索引类型总结
 
