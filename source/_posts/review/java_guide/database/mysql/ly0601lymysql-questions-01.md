@@ -37,7 +37,7 @@ updated: 2023-01-22 22:46:06
 # MySQL基础架构
 
 - MySQL的一个**简要机构图**，客户端的一条**SQL语句**在MySQL内部如何执行
-  ![img](https://guide-blog-images.oss-cn-shenzhen.aliyuncs.com/javaguide/13526879-3037b144ed09eb88.png)
+  ![image-20230313164253061](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313164253061.png)
 - MySQL主要由几部分构成
   1. **连接器**：**身份认证**和**权限相关**（登录MySQL的时候）
   2. **查询缓存**：执行**查询**语句的时候，会先**查询缓存**（MySQL8.0版本后**移除**，因为这个功能不太实用）
