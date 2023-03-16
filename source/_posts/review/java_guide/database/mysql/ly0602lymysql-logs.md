@@ -40,6 +40,9 @@ updated: 2023-01-14 17:31:53
 - mysql执行  
   ![image-20230313164253061](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313164253061.png)
 
+- 总结  总结  
+  ![image-20230315225205398](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230315225205398.png)
+
 - 比较重要的
   1. 二进制日志： **binlog（归档日志）**【server层】
   2. 事务日志：**redo log（重做日志）**和**undo log（回滚日志）** 【引擎层】
@@ -351,6 +354,5 @@ updated: 2023-01-14 17:31:53
 - 三大日志大概的流程
   ![image-20230116002657069](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230116002657069.png)
 
-总结  
-![image-20230315225205398](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230315225205398.png)
+
 
