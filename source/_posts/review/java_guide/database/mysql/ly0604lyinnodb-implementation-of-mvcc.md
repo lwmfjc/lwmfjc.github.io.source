@@ -203,7 +203,7 @@ private:
 
 ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/a3fd1ec6-8f37-42fa-b090-7446d488fd04.bf41f07c.png)
 
-由于 RC 级别下每次查询都会生成`Read View` ，并且事务 101、102 并未提交，此时 `103` 事务生成的 `Read View` 中活跃的事务 **`m_ids` 为：[101,102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：101，`m_creator_trx_id` 为：103
+由于 RC 级别下**每次查询都会生成**`Read View` ，并且事务 101、102 并未提交，此时 `103` 事务生成的 `Read View` 中活跃的事务 **`m_ids` 为：[101,102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：101，`m_creator_trx_id` 为：103
 
 - 此时最新记录的 `DB_TRX_ID` 为 101，m_up_limit_id <= 101 < m_low_limit_id，所以要在 **`m_ids` 列表中查找**，发现 **`DB_TRX_ID` 存在列表**中，那么这个记录不可见
 - **根据 `DB_ROLL_PTR` 找到 `undo log` 中的上一版本记录**，上一条记录的 `DB_TRX_ID` 还是 101，不可见
@@ -220,7 +220,8 @@ private:
 - 此时最新记录的 **`DB_TRX_ID` 为 102**，m_up_limit_id <= 102 < m_low_limit_id，所以要**在 `m_ids` 列表中查找**，发现 `DB_TRX_ID` 存在列表中，那么这个记录不可见
 - 根据 `DB_ROLL_PTR` 找到 `undo log` 中的上一版本记录，**上一条记录的 `DB_TRX_ID` 为 101，满足 101 < m_up_limit_id**，记录可见，所以在 `T6` 时间点查询到数据为 `name = 李四`，与时间 T4 查询到的结果不一致，不可重复读！
 
-**3. 时间线来到 T9 ，数据的版本链为：**
+**3. 时间线来到 T9 ，数据的版本链为：**  
+![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/6fb2b9a1-5f14-4dec-a797-e4cf388ed413.ea9e47d7.png)
 
 ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/6f82703c-36a1-4458-90fe-d7f4edbac71a.c8de5ed7.png)
 
@@ -277,4 +278,4 @@ private:
 
 - `InnoDB` 使用 [Next-key Lockopen in new window](https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html#innodb-next-key-locks) 来防止这种情况。当执行当前读时，会**锁定读取到的记录的同时，锁定它们的间隙**，防止**其它事务在查询范围内插入数据**。只要我**不让你插入，就不会发生幻读**
 
-> Next-Key* Lock(临键锁) 是**Record Lock(记录锁) 和Gap* Lock(间隙锁)** 的结合
+> Next-Key* Lock(临键锁) 是**Record Lock(记录锁) 和Gap Lock(间隙锁)** 的结合
