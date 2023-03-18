@@ -278,4 +278,5 @@ private:
 
 - `InnoDB` 使用 [Next-key Lockopen in new window](https://dev.mysql.com/doc/refman/5.7/en/innodb-locking.html#innodb-next-key-locks) 来防止这种情况。当执行当前读时，会**锁定读取到的记录的同时，锁定它们的间隙**，防止**其它事务在查询范围内插入数据**。只要我**不让你插入，就不会发生幻读**
 
-> Next-Key* Lock(临键锁) 是**Record Lock(记录锁) 和Gap Lock(间隙锁)** 的结合
+> 1. Next-Key* Lock(临键锁) 是**Record Lock(记录锁) 和Gap Lock(间隙锁)** 的结合
+> 2. 间隙锁是(左，右]   ，即左开右闭。
