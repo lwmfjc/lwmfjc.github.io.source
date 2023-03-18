@@ -21,9 +21,39 @@ updated: 2023-03-14 22:34:52
 
 **执行计划** 是指一条 SQL 语句在经过 **MySQL 查询优化器** 的优化会后，具体的执行方式。
 
-执行计划通常用于 SQL 性能分析、优化等场景。通过 `EXPLAIN` 的结果，可以了解到如数据表的查询顺序、数据查询操作的操作类型、哪些索引可以被命中、哪些索引实际会命中、每个数据表有多少行记录被查询等信息。
+执行计划通常用于 **SQL 性能分析**、**优化**等场景。通过 `EXPLAIN` 的结果，可以了解到如**数据表的查询顺序**、数据查询操作的**操作类型**、**哪些索引**可以被命中、哪些索引**实际**会命中、每个数据表有多少**行记录被查询**等信息。
 
 ## 如何获取执行计划？
+
+```mysql
+-- 提交准备数据
+SET NAMES utf8mb4;
+SET FOREIGN_KEY_CHECKS = 0;
+
+-- ----------------------------
+-- Table structure for dept_emp
+-- ----------------------------
+DROP TABLE IF EXISTS `dept_emp`;
+CREATE TABLE `dept_emp`  (
+  `id` int(0) NOT NULL,
+  `emp_no` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `other1` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  `other2` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  INDEX `index_emp_no`(`emp_no`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+
+-- ----------------------------
+-- Records of dept_emp
+-- ----------------------------
+INSERT INTO `dept_emp` VALUES (1, 'a1', 'o11', '012');
+INSERT INTO `dept_emp` VALUES (2, 'a2', 'o21', 'o22');
+INSERT INTO `dept_emp` VALUES (3, 'a3', 'o31', 'o32');
+INSERT INTO `dept_emp` VALUES (4, 'a4', 'o41', 'o42');
+INSERT INTO `dept_emp` VALUES (5, 'a5', 'o51', 'o52');
+
+SET FOREIGN_KEY_CHECKS = 1;
+```
 
 MySQL 为我们提供了 `EXPLAIN` 命令，来获取执行计划的相关信息。
 
@@ -125,7 +155,7 @@ rows 列表示根据表统计信息及选用情况，大致估算出找到所需
 
 ### Extra（重要）
 
-这列包含了 MySQL 解析查询的额外信息，通过这些信息，可以更准确的理解 MySQL 到底是如何执行查询的。常见的值如下：
+这列包含了 MySQL 解析查询的额外信息，通过这些信息，可以更**准确的理解 MySQL 到底是如何执行查询**的。常见的值如下：
 
 - **Using filesort**：在排序时使用了外部的索引排序，没有用到表内索引进行排序。
 - **Using temporary**：MySQL 需要创建临时表来存储查询的结果，常见于 ORDER BY 和 GROUP BY。
