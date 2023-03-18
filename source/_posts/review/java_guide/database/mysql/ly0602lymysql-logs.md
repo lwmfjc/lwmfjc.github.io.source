@@ -98,20 +98,20 @@ updated: 2023-01-14 17:31:53
 
 **不同刷盘策略的流程图**  
 
-- #### innodb_flush_log_at_trx_commit=0（不对是否刷盘做出处理）  
+### innodb_flush_log_at_trx_commit=0（不对是否刷盘做出处理）  
 
   > 为`0`时，如果`MySQL`挂了或宕机可能会有`1`秒数据的丢失。  
   > （**由于事务提交成功也不会主动写入page cache，所以即使只有MySQL 挂了，没有宕机，也会丢失。**）
 
   ![image-20230114211255976](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230114211255976.png)
 
-- #### innodb_flush_log_at_trx_commit=1  
+### innodb_flush_log_at_trx_commit=1  
 
   > 为`1`时， **只要事务提交成功**，**`redo log`记录就一定在硬盘里**，不会有任何数据丢失。如果事务执行期间`MySQL`挂了或宕机，这部分日志丢了，但是事务并没有提交，所以日志丢了也不会有损失。
 
   ![image-20230114211419216](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230114211419216.png)
 
-- #### innodb_flush_log_at_trx_commit=2
+### innodb_flush_log_at_trx_commit=2
 
   > - 为`2`时， 只要**事务提交成功**，`redo log buffer`中的内容**只写入文件系统缓存**（`page cache`）。
   >
@@ -227,9 +227,13 @@ updated: 2023-01-14 17:31:53
 
   3. 折中，可以设置为**N(N>1)**，表示每次提交事物都write，但累积**N**个事务之后才**fsync**![image-20230115220338819](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230115220338819.png)
      在出现**IO**瓶颈的场景里，将**sync_binlog**设置成一个较大的值，可以**提升性能**  
-     同理，如果机器宕机，会**丢失最近N个事务的binlog日志**
+     同理，如果机器宕机，会**丢失最近N个事务的binlog日志**  
 
-# 两阶段提交
+
+
+# 两阶段提交  
+
+
 
 1. **redo log（重做日志）**让InnoDB存储引擎拥有了**崩溃恢复**的能力
 2. **binlog（归档日志）**保证了MySQL**集群架构的数据一致性**
@@ -315,7 +319,7 @@ updated: 2023-01-14 17:31:53
 >
 > **变动数据写入磁盘前，必须先记录 Undo Log，Undo Log 中存储了回滚需要的数据。在事务回滚或者崩溃恢复时，根据 Undo Log 中的信息对提前写入的数据变动进行擦除。**
 >
-> ## 更新一条语句的执行过程(ly:根据多方资料验证，这个是对的，事务提交前并不会持久化到db磁盘数据库文件中)
+> **更新一条语句的执行过程(ly:根据多方资料验证，这个是对的，事务提交前并不会持久化到db磁盘数据库文件中)**
 >
 > > 回答题主的问题，对MySQL数据库来说，事务提交之前，操作的数据存储在数据库在内存区域中的缓冲池中，即写的是内存缓冲池中的页(page cache)，同时会在缓冲池中写undolog(用于回滚)和redolog、binlog(用于故障恢复，保证数据持久化的一致性)，事务提交后，有数据变更的页，即脏页，会被持久化到物理磁盘。
 > >
@@ -339,7 +343,7 @@ updated: 2023-01-14 17:31:53
 > 8. 执行器调用存储引擎的提交事务接口，存储引擎把刚刚写入的 Redo Log 改成 commit 状态。
 > 9. **事务结束**
 
-## MVCC
+# MVCC
 
 - `MVCC` 的实现依赖于：**隐藏字段、Read View、undo log**。
 
@@ -347,7 +351,7 @@ updated: 2023-01-14 17:31:53
 
   > 每个事务读到的数据版本可能是不一样的，在同一个事务中，用户只能看到该事务创建 `Read View` 之前已经提交的修改和该事务本身做的修改
 
-## 总结
+# 总结
 
 - MySQL InnoDB 引擎使用 **redo log(重做日志)** 保证事务的**持久性**，使用 **undo log(回滚日志)** 来保证事务的**原子性**。
 - `MySQL`数据库的**数据备份、主备、主主、主从**都离不开`binlog`，需要依靠`binlog`来同步数据，保证数据一致性。
