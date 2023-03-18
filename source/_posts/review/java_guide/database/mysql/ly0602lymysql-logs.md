@@ -40,8 +40,8 @@ updated: 2023-01-14 17:31:53
 - mysql执行  
   ![image-20230313164253061](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313164253061.png)
 
-- 总结  总结  
-  ![image-20230315225205398](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230315225205398.png)
+- 总结  
+  ![image-20230318140400678](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230318140400678.png)
 
 - 比较重要的
   1. 二进制日志： **binlog（归档日志）**【server层】
@@ -58,7 +58,7 @@ updated: 2023-01-14 17:31:53
 
   > 比如 `MySQL` 实例**挂了或宕机**了，**重启**时，`InnoDB`存储引擎会使用`redo log`恢复数据，保证数据的**持久性**与**完整性**。  
 > 再具体点：防止在**发生故障的时间点**，尚有**脏页未写入磁盘**，在重启mysql服务的时候，根据redo log进行重做，从而达到事务的持久性这一特性
-  
+
   ![image-20230114185737370](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230114185737370.png)
 
 1. MySQL中数据是以**页（这个很重要，重点是针对页）**为单位，你查询一条记录，会**从硬盘把一页的数据加载出来**，加载出来的数据叫**数据页**，会放到**Buffer Pool**中  (这个时候 如果更新，buffer pool 中的数据页就与磁盘上的数据页**内容不一致**，我们称 buffer pool 的数据页为 **dirty page 脏数据**)
