@@ -395,7 +395,7 @@ where vend_country = 'USA' and vend_state = 'CA'
 order by vend_name;
 ```
 
-`order by` 语句必须放在 where 之后。
+**`order by` 语句必须放在 where 之后。**
 
 ## 用通配符进行过滤
 
@@ -576,7 +576,9 @@ from
 
 知识点：
 
-- 截取函数`substring()`：截取字符串，`substring(str ,n ,m)`：返回字符串 str 从第 n 个字符截取到第 m 个字符（左闭右闭）；
+- 截取函数`substring()`：截取字符串，`substring(str ,n ,m)`：返回字符串 str 从第 n 个字符截取到第 m 个字符（左闭右闭）；  
+
+  > 返回字符串 str 从第 n 个字符截取  m 个字符（左闭右闭）
 - 拼接函数`concat()`：将两个或多个字符串连接成一个字符串，select concat(A,B) ：连接字符串 A 和 B。
 - 大写函数 `upper()`：将指定字符串转换为大写。
 
@@ -759,8 +761,8 @@ order by order_lines;
 
 知识点：
 
-1. `count(*)`,`count(列名)`都可以，区别在于，`count(列名)`是统计非 NULL 的行数；
-2. `order by` 最后执行，所以可以使用列别名；
+1. `count(*)`,`count(列名)`都可以，区别在于，**`count(列名)`是统计非 NULL 的行数**；
+2. **`order by` 最后执行，所以可以使用列别名**；
 3. 分组聚合一定不要忘记加上 `group by` ,不然只会有一行结果。
 
 ### 每个供应商成本最低的产品
@@ -927,7 +929,12 @@ where  condition
 ### 返回购买价格为 10 美元或以上产品的顾客列表
 
 ```
-OrderItems` 表示订单商品表，含有字段订单号：`order_num`、订单价格：`item_price`；`Orders` 表代表订单信息表，含有顾客 `id：cust_id` 和订单号：`order_num
+OrderItems` 表示订单商品表，含有字段  
+订单号：`order_num`、
+订单价格：`item_price`；
+`Orders` 表代表订单信息表，含有
+顾客 `id：cust_id` 和
+订单号：`order_num
 ```
 
 `OrderItems` 表:
