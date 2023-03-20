@@ -23,7 +23,7 @@ updated: 2023-02-07 13:28:19
 
 > Apache Maven is a software project management and comprehension tool. Based on the concept of a project object model (POM), Maven can manage a project's build, reporting and documentation from a central piece of information.
 >
-> Apache Maven 的本质是一个**软件项目管理**和**理解**工具。基于**项目对象模型** (**Project Object Model**，POM) 的概念，Maven 可以从**一条中心信息**管理项目的**构建**、**报告**和**文档**。
+> Apache Maven 的本质是一个**软件项目管理**和**理解**工具。基于**项目对象模型** (**Project Object Model**，POM) 的概念，Maven 可以从**一条中心信息** **管理**项目的**构建**、**报告**和**文档**。
 
 **什么是 POM？** 每一个 Maven 工程都有一个 **`pom.xml`** 文件，位于根目录中，包含项目**构建生命周期**的详细信息。通过 `pom.xml` 文件，我们可以定义**项目**的**坐标**、**项目依赖**、**项目信息**、**插件信息**等等配置。
 
@@ -246,7 +246,7 @@ Maven 仓库分为：
 
 Maven 远程仓库可以分为：
 
-- **中央仓库** ：这个仓库是由 Maven 社区来维护的，里面存放了绝大多数开源软件的包，并且是作为 Maven 的默认配置，不需要开发者额外配置。另外为了方便查询，还提供了一个[查询地址](https://search.maven.org/)，开发者可以通过这个地址**更快的搜索需要构件的坐标**。
+- **中央仓库** ：这个仓库是由 **Maven 社区来维护**的，里面存放了绝大多数开源软件的包，并且是作为 Maven 的默认配置，不需要开发者额外配置。另外为了方便查询，还提供了一个[查询地址](https://search.maven.org/)，开发者可以通过这个地址**更快的搜索需要构件的坐标**。
 - **私服** ：私服是一种**特殊的远程 Maven** 仓库，它是架设在**局域网内的仓库**服务，私服一般被配置为**互联网远程仓库的镜像**，供**局域网内的 Maven 用户**使用。
 - **其他的公共仓库** ：有一些公共仓库是**未来加速访问（**比如阿里云 Maven 镜像仓库）或者**部分构件不存在于中央仓库**中。
 
