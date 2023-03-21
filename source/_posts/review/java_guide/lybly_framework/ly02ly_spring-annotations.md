@@ -424,7 +424,7 @@ public class Person {
 }
 ```
 
-我们在需要验证的参数上加上了`@Valid`注解，如果验证失败，它将抛出`MethodArgumentNotValidException`。
+我们**在需要验证的参数上加上了`@Valid`注解**，如果验证失败，它将抛出`MethodArgumentNotValidException`。
 
 ```java
 @RestController
@@ -897,7 +897,7 @@ public class Account {
 }
 ```
 
-使用`@JsonUnwrapped` 扁平对象之后：
+使用`@JsonUnwrapped` **扁平对象(外面那层没了)**之后：
 
 ```java
 @Getter

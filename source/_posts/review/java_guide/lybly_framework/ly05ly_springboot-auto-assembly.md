@@ -173,7 +173,7 @@ public interface ImportSelector {
 }
 ```
 
-可以看出，`AutoConfigurationImportSelector` 类实现了 **`ImportSelector`**接口，也就实现了这个接口中的 **`selectImports`**方法，该方法主要用于**获取所有符合条件的类的全限定类名，这些类需要被加载到 IoC 容器中**。
+可以看出，`AutoConfigurationImportSelector` 类实现了 **`ImportSelector`接口，也就实现了这个接口中的 `selectImports`方法，该方法主要用于**获取所有符合条件的类的全限定类名，这些类需要被加载到 IoC 容器中。
 
 ```java
 private static final String[] NO_IMPORTS = new String[0];
@@ -326,3 +326,6 @@ public class RabbitAutoConfiguration {
 ## 总结
 
 Spring Boot 通过**`@EnableAutoConfiguration`**开启自动装配，通过 **SpringFactoriesLoader** 最终加载**`META-INF/spring.factories`**中的**自动配置类**实现**自动装配**，自动配置类其实就是**通过`@Conditional`按需加载的配置类**，想要其生效必须引入**`spring-boot-starter-xxx`包实现起步依赖**
+
+
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230321182423.png)
