@@ -328,9 +328,9 @@ public Person personPrototype() {
 
 - Bean 容器**找到配置文件**中 Spring Bean 的**定义**。
 - Bean 容器**利用 Java Reflection API** 创建一个 Bean 的实例。【**反射**】
-- 如果涉及到一些属性值 **利用 `set()`方法设置**一些属性值。
+	- 如果涉及到一些属性值 **利用 `set()`方法设置**一些属性值。
 
-> ```aware 英[əˈweə(r)] adj. 意识到的,发觉,发现```
+ > aware 英[əˈweə(r)] adj. 意识到的,发觉,发现`
 
 - 如果 Bean 实现了 **`BeanNameAware`** 接口，调用 `setBeanName()`方法，传入 **Bean 的名字**。
 - 如果 Bean 实现了 **`BeanClassLoaderAware`** 接口，调用 `setBeanClassLoader()`方法，传入 **`ClassLoader`对象的实例**。
@@ -350,6 +350,8 @@ public Person personPrototype() {
 与之比较类似的中文版本:
 
 [![Spring Bean 生命周期](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d616765732e7869616f7a6875616e6c616e2e636f6d2f70686f746f2f323031392f62356432363435363536353761353339356332373831303831613734383365312e6a7067)](https://camo.githubusercontent.com/9efd4a1a6c11ebb15c61a022e93bb20934a85a72d95194cf59402421c09191a9/68747470733a2f2f696d616765732e7869616f7a6875616e6c616e2e636f6d2f70686f746f2f323031392f62356432363435363536353761353339356332373831303831613734383365312e6a7067)
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230321121040.png)
+
 
 ## Spring AoP
 
