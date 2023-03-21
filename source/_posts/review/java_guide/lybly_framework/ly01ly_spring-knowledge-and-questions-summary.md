@@ -494,7 +494,9 @@ MVC 是一种设计模式，Spring MVC 是一款很优秀的 MVC 框架。Spring
 4. `Handler` 完成对用户请求的处理后，会**返回一个 `ModelAndView`** 对象给`DispatcherServlet`，`ModelAndView` 顾名思义，包含了**数据模型**以及**相应的视图的信息**。`Model` 是返回的数据对象，`View` 是个逻辑上的 `View`。
 5. `ViewResolver` 会**根据逻辑 `View` 查找实际的 `View`**。
 6. `DispaterServlet` 把**返回的 `Model` 传给 `View`（视图渲染**）。
-7. 把 **`View` 返回**给请求者（浏览器）
+7. 把 **`View` 返回**给请求者（浏览器）  
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230321141002.png)
+
 
 ### 统一异常处理怎么做？
 
@@ -760,7 +762,7 @@ public class UserServiceImpl implements UserService {
 
 **事务传播行为是为了解决业务层方法之间互相调用的事务问题**。
 
-当事务方法被另一个事务方法调用时，必须指定事务应该如何传播。例如：方法可能继续在现有事务中运行，也可能开启一个新事务，并在自己的事务中运行。  
+当事务方法被另一个事务方法(也可能非事务)调用时，必须指定事务应该如何传播。例如：方法可能继续在现有事务中运行，也可能开启一个新事务，并在自己的事务中运行。  
 
 > 注意几点，下面这个值都是**内方法**上的注解的值，且两个方法必须属于不同类  
 >
@@ -843,6 +845,7 @@ public class UserServiceImpl implements UserService {
 - **`TransactionDefinition.PROPAGATION_SUPPORTS`**: 如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行。
 - **`TransactionDefinition.PROPAGATION_NOT_SUPPORTED`**: 以非事务方式运行，如果当前存在事务，则把当前事务挂起。
 - **`TransactionDefinition.PROPAGATION_NEVER`**: 以非事务方式运行，如果当前存在事务，则抛出异常。
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230321162427.png)
 
 ### Spring 事务中的隔离级别有哪几种?
 
