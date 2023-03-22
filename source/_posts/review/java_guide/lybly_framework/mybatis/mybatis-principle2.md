@@ -699,3 +699,4 @@ sqlSession是种共用资源，用完了要返回到池子中，以供其它地�
 
 至此我们已经大致了解了**Mybatis启动时的大致流程**，很多细节都还没有详细介绍，这是因为涉及到的层面又深又广，如果在一篇文章中介绍，反而会让读者如置云里雾里，不知所云。因此，在接下来我将每个模块的详细介绍。如果文章有什么错误或者需要改进的，希望同学们指出来，希望对大家有帮助。
 
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230322160744.png)
