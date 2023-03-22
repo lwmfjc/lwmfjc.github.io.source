@@ -764,7 +764,7 @@ public class MyBatisBootStrap {
             // 5. 执行接口方法
             TTestUser userInfo = userMapper.selectByPrimaryKey(16L);
             System.out.println("userInfo = " + JSONUtil.toJsonStr(userInfo));
-            // 6. 提交事物
+            // 6. 提交事务
             sqlSession.commit();
             // 7. 关闭资源
             sqlSession.close();
@@ -786,3 +786,4 @@ public class MyBatisBootStrap {
 
 这篇文章简单的介绍了下MyBatis的**基本概念**，并提供了简单的栗子，**接下来几篇文章打算写下Mybatis的启动流程**，让我们更好的了解下**mybatis的各模块协作**。
 
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230322145827.png)
