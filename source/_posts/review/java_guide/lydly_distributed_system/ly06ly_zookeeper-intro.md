@@ -201,7 +201,8 @@ Session 有一个属性叫做：`sessionTimeout` ，`sessionTimeout` 代表会�
 
 为了保证高可用，最好是以集群形态来部署 ZooKeeper，这样只要集群中大部分机器是可用的（能够容忍一定的机器故障），那么 ZooKeeper 本身仍然是可用的。通常 3 台服务器就可以构成一个 ZooKeeper 集群了。ZooKeeper 官方提供的架构图就是一个 ZooKeeper 集群整体对外提供服务。
 
-[![img](https://github.com/Snailclimb/JavaGuide/raw/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/zookeeper集群.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/zookeeper集群.png)
+[!![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230323160454.png)
+
 
 上图中每一个 Server 代表一个安装 ZooKeeper 服务的服务器。组成 ZooKeeper 服务的服务器都会在内存中维护当前的服务器状态，并且**每台服务器之间都互相保持着通信**。集群间通过 **ZAB 协议（ZooKeeper Atomic Broadcast）**来保持数据的一致性。
 
@@ -214,7 +215,7 @@ Session 有一个属性叫做：`sessionTimeout` ，`sessionTimeout` 代表会�
 
 但是，在 ZooKeeper 中没有选择传统的 Master/Slave 概念，而是引入了 Leader、Follower 和 Observer 三种角色。如下图所示
 
-[![img](https://github.com/Snailclimb/JavaGuide/raw/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/zookeeper集群中的角色.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/distributed-process-coordination/zookeeper/images/zookeeper集群中的角色.png)
+[!![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230323160539.png)
 
 ZooKeeper 集群中的所有机器通过一个 **Leader 选举过程** 来选定一台称为 “**Leader**” 的机器，Leader 既可以为客户端提供**写**服务又能提供**读**服务。除了 Leader 外，**Follower** 和 **Observer** 都**只能提供读**服务。Follower 和 Observer 唯一的区别在于 **Observer 机器不参与 Leader 的选举**过程，也**不参与写操作的“过半写成功”策略**，因此 Observer 机器可以在不影响写性能的情况下提升集群的读性能。
 
