@@ -48,6 +48,9 @@ updated: 2023-02-13 17:30:07
 比如各个分布式组件**如何协调**起来，如何**减少**各个系统之间的**耦合度**，**分布式事务**的处理，如何去**配置整个分布式系统**等等。`ZooKeeper` 主要就是解决这些问题的。
 
 ## 3. 一致性问题
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230323213318.png)
+
+
 
 设计一个分布式系统必定会遇到一个问题—— **因为分区容忍性（partition tolerance）的存在，就必定要求我们需要在系统可用性（availability）和数据一致性（consistency）中做出权衡** 。这就是著名的 `CAP` 定理。
 
@@ -304,6 +307,9 @@ updated: 2023-02-13 17:30:07
  ![watcher机制](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f696d675f636f6e766572742f32343161623863633337353731303334666139383433323262373533633762612e706e67) 
 
 ## 7. Zookeeper的几个典型应用场景
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230323222520.png)
+
+
 
 前面说了这么多的理论知识，你可能听得一头雾水，这些玩意有啥用？能干啥事？别急，听我慢慢道来。
 
