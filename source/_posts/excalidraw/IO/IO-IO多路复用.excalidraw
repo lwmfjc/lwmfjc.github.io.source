@@ -71,7 +71,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "SJmV1_j1MenjjjzNNXrPL",
-      "originalText": "服务器端"
+      "originalText": "服务器端",
+      "lineHeight": 1.168155392655801
     },
     {
       "type": "rectangle",
@@ -145,7 +146,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "ON-oc2HNY9UQE6ScIKVj1",
-      "originalText": "线程"
+      "originalText": "线程",
+      "lineHeight": 1.1722205028881554
     },
     {
       "type": "arrow",
@@ -278,7 +280,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "S4GfJbyg3B8bc2opAdhJD",
-      "originalText": "选择器(Selector)"
+      "originalText": "选择器(Selector)",
+      "lineHeight": 1.1669491525423719
     },
     {
       "type": "rectangle",
@@ -356,7 +359,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "L0oV6unaHL1eOyTCW5mAd",
-      "originalText": "通道(Channel)"
+      "originalText": "通道(Channel)",
+      "lineHeight": 1.1848186570667771
     },
     {
       "type": "rectangle",
@@ -438,7 +442,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "ajVCWZ1L762KQNbS_gnlp",
-      "originalText": "缓冲区(Buffer)"
+      "originalText": "缓冲区(Buffer)",
+      "lineHeight": 1.166480882160125
     },
     {
       "type": "rectangle",
@@ -512,7 +517,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "3L_TW1C43xjMpZWPu-2r6",
-      "originalText": "客户端"
+      "originalText": "客户端",
+      "lineHeight": 1.177029630675369
     },
     {
       "type": "arrow",
@@ -924,8 +930,8 @@
     },
     {
       "type": "image",
-      "version": 173,
-      "versionNonce": 1624740942,
+      "version": 174,
+      "versionNonce": 1992645464,
       "isDeleted": false,
       "id": "1n6CvFjrvm240xblFBdph",
       "fillStyle": "hachure",
@@ -946,10 +952,10 @@
       ],
       "roundness": null,
       "boundElements": [],
-      "updated": 1678014773504,
+      "updated": 1679755277515,
       "link": null,
       "locked": false,
-      "status": "pending",
+      "status": "saved",
       "fileId": "38003475791399b86c053ec05d904b9202dc3380",
       "scale": [
         1,
@@ -972,7 +978,7 @@
       "y": 335.15726539342523,
       "strokeColor": "#c92a2a",
       "backgroundColor": "transparent",
-      "width": 104.88415119603827,
+      "width": 104.87564086914062,
       "height": 22.4298024694904,
       "seed": 183918395,
       "groupIds": [
@@ -989,7 +995,8 @@
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "I/O 多路复用"
+      "originalText": "I/O 多路复用",
+      "lineHeight": 1.2
     },
     {
       "type": "text",
@@ -1007,8 +1014,8 @@
       "y": 96.61209191501638,
       "strokeColor": "#2b8a3e",
       "backgroundColor": "transparent",
-      "width": 236.18322753906253,
-      "height": 50.343510942785265,
+      "width": 236.11033630371094,
+      "height": 50.34351094278526,
       "seed": 866551803,
       "groupIds": [
         "-vGZMzbHxmTGy3v7_kPrb"
@@ -1024,7 +1031,8 @@
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "解决问题：应用程序不断进行 I/O 系统\n调用轮询数据是否已经准备好的过程\n是十分消耗 CPU 资源的。"
+      "originalText": "解决问题：应用程序不断进行 I/O 系统\n调用轮询数据是否已经准备好的过程\n是十分消耗 CPU 资源的。",
+      "lineHeight": 1.199999999999999
     },
     {
       "type": "text",
@@ -1042,7 +1050,7 @@
       "y": 155.9040786661875,
       "strokeColor": "#2b8a3e",
       "backgroundColor": "transparent",
-      "width": 281.7593688964844,
+      "width": 281.603515625,
       "height": 93.05147078585256,
       "seed": 1581253531,
       "groupIds": [
@@ -1059,7 +1067,8 @@
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "线程首先发起 select 调用，询问内核数据\n是否准备就绪，等内核把数据准备好了，\n用户线程再发起 read 调用。read 调用\n的过程（数据从内核空间 -> 用户空间）\n还是阻塞的"
+      "originalText": "线程首先发起 select 调用，询问内核数据\n是否准备就绪，等内核把数据准备好了，\n用户线程再发起 read 调用。read 调用\n的过程（数据从内核空间 -> 用户空间）\n还是阻塞的",
+      "lineHeight": 1.2000000000000008
     },
     {
       "type": "text",
@@ -1077,7 +1086,7 @@
       "y": 255.54037705375083,
       "strokeColor": "#2b8a3e",
       "backgroundColor": "transparent",
-      "width": 256.9593505859375,
+      "width": 256.9089660644531,
       "height": 57.21520596762504,
       "seed": 212934453,
       "groupIds": [
@@ -1094,7 +1103,8 @@
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "select 调用 ：内核提供的系统调用，\n它支持一次查询多个系统调用的可用\n状态。几乎所有的操作系统都支持"
+      "originalText": "select 调用 ：内核提供的系统调用，\n它支持一次查询多个系统调用的可用\n状态。几乎所有的操作系统都支持",
+      "lineHeight": 1.2000000000000006
     },
     {
       "type": "line",
@@ -1296,7 +1306,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "WHfNuAmgovgZw4g-oo4jo",
-      "originalText": "通道(Channel)"
+      "originalText": "通道(Channel)",
+      "lineHeight": 1.1848186570667771
     },
     {
       "type": "rectangle",
@@ -1378,7 +1389,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "26DIVm-lWmpd0y0L03FP2",
-      "originalText": "缓冲区(Buffer)"
+      "originalText": "缓冲区(Buffer)",
+      "lineHeight": 1.166480882160125
     },
     {
       "type": "rectangle",
@@ -1452,7 +1464,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "ktHWW4uKKNRJxGU13_6Aw",
-      "originalText": "客户端"
+      "originalText": "客户端",
+      "lineHeight": 1.177029630675369
     },
     {
       "type": "arrow",
@@ -1738,7 +1751,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "pZ9ieMlQpo7wpHu_w3cLP",
-      "originalText": "通道(Channel)"
+      "originalText": "通道(Channel)",
+      "lineHeight": 1.1848186570667771
     },
     {
       "type": "rectangle",
@@ -1820,7 +1834,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "PhrDcCiJ4Dpl8SCYZcQqz",
-      "originalText": "缓冲区(Buffer)"
+      "originalText": "缓冲区(Buffer)",
+      "lineHeight": 1.166480882160125
     },
     {
       "type": "rectangle",
@@ -1894,7 +1909,8 @@
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "j57Wob-ip1gfJeKK6_Cpf",
-      "originalText": "客户端"
+      "originalText": "客户端",
+      "lineHeight": 1.177029630675369
     },
     {
       "type": "arrow",
@@ -2159,7 +2175,7 @@
       "y": 619.6587182141712,
       "strokeColor": "#c92a2a",
       "backgroundColor": "transparent",
-      "width": 564.1710815429688,
+      "width": 563.9346923828125,
       "height": 40.09678851325947,
       "seed": 516476763,
       "groupIds": [],
@@ -2174,33 +2190,43 @@
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "每个客户端对应一个Channel，Selector把数据放到Channel对应的Buffer中，\n客户端从Channel对应的Buffer取数据"
+      "originalText": "每个客户端对应一个Channel，Selector把数据放到Channel对应的Buffer中，\n客户端从Channel对应的Buffer取数据",
+      "lineHeight": 1.1999999999999995
     },
     {
-      "id": "1-ED9e__Uxo2HTiHFUAar",
       "type": "arrow",
-      "x": 585.0731897474452,
-      "y": 351.9705130133167,
-      "width": 118.50012149896179,
-      "height": 159.21987941477556,
-      "angle": 0,
-      "strokeColor": "#c92a2a",
-      "backgroundColor": "#ced4da",
+      "version": 113,
+      "versionNonce": 448663310,
+      "isDeleted": false,
+      "id": "1-ED9e__Uxo2HTiHFUAar",
       "fillStyle": "solid",
       "strokeWidth": 1,
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
+      "angle": 0,
+      "x": 585.0731897474452,
+      "y": 351.9705130133167,
+      "strokeColor": "#c92a2a",
+      "backgroundColor": "#ced4da",
+      "width": 118.50012149896179,
+      "height": 159.21987941477556,
+      "seed": 932471506,
       "groupIds": [],
       "roundness": null,
-      "seed": 932471506,
-      "version": 113,
-      "versionNonce": 448663310,
-      "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1678015417703,
       "link": null,
       "locked": false,
+      "startBinding": {
+        "elementId": "v6N8ht09KHAr-x7inMv4Q",
+        "gap": 14.180137369892325,
+        "focus": 0.23593474821702548
+      },
+      "endBinding": null,
+      "lastCommittedPoint": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow",
       "points": [
         [
           0,
@@ -2210,40 +2236,31 @@
           -118.50012149896179,
           159.21987941477556
         ]
-      ],
-      "lastCommittedPoint": null,
-      "startBinding": {
-        "elementId": "v6N8ht09KHAr-x7inMv4Q",
-        "gap": 14.180137369892325,
-        "focus": 0.23593474821702548
-      },
-      "endBinding": null,
-      "startArrowhead": null,
-      "endArrowhead": "arrow"
+      ]
     },
     {
-      "id": "v6N8ht09KHAr-x7inMv4Q",
       "type": "rectangle",
-      "x": 560.5730377309053,
-      "y": 120.79037564342434,
-      "width": 353,
-      "height": 217,
-      "angle": 0,
-      "strokeColor": "#c92a2a",
-      "backgroundColor": "#ced4da",
+      "version": 892,
+      "versionNonce": 1336075026,
+      "isDeleted": false,
+      "id": "v6N8ht09KHAr-x7inMv4Q",
       "fillStyle": "solid",
       "strokeWidth": 1,
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
+      "angle": 0,
+      "x": 560.5730377309053,
+      "y": 120.79037564342434,
+      "strokeColor": "#c92a2a",
+      "backgroundColor": "#ced4da",
+      "width": 353,
+      "height": 217,
+      "seed": 1243447822,
       "groupIds": [
         "AcNMvoPrgNHM9KguFZ3Sa"
       ],
       "roundness": null,
-      "seed": 1243447822,
-      "version": 892,
-      "versionNonce": 1336075026,
-      "isDeleted": false,
       "boundElements": [
         {
           "type": "text",
@@ -2259,74 +2276,190 @@
       "locked": false
     },
     {
-      "id": "5S4yKwieUdtrNDVm4lY52",
       "type": "text",
-      "x": 565.5730377309053,
-      "y": 133.29037564342434,
-      "width": 340,
-      "height": 192,
-      "angle": 0,
-      "strokeColor": "#c92a2a",
-      "backgroundColor": "transparent",
+      "version": 523,
+      "versionNonce": 54046930,
+      "isDeleted": false,
+      "id": "5S4yKwieUdtrNDVm4lY52",
       "fillStyle": "hachure",
       "strokeWidth": 1,
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
+      "angle": 0,
+      "x": 565.5730377309053,
+      "y": 133.29037564342434,
+      "strokeColor": "#c92a2a",
+      "backgroundColor": "transparent",
+      "width": 340,
+      "height": 192,
+      "seed": 654334994,
       "groupIds": [
         "AcNMvoPrgNHM9KguFZ3Sa"
       ],
       "roundness": null,
-      "seed": 654334994,
-      "version": 523,
-      "versionNonce": 54046930,
-      "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1678015417703,
       "link": null,
       "locked": false,
-      "text": "当select函数返回后，用户依然需要遍\n历刚刚提交给操作系统的 list。\n\n只不过，操作系统会将准备就绪的文件\n描述符做上标识，用户层将不会再有无\n意义的系统调用开销\n\n",
       "fontSize": 20,
       "fontFamily": 2,
+      "text": "当select函数返回后，用户依然需要遍\n历刚刚提交给操作系统的 list。\n\n只不过，操作系统会将准备就绪的文件\n描述符做上标识，用户层将不会再有无\n意义的系统调用开销\n\n",
       "textAlign": "left",
       "verticalAlign": "middle",
       "containerId": "v6N8ht09KHAr-x7inMv4Q",
-      "originalText": "当select函数返回后，用户依然需要遍历刚刚提交给操作系统的 list。\n\n只不过，操作系统会将准备就绪的文件描述符做上标识，用户层将不会再有无意义的系统调用开销\n\n"
+      "originalText": "当select函数返回后，用户依然需要遍历刚刚提交给操作系统的 list。\n\n只不过，操作系统会将准备就绪的文件描述符做上标识，用户层将不会再有无意义的系统调用开销\n\n",
+      "lineHeight": 1.2
     },
     {
-      "id": "ahflsA7vT-FR5HN1VbazF",
       "type": "text",
-      "x": 572.9732452504365,
-      "y": 279.19027035777975,
-      "width": 282.216796875,
-      "height": 48,
-      "angle": 0,
-      "strokeColor": "#5f3dc4",
-      "backgroundColor": "#ced4da",
+      "version": 169,
+      "versionNonce": 1854209358,
+      "isDeleted": false,
+      "id": "ahflsA7vT-FR5HN1VbazF",
       "fillStyle": "solid",
       "strokeWidth": 1,
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
+      "angle": 0,
+      "x": 572.9732452504365,
+      "y": 279.19027035777975,
+      "strokeColor": "#5f3dc4",
+      "backgroundColor": "#ced4da",
+      "width": 282.216796875,
+      "height": 48,
+      "seed": 1385343182,
       "groupIds": [
         "AcNMvoPrgNHM9KguFZ3Sa"
       ],
       "roundness": null,
-      "seed": 1385343182,
-      "version": 169,
-      "versionNonce": 1854209358,
-      "isDeleted": false,
-      "boundElements": null,
+      "boundElements": [],
       "updated": 1678015417703,
       "link": null,
       "locked": false,
-      "text": "(而如果是一般的NIO，则是不断\n调用read 判断是否返回 -1)",
       "fontSize": 20,
       "fontFamily": 2,
+      "text": "(而如果是一般的NIO，则是不断\n调用read 判断是否返回 -1)",
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "(而如果是一般的NIO，则是不断\n调用read 判断是否返回 -1)"
+      "originalText": "(而如果是一般的NIO，则是不断\n调用read 判断是否返回 -1)",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "5UOp2ZOIHIbLz90KImZgI",
+      "type": "rectangle",
+      "x": 1176.7522226969402,
+      "y": 99.59033291881491,
+      "width": 157,
+      "height": 56,
+      "angle": 0,
+      "strokeColor": "#000000",
+      "backgroundColor": "#40c057",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "dashed",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1196598824,
+      "version": 258,
+      "versionNonce": 1520913752,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "ld3rhr1O4CGBu7SnCB63L"
+        },
+        {
+          "id": "yUnks0VwYFOCw2wViJPWh",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1679755314988,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "ld3rhr1O4CGBu7SnCB63L",
+      "type": "text",
+      "x": 1194.2365976969402,
+      "y": 115.59033291881491,
+      "width": 122.03125,
+      "height": 24,
+      "angle": 0,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 406666536,
+      "version": 101,
+      "versionNonce": 551798872,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1679755311505,
+      "link": null,
+      "locked": false,
+      "text": "Java中的NIO",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "5UOp2ZOIHIbLz90KImZgI",
+      "originalText": "Java中的NIO",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "yUnks0VwYFOCw2wViJPWh",
+      "type": "arrow",
+      "x": 1227.1522471110027,
+      "y": 161.19033902233053,
+      "width": 92.800048828125,
+      "height": 76.79998779296875,
+      "angle": 0,
+      "strokeColor": "#2b8a3e",
+      "backgroundColor": "#40c057",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 643664168,
+      "version": 37,
+      "versionNonce": 67185752,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1679755326719,
+      "link": null,
+      "locked": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -92.800048828125,
+          76.79998779296875
+        ]
+      ],
+      "lastCommittedPoint": null,
+      "startBinding": {
+        "elementId": "5UOp2ZOIHIbLz90KImZgI",
+        "focus": -0.11127647203541396,
+        "gap": 5.600006103515625
+      },
+      "endBinding": null,
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
     }
   ],
   "appState": {
