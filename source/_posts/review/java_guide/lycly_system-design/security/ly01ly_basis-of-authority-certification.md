@@ -47,13 +47,15 @@ RBAC 即**基于角色的权限访问控制**（**Role-Based Access Control**）
 
 简单地说：一个**用户可以拥有若干角色**，每一个**角色又可以被分配若干权限**，这样就构造成“**用户-角色-权限**” 的授权模型。在这种模型中，用户与角色、角色与权限之间构成了多对多的关系，如下图
 
- ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f64657369676e2d6f662d617574686f726974792d73797374656d2f726261632e706e67)
+![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230328162900.png)
+
 
 **在 RBAC 中，权限与角色相关联，用户通过成为适当角色的成员而得到这些角色的权限。这就极大地简化了权限的管理。**
 
 本系统的权限设计相关的表如下（一共 5 张表，2 张用户建立表之间的联系）：
 
- ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f323032302d31312f2545362539352542302545362538442541452545352542412539332545382541452542452545382541452541312d2545362539442538332545392539392539302e706e67)
+![x.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/x.png)
+
 
 通过这个权限模型，我们可以创建不同的角色并为不同的角色分配不同的权限范围（菜单）。
 
@@ -151,7 +153,8 @@ public String readAllCookies(HttpServletRequest request) {
 
 关于这种认证方式更详细的过程如下：
 
- ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73657373696f6e2d636f6f6b69652d61757468656e7469636174696f6e2d70726f636573732e706e67) 
+ ![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230328163040.png)
+ 
 
 1. 用户向服务器发送用户名、密码、验证码用于登陆系统。
 2. 服务器验证通过后，**服务器为用户创建一个 `Session`**，并将 `Session` 信息**存储**起来（一般是Redis）。

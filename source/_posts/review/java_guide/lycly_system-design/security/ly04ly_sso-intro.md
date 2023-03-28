@@ -80,7 +80,8 @@ SSO 英文全称 **Single Sign On**，单点登录。SSO 是在多个应用系�
 
 **登录时序图**
 
- ![SSO系统设计-登录时序图](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2f73736f2d6c6f67696e2d73657175656e63652e706e672d6b6272622e706e67) 
+ ![uyuwer789234.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/uyuwer789234.png)
+ 
 
 按照上图，用户登录后 **AuthToken 保存在 Cookie** 中。 domain=test.com 浏览器会将 domain 设置成 .test.com，
 
@@ -88,7 +89,8 @@ SSO 英文全称 **Single Sign On**，单点登录。SSO 是在多个应用系�
 
 **登录信息获取/登录状态校验**
 
-[![SSO系统设计-登录信息获取/登录状态校验](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2f73736f2d6c6f67696e636865636b2d73657175656e63652e706e672d6b6272622e706e67)](https://camo.githubusercontent.com/8b77470b0277b6ba9d58e0f237eb057e18946d5f03695b3da75eef6f69f15b5d/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2f73736f2d6c6f67696e636865636b2d73657175656e63652e706e672d6b6272622e706e67)
+ ![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230328163734.png)
+
 
 ### 用户登出
 
@@ -99,7 +101,8 @@ SSO 英文全称 **Single Sign On**，单点登录。SSO 是在多个应用系�
 
 **登出时序图**
 
- ![SSO系统设计-用户登出](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2f73736f2d6c6f676f75742d73657175656e63652e706e672d6b6272622e706e67) 
+ ![iuwerewr.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/iuwerewr.png)
+ 
 
 ### 跨域登录、登出
 
@@ -111,16 +114,18 @@ SSO 英文全称 **Single Sign On**，单点登录。SSO 是在多个应用系�
 - 登出完成之后**通过回调**的方式，调用**非主域名站点的登出**页面，完成**设置 Cookie 中的 AuthToken 过期**的操作。(**过期：先让主域名过期，再让非主域名过期[token失效]**)
 
 **跨域登录（主域名已登录）**
+ ![a734534222.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/a734534222.png)
 
- ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2f73736f2d63726f7373646f6d61696e2d6c6f67696e2d6c6f67676564696e2d73657175656e63652e706e672d6b6272622e706e67)
 
 **跨域登录（主域名未登录）**
 
- ![SSO系统设计-跨域登录（主域名未登录）](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2f73736f2d63726f7373646f6d61696e2d6c6f67696e2d756e6c6f67696e2d73657175656e63652e706e672d6b6272622e706e67) 
+ ![u9879823.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/u9879823.png)
+ 
 
 **跨域登出**
 
- ![SSO系统设计-跨域登出](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2f73736f2d63726f7373646f6d61696e2d6c6f676f75742d73657175656e63652e706e672d6b6272622e706e67) 
+  ![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230328163659.png)
+
 
 ## 说明
 

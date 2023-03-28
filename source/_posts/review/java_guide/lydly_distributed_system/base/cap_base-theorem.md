@@ -126,7 +126,8 @@ CAP 理论这节我们也说过了：
 
 ### BASE 理论三要素
 
-![BASE理论三要素](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d67636f6e766572742e6373646e696d672e636e2f6148523063484d364c793931633256794c57647662475174593252754c6e687064485575615738764d6a41784f4338314c7a49304c7a45324d7a6b784e4467774e6d51355a544531597a593f782d6f73732d70726f636573733d696d6167652f666f726d61742c706e67) 
+ ![098asdfkwe.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/098asdfkwe.png)
+
 
 #### 基本可用
 
