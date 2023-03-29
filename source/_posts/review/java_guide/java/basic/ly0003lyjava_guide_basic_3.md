@@ -257,25 +257,83 @@ updated: 2022-10-08 15:23:15
 
   ```java
   //JDK动态代理
-  public class DebugInvocationHandler implements InvocationHandler {
-      /**
-       * 代理类中的真实对象
-       */
+  interface ILy {
+      String say(String word);
+  }
+  
+  class LyImpl implements ILy{
+  
+      @Override
+      public String say(String word) {
+          return "hello ,"+word;
+      }
+  }
+  
+  @Slf4j
+  class MyInvocationHandler implements InvocationHandler {
       private final Object target;
   
-      public DebugInvocationHandler(Object target) {
+      public MyInvocationHandler(Object target) {
           this.target = target;
-      }
+    }
   
-      public Object invoke(Object proxy, Method method, Object[] args) throws InvocationTargetException, IllegalAccessException {
-          System.out.println("before method " + method.getName());
-          Object result = method.invoke(target, args); //通过反射调用方法
-          System.out.println("after method " + method.getName());
+      @Override
+      public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+          log.info("调用前");
+          Object result = method.invoke(target, args);
+          log.info("结果是:"+result);
+          log.info("调用后");
           return result;
       }
   }
+  
+  public class Test {
+      String a;
+  
+      public static void main(String[] args) {
+          LyImpl target = new LyImpl();
+          ILy targetProxy = (ILy)Proxy.newProxyInstance(Test.class.getClassLoader(),
+                  target.getClass().getInterfaces(), new MyInvocationHandler(target));
+          targetProxy.say("dxs");
+      }
+  }
   ```
-
+  
+  ```java
+  //cglib动态代理 
+  @Slf4j
+  class MyCglibProxyInterceptor implements MethodInterceptor{
+  
+      @Override
+      public Object intercept(Object o, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
+          log.info("调用前");
+          //注意，这里是invokeSuper，如果是invoke就会调用自己，导致死循环(递归)
+          Object result = methodProxy.invokeSuper(o, args);
+          log.info("调用结果"+result);
+          log.info("调用后");
+          return result;
+      }
+  }
+  
+  public class Test {
+      String a;
+  
+      public static void main(String[] args) {
+          Enhancer enhancer=new Enhancer();
+          enhancer.setClassLoader(Test.class.getClassLoader());
+          enhancer.setSuperclass(LyImpl.class);
+          enhancer.setCallback(new MyCglibProxyInterceptor());
+          //方法一(通过)
+          ILy o = (ILy)enhancer.create();
+          //方法二(通过)
+          //LyImpl o = (LyImpl)enhancer.create();
+          o.say("lyly"); 
+      }
+  }
+  ```
+  
+  
+  
   注解也使用到了反射，比如Spring上的@Component注解。
   可以**基于反射分析类**，然后**获取到类/属性/方法/方法的参数上的注解**，**获取注解后，做进一步的处理**
 
@@ -298,7 +356,7 @@ updated: 2022-10-08 15:23:15
 - 注解只有被解析后才会生效
 
   - **编译期直接扫描** ：编译器在编译 Java 代码的时候扫描对应的注解并处理，比如某个方法使用`@Override` 注解，编译器在编译的时候就会检测当前的方法是否重写了父类对应的方法。
-  - **运行期通过反射处理** ：像框架中自带的注解(比如 Spring 框架的 `@Value` 、`@Component`)都是通过反射来进行处理的。
+  - **运行期通过反射处理** ：像框架中自带的注解(比如 Spring 框架的 `@Value` 、`@Component`)都是通过反射来进行处理的。(创建类的时候使用反射分析类，获取注解，对创建的对象进一步处理)
 
 ## SPI 
 
