@@ -1,0 +1,79 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "ENevhz8oBu_yMC7nmGoIV",
+      "type": "rectangle",
+      "x": 190.28574044363836,
+      "y": 67.85713631766183,
+      "width": 260,
+      "height": 44,
+      "angle": 0,
+      "strokeColor": "#000000",
+      "backgroundColor": "#12b886",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": {
+        "type": 3
+      },
+      "seed": 1993341014,
+      "version": 175,
+      "versionNonce": 1813334218,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "gVBkfl0nCgq6bQVOO1WNX"
+        }
+      ],
+      "updated": 1680320665118,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "gVBkfl0nCgq6bQVOO1WNX",
+      "type": "text",
+      "x": 202.75574929373602,
+      "y": 77.35713631766183,
+      "width": 235.0599822998047,
+      "height": 25,
+      "angle": 0,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 731366730,
+      "version": 189,
+      "versionNonce": 22544598,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1680320665118,
+      "link": null,
+      "locked": false,
+      "text": "迪米特法则(最少知道原则)",
+      "fontSize": 20,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "ENevhz8oBu_yMC7nmGoIV",
+      "originalText": "迪米特法则(最少知道原则)",
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}
