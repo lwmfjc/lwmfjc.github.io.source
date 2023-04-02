@@ -309,6 +309,8 @@ updated: 2022-10-08 15:23:15
           log.info("调用前");
           //注意，这里是invokeSuper，如果是invoke就会调用自己，导致死循环(递归)
           Object result = methodProxy.invokeSuper(o, args);
+          //上面这个写法有问题，应该是
+          //Object result = method.invoke(o, args);
           log.info("调用结果"+result);
           log.info("调用后");
           return result;

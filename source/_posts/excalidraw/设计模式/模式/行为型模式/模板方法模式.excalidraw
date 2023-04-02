@@ -1,0 +1,79 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "id": "dfXHVfd_L91ZNkPX-w24z",
+      "type": "rectangle",
+      "x": 182.97143772670205,
+      "y": 7.514288766043535,
+      "width": 149,
+      "height": 39,
+      "angle": 0,
+      "strokeColor": "#000000",
+      "backgroundColor": "#12b886",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": {
+        "type": 3
+      },
+      "seed": 2003906161,
+      "version": 112,
+      "versionNonce": 1002254751,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "nTNkWdxo4EGT89aMNdx6A"
+        }
+      ],
+      "updated": 1680452808547,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "nTNkWdxo4EGT89aMNdx6A",
+      "type": "text",
+      "x": 197.47143772670205,
+      "y": 14.514288766043535,
+      "width": 120,
+      "height": 25,
+      "angle": 0,
+      "strokeColor": "#000000",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 319964561,
+      "version": 79,
+      "versionNonce": 1327463377,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1680452808547,
+      "link": null,
+      "locked": false,
+      "text": "模板方法模式",
+      "fontSize": 20,
+      "fontFamily": 1,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "dfXHVfd_L91ZNkPX-w24z",
+      "originalText": "模板方法模式",
+      "lineHeight": 1.25
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}
