@@ -9,7 +9,7 @@ date: 2023-04-06 10:55:23
 updated: 2023-04-06 10:55:23
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+>  学习来源 https://www.bilibili.com/video/BV1L4411y7mn（添加小部分笔记）感谢作者!
 
 # 服务器信息修改
 

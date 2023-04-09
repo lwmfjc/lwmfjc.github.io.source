@@ -6,10 +6,10 @@ tags:
 categories:
  - "学习"
 date: 2023-04-06 00:11:58
-updated: 2023-04-06 00:11:58
+updated: 2023-04-06 00:11:58学习辣（添加小部分笔记）感谢作者!
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+>  学习来源 https://www.bilibili.com/video/BV1L4411y7mn（添加小部分笔记）感谢作者!
 
 # 基本操作
 
@@ -120,20 +120,3 @@ ConsumeMessageThread_2 Receive New Messages: [MessageExt [queueId=1, storeSize=1
 ## 如图
 
 ![image-20230406102316614](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230406102316614.png)
-
-# Broker集群模式
-
-## 架构
-
-单Master、多Master、多Master多Slave(异步)、多Master多Slave(同步)
-
-![image-20230406103454040](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230406103454040.png)
-
-## 双主双从，同步双写
-
-### 集群工作流程
-
-![image-20230406103639008](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230406103639008.png)
-
-### 
-
