@@ -91,7 +91,11 @@ updated: 2023-04-09 09:20:04
 
 # 负载均衡
 
+![负载均衡--生产者和消费者](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1--%E7%94%9F%E4%BA%A7%E8%80%85%E5%92%8C%E6%B6%88%E8%B4%B9%E8%80%85.png)
+
 # 消息重试
+
+
 
 # 死信队列
 
