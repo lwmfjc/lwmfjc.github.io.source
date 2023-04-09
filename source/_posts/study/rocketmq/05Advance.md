@@ -132,6 +132,20 @@ RocketMQ会自动不断重试，且为了保证顺序性，会导致消息消费
 
 # 死信队列
 
+## 特性
 
+**针对的是消费者组；不再被正常消费；有过期时间；**
+
+![image-20230409125229653](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409125229653.png)
+
+## 查看
+
+通过admin的控制台查看
+
+**可重发；可指定后特殊消费**
+
+![image-20230409125318120](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409125318120.png)
+
+可以重发，也可以写一个消费者，指定死信队列里面的消息
 
 # 消费幂等
