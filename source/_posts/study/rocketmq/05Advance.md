@@ -95,8 +95,43 @@ updated: 2023-04-09 09:20:04
 
 # 消息重试
 
+下面都是针对**消费失败的重试**
 
+## 顺序消息  
+
+RocketMQ会自动不断重试，且为了保证顺序性，会导致消息消费被阻塞。使用时要**及时监控**并处理消费失败现象
+
+## 无序消息（普通、定时、延时、事务）  
+
+- 通过设置返回状态达到消息重试的结果
+- 重试只对集群消费方式生效，广播方式不提供重试特性
+- 重试次数
+  ![image-20230409124321601](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409124321601.png)
+  如果16次后还是消费失败，会进入死信队列，不再被消费
+
+## 配置是否重试
+
+### 重试
+
+![image-20230409124719030](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409124719030.png)
+
+### 不重试，认为消费成功
+
+![image-20230409124757126](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409124757126.png)
+
+### 修改重试次数
+
+在创建消费者的时候，传入Properties即可  
+![image-20230409124905027](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409124905027.png)
+
+### 注意事项
+
+![image-20230409124951137](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409124951137.png)
+
+```messge.getReconsumeTimes()```获取消息已经重试的次数
 
 # 死信队列
+
+
 
 # 消费幂等
