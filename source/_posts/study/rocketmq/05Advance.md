@@ -28,8 +28,6 @@ updated: 2023-04-09 09:20:04
 1. 关系型数据库最终也是要存到文件系统中的，不如直接存到文件系统，绕过关系型数据库
 2. 常见的RocketMQ/RabbitMQ/Kafka都是采用消息刷盘到计算机的文件系统来做持久化(**同步刷盘**/**异步刷盘**)
 
-# 高可用性机制
-
 ## 消息发送
 
 1. 顺序写：600MB/s，随机写：100KB/s  
@@ -73,6 +71,23 @@ updated: 2023-04-09 09:20:04
 ### 总结
 
 ![image-20230409104824102](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409104824102.png)
+
+## 刷盘机制
+
+![image-20230409112124204](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230409112124204.png)
+
+1. 同步刷盘
+2. 异步刷盘
+
+# 高可用性机制
+
+## 消费高可用及发送高可用
+
+![RocketMQ架构](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/RocketMQ%E6%9E%B6%E6%9E%84.png)
+
+## 消息主从复制
+
+![无标题-2023-04-09-1156](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/%E6%97%A0%E6%A0%87%E9%A2%98-2023-04-09-1156.png)
 
 # 负载均衡
 
