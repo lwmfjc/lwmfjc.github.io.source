@@ -5,8 +5,8 @@ tags:
   - rocketmq-hm
 categories:
   - 学习
-date: 2023-04-07 14:31:59
-updated: 2023-04-07 14:31:59
+date: 2022-04-07 14:31:59
+updated: 2022-04-07 14:31:59
 ---
 
 > 学习来源 https://www.bilibili.com/video/BV1L4411y7mn（添加小部分笔记）感谢作者!前提
