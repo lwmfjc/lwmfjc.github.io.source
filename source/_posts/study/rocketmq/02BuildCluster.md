@@ -58,7 +58,7 @@ systemctl disable firewalld.service
 
 ```shell
 #添加环境变量
-vim etc/profile
+vim /etc/profile
 #添加
 ROCKETMQ_HOME=/usr/local/rocketmq/rocketmq-all-4.4.0-bin-release
 PATH=$PATH:$ROCKETMQ_HOME/bin
