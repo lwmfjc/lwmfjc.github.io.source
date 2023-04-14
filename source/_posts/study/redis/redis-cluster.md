@@ -468,8 +468,18 @@ cluster 下表命令
 
 # RedisCluster架构原理分析
 
+## 基础架构（数据分片）
+
+![image-20230414215403801](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414215403801.png)
+
+## 集群分片原理
+
+![image-20230414215902852](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414215902852.png)
+
 ## 启动集群原理
+
+![image-20230414220624119](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414220624119.png)
 
 ## 集群通信原理
 
-## 集群分片原理
+![image-20230414221225818](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414221225818.png)
