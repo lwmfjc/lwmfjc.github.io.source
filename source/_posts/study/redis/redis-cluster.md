@@ -200,7 +200,11 @@ vars currentEpoch 6 lastVoteEpoch 0
 
 ```
 
-# 加入集群
+# 集群搭建
+
+## 手动搭建集群
+
+### 加入集群
 
 在node1:6379 查看当前cluster
 
@@ -246,7 +250,7 @@ a20b6da956145cfa06ed55159456de8259d9f246 192.168.1.103:6379@16379 master - 0 168
 4aeeaa0d87b91712576c6e995b355fe4a87b24e0 192.168.1.101:6380@16380 master - 0 1681464637000 3 connected
 ```
 
-# 主从配置
+### 主从配置
 
 上面发现的node-id  
 
@@ -283,7 +287,7 @@ a20b6da956145cfa06ed55159456de8259d9f246 192.168.1.103:6379@16379 master - 0 168
 84384230f256fae73ab5bbaf34b0479b67602d6e 192.168.1.102:6380@16380 slave a20b6da956145cfa06ed55159456de8259d9f246 0 1681465223880 2 connected
 ```
 
-# 分配槽位
+### 分配槽位
 
 只对主库分配，从库不进行分配  
 ```expr 16384 / 3 ``` 5461
@@ -331,6 +335,116 @@ cluster_stats_messages_ping_received:3530
 cluster_stats_messages_pong_received:3466
 cluster_stats_messages_received:6996
 ```
+
+## 自动集群搭建
+
+**假设所有的节点都已经重置过，没有主从状态，也未加入任何集群。**
+
+> Redis5之前使用redis-trib.rb脚本搭建
+>
+> redis-trib.rb脚本使用ruby语言编写，所以想要运行次脚本，我们必须安装Ruby环境。安装命令如下：
+>
+> ```
+> yum -y install centos-release-scl-rh
+> yum -y install rh-ruby23  
+> scl enable rh-ruby23 bash
+> gem install redis
+> ```
+>
+> 安装完成后，我们可以使用 ruby -v 查看版本信息。
+>
+> ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1120165-20200221181647318-2083171766.png)
+>
+> Ruby环境安装完成后。运行如下命令：
+>
+> ```redis-trib.rb create --replicas 1 192.168.14.101:6379 192.168.14.102:6380 192.168.14.103:6381 192.168.14.101:6382 192.168.14.102:6383 192.168.14.103:6384```
+
+**前面我们就说过，redis5.0之后已经将redis-trib.rb 脚本的功能全部集成到redis-cli中了，所以我们直接使用如下命令即可：**
+
+```redis-cli -h node3 -p 6379 cluster reset hard```
+
+此时所有节点都是master且已经在运行中  
+此时运行  
+
+```shell
+# redis-cli -a ${password} --cluster create 192.168.1.101:6379 192.168.1.102:6379 192.168.1.103:6379 192.168.1.103:6380 192.168.1.101:6380 192.168.1.102:6380  --cluster-replicas 1
+# 如果有密码，一般情况下集群下的所有节点使用同样的密码
+redis-cli --cluster create 192.168.1.101:6379 192.168.1.102:6379 192.168.1.103:6379 192.168.1.103:6380 192.168.1.101:6380 192.168.1.102:6380  --cluster-replicas 1
+>>> Performing hash slots allocation on 6 nodes...
+Master[0] -> Slots 0 - 5460
+Master[1] -> Slots 5461 - 10922
+Master[2] -> Slots 10923 - 16383
+Adding replica 192.168.1.102:6380 to 192.168.1.101:6379
+Adding replica 192.168.1.103:6380 to 192.168.1.102:6379
+Adding replica 192.168.1.101:6380 to 192.168.1.103:6379
+M: 24ea7569f0a433eb9706d991f21ae49ec21e48cf 192.168.1.101:6379
+   slots:[0-5460] (5461 slots) master
+M: 518fc32f556b10d4b8f83bda420d01aaeeb25f51 192.168.1.102:6379
+   slots:[5461-10922] (5462 slots) master
+M: c021bdbaf1c3a476616781c25dbc2b3042ed6f10 192.168.1.103:6379
+   slots:[10923-16383] (5461 slots) master
+S: 25e44d3ff2d94400b3c53d66993fc99332adffe4 192.168.1.103:6380
+   replicates 518fc32f556b10d4b8f83bda420d01aaeeb25f51
+S: a6159c5dda95017ba5433f597ea4d18780868dfc 192.168.1.101:6380
+   replicates c021bdbaf1c3a476616781c25dbc2b3042ed6f10
+S: a0e986c4cfb914f34efc8f6ea07cb9b72b615593 192.168.1.102:6380
+   replicates 24ea7569f0a433eb9706d991f21ae49ec21e48cf
+Can I set the above configuration? (type 'yes' to accept): yes
+>>> Nodes configuration updated
+>>> Assign a different config epoch to each node
+>>> Sending CLUSTER MEET messages to join the cluster
+Waiting for the cluster to join
+.
+>>> Performing Cluster Check (using node 192.168.1.101:6379)
+M: 24ea7569f0a433eb9706d991f21ae49ec21e48cf 192.168.1.101:6379
+   slots:[0-5460] (5461 slots) master
+   1 additional replica(s)
+S: a0e986c4cfb914f34efc8f6ea07cb9b72b615593 192.168.1.102:6380
+   slots: (0 slots) slave
+   replicates 24ea7569f0a433eb9706d991f21ae49ec21e48cf
+S: 25e44d3ff2d94400b3c53d66993fc99332adffe4 192.168.1.103:6380
+   slots: (0 slots) slave
+   replicates 518fc32f556b10d4b8f83bda420d01aaeeb25f51
+M: c021bdbaf1c3a476616781c25dbc2b3042ed6f10 192.168.1.103:6379
+   slots:[10923-16383] (5461 slots) master
+   1 additional replica(s)
+S: a6159c5dda95017ba5433f597ea4d18780868dfc 192.168.1.101:6380
+   slots: (0 slots) slave
+   replicates c021bdbaf1c3a476616781c25dbc2b3042ed6f10
+M: 518fc32f556b10d4b8f83bda420d01aaeeb25f51 192.168.1.102:6379
+   slots:[5461-10922] (5462 slots) master
+   1 additional replica(s)
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.  #所有槽位都分配成功
+```
+
+随便使用一个节点查询：  
+
+```shell
+redis-cli -h node1 -p 6380 cluster nodes                                                                                                                          
+25e44d3ff2d94400b3c53d66993fc99332adffe4 192.168.1.103:6380@16380 slave 518fc32f556b10d4b8f83bda420d01aaeeb25f51 0 1681482908718 2 connected
+518fc32f556b10d4b8f83bda420d01aaeeb25f51 192.168.1.102:6379@16379 master - 0 1681482906668 2 connected 5461-10922
+24ea7569f0a433eb9706d991f21ae49ec21e48cf 192.168.1.101:6379@16379 master - 0 1681482908000 1 connected 0-5460
+c021bdbaf1c3a476616781c25dbc2b3042ed6f10 192.168.1.103:6379@16379 master - 0 1681482907000 3 connected 10923-16383
+a0e986c4cfb914f34efc8f6ea07cb9b72b615593 192.168.1.102:6380@16380 slave 24ea7569f0a433eb9706d991f21ae49ec21e48cf 0 1681482909743 1 connected
+a6159c5dda95017ba5433f597ea4d18780868dfc 192.168.1.101:6380@16380 myself,slave c021bdbaf1c3a476616781c25dbc2b3042ed6f10 0 1681482908000 3 connected
+```
+
+如上，槽位都已经平均分配完，且主从关系也配置好了  
+![image-20230414225420457](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414225420457.png)
+
+弊端：通过该方式创建的带有从节点的机器**不能够自己手动指定主节点**，所以如果需要指定的话，需要自己手动指定  
+
+> 1.  a: 先使用```redis-cli --cluster create 192.168.163.132:6379 192.168.163.132:6380 192.168.163.132:6381```  
+>    b:或```redis-cli --cluster add-node 192.168.163.132:6382 192.168.163.132:6379    
+>    **说明：b:为一个指定集群添加节点，需要先连到该集群的任意一个节点IP（192.168.163.132:6379），再把新节点加入。该2个参数的顺序有要求：新加入的节点放前面**
+> 2. 通过```redis-cli --cluster add-node 192.168.163.132:6382 192.168.163.132:6379 --cluster-slave --cluster-master-id 117457eab5071954faab5e81c3170600d5192270```来处理。    
+>    **说明：把6382节点加入到6379节点的集群中，并且当做node_id为 117457eab5071954faab5e81c3170600d5192270 的从节点。如果不指定 --cluster-master-id 会随机分配到任意一个主节点。**
+> 3. 总结：也就是先创建主节点，再创建从节点就是了
+
+
 
 # MOVED重定向
 
@@ -435,6 +549,10 @@ f1151c2350820b35e117d3c32b59b64917688745 192.168.1.103:6379@16379 master - 0 168
 95b2dcd681674398d22817728af08c31d4bd4872 192.168.1.102:6379@16379 master - 0 1681470627000 4 connected 5462-10922
 fd6acb4af8afa5ddd31cf559ee2c80ffcbea456f 192.168.1.101:6379@16379 myself,slave f6cf3978d3397582c87480f8c335297675d4354a 0 1681470625000 6 connected
 ```
+
+# 集群扩容
+
+
 
 # cluster命令
 
