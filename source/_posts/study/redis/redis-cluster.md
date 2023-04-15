@@ -9,7 +9,9 @@ date: 2023-04-13 23:27:30
 updated: 2023-04-13 23:27:30
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
+> 转载自https://www.cnblogs.com/Yunya-Cnblogs/p/14608937.html（添加小部分笔记）感谢作者!
+>
+> 部分参考自 https://www.cnblogs.com/ysocean/p/12328088.html
 
 # 基本准备
 
