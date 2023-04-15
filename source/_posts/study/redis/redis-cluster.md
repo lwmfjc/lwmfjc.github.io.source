@@ -552,7 +552,371 @@ fd6acb4af8afa5ddd31cf559ee2c80ffcbea456f 192.168.1.101:6379@16379 myself,slave f
 
 # 集群扩容
 
+## 当前集群状态
 
+```shell
+▶ redis-cli -h node1 -p 6379 cluster nodes
+f635a8cdaa48e04f2531d28c103bea9dc2d8f48d 192.168.1.102:6380@16380 slave f9d707317348314a7306fdaf91da2d153590140e 0 1681527313557 5 connected
+f49300c718a7e0baf6d3e8ba4bf7e9915e8051cc 192.168.1.101:6380@16380 slave 9e9613cec2fdd48000509e9c3723d157263edd87 0 1681527313000 4 connected
+9ea59136c61207347657503fd7a78349f57e919e 192.168.1.103:6380@16380 slave fff7298fa77799434bc8ef6c74c974c21ebc47b4 0 1681527314000 0 connected
+fff7298fa77799434bc8ef6c74c974c21ebc47b4 192.168.1.101:6379@16379 myself,master - 0 1681527313000 0 connected 0-5461
+9e9613cec2fdd48000509e9c3723d157263edd87 192.168.1.102:6379@16379 master - 0 1681527314579 4 connected 5462-10922
+f9d707317348314a7306fdaf91da2d153590140e 192.168.1.103:6379@16379 master - 0 1681527312000 5 connected 10923-16383
+
+```
+
+## 新增节点配置并启动
+
+### 准备
+
+假设在node3新增两个端口{6390,6391}，作为新节点   
+**且 node3:6391 replicate node3:6390**
+
+步骤：通过```mkdir -p /usr/local/redis_cluster/redis_63{91,90}/{conf,pid,logs}```创建文件夹，然后再conf目录下配置集群配置文件  
+
+```shell
+# 守护进行模式启动
+daemonize yes
+
+# 设置数据库数量，默认数据库为0
+databases 16
+
+# 绑定地址，需要修改
+bind node3
+
+# 绑定端口，需要修改
+port 6390
+
+# pid文件存储位置，文件名需要修改
+pidfile /usr/local/redis_cluster/redis_6390/pid/redis_6390.pid
+
+# log文件存储位置，文件名需要修改
+logfile /usr/local/redis_cluster/redis_6390/logs/redis_6390.log
+
+# RDB快照备份文件名，文件名需要修改
+dbfilename redis_6390.rdb
+
+# 本地数据库存储目录，需要修改
+dir /usr/local/redis_cluster/redis_6390
+
+# 集群相关配置
+# 是否以集群模式启动
+cluster-enabled yes
+
+# 集群节点回应最长时间，超过该时间被认为下线
+cluster-node-timeout 15000
+
+# 生成的集群节点配置文件名，文件名需要修改
+cluster-config-file nodes_6390.conf
+
+```
+
+目录结构  
+
+```shell
+root@centos7103:/usr/local/redis_cluster                                                                                                                                                 
+▶ ls
+redis6  redis_6379  redis_6380  redis_6390  redis_6391
+
+▶ tree *90
+redis_6390
+├── conf
+│   └── redis.conf
+├── logs
+└── pid
+
+3 directories, 1 file
+```
+
+启动节点  
+
+```shell
+# 两个孤儿节点
+root@centos7103:/usr/local/redis_cluster                                                                                                                                                ⍉
+▶ redis-server /usr/local/redis_cluster/redis_6390/conf/redis.conf
+
+root@centos7103:/usr/local/redis_cluster                                                                                                                                                 
+▶ redis-server /usr/local/redis_cluster/redis_6391/conf/redis.conf
+
+root@centos7103:/usr/local/redis_cluster                                                                                                                                                 
+▶ netstat -lntup |grep redis
+tcp        0      0 192.168.1.103:6379      0.0.0.0:*               LISTEN      3484/redis-server n 
+tcp        0      0 192.168.1.103:6380      0.0.0.0:*               LISTEN      3507/redis-server n 
+tcp        0      0 192.168.1.103:6390      0.0.0.0:*               LISTEN      5590/redis-server n 
+tcp        0      0 192.168.1.103:6391      0.0.0.0:*               LISTEN      5616/redis-server n 
+tcp        0      0 192.168.1.103:16379     0.0.0.0:*               LISTEN      3484/redis-server n 
+tcp        0      0 192.168.1.103:16380     0.0.0.0:*               LISTEN      3507/redis-server n 
+tcp        0      0 192.168.1.103:16390     0.0.0.0:*               LISTEN      5590/redis-server n 
+tcp        0      0 192.168.1.103:16391     0.0.0.0:*               LISTEN      5616/redis-server n 
+```
+
+### 添加主节点
+
+将新节点加入到node1:6379 [0,5460]所在的集群中  
+加入前  
+
+```shell
+redis-cli -h node3 -p 6390
+node3:6390> cluster nodes
+b014cfbeff6f9668ec9592cbc8aa874bda2d8d6b :6390@16390 myself,master - 0 0 0 connected
+```
+
+加入  
+
+```shell
+# 在node1客户端操作，将103:6390添加到101:6379所在的集群中
+redis-cli -h node1 -p 6379 --cluster add-node 192.168.1.103:6390 192.168.1.101:6379
+>>> Adding node 192.168.1.103:6390 to cluster 192.168.1.101:6379
+>>> Performing Cluster Check (using node 192.168.1.101:6379)
+M: fff7298fa77799434bc8ef6c74c974c21ebc47b4 192.168.1.101:6379
+   slots:[0-5461] (5462 slots) master
+   1 additional replica(s)
+S: f635a8cdaa48e04f2531d28c103bea9dc2d8f48d 192.168.1.102:6380
+   slots: (0 slots) slave
+   replicates f9d707317348314a7306fdaf91da2d153590140e
+S: f49300c718a7e0baf6d3e8ba4bf7e9915e8051cc 192.168.1.101:6380
+   slots: (0 slots) slave
+   replicates 9e9613cec2fdd48000509e9c3723d157263edd87
+S: 9ea59136c61207347657503fd7a78349f57e919e 192.168.1.103:6380
+   slots: (0 slots) slave
+   replicates fff7298fa77799434bc8ef6c74c974c21ebc47b4
+M: 9e9613cec2fdd48000509e9c3723d157263edd87 192.168.1.102:6379
+   slots:[5462-10922] (5461 slots) master
+   1 additional replica(s)
+M: f9d707317348314a7306fdaf91da2d153590140e 192.168.1.103:6379
+   slots:[10923-16383] (5461 slots) master
+   1 additional replica(s)
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+>>> Send CLUSTER MEET to node 192.168.1.103:6390 to make it join the cluster.
+[OK] New node added correctly.
+```
+
+加入后  
+
+```shell
+▶ redis-cli -h node1 -p 6379 cluster nodes                                           
+b014cfbeff6f9668ec9592cbc8aa874bda2d8d6b 192.168.1.103:6390@16390 master - 0 1681527533967 6 connected
+f635a8cdaa48e04f2531d28c103bea9dc2d8f48d 192.168.1.102:6380@16380 slave f9d707317348314a7306fdaf91da2d153590140e 0 1681527534990 5 connected
+f49300c718a7e0baf6d3e8ba4bf7e9915e8051cc 192.168.1.101:6380@16380 slave 9e9613cec2fdd48000509e9c3723d157263edd87 0 1681527533000 4 connected
+9ea59136c61207347657503fd7a78349f57e919e 192.168.1.103:6380@16380 slave fff7298fa77799434bc8ef6c74c974c21ebc47b4 0 1681527533000 0 connected
+fff7298fa77799434bc8ef6c74c974c21ebc47b4 192.168.1.101:6379@16379 myself,master - 0 1681527529000 0 connected 0-5461
+9e9613cec2fdd48000509e9c3723d157263edd87 192.168.1.102:6379@16379 master - 0 1681527534000 4 connected 5462-10922
+f9d707317348314a7306fdaf91da2d153590140e 192.168.1.103:6379@16379 master - 0 1681527533000 5 connected 10923-16383
+```
+
+为他分配槽位  
+
+```shell
+# 最后一个参数，表示原来集群中任意一个节点，这里会将源节点所在集群的一部分分给新增节点
+redis-cli -h node1 -p 6379 --cluster reshard 192.168.1.101:6379
+##过程
+#后面的2000表示分配2000个槽位给新增节点
+How many slots do you want to move (from 1 to 16384)? 2000 #输入
+#表示接受节点的NodeId,填新增节点6390的
+What is the receiving node ID? b014cfbeff6f9668ec9592cbc8aa874bda2d8d6b #输入
+#这里填槽的来源，要么填all，表示所有master节点都拿出一部分槽位分配给新增节点；
+#要么填某个原有NodeId，表示这个节点拿出一部分槽位给新增节点
+Please enter all the source node IDs.
+  Type 'all' to use all the nodes as source nodes for the hash slots.
+  Type 'done' once you entered all the source nodes IDs.
+Source node #1: 7e900adc7f977cfcccef12d48c7a29b64c4344c2
+Source node #2: done
+# 这里把node1:6379 拿出了2000个槽位给新节点
+
+```
+
+![image-20230415115032010](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230415115032010.png)
+
+结果：  
+
+```shell
+? redis-cli -h node1 -p 6380 cluster nodes                       
+259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 192.168.1.103:6379@16379 master - 0 1681530641000 2 connected 10923-16383
+429ed631dbf09ba846a5371b707defe17b9f8c8e 192.168.1.101:6380@16380 myself,slave 9355d72df6e9dc2643ac1c819cd2e496fb1aed60 0 1681530643000 4 connected
+9355d72df6e9dc2643ac1c819cd2e496fb1aed60 192.168.1.102:6379@16379 master - 0 1681530641000 4 connected 5462-10922
+81e1e03230ed7700028fa56155e9531b48791164 192.168.1.103:6390@16390 master - 0 1681530644122 6 connected 0-1999
+a04347e1af8930324dab7ae85f912449475a487f 192.168.1.102:6380@16380 slave 259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 0 1681530643093 2 connected
+92a9d6b988dcf8a219de0247975d8e341072134d 192.168.1.103:6380@16380 slave 7e900adc7f977cfcccef12d48c7a29b64c4344c2 0 1681530643000 1 connected
+7e900adc7f977cfcccef12d48c7a29b64c4344c2 192.168.1.101:6379@16379 master - 0 1681530642063 1 connected 2000-5461
+```
+
+### 添加从节点
+
+将节点添加到集群中  
+
+```shell
+▶ redis-cli -h node1 -p 6379 --cluster add-node 192.168.1.103:6391 192.168.1.101:6379
+>>> Adding node 192.168.1.103:6391 to cluster 192.168.1.101:6379
+>>> Performing Cluster Check (using node 192.168.1.101:6379)
+M: 7e900adc7f977cfcccef12d48c7a29b64c4344c2 192.168.1.101:6379
+   slots:[2000-5461] (3462 slots) master
+   1 additional replica(s)
+M: 9355d72df6e9dc2643ac1c819cd2e496fb1aed60 192.168.1.102:6379
+   slots:[5462-10922] (5461 slots) master
+   1 additional replica(s)
+S: a04347e1af8930324dab7ae85f912449475a487f 192.168.1.102:6380
+   slots: (0 slots) slave
+   replicates 259b65d7f3d1eac2716f7ae00cc6c1db27a55b27
+M: 259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 192.168.1.103:6379
+   slots:[10923-16383] (5461 slots) master
+   1 additional replica(s)
+M: 81e1e03230ed7700028fa56155e9531b48791164 192.168.1.103:6390
+   slots:[0-1999] (2000 slots) master
+S: 429ed631dbf09ba846a5371b707defe17b9f8c8e 192.168.1.101:6380
+   slots: (0 slots) slave
+   replicates 9355d72df6e9dc2643ac1c819cd2e496fb1aed60
+S: 92a9d6b988dcf8a219de0247975d8e341072134d 192.168.1.103:6380
+   slots: (0 slots) slave
+   replicates 7e900adc7f977cfcccef12d48c7a29b64c4344c2
+[OK] All nodes agree about slots configuration.
+>>> Check for open slots...
+>>> Check slots coverage...
+[OK] All 16384 slots covered.
+>>> Send CLUSTER MEET to node 192.168.1.103:6391 to make it join the cluster.
+[OK] New node added correctly.
+```
+
+建立主从关系  
+
+```shell
+▶ redis-cli -h node1 -p 6380 cluster nodes                                           
+9babc7adc86da25ba501bd5bc007300dc04743a9 192.168.1.103:6391@16391 master - 0 1681530812000 0 connected
+259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 192.168.1.103:6379@16379 master - 0 1681530808000 2 connected 10923-16383
+429ed631dbf09ba846a5371b707defe17b9f8c8e 192.168.1.101:6380@16380 myself,slave 9355d72df6e9dc2643ac1c819cd2e496fb1aed60 0 1681530811000 4 connected
+9355d72df6e9dc2643ac1c819cd2e496fb1aed60 192.168.1.102:6379@16379 master - 0 1681530810000 4 connected 5462-10922
+81e1e03230ed7700028fa56155e9531b48791164 192.168.1.103:6390@16390 master - 0 1681530810000 6 connected 0-1999
+a04347e1af8930324dab7ae85f912449475a487f 192.168.1.102:6380@16380 slave 259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 0 1681530811246 2 connected
+92a9d6b988dcf8a219de0247975d8e341072134d 192.168.1.103:6380@16380 slave 7e900adc7f977cfcccef12d48c7a29b64c4344c2 0 1681530812275 1 connected
+7e900adc7f977cfcccef12d48c7a29b64c4344c2 192.168.1.101:6379@16379 master - 0 1681530809182 1 connected 2000-5461
+
+root@centos7101:/usr/local/redis_cluster                                                                                                                                
+▶ redis-cli -h node3 -p 6391 cluster replicate 81e1e03230ed7700028fa56155e9531b48791164
+OK
+
+root@centos7101:/usr/local/redis_cluster                                                                     # 验证                                                           
+▶ redis-cli -h node1 -p 6380 cluster nodes                                             
+9babc7adc86da25ba501bd5bc007300dc04743a9 192.168.1.103:6391@16391 slave 81e1e03230ed7700028fa56155e9531b48791164 0 1681530870000 6 connected
+259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 192.168.1.103:6379@16379 master - 0 1681530868642 2 connected 10923-16383
+429ed631dbf09ba846a5371b707defe17b9f8c8e 192.168.1.101:6380@16380 myself,slave 9355d72df6e9dc2643ac1c819cd2e496fb1aed60 0 1681530867000 4 connected
+9355d72df6e9dc2643ac1c819cd2e496fb1aed60 192.168.1.102:6379@16379 master - 0 1681530871715 4 connected 5462-10922
+81e1e03230ed7700028fa56155e9531b48791164 192.168.1.103:6390@16390 master - 0 1681530868000 6 connected 0-1999
+a04347e1af8930324dab7ae85f912449475a487f 192.168.1.102:6380@16380 slave 259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 0 1681530869000 2 connected
+92a9d6b988dcf8a219de0247975d8e341072134d 192.168.1.103:6380@16380 slave 7e900adc7f977cfcccef12d48c7a29b64c4344c2 0 1681530870000 1 connected
+7e900adc7f977cfcccef12d48c7a29b64c4344c2 192.168.1.101:6379@16379 master - 0 1681530870693 1 connected 2000-5461
+```
+
+测试  
+
+```shell
+node1:6380> set 18 a
+-> Redirected to slot [511] located at 192.168.1.103:6390
+OK
+192.168.1.103:6390> get 18
+"a"
+#在node3:6391上尝试->说明从机上是有数据的
+▶ redis-cli -h node3 -p 6391    
+node3:6391> get 18
+(error) MOVED 511 192.168.1.103:6390
+node3:6391> readonly 
+OK
+node3:6391> get 18
+"a"
+node3:6391> keys *
+1) "18"
+```
+
+### 集群收缩
+
+#### 迁移待移除节点的槽位
+
+```shell
+#当前节点信息
+429ed631dbf09ba846a5371b707defe17b9f8c8e 192.168.1.101:6380@16380 slave 9355d72df6e9dc2643ac1c819cd2e496fb1aed60 0 1681531264142 4 connected
+7e900adc7f977cfcccef12d48c7a29b64c4344c2 192.168.1.101:6379@16379 master - 0 1681531260000 1 connected 2000-5461
+9355d72df6e9dc2643ac1c819cd2e496fb1aed60 192.168.1.102:6379@16379 myself,master - 0 1681531261000 4 connected 5462-10922
+259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 192.168.1.103:6379@16379 master - 0 1681531262088 2 connected 10923-16383
+9babc7adc86da25ba501bd5bc007300dc04743a9 192.168.1.103:6391@16391 slave 81e1e03230ed7700028fa56155e9531b48791164 0 1681531265170 6 connected
+81e1e03230ed7700028fa56155e9531b48791164 192.168.1.103:6390@16390 master - 0 1681531264000 6 connected 0-1999
+92a9d6b988dcf8a219de0247975d8e341072134d 192.168.1.103:6380@16380 slave 7e900adc7f977cfcccef12d48c7a29b64c4344c2 0 1681531263115 1 connected
+a04347e1af8930324dab7ae85f912449475a487f 192.168.1.102:6380@16380 slave 259b65d7f3d1eac2716f7ae00cc6c1db27a55b27 0 1681531260038 2 connected
+```
+
+移除并将槽位分配给其他节点  
+
+```shell
+redis-cli -p 6379 -h node1 --cluster reshard --cluster-from bee9c03b1c4592119695a17472847736128c8603 --cluster-to 644b722eb996aeb392a8190b29cfdbe95536af9a --cluster-slots 2000 192.168.1.101:6379
+# 用哪个客户端，最后的ip:host->对该ip host所在集群的from和to操作，进行转移
+# 结果
+ redis-cli -h node1 -p 6380 cluster nodes
+bee9c03b1c4592119695a17472847736128c8603 192.168.1.103:6390@16390 master - 0 1681532501000 6 connected
+f525c38c1a78e997a96315ca982f969c51500e86 192.168.1.102:6379@16379 master - 0 1681532501000 0 connected 5462-10922
+2b905b7e2480d80bb7c7aa47940e9636697a7d4c 192.168.1.103:6379@16379 master - 0 1681532503071 2 connected 10923-16383
+644b722eb996aeb392a8190b29cfdbe95536af9a 192.168.1.101:6379@16379 master - 0 1681532502000 8 connected 0-5461
+180113f8ceeba0b17b4a122caa62d36e99141225 192.168.1.103:6391@16391 slave 644b722eb996aeb392a8190b29cfdbe95536af9a 0 1681532503000 8 connected
+576e15ed8ac1f4632e5f0917c43d41f7e26dc1e0 192.168.1.101:6380@16380 myself,slave f525c38c1a78e997a96315ca982f969c51500e86 0 1681532500000 0 connected
+7ff6ce4b934027c1cdb8720169873f8e97474885 192.168.1.102:6380@16380 slave 2b905b7e2480d80bb7c7aa47940e9636697a7d4c 0 1681532504083 2 connected
+75f8df2756a83c121b5637e3a381fa8ebfb9204d 192.168.1.103:6380@16380 slave 644b722eb996aeb392a8190b29cfdbe95536af9a 0 1681532501053 8 connected
+## 查看
+▶ redis-cli -h node1 -p 6379              
+node1:6379> get 18
+"a"
+node1:6379> keys *
+1) "18"
+node1:6379> exit
+## 看看还在不在103:6390上
+redis-cli -h node3 -p 6390       
+node3:6390> keys *
+(empty array)
+node3:6390> get 18
+(error) MOVED 511 192.168.1.101:6379
+```
+
+槽位调整成功
+
+> 注意，node3:6391原本replicate node3:6390，但是node3:6390没有槽位了，所以他就跟到槽位所在的node上了，即：  
+>
+> ```shell
+> 644b722eb996aeb392a8190b29cfdbe95536af9a 192.168.1.101:6379@16379 master - 0 1681532502000 8 connected 0-5461
+> 180113f8ceeba0b17b4a122caa62d36e99141225 192.168.1.103:6391@16391 slave 644b722eb996aeb392a8190b29cfdbe95536af9a 0 1681532503000 8 connected
+> ```
+
+#### 移除待删除的主从节点
+
+先移除从节点，再移除主节点，防止触发集群故障转移(如上，这里可能并不会，因为已经没有节点replicate node3:6390了)
+
+```shell
+redis-cli -p 6379 -h node1 --cluster del-node 192.168.1.102:6380 180113f8ceeba0b17b4a122caa62d36e99141225
+#ip+port :哪个节点所在的集群
+#nodeId
+>>> Removing node 180113f8ceeba0b17b4a122caa62d36e99141225 from cluster 192.168.1.102:6380
+>>> Sending CLUSTER FORGET messages to the cluster...
+>>> Sending CLUSTER RESET SOFT to the deleted node.
+```
+
+移除主节点
+
+```shell
+redis-cli -p 6379 -h node1 --cluster del-node 192.168.1.102:6380 bee9c03b1c4592119695a17472847736128c8603
+>>> Removing node bee9c03b1c4592119695a17472847736128c8603 from cluster 192.168.1.102:6380
+>>> Sending CLUSTER FORGET messages to the cluster...
+>>> Sending CLUSTER RESET SOFT to the deleted node.
+```
+
+查看状态（移除成功）  
+
+```shell
+▶ redis-cli -h node1 -p 6379 cluster nodes                                                                 
+644b722eb996aeb392a8190b29cfdbe95536af9a 192.168.1.101:6379@16379 myself,master - 0 1681533116000 8 connected 0-5461
+75f8df2756a83c121b5637e3a381fa8ebfb9204d 192.168.1.103:6380@16380 slave 644b722eb996aeb392a8190b29cfdbe95536af9a 0 1681533119000 8 connected
+f525c38c1a78e997a96315ca982f969c51500e86 192.168.1.102:6379@16379 master - 0 1681533120514 0 connected 5462-10922
+2b905b7e2480d80bb7c7aa47940e9636697a7d4c 192.168.1.103:6379@16379 master - 0 1681533119492 2 connected 10923-16383
+576e15ed8ac1f4632e5f0917c43d41f7e26dc1e0 192.168.1.101:6380@16380 slave f525c38c1a78e997a96315ca982f969c51500e86 0 1681533118463 0 connected
+7ff6ce4b934027c1cdb8720169873f8e97474885 192.168.1.102:6380@16380 slave 2b905b7e2480d80bb7c7aa47940e9636697a7d4c 0 1681533118000 2 connected
+
+```
 
 # cluster命令
 
@@ -591,6 +955,8 @@ cluster 下表命令
 ![image-20230414215403801](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414215403801.png)
 
 ## 集群分片原理
+
+如果有任意1个槽位没有被分配，则集群创建不成功。
 
 ![image-20230414215902852](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414215902852.png)
 

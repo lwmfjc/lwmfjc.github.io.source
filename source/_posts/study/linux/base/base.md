@@ -131,3 +131,14 @@ ps -ef //-e表示全部进程 ，-f表示全部的列
 
 ```yum install -y tree```
 
+# 快捷键
+
+ctrl+w 快速删除光标前的整个单词
+
+ctrl+a 光标移到行首 [xshell]
+
+ctrl+e 光标移到行尾 [xshell]
+
+# 创建多级目录
+
+```mkdir -p /usr/local/redis_cluster/redis_63{79,80}/{conf,pid,logs}```
