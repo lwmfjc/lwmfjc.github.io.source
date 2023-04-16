@@ -159,7 +159,8 @@
       "verticalAlign": "top",
       "containerId": null,
       "originalText": "在子线程里修改了这个值",
-      "lineHeight": 1.1954621046769587
+      "lineHeight": 1.1954621046769587,
+      "baseline": 14
     },
     {
       "type": "line",
@@ -323,7 +324,8 @@
       "verticalAlign": "top",
       "containerId": null,
       "originalText": "CPU",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "text",
@@ -357,7 +359,8 @@
       "verticalAlign": "top",
       "containerId": null,
       "originalText": "CPU",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "rectangle",
@@ -426,7 +429,8 @@
       "verticalAlign": "top",
       "containerId": null,
       "originalText": "主存储",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "rectangle",
@@ -495,7 +499,8 @@
       "verticalAlign": "middle",
       "containerId": "FKszJY66e0UGgvSTUnEbw",
       "originalText": "flag = false",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "arrow",
@@ -556,8 +561,8 @@
     },
     {
       "type": "text",
-      "version": 479,
-      "versionNonce": 424931559,
+      "version": 480,
+      "versionNonce": 1009862894,
       "isDeleted": false,
       "id": "j-pDCKjdYaB8ShOo786KP",
       "fillStyle": "hachure",
@@ -570,7 +575,7 @@
       "y": 475.5999379839217,
       "strokeColor": "#000000",
       "backgroundColor": "#228be6",
-      "width": 163.4375,
+      "width": 175.15625,
       "height": 24,
       "seed": 347160333,
       "groupIds": [],
@@ -581,17 +586,18 @@
           "type": "arrow"
         }
       ],
-      "updated": 1679738326839,
+      "updated": 1681635656359,
       "link": null,
       "locked": false,
       "fontSize": 20,
       "fontFamily": 3,
-      "text": "(调用读屏障)读取",
+      "text": "(调用读屏障)1读取",
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "(调用读屏障)读取",
-      "lineHeight": 1.2
+      "originalText": "(调用读屏障)1读取",
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "rectangle",
@@ -656,7 +662,8 @@
       "verticalAlign": "middle",
       "containerId": "bPMO6fPvZyq-jGFCNMsMT",
       "originalText": "flag = true",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "rectangle",
@@ -733,7 +740,8 @@
       "verticalAlign": "middle",
       "containerId": "jn_pCI6j3SVNF55XHYmoF",
       "originalText": "工作内存\nflag=false",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 43
     },
     {
       "type": "rectangle",
@@ -806,7 +814,8 @@
       "verticalAlign": "middle",
       "containerId": "CDiJptKWTUWO1FqOFGZpY",
       "originalText": "主线程\n循环判断",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 43
     },
     {
       "type": "arrow",
@@ -859,8 +868,8 @@
     },
     {
       "type": "arrow",
-      "version": 812,
-      "versionNonce": 1026857641,
+      "version": 814,
+      "versionNonce": 1355321906,
       "isDeleted": false,
       "id": "3zbNCvxRZ38gOX28ytoED",
       "fillStyle": "hachure",
@@ -884,7 +893,7 @@
           "id": "U_xoov7_MqhhrVif0Lf4b"
         }
       ],
-      "updated": 1679738326883,
+      "updated": 1681635662519,
       "link": null,
       "locked": false,
       "startBinding": {
@@ -921,8 +930,8 @@
     },
     {
       "type": "text",
-      "version": 173,
-      "versionNonce": 983452359,
+      "version": 176,
+      "versionNonce": 1022180974,
       "isDeleted": false,
       "id": "U_xoov7_MqhhrVif0Lf4b",
       "fillStyle": "hachure",
@@ -941,17 +950,18 @@
       "groupIds": [],
       "roundness": null,
       "boundElements": [],
-      "updated": 1679738326839,
+      "updated": 1681635666989,
       "link": null,
       "locked": false,
       "fontSize": 20,
       "fontFamily": 3,
-      "text": "使用，\n一直false",
+      "text": "3使用，\n一直false",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "3zbNCvxRZ38gOX28ytoED",
-      "originalText": "使用，\n一直false",
-      "lineHeight": 1.2
+      "originalText": "3使用，\n一直false",
+      "lineHeight": 1.2,
+      "baseline": 43
     },
     {
       "type": "rectangle",
@@ -1024,12 +1034,13 @@
       "verticalAlign": "middle",
       "containerId": "8koiJLPpfEq6sovJ84yTT",
       "originalText": "工作内存\nflag = false ->true",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 34
     },
     {
       "type": "text",
-      "version": 203,
-      "versionNonce": 1382707945,
+      "version": 204,
+      "versionNonce": 1033705138,
       "isDeleted": false,
       "id": "Yvu-IeW7tneRzHh4i-2P7",
       "fillStyle": "hachure",
@@ -1042,23 +1053,24 @@
       "y": 303.59996239798414,
       "strokeColor": "#5f3dc4",
       "backgroundColor": "transparent",
-      "width": 103.4375,
+      "width": 115.15625,
       "height": 24,
       "seed": 1283948749,
       "groupIds": [],
       "roundness": null,
       "boundElements": [],
-      "updated": 1679738326839,
+      "updated": 1681635659125,
       "link": null,
       "locked": false,
       "fontSize": 20,
       "fontFamily": 3,
-      "text": "载入(重新)",
+      "text": "2载入(重新)",
       "textAlign": "left",
       "verticalAlign": "top",
       "containerId": null,
-      "originalText": "载入(重新)",
-      "lineHeight": 1.2
+      "originalText": "2载入(重新)",
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "rectangle",
@@ -1131,7 +1143,8 @@
       "verticalAlign": "middle",
       "containerId": "gWVG3MNCJNmfV7YWPIcA_",
       "originalText": "子线程修改flag",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "arrow",
@@ -1189,8 +1202,8 @@
     },
     {
       "type": "text",
-      "version": 154,
-      "versionNonce": 743575433,
+      "version": 155,
+      "versionNonce": 586353774,
       "isDeleted": false,
       "id": "que6vfmOVpbdtEChIeEBa",
       "fillStyle": "hachure",
@@ -1199,7 +1212,7 @@
       "roughness": 1,
       "opacity": 100,
       "angle": 0,
-      "x": 458.77614151914565,
+      "x": 458.7761415191457,
       "y": 143.47581331224868,
       "strokeColor": "#5f3dc4",
       "backgroundColor": "transparent",
@@ -1209,7 +1222,7 @@
       "groupIds": [],
       "roundness": null,
       "boundElements": [],
-      "updated": 1679738326839,
+      "updated": 1681635651039,
       "link": null,
       "locked": false,
       "fontSize": 20,
@@ -1219,7 +1232,8 @@
       "verticalAlign": "middle",
       "containerId": "jijAHvyW9llXLMR3ZzEdL",
       "originalText": "使用",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "arrow",
@@ -1285,8 +1299,8 @@
     },
     {
       "type": "text",
-      "version": 148,
-      "versionNonce": 1750677097,
+      "version": 151,
+      "versionNonce": 829223666,
       "isDeleted": false,
       "id": "bQMvzxZLgbUaAVqLVUYXP",
       "fillStyle": "hachure",
@@ -1295,32 +1309,33 @@
       "roughness": 1,
       "opacity": 100,
       "angle": 0,
-      "x": 642.0000653948103,
+      "x": 636.1406903948103,
       "y": 148.79997307913646,
       "strokeColor": "#087f5b",
       "backgroundColor": "transparent",
-      "width": 40,
+      "width": 51.71875,
       "height": 24,
       "seed": 715285347,
       "groupIds": [],
       "roundness": null,
       "boundElements": [],
-      "updated": 1679738326839,
+      "updated": 1681635669333,
       "link": null,
       "locked": false,
       "fontSize": 20,
       "fontFamily": 3,
-      "text": "赋值",
+      "text": "4赋值",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "YlibCPDT-bjsAkA9JspYC",
-      "originalText": "赋值",
-      "lineHeight": 1.2
+      "originalText": "4赋值",
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "arrow",
-      "version": 875,
-      "versionNonce": 424169289,
+      "version": 880,
+      "versionNonce": 76747758,
       "isDeleted": false,
       "id": "46VyqrSiMjaWkMO6-GrK1",
       "fillStyle": "hachure",
@@ -1329,7 +1344,7 @@
       "roughness": 1,
       "opacity": 100,
       "angle": 0,
-      "x": 517.4558863629715,
+      "x": 516.6558985700027,
       "y": 312.81552120098746,
       "strokeColor": "#087f5b",
       "backgroundColor": "transparent",
@@ -1344,18 +1359,18 @@
           "id": "kXsDvCpQ6ANAhotr1JOQE"
         }
       ],
-      "updated": 1679738326885,
+      "updated": 1681635669573,
       "link": null,
       "locked": false,
       "startBinding": {
         "elementId": "kZG6F2v8wExmdEesv3eRL",
-        "focus": -0.47013784835712513,
-        "gap": 18.41993163855428
+        "focus": -0.45748271901801923,
+        "gap": 18.169580950096922
       },
       "endBinding": {
         "elementId": "Kh5c7-dLbfaXlvLJaeJWD",
-        "focus": 0.045120638394517694,
-        "gap": 2.4000244140625
+        "focus": 0.04456704746299898,
+        "gap": 1.60003662109375
       },
       "lastCommittedPoint": null,
       "startArrowhead": null,
@@ -1377,8 +1392,8 @@
     },
     {
       "type": "text",
-      "version": 162,
-      "versionNonce": 714637641,
+      "version": 166,
+      "versionNonce": 1947562094,
       "isDeleted": false,
       "id": "kXsDvCpQ6ANAhotr1JOQE",
       "fillStyle": "hachure",
@@ -1387,27 +1402,28 @@
       "roughness": 1,
       "opacity": 100,
       "angle": 0,
-      "x": 495.600071498326,
+      "x": 488.9407087053572,
       "y": 365.999931880406,
       "strokeColor": "#087f5b",
       "backgroundColor": "transparent",
-      "width": 40,
+      "width": 51.71875,
       "height": 24,
       "seed": 1240688355,
       "groupIds": [],
       "roundness": null,
       "boundElements": [],
-      "updated": 1679738326839,
+      "updated": 1681635671981,
       "link": null,
       "locked": false,
       "fontSize": 20,
       "fontFamily": 3,
-      "text": "存储",
+      "text": "5存储",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "46VyqrSiMjaWkMO6-GrK1",
-      "originalText": "存储",
-      "lineHeight": 1.2
+      "originalText": "5存储",
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "rectangle",
@@ -1480,7 +1496,8 @@
       "verticalAlign": "middle",
       "containerId": "Kh5c7-dLbfaXlvLJaeJWD",
       "originalText": "flag=true",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "arrow",
@@ -1538,8 +1555,8 @@
     },
     {
       "type": "text",
-      "version": 158,
-      "versionNonce": 1963604457,
+      "version": 162,
+      "versionNonce": 569729266,
       "isDeleted": false,
       "id": "qojmVtSJCeWvIl8VB8NCt",
       "fillStyle": "hachure",
@@ -1548,27 +1565,28 @@
       "roughness": 1,
       "opacity": 100,
       "angle": 0,
-      "x": 338.40008980887285,
-      "y": 464.7999349321638,
+      "x": 332.54071480887285,
+      "y": 464.79993493216375,
       "strokeColor": "#087f5b",
       "backgroundColor": "transparent",
-      "width": 40,
+      "width": 51.71875,
       "height": 24,
       "seed": 179764205,
       "groupIds": [],
       "roundness": null,
       "boundElements": [],
-      "updated": 1679738326839,
+      "updated": 1681635673961,
       "link": null,
       "locked": false,
       "fontSize": 20,
       "fontFamily": 3,
-      "text": "写入",
+      "text": "6写入",
       "textAlign": "center",
       "verticalAlign": "middle",
       "containerId": "OqSqoBATgAZtTgFmOLO92",
-      "originalText": "写入",
-      "lineHeight": 1.2
+      "originalText": "6写入",
+      "lineHeight": 1.2,
+      "baseline": 19
     },
     {
       "type": "text",
@@ -1604,7 +1622,8 @@
       "verticalAlign": "top",
       "containerId": null,
       "originalText": "（主存储)读取->载入(到线程工作内存)->使用(线程中)\n   ->赋值(线程中)->存储(到主存储)->(正式)写入(主存储)",
-      "lineHeight": 1.187569182323434
+      "lineHeight": 1.187569182323434,
+      "baseline": 40
     },
     {
       "type": "rectangle",
@@ -1879,7 +1898,8 @@
       "verticalAlign": "middle",
       "containerId": "R0pFI5CeM2FlUAEUHxFjC",
       "originalText": "理解成是缓冲，因为是不能对主存的数据直接读取以及存储的",
-      "lineHeight": 1.2
+      "lineHeight": 1.2,
+      "baseline": 41
     }
   ],
   "appState": {
