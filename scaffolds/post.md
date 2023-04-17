@@ -3,11 +3,10 @@ title: {{ title }}
 date: {{ date }}
 updated: {{ date }} 
 description: {{ title }} 
-tags: 
- - "rocketmq-hm"
+tags:
+  - how_mysql_run
 categories:
- - "学习"
+  - 学习
 ---
 
-> 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
-
+> 学习《MySQL是怎样运行的》，感谢作者！
