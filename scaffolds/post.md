@@ -4,7 +4,7 @@ date: {{ date }}
 updated: {{ date }} 
 description: {{ title }} 
 tags:
-  - how_mysql_run
+  - MySQL是怎样运行的
 categories:
   - 学习
 ---
