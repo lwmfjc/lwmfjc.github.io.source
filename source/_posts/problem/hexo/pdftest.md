@@ -12,6 +12,8 @@ tags:
 
 > 学习《MySQL是怎样运行的》，感谢作者！
 
+<a target="_blank" href="/myjs/pdfjs/web/viewer.html?file=/pdf/my.pdf">访问菜鸟教程!</a>
+
 <iframe src='/myjs/pdfjs/web/viewer.html?file=/pdf/my.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
 
 # kljaskdf
