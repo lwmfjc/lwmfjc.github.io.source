@@ -12,7 +12,17 @@ tags:
 
 > 学习《MySQL是怎样运行的》，感谢作者！
 
-<iframe src='/myjs/pdfjs/web/viewer.html?file=/pdf/my.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="2000px"></iframe>
+<iframe src='/myjs/pdfjs/web/viewer.html?file=/pdf/my.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
 
-<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/temp/01.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="2000px"></iframe>
+# kljaskdf
+
+## kjas
+
+### kasdf
+
+# kajsdf
+
+
+
+<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/temp/01.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="200px"></iframe>
 
