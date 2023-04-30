@@ -14,11 +14,11 @@ categories:
 
 # 在线地址
 
-<a target="_blank" href="/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/study/mysql/how_mysql_run/xxx.pdf">xxx</a>
+<a target="_blank" href="/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/files/main/study/mysql/how_mysql_run/xxx.pdf">xxx</a>
 
 # 内容
 
-<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/study/mysql/how_mysql_run/xxx.pdf' style="padding: 0;width:100%;"  style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
+<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/files/main/study/mysql/how_mysql_run/xxx.pdf' style="padding: 0;width:100%;"  style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
 
 # 说明
 
