@@ -14,7 +14,7 @@ tags:
 
 <a target="_blank" href="/myjs/pdfjs/web/viewer.html?file=/pdf/my.pdf">访问菜鸟教程!</a>
 
-<iframe src='/myjs/pdfjs/web/viewer.html?file=/pdf/my.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
+<iframe src='/myjs/pdfjs/web/viewer.html?file=/pdf/00封面.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
 
 # kljaskdf
 
@@ -26,5 +26,5 @@ tags:
 
 
 
-<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/temp/01.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="200px"></iframe>
+<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/study/mysql/how_mysql_run/00封面.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="200px"></iframe>
 
