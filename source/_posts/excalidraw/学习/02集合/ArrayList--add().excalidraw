@@ -1,0 +1,805 @@
+{
+  "type": "excalidraw",
+  "version": 2,
+  "source": "https://excalidraw.com",
+  "elements": [
+    {
+      "type": "rectangle",
+      "version": 700,
+      "versionNonce": 989085743,
+      "isDeleted": false,
+      "id": "xVEr2yqMnO1gyhK0ScbU8",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "x": 664.1512816270997,
+      "y": -998.0366899713587,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "#b2f2bb",
+      "width": 287,
+      "height": 65,
+      "seed": 1962951494,
+      "groupIds": [],
+      "roundness": null,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "GUscquWu3DdlawISkpyG_"
+        }
+      ],
+      "updated": 1685722026710,
+      "link": null,
+      "locked": false
+    },
+    {
+      "type": "text",
+      "version": 790,
+      "versionNonce": 1301438017,
+      "isDeleted": false,
+      "id": "GUscquWu3DdlawISkpyG_",
+      "fillStyle": "solid",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "angle": 0,
+      "x": 676.3231566270997,
+      "y": -977.5366899713587,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "#b2f2bb",
+      "width": 262.65625,
+      "height": 24,
+      "seed": 1240086490,
+      "groupIds": [],
+      "roundness": null,
+      "boundElements": [],
+      "updated": 1685722026710,
+      "link": null,
+      "locked": false,
+      "fontSize": 20,
+      "fontFamily": 3,
+      "text": "ArrayList--add(E e)方法",
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "containerId": "xVEr2yqMnO1gyhK0ScbU8",
+      "originalText": "ArrayList--add(E e)方法",
+      "lineHeight": 1.2,
+      "baseline": 19
+    },
+    {
+      "id": "6u0SSaAuDEPkZD-wA31gf",
+      "type": "rectangle",
+      "x": 831.6513579210443,
+      "y": -903.1698712254279,
+      "width": 435,
+      "height": 130,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 395718575,
+      "version": 311,
+      "versionNonce": 285781217,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "HWC3WKaxikrGhkD3FTPO6"
+        },
+        {
+          "id": "CX8vCLbZhBcjjRXwi4K7A",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1685722024970,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "HWC3WKaxikrGhkD3FTPO6",
+      "type": "text",
+      "x": 836.6513579210443,
+      "y": -898.1698712254279,
+      "width": 403.4375,
+      "height": 120,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 707969025,
+      "version": 587,
+      "versionNonce": 1657654703,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685722024970,
+      "link": null,
+      "locked": false,
+      "text": "//size：数组当前实际容量\n//对数组进行扩容\nensureCapacityInternal(size + 1);\n//扩容后新增的元素放在实际容量后一个位置\nelementData[size++]=e",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "middle",
+      "baseline": 115,
+      "containerId": "6u0SSaAuDEPkZD-wA31gf",
+      "originalText": "//size：数组当前实际容量\n//对数组进行扩容\nensureCapacityInternal(size + 1);\n//扩容后新增的元素放在实际容量后一个位置\nelementData[size++]=e",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "6eLoHvzEWhxa1NIYieCT_",
+      "type": "rectangle",
+      "x": 699.6514901638831,
+      "y": -663.1698661391648,
+      "width": 656,
+      "height": 154,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1120773775,
+      "version": 834,
+      "versionNonce": 2046457377,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "P71asKsKRtZKX7HpkArbw"
+        },
+        {
+          "id": "CX8vCLbZhBcjjRXwi4K7A",
+          "type": "arrow"
+        },
+        {
+          "id": "FS_0E6U8M69waqxHyr4lf",
+          "type": "arrow"
+        },
+        {
+          "id": "f6t2vn7rNGXpIHnWfoV8q",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1685722023718,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "P71asKsKRtZKX7HpkArbw",
+      "type": "text",
+      "x": 704.6514901638831,
+      "y": -658.1698661391648,
+      "width": 644.53125,
+      "height": 144,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 500731681,
+      "version": 1021,
+      "versionNonce": 296237167,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685722023718,
+      "link": null,
+      "locked": false,
+      "text": "minCapacity：实际需要存放的元素个数\nprivate void ensureCapacityInternal(int minCapacity) { \n    ensureExplicitCapacity ( \n      calculateCapacity (elementData, minCapacity)\n    );\n}",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "middle",
+      "baseline": 139,
+      "containerId": "6eLoHvzEWhxa1NIYieCT_",
+      "originalText": "minCapacity：实际需要存放的元素个数\nprivate void ensureCapacityInternal(int minCapacity) {        \n    ensureExplicitCapacity ( \n      calculateCapacity (elementData, minCapacity)\n    );\n}",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "CX8vCLbZhBcjjRXwi4K7A",
+      "type": "arrow",
+      "x": 1028.5495901031966,
+      "y": -759.1698712254279,
+      "width": 0.8544280502230777,
+      "height": 83.000010172526,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 829231553,
+      "version": 1266,
+      "versionNonce": 843464655,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685722024970,
+      "link": null,
+      "locked": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -0.8544280502230777,
+          83.000010172526
+        ]
+      ],
+      "lastCommittedPoint": null,
+      "startBinding": {
+        "elementId": "6u0SSaAuDEPkZD-wA31gf",
+        "focus": 0.08863438062557685,
+        "gap": 14
+      },
+      "endBinding": {
+        "elementId": "6eLoHvzEWhxa1NIYieCT_",
+        "focus": -0.0026850240107879077,
+        "gap": 12.999994913737055
+      },
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "FS_0E6U8M69waqxHyr4lf",
+      "type": "arrow",
+      "x": 1188.2924038086212,
+      "y": -667.1347178524857,
+      "width": 164.28876805031132,
+      "height": 221.82385250295283,
+      "angle": 0,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "dashed",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": {
+        "type": 2
+      },
+      "seed": 99490369,
+      "version": 948,
+      "versionNonce": 328868321,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685722023718,
+      "link": null,
+      "locked": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          88.69230779080863,
+          -102.70191667860627
+        ],
+        [
+          164.28876805031132,
+          -221.82385250295283
+        ]
+      ],
+      "lastCommittedPoint": null,
+      "startBinding": {
+        "elementId": "6eLoHvzEWhxa1NIYieCT_",
+        "focus": 0.22996536673550633,
+        "gap": 3.9648517133208543
+      },
+      "endBinding": {
+        "elementId": "oez5BIeLSjPDDb6wTo2u-",
+        "focus": 0.9110829585284875,
+        "gap": 3.070125026955452
+      },
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "oez5BIeLSjPDDb6wTo2u-",
+      "type": "rectangle",
+      "x": 1355.651296885888,
+      "y": -969.8367235406947,
+      "width": 942,
+      "height": 226,
+      "angle": 0,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 428388257,
+      "version": 494,
+      "versionNonce": 769147041,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "0UmaBo8aulePbqrC4f9Y8"
+        },
+        {
+          "id": "FS_0E6U8M69waqxHyr4lf",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1685722005429,
+      "link": null,
+      "locked": false
+    },
+    {
+      "id": "0UmaBo8aulePbqrC4f9Y8",
+      "type": "text",
+      "x": 1360.651296885888,
+      "y": -964.8367235406947,
+      "width": 920.46875,
+      "height": 216,
+      "angle": 0,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1935810689,
+      "version": 766,
+      "versionNonce": 1799509487,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685722005429,
+      "link": null,
+      "locked": false,
+      "text": "//确定实际需要的容量\n//如果是第一次扩容，则以Math.max(DEFAULT_CAPACITY, minCapacity)其中最大的为实际扩容数\nprivate static int calculateCapacity(Object[] elementData, int minCapacity) {\n        if (elementData = = DEFAULTCAPACITY_EMPTY_ELEMENTDATA) \n        {\n            return Math.max(DEFAULT_CAPACITY, minCapacity);\n        }\n        return minCapacity;\n    }",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "middle",
+      "baseline": 211,
+      "containerId": "oez5BIeLSjPDDb6wTo2u-",
+      "originalText": "//确定实际需要的容量\n//如果是第一次扩容，则以Math.max(DEFAULT_CAPACITY, minCapacity)其中最大的为实际扩容数\nprivate static int calculateCapacity(Object[] elementData, int minCapacity) {\n        if (elementData = = DEFAULTCAPACITY_EMPTY_ELEMENTDATA) \n        {\n            return Math.max(DEFAULT_CAPACITY, minCapacity);\n        }\n        return minCapacity;\n    }",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "f6t2vn7rNGXpIHnWfoV8q",
+      "type": "arrow",
+      "x": 1011.2710580405419,
+      "y": -488.50327068018044,
+      "width": 7.971292906893723,
+      "height": 171.99992879231763,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": {
+        "type": 2
+      },
+      "seed": 751514401,
+      "version": 865,
+      "versionNonce": 1318927809,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "mETV00LaDdQdQ5TrvjGig"
+        }
+      ],
+      "updated": 1685722023719,
+      "link": null,
+      "locked": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          -7.971292906893723,
+          171.99992879231763
+        ]
+      ],
+      "lastCommittedPoint": null,
+      "startBinding": {
+        "elementId": "6eLoHvzEWhxa1NIYieCT_",
+        "focus": 0.035676865569316665,
+        "gap": 20.666595458984375
+      },
+      "endBinding": {
+        "elementId": "eswqIiQW-ReHIFNwM2s-w",
+        "focus": 0.036890698339773764,
+        "gap": 1
+      },
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "mETV00LaDdQdQ5TrvjGig",
+      "type": "text",
+      "x": 928.7337585702867,
+      "y": -447.16993226058406,
+      "width": 80,
+      "height": 24,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1667804847,
+      "version": 56,
+      "versionNonce": 1001711361,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685721852450,
+      "link": null,
+      "locked": false,
+      "text": "扩容逻辑",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "baseline": 19,
+      "containerId": "f6t2vn7rNGXpIHnWfoV8q",
+      "originalText": "扩容逻辑",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "eswqIiQW-ReHIFNwM2s-w",
+      "type": "text",
+      "x": 669.9848438422684,
+      "y": -315.5033418878628,
+      "width": 632.8125,
+      "height": 216,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1103914337,
+      "version": 451,
+      "versionNonce": 119889391,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "id": "f6t2vn7rNGXpIHnWfoV8q",
+          "type": "arrow"
+        },
+        {
+          "id": "bRF-RHDDae_1auDzaY1Ud",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1685722022226,
+      "link": null,
+      "locked": false,
+      "text": "    \n//确定是否确实需要扩容\nprivate void ensureExplicitCapacity(int minCapacity) {\n    modCount++;\n    // overflow-conscious code\n    //当实际需要的容量大于当前容量时才需要扩容\n    if (minCapacity - elementData.length > 0)\n       grow(minCapacity);\n}",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "baseline": 211,
+      "containerId": null,
+      "originalText": "    \n//确定是否确实需要扩容\nprivate void ensureExplicitCapacity(int minCapacity) {\n    modCount++;\n    // overflow-conscious code\n    //当实际需要的容量大于当前容量时才需要扩容\n    if (minCapacity - elementData.length > 0)\n       grow(minCapacity);\n}",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "cxJn7-gGUPTQGwjnIzkZ-",
+      "type": "text",
+      "x": 1428.9845284939609,
+      "y": -513.1699678644252,
+      "width": 773.4375,
+      "height": 384,
+      "angle": 0,
+      "strokeColor": "#1971c2",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1908017665,
+      "version": 623,
+      "versionNonce": 1204430959,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "id": "bRF-RHDDae_1auDzaY1Ud",
+          "type": "arrow"
+        },
+        {
+          "id": "6gkTcxn6dMN2nL0HFv8eV",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1685722017980,
+      "link": null,
+      "locked": false,
+      "text": "    private void grow(int minCapacity) {\n        // overflow-conscious code\n        //当前数组容量oldCapacity\n        //扩容后的大小newCapacity\n        int oldCapacity = elementData.length;\n        int newCapacity = oldCapacity + (oldCapacity >> 1);\n        //如果扩容后比实际需要的还要小，那么以实际需要的容量为主\n        if (newCapacity - minCapacity < 0)\n            newCapacity = minCapacity;\n        //如果扩容后比数组允许的最大容量（Integer.MAX_VALUE - 8）还要大\n        //那么 以（实际需要的容量为参数），进一步处理\n        if (newCapacity - MAX_ARRAY_SIZE > 0)\n            newCapacity = hugeCapacity(minCapacity);\n        // minCapacity is usually close to size, so this is a win:\n        elementData = Arrays.copyOf(elementData, newCapacity);\n    }",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "baseline": 379,
+      "containerId": null,
+      "originalText": "    private void grow(int minCapacity) {\n        // overflow-conscious code\n        //当前数组容量oldCapacity\n        //扩容后的大小newCapacity\n        int oldCapacity = elementData.length;\n        int newCapacity = oldCapacity + (oldCapacity >> 1);\n        //如果扩容后比实际需要的还要小，那么以实际需要的容量为主\n        if (newCapacity - minCapacity < 0)\n            newCapacity = minCapacity;\n        //如果扩容后比数组允许的最大容量（Integer.MAX_VALUE - 8）还要大\n        //那么 以（实际需要的容量为参数），进一步处理\n        if (newCapacity - MAX_ARRAY_SIZE > 0)\n            newCapacity = hugeCapacity(minCapacity);\n        // minCapacity is usually close to size, so this is a win:\n        elementData = Arrays.copyOf(elementData, newCapacity);\n    }",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "bRF-RHDDae_1auDzaY1Ud",
+      "type": "arrow",
+      "x": 1319.6514393012528,
+      "y": -291.0853221971413,
+      "width": 93.3331298828125,
+      "height": 90.4750238633481,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": {
+        "type": 2
+      },
+      "seed": 1066695215,
+      "version": 1318,
+      "versionNonce": 1435233839,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "xdi9K5Neom9E5tx4OPi-B"
+        }
+      ],
+      "updated": 1685722022229,
+      "link": null,
+      "locked": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          93.3331298828125,
+          -90.4750238633481
+        ]
+      ],
+      "lastCommittedPoint": null,
+      "startBinding": {
+        "elementId": "eswqIiQW-ReHIFNwM2s-w",
+        "focus": 0.5789266372875297,
+        "gap": 16.854095458984375
+      },
+      "endBinding": {
+        "elementId": "cxJn7-gGUPTQGwjnIzkZ-",
+        "focus": 0.7951941155732989,
+        "gap": 15.999959309895758
+      },
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "xdi9K5Neom9E5tx4OPi-B",
+      "type": "text",
+      "x": 1339.6513884386227,
+      "y": -346.5033062840216,
+      "width": 140,
+      "height": 24,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1608381697,
+      "version": 73,
+      "versionNonce": 10280577,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685721852450,
+      "link": null,
+      "locked": false,
+      "text": "真正的扩容方法",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "baseline": 19,
+      "containerId": "bRF-RHDDae_1auDzaY1Ud",
+      "originalText": "真正的扩容方法",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "6gkTcxn6dMN2nL0HFv8eV",
+      "type": "arrow",
+      "x": 1601.862528397779,
+      "y": -533.8367260838262,
+      "width": 485.78858538263967,
+      "height": 109.24840139363664,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": {
+        "type": 2
+      },
+      "seed": 899853249,
+      "version": 892,
+      "versionNonce": 1940730337,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "type": "text",
+          "id": "bIa9LP2zgkwxnwIRmpk6U"
+        }
+      ],
+      "updated": 1685722017981,
+      "link": null,
+      "locked": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          152.45550636245844,
+          -74.66654459635413
+        ],
+        [
+          485.78858538263967,
+          -109.24840139363664
+        ]
+      ],
+      "lastCommittedPoint": null,
+      "startBinding": {
+        "elementId": "cxJn7-gGUPTQGwjnIzkZ-",
+        "focus": -0.8321918447266374,
+        "gap": 20.666758219401004
+      },
+      "endBinding": {
+        "elementId": "q3T_PutxYRxkimSoyony7",
+        "focus": 0.6887704168090839,
+        "gap": 13.66689046223928
+      },
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
+    },
+    {
+      "id": "bIa9LP2zgkwxnwIRmpk6U",
+      "type": "text",
+      "x": 2052.317963552554,
+      "y": -589.8365938409878,
+      "width": 300,
+      "height": 24,
+      "angle": 0,
+      "strokeColor": "#1e1e1e",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 1744598575,
+      "version": 97,
+      "versionNonce": 1376536655,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1685722010789,
+      "link": null,
+      "locked": false,
+      "text": "扩容后比数组最大允许的容量还大",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "center",
+      "verticalAlign": "middle",
+      "baseline": 19,
+      "containerId": "6gkTcxn6dMN2nL0HFv8eV",
+      "originalText": "扩容后比数组最大允许的容量还大",
+      "lineHeight": 1.2
+    },
+    {
+      "id": "q3T_PutxYRxkimSoyony7",
+      "type": "text",
+      "x": 2101.318004242658,
+      "y": -692.5033113702843,
+      "width": 659.84375,
+      "height": 240,
+      "angle": 0,
+      "strokeColor": "#2f9e44",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 1,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [],
+      "roundness": null,
+      "seed": 432476577,
+      "version": 423,
+      "versionNonce": 1176447297,
+      "isDeleted": false,
+      "boundElements": [
+        {
+          "id": "6gkTcxn6dMN2nL0HFv8eV",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1685721998850,
+      "link": null,
+      "locked": false,
+      "text": "    private static int hugeCapacity(int minCapacity) {\n        if (minCapacity < 0) // overflow\n            throw new OutOfMemoryError();\n        //如果实际需要的容量已经大于数组允许的最大容量，那么以\n        //比(数组允许最大容量还大的)Integer.MAX_VALUE为结果；\n        //否则-> 以数组允许的最大容量为结果\n        return (minCapacity > MAX_ARRAY_SIZE) ?\n            Integer.MAX_VALUE :\n            MAX_ARRAY_SIZE;\n    }",
+      "fontSize": 20,
+      "fontFamily": 3,
+      "textAlign": "left",
+      "verticalAlign": "top",
+      "baseline": 235,
+      "containerId": null,
+      "originalText": "    private static int hugeCapacity(int minCapacity) {\n        if (minCapacity < 0) // overflow\n            throw new OutOfMemoryError();\n        //如果实际需要的容量已经大于数组允许的最大容量，那么以\n        //比(数组允许最大容量还大的)Integer.MAX_VALUE为结果；\n        //否则-> 以数组允许的最大容量为结果\n        return (minCapacity > MAX_ARRAY_SIZE) ?\n            Integer.MAX_VALUE :\n            MAX_ARRAY_SIZE;\n    }",
+      "lineHeight": 1.2
+    }
+  ],
+  "appState": {
+    "gridSize": null,
+    "viewBackgroundColor": "#ffffff"
+  },
+  "files": {}
+}
