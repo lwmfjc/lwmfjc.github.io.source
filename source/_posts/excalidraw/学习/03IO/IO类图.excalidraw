@@ -6,8 +6,8 @@
     {
       "id": "ZUnmpxwTtXKvQ7OC_7er1",
       "type": "image",
-      "x": -233.00736429844642,
-      "y": -156.20377487448104,
+      "x": -303.8645594714375,
+      "y": -119.48948916019529,
       "width": 1221.2433255709136,
       "height": 551.2556677924263,
       "angle": 0,
@@ -18,14 +18,16 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1555506420,
-      "version": 246,
-      "versionNonce": 2100130892,
+      "version": 350,
+      "versionNonce": 1476657652,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false,
       "status": "saved",
@@ -37,8 +39,8 @@
     },
     {
       "type": "rectangle",
-      "version": 849,
-      "versionNonce": 1305200244,
+      "version": 953,
+      "versionNonce": 464275276,
       "isDeleted": false,
       "id": "kGPjSk8cWtMhI906uTj3o",
       "fillStyle": "hachure",
@@ -47,27 +49,29 @@
       "roughness": 1,
       "opacity": 100,
       "angle": 0,
-      "x": -161.06372828831638,
-      "y": 149.42015158702094,
+      "x": -231.92092346130744,
+      "y": 186.1344373013067,
       "strokeColor": "#2f9e44",
       "backgroundColor": "transparent",
       "width": 187.62062362950024,
       "height": 48.45148556243286,
       "seed": 1257012697,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": {
         "type": 3
       },
       "boundElements": [],
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "2YOsQ9u4O2L6g2myLALp1",
       "type": "rectangle",
-      "x": 430.9917514312134,
-      "y": 142.36149683579515,
+      "x": 360.13455625822235,
+      "y": 179.0757825500809,
       "width": 167.20535848291237,
       "height": 64.30977384914686,
       "angle": 0,
@@ -78,11 +82,13 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1513718644,
-      "version": 456,
-      "versionNonce": 445713100,
+      "version": 560,
+      "versionNonce": 2039980916,
       "isDeleted": false,
       "boundElements": [
         {
@@ -90,15 +96,15 @@
           "type": "arrow"
         }
       ],
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "PSM_vaHrD8_thsb1r15qV",
       "type": "rectangle",
-      "x": -209.76744090856585,
-      "y": 219.5332076131482,
+      "x": -280.6246360815569,
+      "y": 256.2474933274339,
       "width": 210.46839538308402,
       "height": 59.632726149825466,
       "angle": 0,
@@ -109,22 +115,24 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1398798028,
-      "version": 451,
-      "versionNonce": 608031052,
+      "version": 555,
+      "versionNonce": 993727732,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "V9Vi3PM1F2qIsnp-Oe3xr",
       "type": "arrow",
-      "x": -170.01233474607318,
-      "y": 277.99663838509986,
+      "x": -240.86952991906423,
+      "y": 314.71092409938564,
       "width": 4.225419264229913,
       "height": 190.18413389514512,
       "angle": 0,
@@ -135,14 +143,16 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 646861516,
-      "version": 1019,
-      "versionNonce": 693035596,
+      "version": 1242,
+      "versionNonce": 1909598964,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022693335,
+      "updated": 1686026985913,
       "link": null,
       "locked": false,
       "points": [
@@ -160,7 +170,7 @@
       "endBinding": {
         "elementId": "t6t3em9V_iwSEr6yFtmyo",
         "focus": -0.35629035379653773,
-        "gap": 4.237479934905707
+        "gap": 4.237479934905593
       },
       "startArrowhead": null,
       "endArrowhead": "arrow"
@@ -168,8 +178,8 @@
     {
       "id": "1pk2qyzahfaPQWVokKqUX",
       "type": "arrow",
-      "x": 495.2302647550945,
-      "y": 207.90050179348043,
+      "x": 424.3730695821034,
+      "y": 244.61478750776615,
       "width": 634.8309922945127,
       "height": 257.41923441479975,
       "angle": 0,
@@ -180,16 +190,18 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": {
         "type": 2
       },
       "seed": 1242276940,
-      "version": 1651,
-      "versionNonce": 1549056204,
+      "version": 1993,
+      "versionNonce": 1773710452,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022693335,
+      "updated": 1686026985913,
       "link": null,
       "locked": false,
       "points": [
@@ -209,13 +221,13 @@
       "lastCommittedPoint": null,
       "startBinding": {
         "elementId": "2YOsQ9u4O2L6g2myLALp1",
-        "focus": -0.27469086626444394,
-        "gap": 1.2292311085384284
+        "focus": -0.27469086626444356,
+        "gap": 1.2292311085383716
       },
       "endBinding": {
         "elementId": "t6t3em9V_iwSEr6yFtmyo",
-        "focus": -0.6515266251096853,
-        "gap": 7.098516006870511
+        "focus": -0.6515266251096843,
+        "gap": 7.0985160068704545
       },
       "startArrowhead": null,
       "endArrowhead": "arrow"
@@ -223,8 +235,8 @@
     {
       "id": "t6t3em9V_iwSEr6yFtmyo",
       "type": "rectangle",
-      "x": -263.9465088083467,
-      "y": 472.4182522151507,
+      "x": -334.8037039813378,
+      "y": 509.13253792943635,
       "width": 307.5176458604659,
       "height": 47.94001323300039,
       "angle": 0,
@@ -235,11 +247,13 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1413930316,
-      "version": 625,
-      "versionNonce": 1693215476,
+      "version": 729,
+      "versionNonce": 645495500,
       "isDeleted": false,
       "boundElements": [
         {
@@ -255,15 +269,15 @@
           "id": "Qcal_QM2eWSMPiDAR-O6f"
         }
       ],
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "Qcal_QM2eWSMPiDAR-O6f",
       "type": "text",
-      "x": -251.2476529191294,
-      "y": 482.27674993708325,
+      "x": -322.10484809212045,
+      "y": 518.9910356513692,
       "width": 282.11993408203125,
       "height": 28.223017789135113,
       "angle": 0,
@@ -274,14 +288,16 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1801624948,
-      "version": 930,
-      "versionNonce": 2124082764,
+      "version": 1034,
+      "versionNonce": 1006651764,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false,
       "text": "建立缓冲区，能更高效读取",
@@ -297,8 +313,8 @@
     {
       "id": "Jd7UOXYAilBhC2M2whECf",
       "type": "rectangle",
-      "x": 44.03252009697587,
-      "y": 146.3581586366277,
+      "x": -26.824675076015183,
+      "y": 183.07244435091346,
       "width": 160.99998474121094,
       "height": 56.000022888183594,
       "angle": 0,
@@ -309,22 +325,24 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1245089908,
-      "version": 285,
-      "versionNonce": 366820852,
+      "version": 389,
+      "versionNonce": 974796748,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "B9RBJtkCycK5k-7kPneSs",
       "type": "rectangle",
-      "x": 613.0325353557649,
-      "y": 219.35818915420583,
+      "x": 542.1753401827739,
+      "y": 256.0724748684916,
       "width": 155,
       "height": 58.000030517578125,
       "angle": 0,
@@ -335,22 +353,24 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 349304396,
-      "version": 236,
-      "versionNonce": 806669132,
+      "version": 340,
+      "versionNonce": 899611380,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "aCaFU3NjLNo8PpjacmWEw",
       "type": "arrow",
-      "x": 190.0325048381868,
-      "y": 201.3581586366277,
+      "x": 119.17530966519575,
+      "y": 238.07244435091349,
       "width": 701.2463767487018,
       "height": 271.3635740253859,
       "angle": 0,
@@ -361,14 +381,16 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 568436940,
-      "version": 586,
-      "versionNonce": 1258883572,
+      "version": 809,
+      "versionNonce": 751666380,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022693335,
+      "updated": 1686026985913,
       "link": null,
       "locked": false,
       "points": [
@@ -385,8 +407,8 @@
       "startBinding": null,
       "endBinding": {
         "elementId": "TteBdCYa7wPZzuCscA4Do",
-        "focus": 0.1268583599954484,
-        "gap": 4.636372568852266
+        "focus": 0.1268583599954448,
+        "gap": 4.636372568852096
       },
       "startArrowhead": null,
       "endArrowhead": "arrow"
@@ -394,8 +416,8 @@
     {
       "id": "_nMQ4I15hMCuaZsOaf51z",
       "type": "arrow",
-      "x": 679.0324438030309,
-      "y": 276.3581586366277,
+      "x": 608.1752486300398,
+      "y": 313.0724443509135,
       "width": 207.8925201617535,
       "height": 196.8787177990472,
       "angle": 0,
@@ -406,14 +428,16 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1690183372,
-      "version": 554,
-      "versionNonce": 224116556,
+      "version": 777,
+      "versionNonce": 1951596020,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022693335,
+      "updated": 1686026985913,
       "link": null,
       "locked": false,
       "points": [
@@ -430,8 +454,8 @@
       "startBinding": null,
       "endBinding": {
         "elementId": "TteBdCYa7wPZzuCscA4Do",
-        "focus": -0.22888131375509693,
-        "gap": 4.121228795190973
+        "focus": -0.22888131375509876,
+        "gap": 4.121228795190802
       },
       "startArrowhead": null,
       "endArrowhead": "arrow"
@@ -439,8 +463,8 @@
     {
       "id": "TteBdCYa7wPZzuCscA4Do",
       "type": "rectangle",
-      "x": 852.032474320609,
-      "y": 477.3581052308659,
+      "x": 781.175279147618,
+      "y": 514.0723909451515,
       "width": 159,
       "height": 34,
       "angle": 0,
@@ -451,11 +475,13 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 613334220,
-      "version": 361,
-      "versionNonce": 150294772,
+      "version": 465,
+      "versionNonce": 544191692,
       "isDeleted": false,
       "boundElements": [
         {
@@ -471,15 +497,15 @@
           "id": "o-SclRVK0uewsPVJ9qnjM"
         }
       ],
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "o-SclRVK0uewsPVJ9qnjM",
       "type": "text",
-      "x": 871.532474320609,
-      "y": 482.35810523086604,
+      "x": 800.675279147618,
+      "y": 519.0723909451519,
       "width": 120,
       "height": 24,
       "angle": 0,
@@ -490,14 +516,16 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 251923956,
-      "version": 321,
-      "versionNonce": 679176268,
+      "version": 425,
+      "versionNonce": 702934900,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false,
       "text": "文件处理相关",
@@ -513,8 +541,8 @@
     {
       "id": "gglqaIVo6X5dqAw3uygMh",
       "type": "rectangle",
-      "x": 77.032550614554,
-      "y": 281.3581586366277,
+      "x": 6.175355441562942,
+      "y": 318.0724443509135,
       "width": 152.9999542236328,
       "height": 56.000022888183594,
       "angle": 0,
@@ -525,22 +553,24 @@
       "strokeStyle": "dashed",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1797311988,
-      "version": 231,
-      "versionNonce": 407531508,
+      "version": 335,
+      "versionNonce": 1128919500,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022701337,
+      "updated": 1686025403916,
       "link": null,
       "locked": false
     },
     {
       "id": "oxXPpGxkgAVOyQbbyE1eT",
       "type": "text",
-      "x": -8.467441756051471,
-      "y": 491.81547784357355,
+      "x": -79.32463692904253,
+      "y": 528.5297635578595,
       "width": 844.58203125,
       "height": 160.54264264608165,
       "angle": 0,
@@ -551,11 +581,13 @@
       "strokeStyle": "dashed",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1337287884,
-      "version": 282,
-      "versionNonce": 597607756,
+      "version": 386,
+      "versionNonce": 1675616500,
       "isDeleted": false,
       "boundElements": [
         {
@@ -563,7 +595,7 @@
           "type": "arrow"
         }
       ],
-      "updated": 1686022692880,
+      "updated": 1686025403916,
       "link": null,
       "locked": false,
       "text": "        DataOutputStream dataOutputStream = new DataOutputStream(new FileOutputStream(\"a.data\"));\n        dataOutputStream.writeBoolean(false);\n        dataOutputStream.writeFloat(3.0f);\n        dataOutputStream.close();\n        DataInputStream dataInputStream = new DataInputStream(new FileInputStream(\"a.data\"));\n        boolean b = dataInputStream.readBoolean();\n        System.out.println(\"第一个:\" + b);\n        float v = dataInputStream.readFloat();\n        System.out.println(\"第2个\" + v);",
@@ -579,8 +611,8 @@
     {
       "id": "9Mb4x5hth0kd0dPTmI31M",
       "type": "arrow",
-      "x": 65.03254298515947,
-      "y": 258.3581281190496,
+      "x": -5.824652187831589,
+      "y": 295.07241383333536,
       "width": 186.4916360454181,
       "height": 218.00006866455078,
       "angle": 0,
@@ -591,16 +623,18 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": {
         "type": 2
       },
       "seed": 1637840244,
-      "version": 233,
-      "versionNonce": 1455139700,
+      "version": 456,
+      "versionNonce": 1826294604,
       "isDeleted": false,
       "boundElements": null,
-      "updated": 1686022693335,
+      "updated": 1686026985913,
       "link": null,
       "locked": false,
       "points": [
@@ -621,8 +655,8 @@
       "startBinding": null,
       "endBinding": {
         "elementId": "oxXPpGxkgAVOyQbbyE1eT",
-        "focus": 0.08286941821857352,
-        "gap": 15.457281059973155
+        "focus": 0.08286941821857507,
+        "gap": 15.457281059973468
       },
       "startArrowhead": null,
       "endArrowhead": "arrow"
@@ -630,10 +664,10 @@
     {
       "id": "clBvHrpy40olcWPqYTNjZ",
       "type": "text",
-      "x": 532.0627404877013,
-      "y": -229.64183427893454,
+      "x": 434.9197961517634,
+      "y": -194.07034467234973,
       "width": 904.921875,
-      "height": 243.42852805909652,
+      "height": 262.1537994482578,
       "angle": 0,
       "strokeColor": "#1971c2",
       "backgroundColor": "transparent",
@@ -642,25 +676,81 @@
       "strokeStyle": "solid",
       "roughness": 1,
       "opacity": 100,
-      "groupIds": [],
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
       "roundness": null,
       "seed": 1612057932,
-      "version": 619,
-      "versionNonce": 1717253876,
+      "version": 914,
+      "versionNonce": 1484320460,
       "isDeleted": false,
-      "boundElements": null,
-      "updated": 1686022692880,
+      "boundElements": [
+        {
+          "id": "0ITwPiM33ZdFoaIxauuhO",
+          "type": "arrow"
+        }
+      ],
+      "updated": 1686025403916,
       "link": null,
       "locked": false,
-      "text": "        ObjectOutputStream objectOutputStream = new ObjectOutputStream(\n             new FileOutputStream(\"a.data\"));\n        objectOutputStream.writeBoolean(false);\n        objectOutputStream.writeFloat(3.0f);\n        objectOutputStream.writeObject(new Student(\"a\",10));\n        objectOutputStream.close();\n        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(\"a.data\"));\n        boolean b1 = objectInputStream.readBoolean();\n        System.out.println(\"第一个:\" + b1);\n        float v2 = objectInputStream.readFloat();\n        System.out.println(\"第2个\" + v2);\n        Student student=(Student)(objectInputStream.readObject());\n        System.out.println(student);",
+      "text": "        //ObjectOutputStream具有DataOutputStream的功能\n        ObjectOutputStream objectOutputStream = new ObjectOutputStream(\n             new FileOutputStream(\"a.data\"));\n        objectOutputStream.writeBoolean(false);\n        objectOutputStream.writeFloat(3.0f);\n        objectOutputStream.writeObject(new Student(\"a\",10));\n        objectOutputStream.close();\n        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(\"a.data\"));\n        boolean b1 = objectInputStream.readBoolean();\n        System.out.println(\"第一个:\" + b1);\n        float v2 = objectInputStream.readFloat();\n        System.out.println(\"第2个\" + v2);\n        Student student=(Student)(objectInputStream.readObject());\n        System.out.println(student);",
       "fontSize": 15.60439282430106,
       "fontFamily": 3,
       "textAlign": "left",
       "verticalAlign": "top",
-      "baseline": 239,
+      "baseline": 258,
       "containerId": null,
-      "originalText": "        ObjectOutputStream objectOutputStream = new ObjectOutputStream(\n             new FileOutputStream(\"a.data\"));\n        objectOutputStream.writeBoolean(false);\n        objectOutputStream.writeFloat(3.0f);\n        objectOutputStream.writeObject(new Student(\"a\",10));\n        objectOutputStream.close();\n        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(\"a.data\"));\n        boolean b1 = objectInputStream.readBoolean();\n        System.out.println(\"第一个:\" + b1);\n        float v2 = objectInputStream.readFloat();\n        System.out.println(\"第2个\" + v2);\n        Student student=(Student)(objectInputStream.readObject());\n        System.out.println(student);",
+      "originalText": "        //ObjectOutputStream具有DataOutputStream的功能\n        ObjectOutputStream objectOutputStream = new ObjectOutputStream(\n             new FileOutputStream(\"a.data\"));\n        objectOutputStream.writeBoolean(false);\n        objectOutputStream.writeFloat(3.0f);\n        objectOutputStream.writeObject(new Student(\"a\",10));\n        objectOutputStream.close();\n        ObjectInputStream objectInputStream = new ObjectInputStream(new FileInputStream(\"a.data\"));\n        boolean b1 = objectInputStream.readBoolean();\n        System.out.println(\"第一个:\" + b1);\n        float v2 = objectInputStream.readFloat();\n        System.out.println(\"第2个\" + v2);\n        Student student=(Student)(objectInputStream.readObject());\n        System.out.println(student);",
       "lineHeight": 1.2
+    },
+    {
+      "id": "0ITwPiM33ZdFoaIxauuhO",
+      "type": "arrow",
+      "x": 207.3342426297819,
+      "y": 191.94874471489763,
+      "width": 207.9999651227672,
+      "height": 217.92061280808554,
+      "angle": 0,
+      "strokeColor": "#1971c2",
+      "backgroundColor": "transparent",
+      "fillStyle": "hachure",
+      "strokeWidth": 2,
+      "strokeStyle": "solid",
+      "roughness": 1,
+      "opacity": 100,
+      "groupIds": [
+        "8OoUqL_6iMSGoDi_vsxvF"
+      ],
+      "roundness": {
+        "type": 2
+      },
+      "seed": 1072268404,
+      "version": 483,
+      "versionNonce": 715595636,
+      "isDeleted": false,
+      "boundElements": null,
+      "updated": 1686026985913,
+      "link": null,
+      "locked": false,
+      "points": [
+        [
+          0,
+          0
+        ],
+        [
+          207.9999651227672,
+          -217.92061280808554
+        ]
+      ],
+      "lastCommittedPoint": null,
+      "startBinding": null,
+      "endBinding": {
+        "elementId": "clBvHrpy40olcWPqYTNjZ",
+        "focus": 0.7561158202489704,
+        "gap": 19.585588399214316
+      },
+      "startArrowhead": null,
+      "endArrowhead": "arrow"
     }
   ],
   "appState": {
