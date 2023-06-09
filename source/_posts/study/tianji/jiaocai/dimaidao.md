@@ -13,7 +13,7 @@ updated: 2023-06-09 18:08:38
 
 # 在线地址
 
-<a target="_blank" href="/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/files/main/study/tianji/jiaocai/xxx.pdf">xxx</a>
+<a target="_blank" href="/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/files/main/study/tianji/jiaocai/倪海厦-天纪-地脉道.pdf">倪海厦-天纪-地脉道</a>
 
 # 内容
 
