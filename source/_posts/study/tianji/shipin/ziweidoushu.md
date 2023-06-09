@@ -17,7 +17,7 @@ updated: 2023-06-09 18:12:57
 
 # 内容
 
-<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/files/main/study/jvm/understanding_the_jvm/紫微斗数-学习笔记.pdf' style="padding: 0;width:100%;"  style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
+<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/files/main/study/tianji/shipin/紫微斗数-学习笔记.pdf' style="padding: 0;width:100%;"  style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="650px"></iframe>
 
 # 说明
 
