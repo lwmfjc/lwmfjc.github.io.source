@@ -26,5 +26,5 @@ tags:
 
 
 
-<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/study/mysql/how_mysql_run/00封面.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="200px"></iframe>
+<iframe src='/myjs/pdfjs/web/viewer.html?file=https://raw.githubusercontent.com/lwmfjc/pdfs/main/work/mysql/how_mysql_run/00封面.pdf' style="padding: 0;width:100%;" marginwidth="0" frameborder="no" scrolling="no" height="200px"></iframe>
 
