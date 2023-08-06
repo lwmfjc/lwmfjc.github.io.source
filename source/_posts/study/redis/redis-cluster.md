@@ -14,6 +14,7 @@ updated: 2023-04-13 23:27:30
 > 部分参考自 https://www.cnblogs.com/ysocean/p/12328088.html
 
 # 基本准备
+![1691117992.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1691117992.png)
 
 ## 架构
 
