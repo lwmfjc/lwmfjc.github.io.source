@@ -38,6 +38,8 @@ tags:
 
 ## 安装完成后修改ip及网关
 
+### Centos
+
 1. ```vi /etc/sysconfig/network-scripts/ifcfg-ens**```
 
 2. 修改部分键值对  
@@ -52,6 +54,59 @@ tags:
    ```
 
 3. ```systemctl restart network```
+
+### Debian
+
+1. 查看当前网卡
+   ```shell
+   ip link
+   #1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+   #    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+   #2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+   #    link/ether 00:0c:29:ed:95:f5 brd ff:ff:ff:ff:ff:ff
+   #    altname enp2s1
+   ```
+
+   得知网卡名为ens33
+
+2. ```vim /etc/network/interfaces```
+   添加内容，为网卡（ens33）设置静态ip
+
+   ```shell
+   #ly-update
+   auto ens33
+   iface ens33 inet static
+   address 192.168.1.206
+   netmask 255.255.255.0
+   gateway 192.168.1.1
+   dns-nameservers 223.5.5.5 223.6.6.6
+   ```
+
+3. 重启网络  
+   ```shell
+   sudo service networking restart
+   ```
+
+4. 查看ip
+   ```shell
+   ip a
+   #---------------------结果显示
+   1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+       link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+       inet 127.0.0.1/8 scope host lo
+          valid_lft forever preferred_lft forever
+       inet6 ::1/128 scope host noprefixroute 
+          valid_lft forever preferred_lft forever
+   2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP group default qlen 1000
+       link/ether 00:0c:xx:xx:23:f5 brd ff:ff:ff:ff:ff:ff
+       altname enp2s1
+       inet 192.168.1.206/24 brd 192.168.1.255 scope global ens33
+          valid_lft forever preferred_lft forever
+       inet6 xxxx::20c:29ff:feed:xxxx/64 scope link 
+          valid_lft forever preferred_lft forever
+   ```
+
+   
 
 # 克隆虚拟机
 
