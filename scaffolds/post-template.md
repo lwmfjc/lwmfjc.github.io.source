@@ -1,10 +1,10 @@
 ---
-title: {{ title }}
-date: {{ date }}
-updated: {{ date }} 
-description: {{ title }} 
+title: xx
+date: 2023-09-14 00:00:27
+updated: 2023-09-14 00:05:28 
+description: xx
 tags:
-  - xxdetail
+  - xx
 categories:
   - xx
 ---
