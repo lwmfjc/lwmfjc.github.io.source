@@ -1,7 +1,7 @@
 ---
 title: <% tp.file.title %>
-date: <% tp.date.now("YYYY-MM-DD HH:mm:ss") %>
-updated: <% tp.date.now("YYYY-MM-DD HH:mm:ss") %>
+date: <% tp.file.creation_date("YYYY-MM-DD HH:mm:ss")%>
+updated: <% tp.file.last_modified_date("YYYY-MM-DD HH:mm:ss") %>
 description: <% tp.file.title %>
 tags: []
 categories:
