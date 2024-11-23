@@ -25,6 +25,7 @@ NexT.utils = {
       }
 
       var imageTitle = $image.attr('title') || $image.attr('alt');
+      imageTitle = $image.attr('alt'); //增加语句隐藏图片名
       if (imageTitle) {
         $imageWrapLink.append(`<p class="image-caption">${imageTitle}</p>`);
         // Make sure img title tag will show correctly in fancybox
