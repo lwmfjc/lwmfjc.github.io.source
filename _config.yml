@@ -1,4 +1,4 @@
-﻿# Hexo Configuration
+# Hexo Configuration
 ## Docs: https://hexo.io/docs/configuration.html
 ## Source: https://github.com/hexojs/hexo/
 
@@ -40,7 +40,7 @@ external_link:
   exclude: ''
 filename_case: 0
 render_drafts: false
-# post_asset_folder: true
+post_asset_folder: true
 # marked:
 #  prependRoot: true
 #  postAsset: true
@@ -116,3 +116,4 @@ symbols_count_time:
   awl: 2
   wpm: 275
   suffix: "mins."
+# Demo: https://utteranc.es/  http://trumandu.github.io/about/

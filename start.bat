@@ -1,0 +1,1 @@
+cmd.exe /c start /min star-blog.bat ^&  start http://localhost:4000/ & exit
