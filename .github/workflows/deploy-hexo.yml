@@ -26,7 +26,7 @@ jobs:
 
       - name: Install and Build  
         run: |
-          npm cache clean --force
+          npm uninstall *
           npm install -g hexo-cli 
           npm install 
           npm uninstall hexo-renderer-marked --save 
