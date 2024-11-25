@@ -54,7 +54,7 @@ updated: 2022-09-23 10:31:44
 ### 就近原则
 
 代码中有很多修改变量的语句，下面是用就近原则+作用域分析的图
-![image-20220923110928107](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923110928107.png)
+![image-20220923110928107](images/mypost/image-20220923110928107.png)
 
 ### 局部变量和类变量
 
@@ -62,7 +62,7 @@ updated: 2022-09-23 10:31:44
 
   带static为类变量，不带的为实例变量  
   代码中的变量分类
-  ![image-20220923111604883](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923111604883.png)
+  ![image-20220923111604883](images/mypost/image-20220923111604883.png)
 
 - 修饰符 --局部变量只有final
                -- 实例变量 public , protected , private , final , static  , volatile transient
@@ -72,14 +72,14 @@ updated: 2022-09-23 10:31:44
   局部变量：栈  
   实例变量：堆  
   类变量：方法区（类信息、常量、静态变量）  
-  ![image-20220923111251514](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923111251514.png)
+  ![image-20220923111251514](images/mypost/image-20220923111251514.png)
 
 - 作用域
   局部变量：从声明处开始，到所属的 } 结束
-  ![image-20220923112828922](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923112828922.png)
+  ![image-20220923112828922](images/mypost/image-20220923112828922.png)
 
 - this
-  ![image-20220923113054686](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923113054686.png)
+  ![image-20220923113054686](images/mypost/image-20220923113054686.png)
 
 - 题中的s既可以用成员变量访问，也可以用类名访问
 
@@ -93,13 +93,13 @@ updated: 2022-09-23 10:31:44
 
 Exam5 obj1=new Exam5();
 
-![image-20220923113659581](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923113659581.png)
+![image-20220923113659581](images/mypost/image-20220923113659581.png)
 
 
 
 obj1.test(10)
 
 非静态代码块或者进入方法，都会在栈中开辟空间存储局部变量
-![image-20220923113808372](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923113808372.png)
+![image-20220923113808372](images/mypost/image-20220923113808372.png)
 
 注意：静态代码块定义的变量，只会存在于静态代码块中。不是类变量，也不属于成员变量

@@ -24,7 +24,7 @@ updated: 2022-10-26 21:16:32
     - 启动main函数则启动了一个JVM进程，**main函数所在线程**为进程中的一个线程，也称**主线程**
     
     - 以下为一个个的进程  
-      ![image-20221026212505577](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026212505577.png)
+      ![image-20221026212505577](images/mypost/image-20221026212505577.png)
     
       - 查看java进程    
         
@@ -81,7 +81,7 @@ updated: 2022-10-26 21:16:32
 
     - 从JVM角度说明
       Java内存区域
-      ![image-20221026213728776](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026213728776.png)
+      ![image-20221026213728776](images/mypost/image-20221026213728776.png)
       一个**进程拥有多个线程**，多个线程共享进程的**堆**和**方法区（JDK1.8: 元空间）**，每个线程拥有自己的**程序计数器**、**虚拟机栈**、**本地方法栈**
     
   - 总结
@@ -144,14 +144,14 @@ updated: 2022-10-26 21:16:32
 
   - **TERMINATED**：终止状态，表示该线程**已经运行完毕**
     如图  
-    ![image-20221027094635757](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221027094635757.png)
+    ![image-20221027094635757](images/mypost/image-20221027094635757.png)
     对于该图有以下几点要注意：  
 
     1. 线程创建后处于**NEW**状态，之后调用**start()**方法运行，此时线程处于**READY**，可运行的线程获得CPU时间片（timeslice）后处于**RUNNING**状态
 
        > - 操作系统中有READY和RUNNING两个状态，而JVM中只有RUNNABLE状态
        > - 现在的操作系统通常都是**“时间分片“**方法进行**抢占式 轮转调度**“，一个线程最多**只能在CPU上运行10-20ms**的时间（此时处于RUNNING)状态，时间过短，时间片之后放入**调度队列**末尾等待再次调度（回到READY状态），太快所以不区分两种状态
-       >   ![image-20221027095421280](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221027095421280.png)
+       >   ![image-20221027095421280](images/mypost/image-20221027095421280.png)
 
     2. 线程执行**wait()**方法后，进入**WAITING(等待 )**状态，进入等待状态的线程需要依靠其他线程**通知**才能回到运行状态 
 
@@ -181,7 +181,7 @@ updated: 2022-10-26 21:16:32
   - 多个线程**同时被阻塞**，它们中的一个或者全部，都在**等待某个资源**被释放。由于**线程被无限期地阻塞**，因此**程序不可能正常终止**
   
   - 前提：**线程A持有资源2**，**线程B持有资源1**。现象：线程A在等待申请资源1，线程B在等待申请资源2，所以这两个线程就会**互相等待**而进入**死锁**状态
-    ![image-20221028092652845](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221028092652845.png)
+    ![image-20221028092652845](images/mypost/image-20221028092652845.png)
     使用代码描述上述问题
   
     ```java

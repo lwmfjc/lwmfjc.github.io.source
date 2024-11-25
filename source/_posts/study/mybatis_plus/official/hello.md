@@ -263,8 +263,8 @@ updated: 2022-05-20 17:16:29
   
     - 操作
       ![image-20220526151137850](C:\Users\ztx11\AppData\Roaming\Typora\typora-user-images\image-20220526151137850.png)
-      ![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526151155505.png)
-      ![image-20220526151232408](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526151232408.png)
+      ![](images/mypost/image-20220526151155505.png)
+      ![image-20220526151232408](images/mypost/image-20220526151232408.png)
   
     - 编写controller确定
   
@@ -488,15 +488,15 @@ updated: 2022-05-20 17:16:29
         ```
   
     - 测试
-      ![image-20220526151658557](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526151658557.png)
+      ![image-20220526151658557](images/mypost/image-20220526151658557.png)
   
   - 使用mybatis-x 插件（idea）
   
   
   
-    ![image-20220526153005432](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526153005432.png)
-    ![image-20220526152906823](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526152906823.png)
+    ![image-20220526153005432](images/mypost/image-20220526153005432.png)
+    ![image-20220526152906823](images/mypost/image-20220526152906823.png)
   
-    ![image-20220526152939073](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220526152939073.png)
+    ![image-20220526152939073](images/mypost/image-20220526152939073.png)
   
   

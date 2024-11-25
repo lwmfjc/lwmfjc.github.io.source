@@ -21,7 +21,7 @@ updated: 2022-10-26 14:17:58
 
 - I/O(**Input/Output**)，即**输入/输出**
   从计算机结构的角度来解读一下I/O，根据冯诺依曼结构，计算机结构分为5大部分：**运算器**、**控制器**、**存储器**、**输入设备**、**输出设备**
-  ![image-20221026153939710](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026153939710.png)
+  ![image-20221026153939710](images/mypost/image-20221026153939710.png)
   其中，输入设备：键盘；输出设备：显示器 
   网卡、硬盘既属于输入设备也属于输出设备
 - 输入设备**向计算机输入（内存）**数据，输出设备**接收计算机（内存）**输出的数据，即I/O描述了**计算机系统**与**外部设备**之间**通信**的过程
@@ -45,7 +45,7 @@ UNIX系统下，包括5种：**同步阻塞I/O**，**同步非阻塞I/O**，**I/
 ### BIO (Blocking I/O )
 
 - 应用程序发起read调用后，会一直阻塞，**直到内核把数据拷贝到用户空间**
-  ![image-20221026162316247](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026162316247.png)
+  ![image-20221026162316247](images/mypost/image-20221026162316247.png)
 
 ### NIO (Non-blocking/New I/O)
 
@@ -59,7 +59,7 @@ UNIX系统下，包括5种：**同步阻塞I/O**，**同步非阻塞I/O**，**I/
     但是，这种 IO 模型同样存在问题：**应用程序不断进行 I/O 系统调用轮询数据是否已经准备好的过程是十分消耗 CPU 资源的。**  
   
     ★★ 也就是说，【准备数据，数据就绪】是**不阻塞**的。而【拷贝数据】是**阻塞**的
-    ![图源：《深入拆解Tomcat & Jetty》](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/bb174e22dbe04bb79fe3fc126aed0c61~tplv-k3u1fbpfcp-watermark.image)  
+    ![图源：《深入拆解Tomcat & Jetty》](images/mypost/bb174e22dbe04bb79fe3fc126aed0c61~tplv-k3u1fbpfcp-watermark.image)  
   
   - I/O多路复用
     线程首先**发起select调用，询问内核数据是否准备就绪**，等准备好了，**用户线程再发起read调用**，r**ead调用的过程（数据从内核空间-->用户空间）**还是阻塞的  
@@ -69,16 +69,16 @@ UNIX系统下，包括5种：**同步阻塞I/O**，**同步非阻塞I/O**，**I/
     > Java 中的 NIO ，有一个非常重要的**选择器 ( Selector )** 的概念，也可以被称为 **多路复用器**。通过它，只需要**一个线程便可以管理多个客户端连接**。当**客户端数据到了**之后，才会为其服务。
     
   - Selector，即多路复用器，一个线程管理多个客户端连接
-    ![image-20221026163835033](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026163835033.png)
+    ![image-20221026163835033](images/mypost/image-20221026163835033.png)
 
 ### AIO(Asynchronous I/O )
 
 - 异步 IO 是基于**事件和回调**机制实现的，也就是**应用操作之后会直接返回**，不会堵塞在那里，当后台处理完成，操作系统会通知相应的线程进行后续的操作
   如图  
-  ![image-20221026164006797](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026164006797.png)
+  ![image-20221026164006797](images/mypost/image-20221026164006797.png)
 
 ## 三者区别
 
-![image-20221026164100906](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026164100906.png)
+![image-20221026164100906](images/mypost/image-20221026164100906.png)
 
 

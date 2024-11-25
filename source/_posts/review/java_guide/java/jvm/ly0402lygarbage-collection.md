@@ -49,7 +49,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
   ```
 
   运行后的结果（这里应该是配过xms和xmx了，即堆内存大小）
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/28954286.jpg)
+  ![img](images/mypost/28954286.jpg)
   如上，**Eden区内存几乎被分配完全**（即使程序什么都不做，新生代也会使用2000多K）
 
   > 注： PSYoungGen 为 38400K ，= 33280K + 5120K （Survivor区总会有一个是空的，所以只加了一个5120K ）
@@ -60,7 +60,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
   allocation2 = new byte[900 * 1024];
   ```
 
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/28128785.jpg)
+  ![img](images/mypost/28128785.jpg)
   在给allocation2分配内存之前，Eden区内存几乎已经被分配完。所以当**Eden区没有足够空间进行分配时**，虚拟机将发起一次MinorGC。GC期间虚拟机又发现**allocation1无法存入空间**，所以只好通过**分配担保机制**，把**新生代的对象**，**提前转移到老年代**去，老年代的空间足够存放allocation1，**所以不会出现Full GC（这里可能是之前的说法，可能只是要表达老年代的GC，而不是Full GC(整堆GC) ）**　　
 
   执行MinorGC后，**后面分配的对象如果能够存在Eden区**的话，还是会在Eden区分配内存  
@@ -131,7 +131,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 ## 主要进行gc的区域
 
 如图：（太长跳过了，直接看下面的总结）  
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/rf-hotspot-vm-gc.69291e6e.png)
+![img](images/mypost/rf-hotspot-vm-gc.69291e6e.png)
 
 总结：  
 针对HotSpotVM的实现，它里面的GC准确分类只有两大种：  
@@ -191,7 +191,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 
 - 该算法的基本思想就是通过一系列称为**“GC Roots"**的对象作为起点，从这些节点开始**向下搜索**，节点所走过的**路径** 称为**引用链**，当一个对象到GC Roots**没有任何引用链**相连的话，证明该对象不可用，需要**被回收**
   下图中由于Object 6 ~ Object 10之间有引用关系，但它们到GC不可达，所以需要被回收
-  ![可达性分析算法](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/jvm-gc-roots.d187e957.png)
+  ![可达性分析算法](images/mypost/jvm-gc-roots.d187e957.png)
 
 - 哪些对象可以作为GC Roots呢
 
@@ -286,7 +286,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 1. **效率问题**
 2. **空间问题**（标记清除后会产生**大量不连续碎片**）
 
-![image-20230311171414048](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230311171414048.png)
+![image-20230311171414048](images/mypost/image-20230311171414048.png)
 
 ## 标记-复制算法
 
@@ -294,13 +294,13 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 - 当这块**内存使用完后**，就将还存活的对象**复制到另一块**去，然后再把**使用的空间一次清理掉**
 - 这样每次内存**回收**都是对内存区间的一半**进行回收**
 
-![复制算法](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/90984624.e8c186ae.png)
+![复制算法](images/mypost/90984624.e8c186ae.png)
 
 ## 标记-整理算法
 
 根据老年代特点提出的一种**标记算法**，**标记过程**仍然与**“标记-清除”**算法一样，但后续不是直接对可回收对象回收，而是让**所有存活对象向一端移动**，然后直接**清理掉端边界以外的内存**
 
-![标记-整理算法 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/94057049.22c58294.png)
+![标记-整理算法 ](images/mypost/94057049.22c58294.png)
 
 ## 分代收集算法
 
@@ -318,7 +318,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 
 ## 汇总
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/11e9dcd0f1ee4f25836e6f1c47104c51-new-image69e1c56a-1d40-493a-9901-6efc647a01f3.png)
+![img](images/mypost/11e9dcd0f1ee4f25836e6f1c47104c51-new-image69e1c56a-1d40-493a-9901-6efc647a01f3.png)
 
 > - 新生代的垃圾回收器：Serial（串行--标记复制），ParNew（并行--标记复制），ParallelScavenge（并行--标记复制）
 > - 老年代的垃圾回收器：SerialOld（串行--标记整理），ParallelOld（并行--标记整理），CMS（并发--标记清除）
@@ -338,7 +338,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 - 这是一个**单线程收集器**，它的**单线程**意义不仅意味着它只会使用**一条垃圾收集线程**去完成垃圾收集工作，更重要的是它在**进行垃圾收集工作时**必须暂停其他所有的工作线程**（”Stop The World“）**，直到它**收集结束**。
 
   - 新生代采用**标记-复制**算法，老年代采用**标记-整理**算法
-    ![ Serial 收集器 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/46873026.3a9311ec.png)
+    ![ Serial 收集器 ](images/mypost/46873026.3a9311ec.png)
   - StopTheWorld会带来**不良用户体验**，所以在后续垃圾收集器设计中**停顿时间不断缩短**。（仍然有停顿，垃圾收集器的过程仍然在继续）
   - 优点：**简单而高效**（与其他收集器的单线程相比）  
     1. 且由于其**没有线程交互**的开销，自然可以获得**很高的单线程收集效率**
@@ -354,7 +354,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 
 - **新生代**采用**标记-复制**算法，**老年代**采用**标记-整理**算法
 
-  ![ParNew 收集器 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/22018368.df835851.png)
+  ![ParNew 收集器 ](images/mypost/22018368.df835851.png)
   ★★★  这是许多运行在Server模式下的虚拟机的首要选择，除了**Serial收集器**外，只有它能与**CMS收集器**（真正意义上的**并发**收集器）配合工作（**ParNew是并行**）
 
 - **并行和并发**概念补充
@@ -388,7 +388,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
   -  Parallel Scavenge 收集器提供了很多参数供用户找到**最合适的停顿时间**或**最大吞吐量**，如果对于收集器运作不太了解，手工优化存在困难的时候，使用 **Parallel Scavenge 收集器**配合**自适应调节策略**，把**内存管理优化**交给虚拟机去完成也是一个不错的选择。
   
   - 新生代采用**标记-复制**，老年代采用**标记-整理**算法
-      ![image-20221215170900774](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221215170900774.png)
+      ![image-20221215170900774](images/mypost/image-20221215170900774.png)
   
 - 这是JDK1.8 的默认收集器
   使用 java -XX:+PrintCommandLineFlags -version 命令查看
@@ -447,7 +447,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
 
   4. 并发清除：**开启用户线程**，同时**GC线程**开始对未扫描的区域做清扫
 
-  ![CMS 垃圾收集器 ](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/CMS%25E6%2594%25B6%25E9%259B%2586%25E5%2599%25A8.8a4d0487.png)
+  ![CMS 垃圾收集器 ](images/mypost/CMS%25E6%2594%25B6%25E9%259B%2586%25E5%2599%25A8.8a4d0487.png)
 
 - 从名字可以看出这是一款优秀的收集器：**并发收集**、**低停顿**。但有三个明显缺点
 
@@ -456,7 +456,7 @@ JDK8版本之后PermGen（永久）已被Metaspace（元空间）取代，且已
   2. 无法处理浮动垃圾
 
      > 浮动垃圾的解释：就是之前被gc 标记为 可达对象，也就是 存活对象，在两次gc线程之间被业务线程删除了引用，那么颜色不会更改，还是之前的颜色（黑色or灰色），但是其实是白色，所以这一次gc 无法对其回收，需要等下一次gc初始标记启动才会被刷成白色
-     > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/13864094-053f50032b4cdfad.png)
+     > ![img](images/mypost/13864094-053f50032b4cdfad.png)
      >
      > 作者：Yellowtail
      > 链接：https://www.jianshu.com/p/6590aaad82f7

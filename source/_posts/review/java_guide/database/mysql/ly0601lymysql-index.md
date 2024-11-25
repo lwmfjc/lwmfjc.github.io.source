@@ -55,7 +55,7 @@ updated: 2023-01-11 09:09:25
   ```
 
   注意，图中keys[天蓝色]是**字符串**，**不是什么莫名其妙的人**
-  ![image-20230111105843993](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230111105843993.png)
+  ![image-20230111105843993](images/mypost/image-20230111105843993.png)
 
 - 哈希算法有个 **Hash 冲突** 问题，也就是说**多个不同的 key 最后得到的 index 相同**。通常情况下，我们常用的解决办法是 **链地址法**。链地址法就是**将哈希冲突数据存放在链表中**。就比如 JDK1.8 之前 `HashMap` 就是通过**链地址法来解决哈希冲突**的。不过，JDK1.8 以后`HashMap`**为了减少链表过长**的时候搜索时间过长引入了**红黑树**。
 
@@ -85,7 +85,7 @@ updated: 2023-01-11 09:09:25
   3. B树的检索的过程相当于**对范围内的每个结点的关键字做二分查找**，可能还没有到达叶子节点，检索就结束了。而**B+树**的检索效率比较稳定，任何查找都是从根节点到叶子节点的过程，叶子结点的顺序检索很明显
   4. B树中某个子节点，他都包括了父节点的某个节点
   5. 如图
-     ![image-20230111144258302](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230111144258302.png)
+     ![image-20230111144258302](images/mypost/image-20230111144258302.png)
 
 - 在MySQL中，**MyISAM引擎**和**InnoDB引擎**都是使用B+Tree作为索引结构，但是，两者的实现方式有点不太一样
 
@@ -96,11 +96,11 @@ updated: 2023-01-11 09:09:25
   >    - InnoDB的辅助索引data域存储相应记录主键的值而不是地址。所以不建议使用过长的字段作为主键，因为所有辅助索引都引用主索引，过长的主索引会令辅助索引变得过大 **(不建议使用过长的字段作为主键)**
   >    - InnoDB数据文件本身是一颗B+Tree，非单调的主键会造成在插入新记录时数据文件为了维持B+Tree的特性而频繁的分裂调整，十分低效。**(不建议使用非单调的字段作为主键)**
 
-![image-20230314113712964](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230314113712964.png)
+![image-20230314113712964](images/mypost/image-20230314113712964.png)
 
 ## MySQL底层数据结构总结
 
-![image-20230314155659459](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230314155659459.png)
+![image-20230314155659459](images/mypost/image-20230314155659459.png)
 
 ## 索引类型总结
 
@@ -139,7 +139,7 @@ MySQL 8.x 中实现的索引新特性：
 - 一张数据表只能有**一个主键**，并且主键不能为null，不能重复
 - 在 MySQL 的 InnoDB 的表中，当**没有显示的指定表的主键时**，InnoDB 会自动先检查表中**是否有唯一索引**且**不允许存在 null 值**的字段，如果有，则选择该字段为默认的主键，否则 InnoDB 将会自动创建一个 6Byte 的自增主键
 - 如图
-  ![image-20230111155549265](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230111155549265.png)
+  ![image-20230111155549265](images/mypost/image-20230111155549265.png)
 
 ## 二级索引（辅助索引）
 
@@ -157,7 +157,7 @@ MySQL 8.x 中实现的索引新特性：
      > Mysql5.6 之前只有 MYISAM 引擎支持全文索引，5.6 之后 InnoDB 也支持了全文索引。 
   
 - 二级索引：
-  ![image-20230112085212547](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230112085212547.png)
+  ![image-20230112085212547](images/mypost/image-20230112085212547.png)
 
 # 聚簇索引与非聚簇索引
 
@@ -186,10 +186,10 @@ MySQL 8.x 中实现的索引新特性：
 - **可能会二次查询（回表）**：这应该是非聚簇索引**最大的缺点**了。 当**查到索引对应的指针或主键**后，可能还需要**根据指针或主键**再**到数据文件或表中查询**
 
 **MySQL的表的文件截图**：
-![image-20230113212438093](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230113212438093.png)
+![image-20230113212438093](images/mypost/image-20230113212438093.png)
 
 **聚簇索引和非聚簇索引**：  
-![image-20230113212558682](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230113212558682.png)
+![image-20230113212558682](images/mypost/image-20230113212558682.png)
 
 **聚簇索引一定回表查询吗(覆盖索引)**
 
@@ -227,7 +227,7 @@ MySQL 8.x 中实现的索引新特性：
 
 - 我觉得覆盖索引要在联合索引上体现的话功能会比较突出
 
-![image-20230114170030609](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230114170030609.png)
+![image-20230114170030609](images/mypost/image-20230114170030609.png)
 
 ## 联合索引
 
@@ -250,11 +250,11 @@ MySQL 8.x 中实现的索引新特性：
 > > **组合索引满足最左匹配，但是遇到非等值判断时匹配停止。**
 > > **name like '陈%' 不是等值匹配，所以 age = 20 这里就用不上 (name,age) 组合索引了**。如果没有索引下推，组合索引只能用到 name，age 的判定就需要回表才能做了。5.6之后有了索引下推，age = 20 可以直接在组合索引里判定。
 >
-> ![image-20230114171107653](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230114171107653.png)
+> ![image-20230114171107653](images/mypost/image-20230114171107653.png)
 >
 > 1. 5.6之前的版本是没有索引下推这个优化的，会忽略age这个字段，直接通过name进行查询，在(name,age)这课树上查找到了两个结果，id分别为2,1，然后拿着取到的id值一次次的回表查询，因此这个过程需要**回表两次**
 > 2. 5.6版本添加了索引下推这个优化
->    ![image-20230114171144075](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230114171144075.png)
+>    ![image-20230114171144075](images/mypost/image-20230114171144075.png)
 >    InnoDB并没有忽略age这个字段，而是**在索引内部就判断了age是否等于20**，对于不等于20的记录直接跳过，因此在(name,age)这棵索引树中只匹配到了一个记录，此时拿着这个id去主键索引树中回表查询全部数据，这个过程只需要回表一次
 
 # 争取使用索引的一些建议

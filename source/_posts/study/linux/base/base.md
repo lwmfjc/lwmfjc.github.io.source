@@ -73,7 +73,7 @@ sh install.sh
 
 //该主题样式如下
 
-![image-20230414123619385](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414123619385.png)
+![image-20230414123619385](images/mypost/image-20230414123619385.png)
 
 ```shell
 $ vi ~/.zshrc

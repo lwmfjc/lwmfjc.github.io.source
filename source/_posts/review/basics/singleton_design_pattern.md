@@ -64,7 +64,7 @@ public class Singleton2 {
 ```
 
 如图，当初始化实例时需要进行复杂取值操作时，可以取代第一种方法
-![image-20220921143557083](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220921143557083.png)
+![image-20220921143557083](images/mypost/image-20220921143557083.png)
 
 ### 懒汉式
 

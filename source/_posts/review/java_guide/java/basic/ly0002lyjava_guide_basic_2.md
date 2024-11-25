@@ -162,7 +162,7 @@ updated: 2022-09-29 10:16:13
   - 引用拷贝，即两个不同的引用指向同一个对象
 
   - 如图  
-    ![image-20221006140951954](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221006140951954.png)
+    ![image-20221006140951954](images/mypost/image-20221006140951954.png)
 
 
 ## Java常见类
@@ -360,7 +360,7 @@ updated: 2022-09-29 10:16:13
   ```
 
   对应的字节码：  
-  ![image-20221008114449075](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008114449075.png)
+  ![image-20221008114449075](images/mypost/image-20221008114449075.png)
   
   字符串对象通过“+”的字符串拼接方式，实际上是通过 `StringBuilder` 调用 `append()` 方法实现的，拼接完成之后调用 `toString()` 得到一个 `String` 对象。因此这里就会产生问题，如下代码，会**产生过多的StringBuilder对象**
   
@@ -405,7 +405,7 @@ updated: 2022-09-29 10:16:13
     会创建 1 或 2 个字符串对象。
     如果常量池中存在值为"abc"的对象，则直接在堆中创建一个对象，并且返回该对象的引用；如果不存在，则先在常量池中创建该对象，然后再在堆中创建该对象，并且返回该对象（堆中）的引用
 
-    下面这个解释，说明**常量池存储的是引用**（堆中某一块区域的）![image-20221008144055351](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221008144055351.png)
+    下面这个解释，说明**常量池存储的是引用**（堆中某一块区域的）![image-20221008144055351](images/mypost/image-20221008144055351.png)
 
     ```java
     // 字符串常量池中已存在字符串对象“abc”的引用

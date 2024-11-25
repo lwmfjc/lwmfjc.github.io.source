@@ -15,13 +15,13 @@ updated: 2022-12-16 10:06:50
 
 # 类的声明周期
 
-![image-20230311173515541](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230311173515541.png)
+![image-20230311173515541](images/mypost/image-20230311173515541.png)
 
 # 类加载过程
 
 - Class文件，需要**加载到虚拟机中**之后才能运行和使用，那么虚拟机是**如何加载**这些Class文件呢
 - 系统加载Class类文件需要三步：**加载**->**连接**->**初始化**。连接过程又分为三步：**验证**->**准备**->**解析**  
-  ![image-20230311173602355](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230311173602355.png)
+  ![image-20230311173602355](images/mypost/image-20230311173602355.png)
 
 ## 加载
 
@@ -53,7 +53,7 @@ updated: 2022-12-16 10:06:50
 3. **字节码**验证（程序语义检查）
 4. **符号引用**验证（类的正确性检查）
 
-![image-20230311233216377](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230311233216377.png)
+![image-20230311233216377](images/mypost/image-20230311233216377.png)
 
 ## 准备
 
@@ -68,7 +68,7 @@ updated: 2022-12-16 10:06:50
   3. 这里所设置的初始值**"通常情况"**下是**数据类型默认的零值（如 0、0L、null、false 等**），比如我们定义了**`public static int value=111`** ，那么 value 变量在准备阶段的**初始值就是 0 而不是 111**（**初始化**阶段才会赋值）。**特殊情况**：比如给 **value 变量加上了 final** 关键字`public static final int value=111` ，那么准备阶段 value 的值就被赋值为 111
 
 - 基本数据类型的零值
-  ![image-20221216114118285](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221216114118285.png)
+  ![image-20221216114118285](images/mypost/image-20221216114118285.png)
 
 ## 解析
 
@@ -89,29 +89,29 @@ updated: 2022-12-16 10:06:50
   >     >
   >     > 1. class文件是这样的结构，里面有个**方法表**的概念  
   >     >
-  >     >    ![image-20230124213133879](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124213133879.png)
+  >     >    ![image-20230124213133879](images/mypost/image-20230124213133879.png)
   >     >
-  >     > 2. 如下，可能会有好几个方法，所以方法表，其实是一个**类数组结构**，而每个方法信息（method_info）呢，![image-20230124213042742](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124213042742.png)
+  >     > 2. 如下，可能会有好几个方法，所以方法表，其实是一个**类数组结构**，而每个方法信息（method_info）呢，![image-20230124213042742](images/mypost/image-20230124213042742.png)
   >     >
   >     > 3. 进一步，对于每个method_info结构体的定义  
   >     >    方法表的结构体由：**访问标志(\**access_flags\**)、名称索引(\**name_index\**)、描述索引(\**descriptor_index\**)、属性表(\**attribute_info\**)集合**组成。
   >     >
-  >     >    > ![image-20230124213623779](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124213623779.png)
+  >     >    > ![image-20230124213623779](images/mypost/image-20230124213623779.png)
   >     >
   >     > 4. 而对于属性表，（其中：属性表集合--用来记录方法的机器指令和抛出异常等信息）  
-  >     >    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20141115145825045)
+  >     >    ![img](images/mypost/20141115145825045)
   >     >    **Java之所以能够运行，就是从Code属性中，取出的机器码**  
   >     >
-  >     >    ![image-20230124214548060](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124214548060.png)
-  >     >    ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20141116114625218)
+  >     >    ![image-20230124214548060](images/mypost/image-20230124214548060.png)
+  >     >    ![img](images/mypost/20141116114625218)
   
 - 解析阶段是虚拟机将**常量池内的符号引用**替换为**直接引用**的过程，也就是**得到类**或者**字段**、**方法**在内存中的**指针**或者**偏移量**。（因为此时那些class文件已经早就加载到**方法区**之中了，所以可以改成指向**方法区**的某个**内存地址**  
 
   > **如下，我的理解是，把下面的 com/test/Student.a ()V 修改成了直接的内存地址 类似的意思**
 
 
-  ![image-20230124222222940](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124222222940.png)  
-  ![image-20230124222327948](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230124222327948.png)
+  ![image-20230124222222940](images/mypost/image-20230124222222940.png)  
+  ![image-20230124222327948](images/mypost/image-20230124222327948.png)
 
 ## 初始化
 

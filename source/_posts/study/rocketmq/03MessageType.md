@@ -170,7 +170,7 @@ updated: 2022-04-07 14:31:59
 
 ## 消费模式
 
-![image-20230407171826975](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230407171826975.png)
+![image-20230407171826975](images/mypost/image-20230407171826975.png)
 
 ## 注意事项
 
@@ -284,7 +284,7 @@ MessageListenerOrderly 保证了同一时刻只有一个线程去消费这个que
 
 ## 事务消息的架构图
 
-![image-20230407192132494](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230407192132494.png)
+![image-20230407192132494](images/mypost/image-20230407192132494.png)
 
 ## 生产者
 

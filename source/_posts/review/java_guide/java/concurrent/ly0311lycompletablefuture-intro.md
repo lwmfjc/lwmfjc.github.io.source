@@ -26,7 +26,7 @@ public class CompletableFuture<T> implements Future<T>, CompletionStage<T> {
 
 `CompletableFuture` 除了提供了更为好用和强大的 `Future` 特性之外，还提供了函数式编程的能力。
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20210902092441434.png)
+![img](images/mypost/image-20210902092441434.png)
 
 Future接口有5个方法：  
 
@@ -36,7 +36,7 @@ Future接口有5个方法：
 - `get()` ：等待任务执行完成并获取运算结果。
 - `get(long timeout, TimeUnit unit)` ：多了一个超时时间。
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20210902093026059.png)
+![img](images/mypost/image-20210902093026059.png)
 
 CompletionStage<T> 接口中的方法比较多，CompoletableFuture的函数式能力就是这个接口赋予的，大量使用**Java8引入的函数式编程**
 
@@ -183,7 +183,7 @@ public class CompletableFutureTest {
 
 
    > 备注，自定义线程池使用：  
-   > ![image-20221206220534852](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221206220534852.png)
+   > ![image-20221206220534852](images/mypost/image-20221206220534852.png)
    >
    > ```java
    > ThreadPoolExecutor executor = new ThreadPoolExecutor(

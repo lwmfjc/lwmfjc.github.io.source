@@ -50,7 +50,7 @@ systemctl disable firewalld.service
 
 ### 或者直接关闭对应端口即可
 
-![image-20230406122046779](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230406122046779.png)
+![image-20230406122046779](images/mypost/image-20230406122046779.png)
 
 ## 环境变量配置
 

@@ -11,6 +11,6 @@ updated: 2022-10-27 16:46:21
 ---
 
 - springCloud涉及到的技术有哪些
-  ![image-20221027164807178](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221027164807178.png)
+  ![image-20221027164807178](images/mypost/image-20221027164807178.png)
 - 约定 > 配置 > 编码
 - 

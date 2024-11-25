@@ -79,7 +79,7 @@ Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**�
    执行的任务需要的**Runnable/Callable**接口，他们的实现类，都可以被**ThreadPoolExecutor**或**ScheduleThreadPoolExecutor**执行
 
 2. 任务的执行
-   ![image-20221123163721335](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221123163721335.png)
+   ![image-20221123163721335](images/mypost/image-20221123163721335.png)
    我们更多关注的，是ThreadPoolExecutor类。另外，ScheduledThreadPoolExecutor类，继承了ThreadPoolExecutor类，并实现了ScheduledExecutorService接口
 
    ```java
@@ -141,7 +141,7 @@ Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**�
 
 ### Executor框架的使用示意图
 
-![image-20221123173130638](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221123173130638.png)
+![image-20221123173130638](images/mypost/image-20221123173130638.png)
 
 1. **主线程首先要创建实现 `Runnable` 或者 `Callable` 接口的任务对象。**
 
@@ -246,7 +246,7 @@ Executor框架不仅包括**线程池的管理**，提供**线程工厂**、**�
   4. **handler**：饱和策略
 
   线程池各个参数的相互关系的理解  
-  ![image-20221124095832400](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124095832400.png)
+  ![image-20221124095832400](images/mypost/image-20221124095832400.png)
   
 - ThreadPoolExecutor饱和策略定义
   如果当前**同时运行的线程数量达到最大线程数量**并且**队列也已经被放满了任务**时，ThreadPoolTaskExecutor定义了一些策略： 
@@ -271,7 +271,7 @@ Executors返回线程池对象的弊端：
 创建线程的几种方法
 
 1. 通过ThreadPoolExecutor构造函数实现（推荐）
-   ![image-20221124105119802](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124105119802.png)
+   ![image-20221124105119802](images/mypost/image-20221124105119802.png)
 2. 通过Executors框架的工具类Executors来实现，我们可以创建三红类型的ThreadPoolExecutor
    FixedThreadPool、SingleThreadExecutor、CachedThreadPool
 
@@ -395,7 +395,7 @@ pool-1-thread-2 End. Time = Sun Apr 12 11:14:47 CST 2020
 
 如上，**线程池首先会先执行 5 个任务，然后这些任务有任务被执行完的话，就会去拿新的任务执行**
 
-![image-20221124133637560](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124133637560.png)
+![image-20221124133637560](images/mypost/image-20221124133637560.png)
 
 execute方法源码  
 
@@ -444,7 +444,7 @@ execute方法源码
 ```
 
 图示：  
-![image-20221124133846191](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124133846191.png)
+![image-20221124133846191](images/mypost/image-20221124133846191.png)
 
 源码
 
@@ -642,7 +642,7 @@ execute方法源码
   
 
 - shutdown() VS shutdownNow()
-  ![image-20221124135602080](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124135602080.png)
+  ![image-20221124135602080](images/mypost/image-20221124135602080.png)
 
   - **`shutdown（）`** :关闭线程池，线程池的状态变为 `SHUTDOWN`。线程池**不再接受新任务**了，但是**队列里的任务得执行完毕**。
   - **`shutdownNow（）`** :关闭线程池，线程的状态变为 `STOP`。线程池会**终止当前正在运行的任务**，并**停止处理排队的任务**并**返回正在等待执行的 List**。
@@ -751,7 +751,7 @@ execute方法源码
 
    - 执行任务过程介绍
      FixedThreadPool的execute()方法运行示意图  
-     ![image-20221124155404087](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124155404087.png)
+     ![image-20221124155404087](images/mypost/image-20221124155404087.png)
      上图分析
      1. 如果当前运行的线程数小于 corePoolSize， 如果再来新任务的话，就创建新的线程来执行任务；
      2. 当前运行的线程数等于 corePoolSize 后， 如果再来新任务的话，会将任务加入 `LinkedBlockingQueue`；
@@ -790,7 +790,7 @@ execute方法源码
      新创建的 `SingleThreadExecutor` 的 `corePoolSize` 和 `maximumPoolSize` 都被设置为 1.其他参数和 `FixedThreadPool` 相同
 
    - 执行过程
-     ![image-20221124173110534](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221124173110534.png)
+     ![image-20221124173110534](images/mypost/image-20221124173110534.png)
      如果当前运行线程数少于corePoolSize（1），则创建一个新的线程执行任务；当前线程池有一个运行的线程后，将任务加入LinkedBlockingQueue；线程执行完当前的任务后，会在循环中反复从LinkedBlockingQueue中获取任务执行
      
    - 为什么不推荐使用SingleThreadExecutor
@@ -823,7 +823,7 @@ execute方法源码
    执行过程（execute()示意图）
 
 
-   ![image-20221128163237634](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221128163237634.png)
+   ![image-20221128163237634](images/mypost/image-20221128163237634.png)
    上图说明：
 
    1. 首先执行 `SynchronousQueue.offer(Runnable task)` 提交任务到任务队列。如果当前 `maximumPool` 中有闲线程正在执行 `SynchronousQueue.poll(keepAliveTime,TimeUnit.NANOSECONDS)`，那么**主线程执行 offer 操作**与空**闲线程执行的 `poll`** 操作配对成功，主线程**把任务交给空闲线程**执行，`execute()`方法执行完成，否则执行下面的步骤 2；
@@ -925,7 +925,7 @@ execute方法源码
   ```
 
 - ScheduleThreadPoolExecutor和Timer的比较
-  ![image-20221129092155589](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129092155589.png)![image-20221129092022551](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129092022551.png)
+  ![image-20221129092155589](images/mypost/image-20221129092155589.png)![image-20221129092022551](images/mypost/image-20221129092022551.png)
 
   - Timer对系统时钟变化敏感，ScheduledThreadPoolExecutor不是
   
@@ -938,7 +938,7 @@ execute方法源码
   JDK1.5 之后，没有理由再使用Timer进行任务调度
 
 - 运行机制 **//下面这块内容后面更新后原作者删除了**
-  ![image-20221129103700454](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129103700454.png)
+  ![image-20221129103700454](images/mypost/image-20221129103700454.png)
   ScheduledThreadPoolExecutor的执行分为：
 
   1. 当调用scheduleAtFixedRate()或scheduleWithFixedDelay()方法时，会向ScheduleThreadPoolExector的DelayQueue添加一个**实现了RunnableScheduleFuture接口的ScheduleFutureTask(私有内部类)**
@@ -950,7 +950,7 @@ execute方法源码
   - 获取任务的方式不同
   - 获取周期任务**后做了额外处理**
 
-  ![image-20221129104234412](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221129104234412.png)
+  ![image-20221129104234412](images/mypost/image-20221129104234412.png)
   **获取任务**，**执行任务**，**修改任务(time)**，**回放(添加)任务**
 
   > 1. 线程 1 从 `DelayQueue` 中获取已到期的 `ScheduledFutureTask（DelayQueue.take()）`。到期任务是指 `ScheduledFutureTask`的 time 大于等于当前系统的时间；

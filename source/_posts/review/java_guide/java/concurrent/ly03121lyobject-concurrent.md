@@ -19,7 +19,7 @@ updated: 2022-10-30 18:56:16
 
 - 对象的构成元素（what）
   HotSpot虚拟机里，对象在**堆内存中的存储布局**分为三个部分
-  ![image-20221030175640211](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030175640211.png)
+  ![image-20221030175640211](images/mypost/image-20221030175640211.png)
   - 对象头（Header）
     - **对象标记 MarkWord**
     - **类元信息**（类型指针 Class Pointer，指向方法区的地址）
@@ -36,15 +36,15 @@ updated: 2022-10-30 18:56:16
     > 4. System.gc(); //躲过了几次gc（次数）
 
     上面这些，**哈希码**、**gc标记**、**gc次数**、**同步锁标记**、**偏向锁持有者**，都保存在**对象标记**里面
-    ![image-20221030175315204](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030175315204.png)
+    ![image-20221030175315204](images/mypost/image-20221030175315204.png)
 
     1. 如果在64位系统中，对象头中，**mark word（对象标记）**占用8个字节（64位）；**class pointer（类元信息）**占用8个字节，总共16字节（忽略压缩指针）
     2. 无锁的时候，
-       ![image-20221030172439113](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030172439113.png)
+       ![image-20221030172439113](images/mypost/image-20221030172439113.png)
 
 - 类型指针
     注意下图，指向方法区中（模板）的地址
-    ![image-20221030173518629](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030173518629.png)
+    ![image-20221030173518629](images/mypost/image-20221030173518629.png)
 
 ### 实例数据和对齐填充
 
@@ -70,11 +70,11 @@ updated: 2022-10-30 18:56:16
 
 ### 源码查看
 
-![image-20221030175807777](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030175807777.png)
+![image-20221030175807777](images/mypost/image-20221030175807777.png)
 
 ## 具体的（64位虚拟机为主）
 
-![image-20221030180026580](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030180026580.png)
+![image-20221030180026580](images/mypost/image-20221030180026580.png)
 
 1. 无锁和偏向锁的锁标志位(最后2位)都是01
    - 无锁的倒数第3位，为0，表示非偏向锁
@@ -86,7 +86,7 @@ updated: 2022-10-30 18:56:16
 如上所示，对象**分代年龄4位**，即**最大值为15**（十进制）
 
 源码中  
-![image-20221030180821194](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030180821194.png)
+![image-20221030180821194](images/mypost/image-20221030180821194.png)
 
 ## 使用代码演示上述理论（JOL)
 
@@ -181,13 +181,13 @@ System.out.println(VM.current().objectAlignment());
   ```
 
 - java 运行中添加参数 -XX:MaxTenuringThreshold = 16 ，则会出现下面错误，即分代gc最大年龄为15
-  ![image-20221030184043505](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030184043505.png)
+  ![image-20221030184043505](images/mypost/image-20221030184043505.png)
 
 - 压缩指针的相关说明
 
   - 使用 java -XX:+PrintComandLineFlags -version ，打印参数
 
-    ![image-20221030184523659](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221030184523659.png)
+    ![image-20221030184523659](images/mypost/image-20221030184523659.png)
     其中有一个, **-XX:+UseCompressedClassPointers** ，即开启了**类型指针压缩**，只需要**4字节**
 
   - 当使用了**类型指针压缩**（默认）时，一个无任何属性对象是 **8字节(markWord)** + **4字节（classPointer)** + **4字节(对齐填充)** = **16字节**

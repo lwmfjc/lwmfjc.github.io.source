@@ -98,7 +98,7 @@ Timestamp 只需要使用 **4** 个字节的存储空间，但是 DateTime 需�
 # 再看MySQL日期类型存储空间
 
 - MySQL 5.6 版本中日期类型所占的存储空间
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/FhRGUVHFK0ujRPNA75f6CuOXQHTE.jpeg)
+  ![img](images/mypost/FhRGUVHFK0ujRPNA75f6CuOXQHTE.jpeg)
 
 1. 可以看出 5.6.4 之后的 MySQL 多出了一个需要 **0 ～ 3 字节**的小数位。DateTime 和 Timestamp 会有几种不同的存储空间占用。
 2. 为了方便，本文我们还是默认 **Timestamp 只需要使用 4 个字节**的存储空间，但是 **DateTime** 需要**耗费 8 个字节**的存储空间
@@ -137,6 +137,6 @@ mysql> select FROM_UNIXTIME(1578707612);
 # 总结
 
 - 推荐使用《高性能MySQL》  
-  ![image-20230119230831365](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230119230831365.png)
+  ![image-20230119230831365](images/mypost/image-20230119230831365.png)
 - 对比  
-  ![image-20230119230841378](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230119230841378.png)
+  ![image-20230119230841378](images/mypost/image-20230119230841378.png)

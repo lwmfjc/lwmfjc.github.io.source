@@ -12,7 +12,7 @@ updated: 2022-05-15 16:57:08
 ## 任务回退-串行回退
 
 - 流程图绘制
-  ![image-20220515170035810](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515170035810.png)
+  ![image-20220515170035810](images/mypost/image-20220515170035810.png)
 
 - xml
 
@@ -119,19 +119,19 @@ updated: 2022-05-15 16:57:08
     ```
 
   - 可以在这个表里让用户选择回退节点
-    ![image-20220515170856822](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515170856822.png)
+    ![image-20220515170856822](images/mypost/image-20220515170856822.png)
 
   - 此时让user3再完成任务
 
   - 注：用下面的方法，不关心当前节点，只写明要跳转的结点即可
-    ![image-20220515171133458](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515171133458.png)
+    ![image-20220515171133458](images/mypost/image-20220515171133458.png)
 
 ## 自定义表单
 
 ### 内置表单
 
 - 绘制
-  ![image-20220515173247794](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515173247794.png)
+  ![image-20220515173247794](images/mypost/image-20220515173247794.png)
 
   - xml
 
@@ -265,10 +265,10 @@ updated: 2022-05-15 16:57:08
     
     ```
 
-    - ![image-20220515173832080](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515173832080.png)
+    - ![image-20220515173832080](images/mypost/image-20220515173832080.png)
 
   - 第一种启动方式，通过map
-    ![image-20220515174011517](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515174011517.png)
+    ![image-20220515174011517](images/mypost/image-20220515174011517.png)
 
   - 第二种启动方式
 
@@ -286,7 +286,7 @@ updated: 2022-05-15 16:57:08
     ```
 
     - 注意查看act_ru_variable变量表
-      ![image-20220515174247320](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515174247320.png)
+      ![image-20220515174247320](images/mypost/image-20220515174247320.png)
 
   - 查看任务中的表单数据
 
@@ -315,7 +315,7 @@ updated: 2022-05-15 16:57:08
     ```
 
   - 查看完成的任务【主要】//有点问题，不管
-    ![image-20220515175944504](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515175944504.png)
+    ![image-20220515175944504](images/mypost/image-20220515175944504.png)
 
 ### 外置表单
 

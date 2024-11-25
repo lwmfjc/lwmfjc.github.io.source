@@ -17,7 +17,7 @@ updated: 2022-10-25 11:40:53
 ## 装饰器模式
 
 ​	类图：  
-​	![image-20230202093047927](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230202093047927.png)
+​	![image-20230202093047927](images/mypost/image-20230202093047927.png)
 
 - 装饰器，Decorator，装饰器模式可以在**不改变原有对象的情况下拓展其功能**
 
@@ -25,7 +25,7 @@ updated: 2022-10-25 11:40:53
 
 - 对于字节流，**FilterInputStream（对应输入流）和FilterOutputStream（对应输出流）**是**装饰器模式的核心**，分别用于**增强（继承了）InputStream**和**OutputStream**子类对象的功能
   Filter （过滤的意思），中间（Closeable）下面这两条**虚线代表实现**；最下面的**实线代表继承**
-  ![image-20221026092700367](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026092700367.png)
+  ![image-20221026092700367](images/mypost/image-20221026092700367.png)
 
 - 其中BufferedInputStream（字节缓冲输入流）、DataInputStream等等都是FilterInputStream的子类，对应的BufferedOutputStream和DataOutputStream都是FilterOutputStream的子类
 
@@ -73,7 +73,7 @@ updated: 2022-10-25 11:40:53
   ZipOutputStream zipOut = new ZipOutputStream(bos);
   ```
 
-  ![image-20221026093724390](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221026093724390.png)
+  ![image-20221026093724390](images/mypost/image-20221026093724390.png)
 
 - 装饰器模式重要的一点，就是**可以对原始类嵌套使用多个装饰器**，所以**装饰器**需要**跟原始类继承相同**的**抽象类**或**实现相同接口**，上面介绍的IO相关装饰器和原始类共同父类都是InputStream和OutputStream
   而对于字符流来说，BufferedReader用来增强Reader（字符输入流）子类功能，BufferWriter用来增加Writer（字符输出流）子类功能

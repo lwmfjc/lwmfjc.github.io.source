@@ -13,7 +13,7 @@ updated: 2022-05-14 07:29:14
 
 - flowable的历史
 
-  ![image-20220514094153736](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514094153736.png)
+  ![image-20220514094153736](images/mypost/image-20220514094153736.png)
 
 - flowable是BPNM的一个基于java的软件实现，不仅包括BPMN，还有DMN决策表和CMMNCase管理引擎，并且有自己的用户管理、微服务API等
 
@@ -97,14 +97,14 @@ updated: 2022-05-14 07:29:14
   - 此时再次启动就会看到一堆日志
 
 - 表
-  ![image-20220514102041305](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514102041305.png)
+  ![image-20220514102041305](images/mypost/image-20220514102041305.png)
 
 ## 流程定义文件解析
 
 - 先通过流程绘制器绘制流程
 
 - 案例（官网，请假流程）
-  ![image-20220514102241579](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514102241579.png)
+  ![image-20220514102241579](images/mypost/image-20220514102241579.png)
 
   - 设计好流程之后，流程数据保存在holiday-request.bpmn20.xml文件中
 
@@ -200,7 +200,7 @@ updated: 2022-05-14 07:29:14
   ```
 
 - ProcessEngine提供的几个服务
-  ![image-20220514103435244](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514103435244.png)
+  ![image-20220514103435244](images/mypost/image-20220514103435244.png)
 
 - 流程部署
 
@@ -225,7 +225,7 @@ updated: 2022-05-14 07:29:14
   ```
 
 - 表结构
-  ![image-20220514104106140](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514104106140.png)
+  ![image-20220514104106140](images/mypost/image-20220514104106140.png)
 
 ## 查询和删除操作
 
@@ -279,7 +279,7 @@ updated: 2022-05-14 07:29:14
     
 
   - 下面三个表的数据都会被删除
-    ![image-20220514105321078](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514105321078.png)
+    ![image-20220514105321078](images/mypost/image-20220514105321078.png)
 
 ## 启动流程实例
 
@@ -311,7 +311,7 @@ updated: 2022-05-14 07:29:14
 - 三个表
   act_ru_variable  act_ru_task  arc_ru_execution
 
-  ![image-20220514111442166](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514111442166.png)
+  ![image-20220514111442166](images/mypost/image-20220514111442166.png)
 
   
 
@@ -338,7 +338,7 @@ updated: 2022-05-14 07:29:14
 
     这里用false参数测试，会提示失败，运行中的流程不允许删除。将第二个参数改为true即可级联删除  
     删除后可以发现下面几个表数据全部清空了
-    ![image-20220514112055940](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514112055940.png)
+    ![image-20220514112055940](images/mypost/image-20220514112055940.png)
 
   - 然后修改xml定义文件并运行testDeploy()重新部署
 
@@ -352,9 +352,9 @@ updated: 2022-05-14 07:29:14
   - 运行流程 testRunProcess()
 
     - 运行后节点会跳到给zhangsan的那个任务，查看数据库表
-      ![image-20220514112605263](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514112605263.png)
+      ![image-20220514112605263](images/mypost/image-20220514112605263.png)
     - 流程变量
-      ![image-20220514112655133](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514112655133.png)
+      ![image-20220514112655133](images/mypost/image-20220514112655133.png)
 
   - 查询任务
 
@@ -388,10 +388,10 @@ updated: 2022-05-14 07:29:14
 - 流程图定义的分析
   任务A处理后，根据处理结果（这里是拒绝），会走向任务D，然后任务D是一个Service，且通过java的委托对象，自动实现操作
 
-  ![image-20220514115334229](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514115334229.png)
+  ![image-20220514115334229](images/mypost/image-20220514115334229.png)
 
 - 到了D那个节点，这里指定了一个自定义的java类处理
-  ![image-20220514115513100](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514115513100.png)
+  ![image-20220514115513100](images/mypost/image-20220514115513100.png)
 
   - 代码配置，注意类名和xml中的一致
 
@@ -438,14 +438,14 @@ updated: 2022-05-14 07:29:14
     ![image-20220514120154300](C:\Users\ly\AppData\Roaming\Typora\typora-user-images\image-20220514120154300.png)
   - 数据库
     下面几个表的数据都被清空了
-    ![image-20220514120320988](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514120320988.png)
+    ![image-20220514120320988](images/mypost/image-20220514120320988.png)
 
 ## 历史任务的完成
 
 - Flowable流程引擎可以自动存储所有流程实例的审计数据或历史数据
 
 - 先查看一下刚才用的流程定义的id
-  ![image-20220514120756973](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514120756973.png)
+  ![image-20220514120756973](images/mypost/image-20220514120756973.png)
 
 - 历史信息查询
 
@@ -472,7 +472,7 @@ updated: 2022-05-14 07:29:14
   ```
 
 - 不一样的地方，在旧版本时没有的
-  ![image-20220514121509725](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514121509725.png)
+  ![image-20220514121509725](images/mypost/image-20220514121509725.png)
 
 ## 流程设计器
 
@@ -481,16 +481,16 @@ updated: 2022-05-14 07:29:14
 - 使用eclipse的设计，会生成一个bar文件，代码稍微有点不同
   接收一个ZipInputStream
 
-  ![image-20220514122035548](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514122035548.png)
+  ![image-20220514122035548](images/mypost/image-20220514122035548.png)
   
 
 ## FlowableUI
 
 - 使用flowable官方提供的包，里面有一个war，直接用命令 java -jar xx.war启动即可
 - 这个应用分成四个模块
-  ![image-20220514121818052](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514121818052.png)
+  ![image-20220514121818052](images/mypost/image-20220514121818052.png)
 - 流程图的绘制及用户分配
-  ![image-20220514121906621](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220514121906621.png)
+  ![image-20220514121906621](images/mypost/image-20220514121906621.png)
 - 
 
 

@@ -77,7 +77,7 @@ CALL pre_test1();
 
 1000 万条数据，我用了 33 分钟才跑完（实际时间跟你电脑硬件配置有关）。这里贴几条生成的数据，大致长这样。
 数据如下所示：  
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/mysqlindex-invalidation-caused-by-implicit-conversion-01.png)
+![img](images/mypost/mysqlindex-invalidation-caused-by-implicit-conversion-01.png)
 
 # SQL测试
 
@@ -97,7 +97,7 @@ CALL pre_test1();
 > **也就是说 左int 右字符不影响效率；而左字符右int则影响效率，后面会解释**
 
 下面看1234的执行计划  
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/mysqlindex-invalidation-caused-by-implicit-conversion-02.png)
+![img](images/mypost/mysqlindex-invalidation-caused-by-implicit-conversion-02.png)
 
 1. 可以看到，**124 三条 SQL 都能使用到索引**，连接**类型都为`ref`**，扫描行数都为 1，所以效率非常高。再看看**第三条 SQL，没有用上索引**，所以为**全表扫描**，`rows`直接到达 1000 万了，所以性能差别才那么大
 
@@ -138,7 +138,7 @@ CALL pre_test1();
       >
       > 然后使用第三条 SQL 语句`SELECT * FROM`test1`WHERE num2 = 10000;`进行查询：
       >
-      > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/mysqlindex-invalidation-caused-by-implicit-conversion-03.png)
+      > ![img](images/mypost/mysqlindex-invalidation-caused-by-implicit-conversion-03.png)
 
       从结果可以看到，**后面插入的三条数据也都匹配上**了。那么这个字符串隐式转换的规则是什么呢？为什么`num2='10000a'`、`'010000'`和`'10000'`这三种情形都能匹配上呢？查阅相关资料发现规则如下：
 
@@ -147,13 +147,13 @@ CALL pre_test1();
 
       现对以上规则做如下测试验证：
 
-      ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/mysqlindex-invalidation-caused-by-implicit-conversion-04.png)
+      ![img](images/mypost/mysqlindex-invalidation-caused-by-implicit-conversion-04.png)
 
       如此也就印证了之前的查询结果了
 
 4. 再次写一条 SQL 查询 str1 字段：`SELECT * FROM`test1`WHERE str1 = 1234;`
 
-   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/mysqlindex-invalidation-caused-by-implicit-conversion-05.png)
+   ![img](images/mypost/mysqlindex-invalidation-caused-by-implicit-conversion-05.png)
 
 # 分析和总结
 

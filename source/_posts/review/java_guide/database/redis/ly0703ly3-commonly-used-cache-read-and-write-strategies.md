@@ -36,7 +36,7 @@ Cache Aside Pattern 中服务端需要同时维系 db 和 cache，并且是**以
 
 简单画了一张图帮助大家理解写的步骤。
 
- ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f63616368652d61736964652d77726974652e706e67) 
+ ![img](images/mypost/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f63616368652d61736964652d77726974652e706e67) 
 
 **读** :
 
@@ -46,7 +46,7 @@ Cache Aside Pattern 中服务端需要同时维系 db 和 cache，并且是**以
 
 简单画了一张图帮助大家理解读的步骤。
 
- ![image-20230224093335898](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230224093335898.png)
+ ![image-20230224093335898](images/mypost/image-20230224093335898.png)
 
 你仅仅了解了上面这些内容的话是远远不够的，我们还要搞懂其中的原理。
 
@@ -96,7 +96,7 @@ Read/Write Through Pattern 中服务端**把 cache 视为主要数据**存储，
 
 简单画了一张图帮助大家理解写的步骤。
 
- ![image-20230224095130940](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230224095130940.png)
+ ![image-20230224095130940](images/mypost/image-20230224095130940.png)
 
 **读(Read Through)：**
 
@@ -105,7 +105,7 @@ Read/Write Through Pattern 中服务端**把 cache 视为主要数据**存储，
 
 简单画了一张图帮助大家理解读的步骤。
 
- ![image-20230224095251704](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230224095251704.png)
+ ![image-20230224095251704](images/mypost/image-20230224095251704.png)
 
 Read-Through Pattern 实际只是在 Cache-Aside Pattern 之上进行了封装。在 Cache-Aside Pattern 下，发生读请求的时候，如果 cache 中不存在对应的数据，是由客户端自己负责把数据写入 cache，而 Read Through Pattern 则是 cache 服务自己来写入缓存的，这对客户端是透明的。
 

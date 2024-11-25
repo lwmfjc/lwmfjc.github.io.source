@@ -14,13 +14,13 @@ updated: 2023-04-13 23:27:30
 > 部分参考自 https://www.cnblogs.com/ysocean/p/12328088.html
 
 # 基本准备
-![1691117992.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1691117992.png)
+![1691117992.png](images/mypost/1691117992.png)
 
 ## 架构
 
 采用Centos7，Redis版本为6.2，架构如下：  
 
-![image-20230414104528632](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414104528632.png)
+![image-20230414104528632](images/mypost/image-20230414104528632.png)
 
 ## hosts修改
 
@@ -71,7 +71,7 @@ vim /etc/hosts
 mkdir -p /usr/local/redis_cluster/redis_63{79,80}/{conf,pid,logs}
 ```
 
-![image-20230414144223428](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414144223428.png)
+![image-20230414144223428](images/mypost/image-20230414144223428.png)
 
 编写配置文件
 
@@ -130,7 +130,7 @@ vim  /usr/local/redis_cluster/redis_6380/conf/redis.conf
 
 查看文件夹当前情况
 
-![image-20230414163620369](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414163620369.png)
+![image-20230414163620369](images/mypost/image-20230414163620369.png)
 
 # 运行
 
@@ -157,7 +157,7 @@ tcp        0      0 192.168.1.101:16379     0.0.0.0:*               LISTEN      
 ```
 
 结果  
-![image-20230414163942512](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414163942512.png)
+![image-20230414163942512](images/mypost/image-20230414163942512.png)
 
 ```shell
 cat *6379/pid/*pid*      
@@ -264,7 +264,7 @@ a20b6da956145cfa06ed55159456de8259d9f246 192.168.1.103:6379@16379 master - 0 168
 | node3    | 192.168.1.103:6379 | a20b6da956145cfa06ed55159456de8259d9f246 |
 
 主从配置  
-![image-20230414104528632](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414104528632.png)
+![image-20230414104528632](images/mypost/image-20230414104528632.png)
 
 ```shell
 #node1:6380->node2:6379
@@ -356,7 +356,7 @@ cluster_stats_messages_received:6996
 >
 > 安装完成后，我们可以使用 ruby -v 查看版本信息。
 >
-> ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1120165-20200221181647318-2083171766.png)
+> ![img](images/mypost/1120165-20200221181647318-2083171766.png)
 >
 > Ruby环境安装完成后。运行如下命令：
 >
@@ -436,7 +436,7 @@ a6159c5dda95017ba5433f597ea4d18780868dfc 192.168.1.101:6380@16380 myself,slave c
 ```
 
 如上，槽位都已经平均分配完，且主从关系也配置好了  
-![image-20230414225420457](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414225420457.png)
+![image-20230414225420457](images/mypost/image-20230414225420457.png)
 
 弊端：通过该方式创建的带有从节点的机器**不能够自己手动指定主节点**，所以如果需要指定的话，需要自己手动指定  
 
@@ -731,7 +731,7 @@ Source node #2: done
 
 ```
 
-![image-20230415115032010](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230415115032010.png)
+![image-20230415115032010](images/mypost/image-20230415115032010.png)
 
 结果：  
 
@@ -1028,18 +1028,18 @@ public class RedisConfig {
 
 ## 基础架构（数据分片）
 
-![image-20230414215403801](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414215403801.png)
+![image-20230414215403801](images/mypost/image-20230414215403801.png)
 
 ## 集群分片原理
 
 如果有任意1个槽位没有被分配，则集群创建不成功。
 
-![image-20230414215902852](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414215902852.png)
+![image-20230414215902852](images/mypost/image-20230414215902852.png)
 
 ## 启动集群原理
 
-![image-20230414220624119](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414220624119.png)
+![image-20230414220624119](images/mypost/image-20230414220624119.png)
 
 ## 集群通信原理
 
-![image-20230414221225818](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230414221225818.png)
+![image-20230414221225818](images/mypost/image-20230414221225818.png)

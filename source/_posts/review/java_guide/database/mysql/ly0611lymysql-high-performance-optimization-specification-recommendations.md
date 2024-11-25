@@ -90,7 +90,7 @@ updated: 2023-01-23 09:24:34
 ## 优先选择符合存储需要的最小数据类型
 
 **Byte：字节**  
-![image-20230123123412164](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230123123412164.png)
+![image-20230123123412164](images/mypost/image-20230123123412164.png)
 
 存储字节越小，**占用也就空间越小**，**性能也越好**。
 
@@ -310,7 +310,7 @@ insert into t(c1,c2,c3) values ('a','b','c');
 >    >
 >    > 通过查看MySQL日志可以看到执行的过程：
 >    >
->    > ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/202074104855490.png)
+>    > ![img](images/mypost/202074104855490.png)
 >
 > 2. **使用Statement执行预编译**  
 >    **使用Statement执行预编译就是把上面的SQL语句执行一次。   **  

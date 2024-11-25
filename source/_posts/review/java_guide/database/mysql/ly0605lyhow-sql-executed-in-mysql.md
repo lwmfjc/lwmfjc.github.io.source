@@ -20,13 +20,13 @@ updated: 2023-01-19 10:20:57
 
  # MySQL基础架构分析
 
-![image-20230313164253061](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313164253061.png)
+![image-20230313164253061](images/mypost/image-20230313164253061.png)
 
 ## MySQL基本架构概览
 
 - 下图是MySQL的简要架构图，从下图可以看到**用户的SQL语句**在MySQL内部是**如何执行的**
 - 先简单介绍一个下图涉及的一些组件的基本作用
-  ![image-20230119113638560](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230119113638560.png)
+  ![image-20230119113638560](images/mypost/image-20230119113638560.png)
   1. **连接器**： **身份认证**和**权限相关**（登录MySQL的时候）
   2. **查询缓存**：执行查询语句的时候，会**先查询缓存**（MySQL8.0版本后移除，因为这个功能不太实用）
   3. **分析器**：**没有命中**缓存的话，SQL语句就会经过分析器，分析器说白了就是要**先看**你的SQL语句干嘛，再**检查**你的SQL语句**语法**是否正确
@@ -38,7 +38,7 @@ updated: 2023-01-19 10:20:57
 
 ## Server层基本组件介绍
 
-![image-20230119161526905](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230119161526905.png)
+![image-20230119161526905](images/mypost/image-20230119161526905.png)
 
 1. **连接器**
    连接器主要和**身份认证**和**权限相关**的功能相关，就好比一个级别很高的门卫一样  

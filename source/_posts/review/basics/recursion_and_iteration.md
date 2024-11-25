@@ -51,7 +51,7 @@ updated: 2022-09-22 21:20:07
   f(2)---返回-
   f(3)---f(2)返回---f(1)返回 【f(3)分解成f(2)和f(1)】
   方法栈的个数：
-  ![image-20220923093752921](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923093752921.png)
+  ![image-20220923093752921](images/mypost/image-20220923093752921.png)
 
 ### 使用循环
 
@@ -79,7 +79,7 @@ updated: 2022-09-22 21:20:07
 
 
 
-![image-20220923095719037](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220923095719037.png)
+![image-20220923095719037](images/mypost/image-20220923095719037.png)
 
 ### 小结
 

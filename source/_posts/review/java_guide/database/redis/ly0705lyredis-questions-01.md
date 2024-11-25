@@ -25,7 +25,7 @@ Redis 没有外部依赖，Linux 和 OS X 是 Redis 开发和测试最多的两�
 
 个人学习的话，你可以自己本机安装 Redis 或者通过 Redis 官网提供的[在线 Redis 环境](https://try.redis.io/)来实际体验 Redis。
 
-![image-20230222135114608](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230222135114608.png)
+![image-20230222135114608](images/mypost/image-20230222135114608.png)
 
 全世界有非常多的网站使用到了 Redis ，[techstacks.io](https://techstacks.io/) 专门维护了一个[使用 Redis 的热门站点列表](https://techstacks.io/tech/redis) ，感兴趣的话可以看看。
 
@@ -39,7 +39,7 @@ Redis 内部做了非常多的性能优化，比较重要的主要有下面 3 �
 
 下面这张图片总结的挺不错的，分享一下，出自 [Why is Redis so fast?](https://twitter.com/alexxubyte/status/1498703822528544770) 。
 
- ![image-20230222135233844](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230222135233844.png)
+ ![image-20230222135233844](images/mypost/image-20230222135233844.png)
 
 ### 分布式缓存常见的技术选型方案有哪些？
 
@@ -234,7 +234,7 @@ struct sdshdr {
 - 用户 id 为 key
 - 商品 id 为 field，商品数量为 value
 
-[![Hash维护简单的购物车信息](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/hash-shopping-cart.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/database/redis/images/hash-shopping-cart.png)
+[![Hash维护简单的购物车信息](images/mypost/hash-shopping-cart.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/database/redis/images/hash-shopping-cart.png)
 
 那用户购物车信息的维护具体应该怎么操作呢？
 
@@ -252,9 +252,9 @@ Redis 中有一个叫做 `sorted set` 的数据结构经常被用在各种排行
 
 相关的一些 Redis 命令: `ZRANGE` (从小到大排序) 、 `ZREVRANGE` （从大到小排序）、`ZREVRANK` (指定元素排名)。
 
- ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f323032313036303731343139353338352e706e67) 
+ ![img](images/mypost/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f323032313036303731343139353338352e706e67) 
 
-[《Java 面试指北》](https://javaguide.cn/zhuanlan/java-mian-shi-zhi-bei.html) 的「技术面试题篇」就有一篇文章详细介绍如何使用 Sorted Set 来设计制作一个排行榜。 ![image-20230222144701328](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230222144701328.png)
+[《Java 面试指北》](https://javaguide.cn/zhuanlan/java-mian-shi-zhi-bei.html) 的「技术面试题篇」就有一篇文章详细介绍如何使用 Sorted Set 来设计制作一个排行榜。 ![image-20230222144701328](images/mypost/image-20230222144701328.png)
 
 ### 使用 Set 实现抽奖系统需要用到什么命令？
 
@@ -343,7 +343,7 @@ Redis 通过 **IO 多路复用程序** 来监听来自客户端的大量连接�
 - 文件事件分派器（将 socket 关联到相应的事件处理器）
 - 事件处理器（连接应答处理器、命令请求处理器、命令回复处理器）
 
-  ![image-20230222231224666](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230222231224666.png)
+  ![image-20230222231224666](images/mypost/image-20230222231224666.png)
 
 相关阅读：[Redis 事件机制详解](http://remcarpediem.net/article/1aa2da89/) 。
 
@@ -355,7 +355,7 @@ Redis 通过 **IO 多路复用程序** 来监听来自客户端的大量连接�
 
 为此，Redis 4.0 之后新增了**`UNLINK`**（可以看作是 `DEL` 的异步版本）、**`FLUSHALL ASYNC`**（清空所有数据库的所有 key，不仅仅是当前 `SELECT` 的数据库）、**`FLUSHDB ASYNC`**（清空当前 `SELECT` 数据库中的所有 key）等异步命令。
 
- ![image-20230222231413647](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230222231413647.png)
+ ![image-20230222231413647](images/mypost/image-20230222231413647.png)
 
 大体上来说，Redis 6.0 之前主要还是单线程处理。
 
@@ -428,7 +428,7 @@ OK
 
 Redis 通过一个叫做**过期字典**（可以看作是 **hash 表**）来保存数据过期的时间。过期字典的键指向 Redis 数据库中的**某个 key**(键)，过期字典的值是一个 **long long** 类型的整数，这个整数保存了 key 所指向的数据库键的**过期时间**（毫秒精度的 UNIX 时间戳）。
 
- ![redis过期字典](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f72656469732d657870697265642d64696374696f6e6172792e706e67) 
+ ![redis过期字典](images/mypost/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f72656469732d657870697265642d64696374696f6e6172792e706e67) 
 
 过期字典是存储在 redisDb 这个结构里的：
 
@@ -478,7 +478,7 @@ Redis 提供 6 种数据淘汰策略：
 2. **allkeys-lfu（least frequently used）**：当内存不足以容纳新写入数据时，在键空间中，移除最不经常使用的 key
 
 > 关于最近最少使用：  
-> ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/v2-71b21233c615b1ce899cd4bd3122cbab_720w.webp)
+> ![img](images/mypost/v2-71b21233c615b1ce899cd4bd3122cbab_720w.webp)
 >
 > 1. 链表尾部的数据会被丢弃  
 >
@@ -687,7 +687,7 @@ Redis 7.0 版本之前，如果在**重写期间有写入命令，AOF 可能会�
 
 官方文档地址：https://redis.io/topics/persistence
 
- ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f7265646973342e302d706572736974656e63652e706e67) 
+ ![img](images/mypost/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f64617461626173652f72656469732f7265646973342e302d706572736974656e63652e706e67) 
 
 ## 参考
 

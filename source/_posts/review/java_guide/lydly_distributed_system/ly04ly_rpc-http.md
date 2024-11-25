@@ -13,7 +13,7 @@ updated: 2023-02-11 19:59:58
 
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
-![ 既然有HTTP协议，为什么还要有RPC](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/d337fef5815143bb80aef0013645ac06%7Etplv-k3u1fbpfcp-zoom-crop-mark%3A3024%3A3024%3A3024%3A1702.awebp)
+![ 既然有HTTP协议，为什么还要有RPC](images/mypost/d337fef5815143bb80aef0013645ac06%7Etplv-k3u1fbpfcp-zoom-crop-mark%3A3024%3A3024%3A3024%3A1702.awebp)
 
 我正在参与掘金技术社区创作者签约计划招募活动，[点击链接报名投稿](https://juejin.cn/post/7112770927082864653)。
 
@@ -65,7 +65,7 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 字节流可以理解为一个双向的通道里流淌的数据，这个**数据**其实就是我们常说的二进制数据，简单来说就是一大堆 **01 串**。纯裸TCP收发的这些 01 串之间是**没有任何边界**的，你根本不知道到哪个地方才算一条完整消息。
 
-![01二进制字节流](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/b82d4fcdd0c4491e979856c93c1750d7%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
+![01二进制字节流](images/mypost/b82d4fcdd0c4491e979856c93c1750d7%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
 
 正因为这个没有**任何边界**的特点，所以当我们选择使用TCP发送 **"夏洛"和"特烦恼"** 的时候，接收端收到的就是 **"夏洛特烦恼"** ，这时候接收端没发区分你是想要表达 **"夏洛"+"特烦恼"** 还是 **"夏洛特"+"烦恼"** 。
 
@@ -95,7 +95,7 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 **HTTP**协议（**H**yper **T**ext **T**ransfer **P**rotocol），又叫做**超文本传输协议**。我们用的比较多，平时上网在浏览器上敲个网址就能访问网页，这里用到的就是HTTP协议。
 
-![HTTP调用](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/8f07a5d1c72a4c4fa811c6c3b5aadd3d%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
+![HTTP调用](images/mypost/8f07a5d1c72a4c4fa811c6c3b5aadd3d%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
 
 而**RPC**（**R**emote **P**rocedure **C**all），又叫做**远程过程调用**。它本身并不是一个具体的协议，而是一种**调用方式**。
 
@@ -119,7 +119,7 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 值得注意的是，虽然大部分RPC协议底层使用TCP，但实际上**它们不一定非得使用TCP，改用UDP或者HTTP，其实也可以做到类似的功能。**
 
-![基于TCP协议的HTTP和RPC协议](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/6419702a7e91434f9fc85c2bce92d931%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
+![基于TCP协议的HTTP和RPC协议](images/mypost/6419702a7e91434f9fc85c2bce92d931%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
 
 到这里，我们回到文章标题的问题。
 
@@ -177,19 +177,19 @@ fd = socket(AF_INET,SOCK_STREAM,0);
 
 这个将结构体转为二进制数组的过程就叫**序列化**，反过来将二进制数组复原成结构体的过程叫**反序列化**。
 
-![序列化和反序列化](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/d501dfc6f764430188ce61fda0f3e5d9%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
+![序列化和反序列化](images/mypost/d501dfc6f764430188ce61fda0f3e5d9%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
 
 对于主流的HTTP1.1，虽然它现在叫**超文本**协议，支持音频视频，但HTTP设计初是用于做网页**文本**展示的，所以它传的内容以字符串为主。header和body都是如此。在body这块，它使用**json**来**序列化**结构体数据。
 
 我们可以随便截个图直观看下。
 
-![HTTP报文](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/04e8a79ddb7247759df23f1132c01655%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
+![HTTP报文](images/mypost/04e8a79ddb7247759df23f1132c01655%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
 
 可以看到这里面的内容非常多的**冗余**，显得**非常啰嗦**。最明显的，像`header`里的那些信息，其实如果我们约定好头部的第几位是content-type，就**不需要每次都真的把"content-type"这个字段都传过来**，类似的情况其实在`body`的json结构里也特别明显。
 
 而RPC，因为它定制化程度更高，可以采用体积更小的protobuf或其他序列化协议去保存结构体数据，同时也不需要像HTTP那样考虑各种浏览器行为，比如302重定向跳转啥的。**因此性能也会更好一些，这也是在公司内部微服务中抛弃HTTP，选择使用RPC的最主要原因。**
 
-![HTTP原理](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/284c26bb7f2848889d1d9b95cf49decb%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
+![HTTP原理](images/mypost/284c26bb7f2848889d1d9b95cf49decb%7Etplv-k3u1fbpfcp-zoom-in-crop-mark%3A4536%3A0%3A0%3A0.awebp)
 
 ![RPC原理](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/edb050d383c644e895e505253f1c4d90~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp)
 

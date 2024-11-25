@@ -17,14 +17,14 @@ updated: 2022-11-07 16:00:06
 ## JMM（JavaMemoryModel)
 
 [详见-知识点](/2022/11/21/review/java_guide/java/concurrent/jmm)
-![Java内存模型](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230202141110576.png)
+![Java内存模型](images/mypost/image-20230202141110576.png)
 
 ## volatile关键字
 
 - 保证变量可见性
 
   - 使用volatile关键字保证变量可见性，如果将变量声明为volatile则**指示JVM该变量是共享且不稳定**的，每次使用它都到**主存**中读取  
-    ![image-20230202141302707](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230202141302707.png)
+    ![image-20230202141302707](images/mypost/image-20230202141302707.png)
     
     > volatile关键字并非Java语言特有，在C语言里也有，它最原始的意义就是**禁用CPU缓存**。
     
@@ -265,7 +265,7 @@ updated: 2022-11-07 16:00:06
 
     使用javap命令查看SynchronizedDemo类**相关字节码信息**：对编译后的SynchronizedDemo.class文件，使用```javap -c -s -v -l SynchronizedDemo.class```
 
-      ![image-20221029185709116](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029185709116.png)
+      ![image-20221029185709116](images/mypost/image-20221029185709116.png)
 
       同步代码块的实现，使用的是**monitorenter**和**monitorexit**指令，其中**monitorenter**指令指向**同步代码块开始**的地方，**monitorexit**指向**同步代码块结束**的结束位置
       执行monitorenter指令就是获取**对象监视器monitor**的持有权
@@ -330,9 +330,9 @@ updated: 2022-11-07 16:00:06
     > 
     
       执行monitorenter时，**尝试获取**对象的锁，如果锁计数器为0则表示所可以被获取，获取后锁计数器设为1，简单的流程  
-    ![image-20221029190656612](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029190656612.png)
+    ![image-20221029190656612](images/mypost/image-20221029190656612.png)
       **只有拥有者线程**才能执行**monitorexit**来释放锁，执行monitorexit指令后，锁计数器设为0（应该是**减一**，与可重入锁有关），当计数器为0时，表明锁被释放，其他线程可以**尝试获得锁**(如果某个线程获取锁失败，那么该线程就会阻塞等待，直到锁被（另一个线程）释放)
-      ![image-20221029190841776](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029190841776.png)
+      ![image-20221029190841776](images/mypost/image-20221029190841776.png)
     
   - synchronized修饰方法
   
@@ -345,10 +345,10 @@ updated: 2022-11-07 16:00:06
     ```
   
     如图  :
-    ![image-20221029191336048](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029191336048.png)
+    ![image-20221029191336048](images/mypost/image-20221029191336048.png)
   
     对比（下面是对synchronized代码块）：  
-    ![image-20221029192437491](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221029192437491.png)
+    ![image-20221029192437491](images/mypost/image-20221029192437491.png)
   
     > synchronized修饰的方法没有monitorenter和monitorexit指令，而是**ACC_SYNCHRONIZED**标识（flags），该标识**指明方法是一个同步方法**（JVM通过访问标志判断方法是否声明为同步方法），从而执行同步调用
     > 如果是**实例方法**，JVM 会尝试**获取实例对象的锁**。如果是**静态方法**，JVM 会尝试**获取当前 class 的锁**。
@@ -416,7 +416,7 @@ updated: 2022-11-07 16:00:06
   3. 对于ThreadLocal变量，**访问这个变量的每个线程**都会**有这个变量的本地副本**。使用get()和set()来获取默认值或将其值**更改为当前线程所存的副本的值**
 
 - 如图  
-  ![image-20230307133923905](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230307133923905.png)
+  ![image-20230307133923905](images/mypost/image-20230307133923905.png)
 
 - 如何使用ThreadLocal
   Demo演示实际中如何使用ThreadLocal  
@@ -600,10 +600,10 @@ updated: 2022-11-07 16:00:06
            **比如我们在同一个线程中声明了两个 `ThreadLocal` 对象的话， `Thread`内部都是使用仅有的那个`ThreadLocalMap` 存放数据的，`ThreadLocalMap`的 key 就是 `ThreadLocal`对象，value 就是 `ThreadLocal` 对象调用`set`方法设置的值**
          
       2. ThreadLocal数据结构如下图所示
-         ![image-20221107150751048](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221107150751048.png)
+         ![image-20221107150751048](images/mypost/image-20221107150751048.png)
       
          **`ThreadLocalMap`是`ThreadLocal`的静态内部类。**
-         ![image-20221107151155140](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221107151155140.png)
+         ![image-20221107151155140](images/mypost/image-20221107151155140.png)
   
 - ThreadLocal内存泄露问题时怎么导致的
 

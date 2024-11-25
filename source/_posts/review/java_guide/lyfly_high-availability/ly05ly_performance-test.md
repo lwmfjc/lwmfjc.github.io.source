@@ -19,7 +19,7 @@ updated: 2023-02-17 11:37:08
 
 本文思维导图：
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/%25E7%25BD%2591%25E7%25AB%2599%25E6%2580%25A7%25E8%2583%25BD%25E6%25B5%258B%25E8%25AF%2595.png)
+![img](images/mypost/%25E7%25BD%2591%25E7%25AB%2599%25E6%2580%25A7%25E8%2583%25BD%25E6%25B5%258B%25E8%25AF%2595.png)
 
 ## [#](#一-不同角色看网站性能) 一 不同角色看网站性能
 

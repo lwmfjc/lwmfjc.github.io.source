@@ -28,7 +28,7 @@ updated: 2023-01-06 10:46:19
 
   1，2是。
   3不是。
-  ![image-20230108214044120](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230108214044120.png)
+  ![image-20230108214044120](images/mypost/image-20230108214044120.png)
 
 # 堆的用途
 
@@ -46,13 +46,13 @@ updated: 2023-01-06 10:46:19
   - 最大堆：堆中的每一个节点的值**都大于**子树中**所有节点**的值
   - 最小堆：堆中的每一个节点的值**都小于**子树中**所有节点**的值
 - 如图，图1是最大堆，图2是最小堆
-  ![image-20230108221541796](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230108221541796.png)
+  ![image-20230108221541796](images/mypost/image-20230108221541796.png)
 
 # 堆的存储
 
 - 由于**完全二叉树的优秀性质**，**利用数组存储二叉树**即节省空间，又**方便索引**（若根结点的序号为1，那么对于树中任意节点i，其左子节点序号为 `2*i`，右子节点序号为 `2*i+1`）。
 - 为了**方便存储**和**索引**，**（二叉）堆**可以用**完全二叉树**的形式进行存储。存储的方式如下图所示
-  ![image-20230108222619449](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230108222619449.png)
+  ![image-20230108222619449](images/mypost/image-20230108222619449.png)
 
 # 堆的操作
 
@@ -63,11 +63,11 @@ updated: 2023-01-06 10:46:19
 ## 插入元素
 
 1. 将要插入的元素放到**最后**
-   ![image-20230109103135560](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109103135560.png)
+   ![image-20230109103135560](images/mypost/image-20230109103135560.png)
 2. 从底向上，如果**父节点**比**该元素小**，则该节点和父节点交换（其实就是一棵树有3个（最多）节点，与树上最大的节点比较）
    直到无法交换（已经与根节点比较过）
-   ![image-20230109103340370](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109103340370.png)
-   ![image-20230109103354015](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109103354015.png)
+   ![image-20230109103340370](images/mypost/image-20230109103340370.png)
+   ![image-20230109103354015](images/mypost/image-20230109103354015.png)
 
 ## 删除堆顶元素
 
@@ -85,17 +85,17 @@ updated: 2023-01-06 10:46:19
   > 在堆这个公司中，会出现老大离职的现象，老大离职之后，它的位置就空出来了
 
   1. 首先删除堆顶元素，使得数组中下标为1的位置空出
-     ![image-20230109111425216](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109111425216.png)
+     ![image-20230109111425216](images/mypost/image-20230109111425216.png)
 
      > 那么他的位置由谁来接替呢，当然是他的直接下属了，谁能力强就让谁上
 
   2. 比较**根节点（当前节点）**的**左子节点**和**右子节点**，也就是下标为 2 ，3 的数组元素，将较大的元素填充到**根节点（下标为1）（当前遍历节点）**的位置
-     ![image-20230109112005680](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109112005680.png)
+     ![image-20230109112005680](images/mypost/image-20230109112005680.png)
 
      > 此时又空出一个位置了，老规矩，谁有能力谁上
 
   3. 一直循环比较**空出位置**的**左右子节点**，并将较大者移至空位，直到堆的最底部
-     ![image-20230109112121358](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109112121358.png)
+     ![image-20230109112121358](images/mypost/image-20230109112121358.png)
 
      > 此时已经完成**自顶向上**的堆化，没有元素可以填补空缺。但会发现数组中出现了”气泡”，导致存户空间的浪费。
      >
@@ -105,11 +105,11 @@ updated: 2023-01-06 10:46:19
   自顶向下的堆化用一个词形容就是“石沉大海”
 
   1. 第一件事情，就是把石头抬起来，从海面扔下去。这个石头就是**堆的最后一个元素**，我们**将最后一个元素移动到堆顶**。
-     ![image-20230109112439473](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109112439473.png)
+     ![image-20230109112439473](images/mypost/image-20230109112439473.png)
   2. 将这个石头沉入海底，不停的与**左右子节点**的值进行比较，和**较大的子节点**交换位置，直到**无法交换位置**
-     ![image-20230109112535327](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109112535327.png)
+     ![image-20230109112535327](images/mypost/image-20230109112535327.png)
   3. 结果
-     ![image-20230109112624540](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109112624540.png)
+     ![image-20230109112624540](images/mypost/image-20230109112624540.png)
 
 ## 堆的操作总结
 
@@ -133,23 +133,23 @@ updated: 2023-01-06 10:46:19
 
   如图，红色区域分别是堆的情况下。对于T，如果只**自顶向下**到P、L这层，被换到了这层的那个元素是不一定就比其他树大的，所以还是要依次自顶向下
 
-  ![image-20230109140309966](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109140309966.png)
+  ![image-20230109140309966](images/mypost/image-20230109140309966.png)
   这个构建堆操作的时间复杂度为O(n)
-  ![image-20230109141141591](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109141141591.png)
+  ![image-20230109141141591](images/mypost/image-20230109141141591.png)
 
 - 首先要了解哪些是非叶节点，**最后一个结点的父节点及它（这个父节点）之前的元素**，都是非叶节点。也就是说，如果**节点个数为n**，那么我们需要对**n/2到1的节点进行自顶向下（沉底）堆化**
 
 - 如图
-  ![image-20230109143927351](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109143927351.png)
+  ![image-20230109143927351](images/mypost/image-20230109143927351.png)
 
   1. 首先将初始的无序数组抽象为一棵树，图中的节点个数为6，所以4，5，6是叶子节点，1，2，3节点为非叶节点  
   2. 对1，2，3节点进行**自顶向下（沉底）**堆化，注意，顺序是从后往前堆化，从3号开始，一直到1号节点。
      - 3号节点堆化结果  
-       ![image-20230109153344935](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109153344935.png)
+       ![image-20230109153344935](images/mypost/image-20230109153344935.png)
      - 2号节点堆化结果
-       ![image-20230109153422766](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109153422766.png)
+       ![image-20230109153422766](images/mypost/image-20230109153422766.png)
      - 1号节点堆化结果
-       ![image-20230109153456496](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109153456496.png)
+       ![image-20230109153456496](images/mypost/image-20230109153456496.png)
 
 ## 排序
 
@@ -162,15 +162,15 @@ updated: 2023-01-06 10:46:19
   2. 其实是做了一次**交换**操作，将**堆顶和末尾元素调换**位置，从而将**取出堆顶元素**和**堆化的第一步(将末尾元素放至根结点位置)**进行合并
 - 步骤
   1. 取出第一个元素并堆化
-     ![image-20230109154808329](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109154808329.png)
+     ![image-20230109154808329](images/mypost/image-20230109154808329.png)
   2. 取出第2个元素并堆化
-     ![image-20230109154830946](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109154830946.png)
+     ![image-20230109154830946](images/mypost/image-20230109154830946.png)
   3. 取出第3个元素并堆化
-     ![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109154851849.png)
+     ![](images/mypost/image-20230109154851849.png)
   4. 取出第4个元素并堆化
-     ![image-20230109155008000](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109155008000.png)
+     ![image-20230109155008000](images/mypost/image-20230109155008000.png)
   5. 取出第5个元素并堆化
-     ![image-20230109155104829](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109155104829.png)
+     ![image-20230109155104829](images/mypost/image-20230109155104829.png)
   6. 取出第6个元素并堆化
-     ![image-20230109155116813](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109155116813.png)
+     ![image-20230109155116813](images/mypost/image-20230109155116813.png)
   7. 排序完成

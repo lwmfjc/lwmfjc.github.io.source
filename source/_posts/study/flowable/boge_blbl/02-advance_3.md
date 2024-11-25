@@ -14,11 +14,11 @@ updated: 2022-05-15 10:04:08
 通过变量指定来进行分配
 
 - 首先绘制流程图（定义）
-  ![image-20220515100239983](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515100239983.png)
+  ![image-20220515100239983](images/mypost/image-20220515100239983.png)
 
   - 变量处理
-    ![image-20220515100603738](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515100603738.png)
-    ![image-20220515100629221](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515100629221.png)
+    ![image-20220515100603738](images/mypost/image-20220515100603738.png)
+    ![image-20220515100629221](images/mypost/image-20220515100629221.png)
 
 - 之后将xml文件导出
 
@@ -121,10 +121,10 @@ updated: 2022-05-15 10:04:08
     - act_ru_variable
 
 
-      ![image-20220515101806631](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515101806631.png)![image-20220515101906703](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515101906703.png)
+      ![image-20220515101806631](images/mypost/image-20220515101806631.png)![image-20220515101906703](images/mypost/image-20220515101906703.png)
     
     - act_ru_task
-      ![image-20220515101840975](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515101840975.png)
+      ![image-20220515101840975](images/mypost/image-20220515101840975.png)
 
   - 让张三完成处理
 
@@ -142,7 +142,7 @@ updated: 2022-05-15 10:04:08
 
   - 此时观察task和identity这两张表
 
-    任务变成了李四，而identity多了张三的记录![image-20220515102508734](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515102508734.png)
+    任务变成了李四，而identity多了张三的记录![image-20220515102508734](images/mypost/image-20220515102508734.png)
 
 ## 任务分配-监听器分配
 
@@ -179,7 +179,7 @@ updated: 2022-05-15 10:04:08
   两个节点走的是同一个监听器
 
 - xml定义中任务监听器的配置(两个节点都配置了)
-  ![image-20220515103504436](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515103504436.png)
+  ![image-20220515103504436](images/mypost/image-20220515103504436.png)
 
   ```java
   <?xml version="1.0" encoding="UTF-8"?>
@@ -274,11 +274,11 @@ updated: 2022-05-15 10:04:08
   ```
 
 - 控制台查看
-  ![image-20220515104113169](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515104113169.png)
+  ![image-20220515104113169](images/mypost/image-20220515104113169.png)
 
 - 数据库查看
-  ![image-20220515104240526](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515104240526.png)
-  ![image-20220515104248454](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515104248454.png)
+  ![image-20220515104240526](images/mypost/image-20220515104240526.png)
+  ![image-20220515104248454](images/mypost/image-20220515104248454.png)
 
 - 让小明处理任务
 
@@ -296,22 +296,22 @@ updated: 2022-05-15 10:04:08
   ```
 
 - 数据库查看
-  ![image-20220515104524706](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515104524706.png)
+  ![image-20220515104524706](images/mypost/image-20220515104524706.png)
 
 ## 流程变量
 
 - 全局变量（跟流程有关）和局部变量（跟task有关）
 
 - 一个流程定义，可以运行多个流程实例；
-  ![image-20220515105403272](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515105403272.png)
-  ![image-20220515105511486](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515105511486.png)
+  ![image-20220515105403272](images/mypost/image-20220515105403272.png)
+  ![image-20220515105511486](images/mypost/image-20220515105511486.png)
   当用到子流程时，就会出现一对多的关系
-  ![image-20220515105549313](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515105549313.png)
+  ![image-20220515105549313](images/mypost/image-20220515105549313.png)
 
 - 全局变量被重复赋值时后面会覆盖前面
 
 - 流程图的创建
-  ![image-20220515110130347](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515110130347.png)
+  ![image-20220515110130347](images/mypost/image-20220515110130347.png)
   这里还设置了条件，详见xm文件 sequenceFlow.conditionExpression 属性
 
   ```xml
@@ -471,7 +471,7 @@ updated: 2022-05-15 10:04:08
   ```
 
 - 下面修改num的值，修改之前
-  ![image-20220515113105628](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515113105628.png)
+  ![image-20220515113105628](images/mypost/image-20220515113105628.png)
 
   - 全局变量的查询
 
@@ -528,7 +528,7 @@ updated: 2022-05-15 10:04:08
   - 结果
 
     按照视频的说法，这里错了，应该是会多了5条记录
-    ![image-20220515120415965](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515120415965.png)
+    ![image-20220515120415965](images/mypost/image-20220515120415965.png)
 
 - 局部变量的再次测试
 
@@ -563,13 +563,13 @@ updated: 2022-05-15 10:04:08
   ```
 
   - 修改前
-    ![image-20220515120817587](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515120817587.png)
+    ![image-20220515120817587](images/mypost/image-20220515120817587.png)
   - 修改后
-    ![image-20220515121223413](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515121223413.png)
+    ![image-20220515121223413](images/mypost/image-20220515121223413.png)
     - 结果表明这是批量增加/修改，而不是覆盖
 
 - 当前数据库的数据 1个局部变量num，5个全局变量
-  ![image-20220515121439233](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515121439233.png)
+  ![image-20220515121439233](images/mypost/image-20220515121439233.png)
 
 - 接下来在张三节点设置一个局部变量
 
@@ -619,7 +619,7 @@ updated: 2022-05-15 10:04:08
   ```
 
   仅仅多了一条记录
-  ![image-20220515122216621](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515122216621.png)
+  ![image-20220515122216621](images/mypost/image-20220515122216621.png)
 
 - 修改全局变量
 
@@ -645,7 +645,7 @@ updated: 2022-05-15 10:04:08
   ```
 
 - 结果如下，**当局部变量和全局变量的名称一样时，只能修改局部变量**
-  ![image-20220515122635345](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515122635345.png)
+  ![image-20220515122635345](images/mypost/image-20220515122635345.png)
 
 - 让李四完成审批
   这里存在局部变量num=18，且完成时设置了局部变量20
@@ -670,14 +670,14 @@ updated: 2022-05-15 10:04:08
   ```
 
 - 注意，这里全局变量被改成20了，局部变量被删除了
-  ![image-20220515123339736](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515123339736.png)
+  ![image-20220515123339736](images/mypost/image-20220515123339736.png)
   走到了总经理审批
 
 - 再测试
   将数据清空，重新部署并运行流程
 
   现在在赵四节点，局部变量为
-  ![image-20220515124117180](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515124117180.png)
+  ![image-20220515124117180](images/mypost/image-20220515124117180.png)
 
 
   ```java
@@ -753,7 +753,7 @@ updated: 2022-05-15 10:04:08
   ```
 
   - 结果，全局变量设置成功，且任务流转到了财务那
-    ![image-20220515124802205](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515124802205.png)
+    ![image-20220515124802205](images/mypost/image-20220515124802205.png)
 
 - 再测试
 
@@ -814,7 +814,7 @@ updated: 2022-05-15 10:04:08
     ```
   
     - 数据库表
-      ![image-20220515130825823](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220515130825823.png)
+      ![image-20220515130825823](images/mypost/image-20220515130825823.png)
   
   - act_hi_varinst 里面看得到局部变量
   

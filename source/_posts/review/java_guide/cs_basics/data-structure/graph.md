@@ -19,7 +19,7 @@ updated: 2022-12-26 08:47:25
 - **图形**结构的元素之间的关系是任意的
   - 图就是由**顶点**的**有穷非空集合**和顶点之间的**边**组成的集合，通常表示为：**G（V，E）**，其中，G表示一个图，V表示顶点的集合，E表示边的集合
   - 下面显示的即**图**这种数据结构，而且还是一张**有向图**
-    ![image-20221226215910568](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221226215910568.png)
+    ![image-20221226215910568](images/mypost/image-20221226215910568.png)
 
 # 图的基本概念
 
@@ -53,7 +53,7 @@ updated: 2022-12-26 08:47:25
 
 下图就是一个**带权有向图**。
 
-![image-20230102162130607](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230102162130607.png)
+![image-20230102162130607](images/mypost/image-20230102162130607.png)
 
 # 图的存储
 
@@ -62,10 +62,10 @@ updated: 2022-12-26 08:47:25
 - 邻接矩阵将图用**二维矩阵**存储，是一种比较**直观**的表示方式
 - 如果第i个顶点和第j个顶点**有关系**，且**关系权值**为n，则A[i] [j] = n
 - 在无向图中，我们只关心关系的有无，所以当**顶点i**和**顶点j**有关系时，A[i] [j]=1 ; 当顶点i和顶点j没有关系时，A[i] [j] = 0 ，如下图所示  
-  ![image-20230102165052250](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230102165052250.png)
+  ![image-20230102165052250](images/mypost/image-20230102165052250.png)
   无向图的邻接矩阵是一个**对称**矩阵，因为在无向图中，**顶点i**和**顶点j**有关系，则**顶点j**和**顶点i**必有关系
 - 有向图的邻接矩阵存储
-  ![image-20230105105331809](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105105331809.png)
+  ![image-20230105105331809](images/mypost/image-20230105105331809.png)
   邻接矩阵存储的方式优点是**简单直接（直接使用一个二维数组即可）**，并且在获取两个顶点之间的关系的时候也非常高效*直接获取指定位置的**数组**元素。但是这种存储方式的确定啊也比较明显**即 比较浪费空间**
 
 ## 邻接表存储
@@ -75,48 +75,48 @@ updated: 2022-12-26 08:47:25
 - 邻接链表使用一个**链表**来存储某个顶点的**所有后继相邻顶点**。对于图中每个顶点Vi ，把所有邻接于Vi 的顶点Vj 链接成一个**单链表**
 
   - 无向图的邻接表存储
-    ![image-20230105111343599](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111343599.png)
+    ![image-20230105111343599](images/mypost/image-20230105111343599.png)
   - 有向图的邻接表存储
-    ![image-20230105111409045](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111409045.png)
+    ![image-20230105111409045](images/mypost/image-20230105111409045.png)
 
 - 邻接表中存储的元素的个数（顶点数）以及图中**边的条数**
 
   - 无向图中，**邻接表**的元素个数等于**边的条数**的两倍，如下图
     7条边，邻接表存储的元素个数为14 （即**每条边存储了两次**）
 
-    ![image-20230105111343599](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111343599.png)
+    ![image-20230105111343599](images/mypost/image-20230105111343599.png)
 
   - 有向图中，邻接表元素个数等于边的条数，如图所示的有向图中，边的条数为8，邻接表
-    ![image-20230105111409045](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105111409045.png)
+    ![image-20230105111409045](images/mypost/image-20230105111409045.png)
 
 # 图的搜索
 
 ## 广度优先搜索
 
 - 广度优先搜索：像水面上的波纹一样，一层一层向外扩展，如图
-  ![image-20230105112011060](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112011060.png)
+  ![image-20230105112011060](images/mypost/image-20230105112011060.png)
 
 - 具体实现方式，用到了**队列**，过程如下
 
   1. **初始状态**：将要搜索的源顶点放入队列
-     ![image-20230105112201827](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112201827.png)
+     ![image-20230105112201827](images/mypost/image-20230105112201827.png)
 
   2. 取出**队首节点**，输出0，将0的**后继顶点（全部）（未访问过的）放入队列**
-     ![image-20230105112302751](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112302751.png)
+     ![image-20230105112302751](images/mypost/image-20230105112302751.png)
 
   3. 取出**队首节点**，输出1，将1的后继顶点（所有）（未访问过的）放入队列
-     ![image-20230105112423589](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112423589.png)
+     ![image-20230105112423589](images/mypost/image-20230105112423589.png)
 
      截止到第3步就很清楚了，就是输出**最近的一个结点**的**全部关系节点**
 
   4. 取出队首节点，输出4，将4的后继顶点（未访问过的）放入队列
-     ![image-20230105112601860](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112601860.png)
+     ![image-20230105112601860](images/mypost/image-20230105112601860.png)
 
   5. 取出队首节点，输出2，将2的后继顶点（未访问过的）放入队列
-     ![image-20230105112650410](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112650410.png)
+     ![image-20230105112650410](images/mypost/image-20230105112650410.png)
 
   6. 取出队首节点，输出3，将3的后继顶点（未访问过的）放入队列，队列为空，结束
-     ![image-20230105112735397](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230105112735397.png)
+     ![image-20230105112735397](images/mypost/image-20230105112735397.png)
 
   7. 总结
      先初始化首结点，之后不断**从队列取出**并将这个结点的有关系的**结点** 依次**放入队列**
@@ -127,23 +127,23 @@ updated: 2022-12-26 08:47:25
 - 和广度优先搜索类似，深度优先搜索的具体实现，用到了另一种线性数据结构---**栈**
 
 1. 初始状态，将要搜索的**源顶点**放入栈中
-   ![image-20230106103852981](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106103852981.png)
+   ![image-20230106103852981](images/mypost/image-20230106103852981.png)
 
 2. **取出栈顶元素，输出0**，将0的**后继顶点（未访问过的）放入栈**中
-   ![image-20230106103958425](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106103958425.png)
+   ![image-20230106103958425](images/mypost/image-20230106103958425.png)
 
 3. 取出栈顶元素，输出4（因为后进先出），将4的后继顶点（未访问过的）放入栈中
-   ![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104122419.png)
+   ![](images/mypost/image-20230106104122419.png)
 
 4. 取出栈顶元素，输出3，将3的后继顶点（未访问过的）放入栈中
-   ![image-20230106104217788](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104217788.png)
+   ![image-20230106104217788](images/mypost/image-20230106104217788.png)
 
    ----------
 
    其实到这部就非常明显了，即 **前面元素的关系元素**，大多都是被一直**压在栈底**的，会一直走走到 **源顶点**的**直系关系**顶点没有了，再往回走
 
 5. 取出栈顶元素，输出2，将2的后继顶点（为访问过的）放入栈中
-   ![image-20230106104458532](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104458532.png)
+   ![image-20230106104458532](images/mypost/image-20230106104458532.png)
 
 6. 取出栈顶元素，输出1，将1的后继顶点（未访问过的）放入栈中，栈为空，结束
-   ![image-20230106104538533](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230106104538533.png)
+   ![image-20230106104538533](images/mypost/image-20230106104538533.png)

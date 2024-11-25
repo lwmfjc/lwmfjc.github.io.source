@@ -23,7 +23,7 @@ updated: 2023-01-10 13:19:14
 - **数据库管理员**：数据库管理员（Database Adminitrator，简称DBA）负责全面**管理和控制**数据库系统 **(是一个人)**
 
 **数据库系统基本构成**如下图所示  
-![image-20230110143032664](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110143032664.png)
+![image-20230110143032664](images/mypost/image-20230110143032664.png)
 
 # 什么是元组，码，候选码，主码，外码，主属性，非主属性
 
@@ -78,9 +78,9 @@ updated: 2023-01-10 13:19:14
 
 - E-R图，也称 **实体-联系图（Entity Relationship Diagram）**，提供表示**实体类型**、**属性**和**关系**，用来描述现实世界的**概念模型**。它是描述**现实世界关系概念模型**的有效方法，是**表示概念关系模型**的一种方式
 - 下图是一个学生选课的 ER 图，**每个学生可以选若干门课程**，**同一门课程也可以被若干人选择**，所以它们之间的关系是**多对多（M: N）**。另外，还有**其他两种关系**是：**1 对 1（1:1）**、**1 对多（1: N）**
-  ![image-20230110151637953](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110151637953.png)
+  ![image-20230110151637953](images/mypost/image-20230110151637953.png)
   将**ER图**转换成**数据库实际的关系模型**（实际设计中，我们通常会将任课教师也作为一个实体来处理）  
-  ![image-20230110151807973](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110151807973.png)
+  ![image-20230110151807973](images/mypost/image-20230110151807973.png)
 
 # 数据库范式了解吗
 
@@ -93,7 +93,7 @@ updated: 2023-01-10 13:19:14
    >第二范式要求，在满足第二范式的基础上，还要满足数据表里得每一条数据记录，都是可唯一标识的。而且所有**非主键字段**，都必须完全依赖主键，不能只依赖主键的一部分，如下，主键为商品名称、供应商名称，是主码是**属性组**。而供应商电话只依赖于供应商id，商品价格只依赖于价格。所以不满足第二范式
 
 
-   ![image-20230110153212488](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110153212488.png)
+   ![image-20230110153212488](images/mypost/image-20230110153212488.png)
 
 3. **3NF(第三范式)**3NF 在 2NF 的基础之上，消除了**非主属性对于码的传递函数依赖** 。符合 3NF 要求的数据库设计，**基本**上解决了数据冗余过大，插入异常，修改异常，删除异常的问题。比如在关系 R(学号 , 姓名, 系名，系主任)中，学号 → 系名，系名 → 系主任，所以存在非主属性系主任对于学号的传递函数依赖，所以该表的设计，不符合 3NF 的要求。
 
@@ -123,7 +123,7 @@ updated: 2023-01-10 13:19:14
 - 存储过程在互联网公司应用不多，因为存储过程**难以调试**和**扩展**，而且**没有移植性**，还会消耗**数据库资源**
 
   > 阿里巴巴Java开发手册要求禁止使用存储过程
-  > ![阿里巴巴Java开发手册: 禁止存储过程](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/0fa082bc4d4f919065767476a41b2156.png)
+  > ![阿里巴巴Java开发手册: 禁止存储过程](images/mypost/0fa082bc4d4f919065767476a41b2156.png)
 
 # drop、delete与truncate区别
 

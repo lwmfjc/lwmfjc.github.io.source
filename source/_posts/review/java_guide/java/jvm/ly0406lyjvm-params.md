@@ -22,7 +22,7 @@ updated: 2022-12-19 15:24:01
 # 堆内存相关
 
 Java 虚拟机所管理的**内存中最大的一块**，**Java 堆**是**所有线程共享的一块内存区域**，在虚拟机**启动时创建**。此内存区域的**唯一目的就是存放对象实例**，**几乎** **所有的对象实例**以及**数组**都在这里分配内存。  
-![image-20230312152902423](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230312152902423.png)
+![image-20230312152902423](images/mypost/image-20230312152902423.png)
 
 ## 显式指定堆内存-Xms和-Xmx
 

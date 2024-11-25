@@ -52,8 +52,8 @@ updated: 2022-09-21 10:04:34
   之后呢，再把局部变量表中1位置的值，放入操作数栈中  
   最后，将操作数栈弹出一个数(10)，将数值赋给局部变量表中的位置2  
 
-  ![image-20220921114316189](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220921114316189.png)
-  ![image-20220921122617548](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220921122617548.png)
+  ![image-20220921114316189](images/mypost/image-20220921114316189.png)
+  ![image-20220921122617548](images/mypost/image-20220921122617548.png)
   如上图，当方法为静态方法时，局部变量表0位置存储的是实参第1个数
   
   (当方法为非静态方法时，局部变量表0位置存储的是this引用)
@@ -143,7 +143,7 @@ updated: 2022-09-21 10:04:34
 ```
 
 先将i的值放进栈中，然后将局部变量表中的i + 1，之后将栈中的值赋值给j
-![image-20220921135728555](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220921135728555.png)
+![image-20220921135728555](images/mypost/image-20220921135728555.png)
 
 到这步骤的时候，i = 2 ，j = 1 
 
@@ -165,6 +165,6 @@ updated: 2022-09-21 10:04:34
 
 ### 小结
 
-![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20220921140923018.png)
+![](images/mypost/image-20220921140923018.png)
 
 ​    

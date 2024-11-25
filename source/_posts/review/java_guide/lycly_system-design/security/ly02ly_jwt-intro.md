@@ -13,7 +13,7 @@ updated: 2023-02-20 14:28:07
 
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
-![image.png](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/20230323003234.png)
+![image.png](images/mypost/20230323003234.png)
 
 
 ## 什么是 JWT?
@@ -47,7 +47,7 @@ JWT 自身包含了身份验证所需要的所有信息，因此，我们的**�
 
 ## JWT 由哪些部分组成？
 
-  ![image-20230220143327916](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230220143327916.png)
+  ![image-20230220143327916](images/mypost/image-20230220143327916.png)
 
 JWT 本质上就是一组字串，通过（`.`）切分成三个为 Base64 编码的部分：
 
@@ -69,7 +69,7 @@ SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
 
 Header 和 Payload 都是 JSON 格式的数据，Signature 由 **Payload**、**Header** 和 **Secret(密钥)**通过特定的计算公式和加密算法得到。
 
- ![image-20230220143503803](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230220143503803.png)
+ ![image-20230220143503803](images/mypost/image-20230220143503803.png)
 
 ### Header
 
@@ -151,7 +151,7 @@ HMACSHA256(
 
 在基于 JWT 进行身份验证的的应用程序中，服务器通过 Payload、Header 和 Secret(密钥)创建 JWT 并**将 JWT 发送给客户端**。客户端接收到 JWT 之后，会**将其保存在 Cookie 或者 localStorage 里面**，以后客户端发出的所有请求都会携带这个令牌。
 
- ![image-20230220143647698](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230220143647698.png)
+ ![image-20230220143647698](images/mypost/image-20230220143647698.png)
 
 简化后的步骤如下：
 

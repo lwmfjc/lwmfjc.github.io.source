@@ -20,7 +20,7 @@ updated: 2022-12-09 08:48:22
 - JVM，JavaVirtualMachine的缩写，虚拟出来的计算机，通过在实际的计算机上**仿真模拟**各类计算机功能实现
 - JVM类似一台小电脑，运行在windows或者linux这些**真实操作系统环境下**，**直接**和操作系统交互，**与硬件不直接交互**，操作系统帮我们完成和硬件交互的工作
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/d947f91e44c44c6c80222b49c2dee859-new-image19a36451-d673-486e-9c8e-3c7d8ab66929.png)
+![img](images/mypost/d947f91e44c44c6c80222b49c2dee859-new-image19a36451-d673-486e-9c8e-3c7d8ab66929.png)
 
 ## Java文件是如何运行的
 
@@ -28,7 +28,7 @@ updated: 2022-12-09 08:48:22
 
 1. 类加载器
    如果JVM想要执行这个.class文件，需要将其**(这里应该指的二进制文件)**装进**类加载器**中，它就像一个搬运工一样，会把所有的.class文件全部搬进JVM里面
-   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/81f1813f371c40ffa1c1f6d78bc49ed9-new-image28314ec8-066f-451e-8373-4517917d6bf7.png)
+   ![img](images/mypost/81f1813f371c40ffa1c1f6d78bc49ed9-new-image28314ec8-066f-451e-8373-4517917d6bf7.png)
 
 2. 方法区
 
@@ -49,7 +49,7 @@ updated: 2022-12-09 08:48:22
    主要就是完成一个加载工作，类似于一个指针一样的，**指向下一行我们需要执行的代码**。和栈一样，都是**线程独享**的，就是**每一个线程都会自己对应的一块区域**而不会存在并发和多线程问题。
 
 6. 小总结
-   ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/897863ee5ecb4d92b9119d065f468262-new-imagef7287f0b-c9f0-4f22-9eb4-6968bbaa5a82.png)
+   ![img](images/mypost/897863ee5ecb4d92b9119d065f468262-new-imagef7287f0b-c9f0-4f22-9eb4-6968bbaa5a82.png)
 
    1. Java文件经过编译后编程.class字节码文件
    2. 字节码文件通过类加载器被搬运到 JVM虚拟机中
@@ -255,7 +255,7 @@ public class Person{
 
 - 当老年区**执行full gc周仍然无法进行对象保存**操作，就会产生**OOM**。这时候就是虚拟机中堆内存不足，**原因可能会是**堆内存设置大小过小，可以通过参数**-Xms、-Xmx**来调整。也可能是**代码中创建对象大且多**，而且它们**一直在被引用**从而**长时间垃圾收集无法收集**它们
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/c02ecba3c33f43429a765987b928e423-new-image93b46f3d-33f9-46f9-a825-ec7129b004f6.png)
+![img](images/mypost/c02ecba3c33f43429a765987b928e423-new-image93b46f3d-33f9-46f9-a825-ec7129b004f6.png)
 
 > 关于-XX:TargetSurvivorRatio参数的问题。其实也不一定是要满足-XX:MaxTenuringThreshold才移动到老年代。可以举个例子：如**对象年龄5的占30%，年龄6的占36%，年龄7的占34%，加入某个年龄段（如例子中的年龄6）**后，总占用超过Survivor空间*TargetSurvivorRatio的时候，从该年龄段开始及大于的年龄对象就要进入老年代（即例子中的年龄6对象，就是年龄6和年龄7晋升到老年代），这时候无需等到MaxTenuringThreshold中要求的15
 
@@ -264,7 +264,7 @@ public class Person{
 首先看一下对象的虚拟机的一些流程  
 
 图例有点问题，**橙色是线程共享，青绿色是线程独享**
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1c1d85b5fb8b47239af2a5c0436eb2d7-new-image0cd10827-2f96-433c-9b16-93d4fe491d88.png)
+![img](images/mypost/1c1d85b5fb8b47239af2a5c0436eb2d7-new-image0cd10827-2f96-433c-9b16-93d4fe491d88.png)
 
 - 图中**程序计数器**、**虚拟机栈**、**本地方法栈**，3个区域随着线程生存而生存。**内存分配**和**回收**都是确定的，**随着线程的结束**内存自然就被回收了，因此不需要考虑垃圾回收问题。
 
@@ -316,7 +316,7 @@ public class Person{
 - 即：把已死亡的对象标记为空闲内存，然后记录在空闲列表中，当我们需要new一个对象时，内存管理模块会从空闲列表中寻找空闲的内存来分给新的对象
   - 不足方面：标记和清除**效率比较低**，且这种做法让**内存中碎片非常多**  。导致如果我们需要使用较大内存卡时，无法分配到足够的连续内存
 - 如图，可使用的内存都是零零散散的，导致大内存对象问题
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/01605d96d85f4daab9bfa5e7000f0d31-new-image78e03b85-fbef-4df9-b41e-2b63d78d119f.png)
+  ![img](images/mypost/01605d96d85f4daab9bfa5e7000f0d31-new-image78e03b85-fbef-4df9-b41e-2b63d78d119f.png)
 
 ### 复制算法
 
@@ -326,14 +326,14 @@ public class Person{
 
   > 默认情况Eden和Survivor 为 8: 2 （Eden : S0 : S1 = 8：1：1）
   
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/fc349fbb9b204495a5321febe27818d4-new-image45920a9a-552c-4656-94d6-e3ca45ff9b76.png)
+  ![img](images/mypost/fc349fbb9b204495a5321febe27818d4-new-image45920a9a-552c-4656-94d6-e3ca45ff9b76.png)
 
 ### 标记整理
 
 - 复制算法在**对象存活率高**的时候，仍然有效率问题（要复制的多）。
 - 标记整理--> 标记过程与**标记-清除**一样，但后续**不是直接对可回收对象进行清理**，而是让所有**存活对象都向一端移动**，然后直接**清理掉边界以外**内存
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/2599e9f722074d34a3f7fd9f0076f121-new-imagec76192ec-b63a-43e3-a6d6-cf01f749953f.png)
+![img](images/mypost/2599e9f722074d34a3f7fd9f0076f121-new-imagec76192ec-b63a-43e3-a6d6-cf01f749953f.png)
 
 ### 分代收集算法
 
@@ -345,7 +345,7 @@ public class Person{
 
 ## （了解）各种各样的垃圾回收器
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/11e9dcd0f1ee4f25836e6f1c47104c51-new-image69e1c56a-1d40-493a-9901-6efc647a01f3.png)
+![img](images/mypost/11e9dcd0f1ee4f25836e6f1c47104c51-new-image69e1c56a-1d40-493a-9901-6efc647a01f3.png)
 
 - 新生代的垃圾回收器：Serial（串行--复制），ParNew（并行--复制），ParallelScavenge（并行--复制）
 - 老年代的垃圾回收器：SerialOld（串行--标记整理），ParallelOld（并行--标记整理），CMS（并发--标记清除）

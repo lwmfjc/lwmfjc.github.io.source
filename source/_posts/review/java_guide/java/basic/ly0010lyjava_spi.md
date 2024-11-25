@@ -23,7 +23,7 @@ updated: 2022-10-12 10:12:52
 SPI，ServiceProviderInterface
 使用SPI：Spring框架、数据库加载驱动、日志接口、以及Dubbo的扩展实现
 
-![image-20221012105156504](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221012105156504.png)
+![image-20221012105156504](images/mypost/image-20221012105156504.png)
 
 感觉下面这个图不太对，被调用方应该
 一般**模块之间**都是**通过接口**进行通讯，
@@ -40,7 +40,7 @@ SPI，ServiceProviderInterface
 
 SLF4J只是一个日志门面（接口），但是SLF4J的具体实现可以有多种，如：Logback/Log4j/Log4j2等等
 
-![image-20221012160549090](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221012160549090.png)
+![image-20221012160549090](images/mypost/image-20221012160549090.png)
 
 #### 简易版本
 
@@ -215,7 +215,7 @@ SLF4J只是一个日志门面（接口），但是SLF4J的具体实现可以有�
   - 接下来同样将 `service-provider` 项目打包成 jar 包，这个 jar 包就是服务提供方的实现。通常我们导入 maven 的 pom 依赖就有点类似这种，只不过我们现在没有将这个 jar 包发布到 maven 公共仓库中，所以在需要使用的地方只能手动的添加到项目中
 
 - 效果展示
-  ![image-20221012171251890](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221012171251890.png)
+  ![image-20221012171251890](images/mypost/image-20221012171251890.png)
 
   ```java
   package edu.jiangxuan.up.service;

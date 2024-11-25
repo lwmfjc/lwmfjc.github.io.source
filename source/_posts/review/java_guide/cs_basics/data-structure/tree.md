@@ -24,7 +24,7 @@ updated: 2023-01-09 15:52:34
   3. 一棵树不包括回路
 
 - 下面是一颗**二叉树**
-  ![image-20230109161939668](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109161939668.png)
+  ![image-20230109161939668](images/mypost/image-20230109161939668.png)
   深度和高度是对应的；根节点所在层为1层
 
 - 常用概念
@@ -58,12 +58,12 @@ updated: 2023-01-09 15:52:34
   至少有2^(k) 个节点，即 深度为k-1的二叉树的最多的节点再加1 
 
 > （关于节点的深度的定义国内争议比较多，我个人比较认可维基百科对[节点深度的定义open in new window](https://zh.wikipedia.org/wiki/树_(数据结构)#/术语)）。
-> ![image-20230109172027272](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109172027272.png)
+> ![image-20230109172027272](images/mypost/image-20230109172027272.png)
 
 ## 满二叉树
 
 一个二叉树，如果每一个**层**的结点数都达到最大值，则这个二叉树就是 **满二叉树**。也就是说，如果一个**二叉树的层数**为 K，且结点总数是(2^k) -1 ，则它就是 **满二叉树**。
-![image-20230109172128330](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230109172128330.png)
+![image-20230109172128330](images/mypost/image-20230109172128330.png)
 
 ## 完全二叉树
 
@@ -71,7 +71,7 @@ updated: 2023-01-09 15:52:34
 
 - 大家可以想象为一棵树从根结点开始扩展，**扩展完左子节点才能开始扩展右子节点，每扩展完一层，才能继续扩展下一层**。如下图所示：  
   从左到右，从上到下：  
-  ![image-20230110095143413](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110095143413.png)
+  ![image-20230110095143413](images/mypost/image-20230110095143413.png)
 
 - 完全二叉树的性质：**父结点**和**子节点**的序号有着对应关系
 
@@ -87,13 +87,13 @@ updated: 2023-01-09 15:52:34
 - 平衡二叉树的常用实现方法有 **红黑树**、**AVL 树**、**替罪羊树**、**加权平衡树**、**伸展树** 等。
 
 - 下面看一颗**不太正常**的树
-  ![image-20230110102326007](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110102326007.png)
+  ![image-20230110102326007](images/mypost/image-20230110102326007.png)
 
   > 这玩意儿还真叫树，只不过这棵树已经退化为一个链表了，我们管它叫 **斜树**。
 
   > 1. 二叉树相比于链表，由于父子节点以及兄弟节点之间往往具有某种特殊的关系，这种关系使得我们在树中对数据进行**搜索**和**修改**时，相对于链表更加快捷便利。
   > 2. 如果二叉树退化为一个链表了，那么那么树所具有的优秀性质就难以表现出来，效率也会大打折，为了避免这样的情况，我们希望每个做 “家长”（父结点） 的，都 **一碗水端平**，分给左儿子和分给右儿子的尽可能一样多，相差最多不超过一层，如下图所示：
-  >    ![image-20230110102451581](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110102451581.png)
+  >    ![image-20230110102451581](images/mypost/image-20230110102451581.png)
 
 # 二叉树的存储
 
@@ -107,16 +107,16 @@ updated: 2023-01-09 15:52:34
   2. **左节点指针 left**
   3. **右节点指针 right**
 - Java没有指针，而是直接**引用对象**
-  ![image-20230110112905083](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110112905083.png)
+  ![image-20230110112905083](images/mypost/image-20230110112905083.png)
 
 ## 顺序存储
 
 - 就是利用**数组**进行存储，数组中每一个位置仅存储**结点的data**，不存储左右子节点的指针，子节点的索引**通过数组下标**完成（类似**堆**）
   - 根节点的序号为1，对于每个节点 Node，假设它存储在数组中下标为 i 的位置，那么它的左子节点就存储在 2i 的位置，它的右子节点存储在下标为 2i+1 的位置。
   - 如图
-    ![](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110113652925.png)
+    ![](images/mypost/image-20230110113652925.png)
 - 存储如下数组，会发现问题：如果要存储的二叉树不是完全二叉树，在**数组中就会出现空隙，导致内存利用率降低**
-  ![image-20230110113804700](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110113804700.png)
+  ![image-20230110113804700](images/mypost/image-20230110113804700.png)
 
 # 二叉树的遍历
 
@@ -135,7 +135,7 @@ updated: 2023-01-09 15:52:34
   } 
   ```
 
-  ![image-20230110114031370](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114031370.png)
+  ![image-20230110114031370](images/mypost/image-20230110114031370.png)
 
 ## 中序遍历
 
@@ -153,8 +153,8 @@ updated: 2023-01-09 15:52:34
   ```
 
 - 如图所示
-  ![image-20230110114345712](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114345712.png)
-  ![image-20230110114356891](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114356891.png)
+  ![image-20230110114345712](images/mypost/image-20230110114345712.png)
+  ![image-20230110114356891](images/mypost/image-20230110114356891.png)
 
 ## 后续遍历
 
@@ -174,4 +174,4 @@ updated: 2023-01-09 15:52:34
   ```
 
   如图  
-  ![image-20230110114443989](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230110114443989.png)
+  ![image-20230110114443989](images/mypost/image-20230110114443989.png)

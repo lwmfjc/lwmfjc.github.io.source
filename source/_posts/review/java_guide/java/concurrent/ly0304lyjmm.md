@@ -22,17 +22,17 @@ updated: 2022-11-21 10:57:24
 - 总结，**CPU Cache缓存的是内存数据**，用于解决**CPU处理速度和内存不匹配**的问题，**内存缓存的是硬盘数据**用于解决硬盘访问速度过慢的问题
   CPU Cache示意图：  
 
-  ![image-20221121161418654](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221121161418654.png)
+  ![image-20221121161418654](images/mypost/image-20221121161418654.png)
   CPU Cache通常分为三层，分别叫L1，L2，L3 Cache
   工作方式：  **先复制一份数据到CPUCache中，当CPU需要用的时候就可以从CPUCache中读取数据，运算完成后，将运算得到的数据，写回MainMemory中**，此时，会出现**内存缓存不一致的问题**，例子：执行了i++，如果两个线程同时执行，假设两个线程从CPUCach中读取的i=1，两个线程做了1++运算完之后再写回MainMemory，此时i=2 而正确结果为3
 
 - CPU为了解决**内存缓存不一致**问题，可以通过制定**缓存一致协议（比如MESI协议）或其他手段**。这个**缓存一致协议**，指的是在 **CPU 高速缓存与主内存交互的时候需要遵守的原则和规范**
-  ![image-20221121163447850](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221121163447850.png)
+  ![image-20221121163447850](images/mypost/image-20221121163447850.png)
   操作系统，通过**内存模型MemoryModel**定义一系列规范来解决这个问题
 
 ## Java内存模型
 
-![image-20230308104349321](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230308104349321.png)
+![image-20230308104349321](images/mypost/image-20230308104349321.png)
 
 ## 指令重排序
 
@@ -81,7 +81,7 @@ updated: 2022-11-21 10:57:24
 
 **Java 内存模型的抽象示意图**如下：
 
-![image-20221122143524756](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221122143524756.png)
+![image-20221122143524756](images/mypost/image-20221122143524756.png)
 如上，若线程1和线程2之间要通信，则  
 
 1. **线程1把本地内存中修改过的共享变量副本的值，同步到主内存中**
@@ -146,7 +146,7 @@ updated: 2022-11-21 10:57:24
   - 为了对编译器和处理器的约束尽可能少，**只要不改变程序**的执行结果（单线程程序和正确执行的多线程程序），**编译器和处理器怎么进行重排序优化都行**。
   - 对于**会改变**程序执行结果的重排序，**JMM 要求编译器和处理器必须禁止这种重排序**。
 
-  ![image-20221122155046471](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221122155046471.png)
+  ![image-20221122155046471](images/mypost/image-20221122155046471.png)
 
   JSR-133对happens-before原则的定义：  
 
@@ -214,7 +214,7 @@ updated: 2022-11-21 10:57:24
 
 3. JMM定义的
 
-![image-20221123111533905](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221123111533905.png)
+![image-20221123111533905](images/mypost/image-20221123111533905.png)
 
 ## 再看并发编程三个重要特性
 

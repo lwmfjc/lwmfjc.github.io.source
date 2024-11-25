@@ -182,7 +182,7 @@ updated: 2023-01-16 01:00:44
 > 同一个数据，在同一事务内读取多次但值不一样
 
 
-![image-20230116150215200](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230116150215200.png)
+![image-20230116150215200](images/mypost/image-20230116150215200.png)
 
 ## 可重复读
 

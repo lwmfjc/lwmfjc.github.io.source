@@ -14,7 +14,7 @@ updated: 2023-01-10 16:48:22
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
 图示总结  
-![image-20230313113143739](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313113143739.png)
+![image-20230313113143739](images/mypost/image-20230313113143739.png)
 
 - MySQL字符编码集有**两套UTF-8**编码实现：**utf-8** 和 **utf8mb4**  
   而其中，utf-8 **不支持存储**emoji符号和一些比较复杂的汉字、繁体字，会出错
@@ -27,7 +27,7 @@ updated: 2023-01-10 16:48:22
 - 计算机只能存储**二进制**的数据，那**英文**、**汉字**、**表情**等字符应该如何存储呢
   - 我们要将这些**字符和二进制的数据一一对应**起来，比如说字符“a”对应“01100001”，反之，“01100001”对应 “a”。我们将字符对应二进制数据的过程称为"**字符编码**"，反之，二进制数据解析成字符的过程称为“**字符解码**”。    
     
-    ![image-20230313105837500](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20230313105837500.png)
+    ![image-20230313105837500](images/mypost/image-20230313105837500.png)
 
 # 有哪些常见的字符集
 
@@ -49,7 +49,7 @@ updated: 2023-01-10 16:48:22
   > 由于，ASCII 码可以表示的字符实在是太少了。后来，人们对其进行了扩展得到了 **ASCII 扩展字符集** 。ASCII 扩展字符集使用 8 位（bits）表示一个字符，所以，ASCII 扩展字符集可以定义 256（2^8）个字符
 
 - 总共128个，下面少了33个无法显示的**控制字符**
-  ![ASCII字符编码](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/c1c6375d08ca268690cef2b13591a5b4.png)
+  ![ASCII字符编码](images/mypost/c1c6375d08ca268690cef2b13591a5b4.png)
 
 ## GB2312
 
@@ -79,11 +79,11 @@ BIG5 主要针对的是**繁体中文**，收录了 13000 多个汉字。
 > 我们上面也说了不同的字符集可以表示的字符范围以及编码规则存在差异。这就导致了一个非常严重的问题：**使用错误的编码方式查看一个包含字符的文件就会产生乱码现象。**  就比如说你使用 UTF-8 编码方式打开 GB2312 编码格式的文件就会出现乱码。示例：“牛”这个汉字 GB2312 编码后的十六进制数值为 “C5A3”，而 “C5A3” 用 UTF-8 解码之后得到的却是 “ţ”。
 
 你可以通过这个网站在线进行编码和解码：https://www.haomeili.net/HanZi/ZiFuBianMaZhuanHuan
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/836c49b117ee4408871b0020b74c991d.png)
+![img](images/mypost/836c49b117ee4408871b0020b74c991d.png)
 
 乱码的本质：**编码**和**解码**时用了不同或者不兼容的字符集
 
-![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/a8808cbabeea49caa3af27d314fa3c02-1.jpg)
+![img](images/mypost/a8808cbabeea49caa3af27d314fa3c02-1.jpg)
 
 - 如果我们能够有一种字符集将世界上所有的字符都纳入其中就好了，于是Unicode带着这个使命诞生了。
 
@@ -97,14 +97,14 @@ BIG5 主要针对的是**繁体中文**，收录了 13000 多个汉字。
 - UTF-32 的规则最简单，不过缺陷也比较明显，对于英文字母这类字符消耗的空间是 UTF-8 的 4 倍之多。
 
 - **UTF-8** 是目前使用最广的一种字符编码
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/1280px-Utf8webgrowth.svg.png)
+  ![img](images/mypost/1280px-Utf8webgrowth.svg.png)
 
 # MySQL字符集
 
 - MySQL支持很多字符编码的方式，比如UTF-8，GB2312，GBK，BIG5
 
 - 使用```SHOW CHARSET```命令查看
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20211008164229671.png)
+  ![img](images/mypost/image-20211008164229671.png)
 
 - **通常情况下**，我们建议使用UTF-8作为默认的字符编码方式
 
@@ -114,7 +114,7 @@ BIG5 主要针对的是**繁体中文**，收录了 13000 多个汉字。
   - **`utf8mb4`** ： UTF-8 的完整实现，正版！最多支持使用 4 个字节表示字符，因此，可以用来存储 emoji 符号
 
 - 为何会有两套UTF-8编码实现，原因如下
-  ![img](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20211008164542347.png)
+  ![img](images/mypost/image-20211008164542347.png)
   因此，如果你需要存储`emoji`类型的数据或者一些比较复杂的文字、繁体字到 MySQL 数据库的话，数据库的编码一定要指定为`utf8mb4` 而不是`utf8` ，要不然存储的时候就会报错了。
   测试：  
 

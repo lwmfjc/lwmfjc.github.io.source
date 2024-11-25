@@ -144,7 +144,7 @@ https://blog.csdn.net/MariaOzawa/article/details/107665689  原作者:[MariaOzaw
   - 如上，多个线程同时访问一段同步代码时，多个线程会**先被**存放在**ContentionList**和**_EntryList**集合中，处于block状态的线程都会加入该列表。
   - 当线程获取到对象的Monitor时，Monitor依靠底层操作系统的MutexLock实现互斥，线程申请Mutex成功，则持有该Mutex，其他线程无法获取；竞争失败的线程再次进入ContentionList被挂起
   - 如果线程调用wait()方法，则会释放当前持有的Mutex，并且该线程进入WaitSet集合中，等待下一次被唤醒（或者顺利执行完方法也会释放Mutex）
-    ![image-20221103162008164](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221103162008164.png)
+    ![image-20221103162008164](images/mypost/image-20221103162008164.png)
 
 ## 锁升级
 
@@ -152,9 +152,9 @@ https://blog.csdn.net/MariaOzawa/article/details/107665689  原作者:[MariaOzaw
 - 当Java对象**被Synchronized**关键字修饰为同步锁后，围绕这个锁的一系列升级操作都和**Java对象头**有关
 - JDK1.6 JVM中，对象实例在堆内存中被分为三个部分：**对象头**、**实例数据**和**对齐填充**。其中**对象头**由**MarkWord**、**指向类的指针**以及数组长度三部分组成
 - MarkWord记录了对象和锁相关的信息，它在64为JVM的长度是64bit，下图为**64位JVM的存储结构**：
-  ![image-20221103172236691](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221103172236691.png)
+  ![image-20221103172236691](images/mypost/image-20221103172236691.png)
   32位如下
-  ![image-20221106120357729](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221106120357729.png)
+  ![image-20221106120357729](images/mypost/image-20221106120357729.png)
   - 锁标志位是两位，**无锁**和**偏向锁**的锁标志位实际为**01**，轻量级锁的锁标志位为**00**
   - 锁升级功能，主要依赖于MarkWord中的**锁标志位**和**释放偏向锁标志位**，Synchronized同步锁，是从**偏向锁**开始的，随着竞争越来越激烈，**偏向锁**升级到**轻量级锁**，最终升级到**重量级锁**
 
@@ -182,7 +182,7 @@ https://blog.csdn.net/MariaOzawa/article/details/107665689  原作者:[MariaOzaw
   > 1. 偏向锁是不会被主动释放的
   > 2. 
 
-  ![image-20221104105511181](https://raw.githubusercontent.com/lwmfjc/lwmfjc.github.io.resource/main/img/image-20221104105511181.png)
+  ![image-20221104105511181](images/mypost/image-20221104105511181.png)
   **偏向锁默认开启**（JDK15默认关闭)，如果**应用程序里所有的锁通常情况下处于竞争**状态，此时可以添加JVM参数关闭偏向锁来调优系统性能
 
   ```shell
