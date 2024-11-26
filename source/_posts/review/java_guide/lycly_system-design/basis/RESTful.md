@@ -13,7 +13,7 @@ updated: 2023-02-17 14:35:02
 
 > 转载自https://github.com/Snailclimb/JavaGuide（添加小部分笔记）感谢作者!
 
-![img](images/mypost/lyx-20241126133826563.png)
+![img](attachments/img/lyx-20241126133826563.png)
 
 这篇文章简单聊聊后端程序员必备的 RESTful API 相关的知识。
 
@@ -21,13 +21,13 @@ updated: 2023-02-17 14:35:02
 
 ## [#](#何为-api) 何为 API？
 
-![img](images/mypost/lyx-20241126133827141.png)
+![img](attachments/img/lyx-20241126133827141.png)
 
 **API（Application Programming Interface）** 翻译过来是应用程序编程接口的意思。
 
 我们在进行后端开发的时候，主要的工作就是**为前端**或者**其他后端服务**提供 **AP**I 比如**查询用户数据的 API** 。
 
-![lyx-20241126133827572](images/mypost/lyx-20241126133827572.png)
+![lyx-20241126133827572](attachments/img/lyx-20241126133827572.png)
 
 但是， API 不仅仅代表后端系统暴露的接口，像框架中提供的方法也属于 API 的范畴。
 
@@ -76,7 +76,7 @@ POST   /classes：新建一个班级
 
 ## [#](#restful-api-规范) RESTful API 规范
 
-![img](images/mypost/lyx-20241126133827978.png)
+![img](attachments/img/lyx-20241126133827978.png)
 
 ### [#](#动作) 动作
 

@@ -61,17 +61,17 @@ Mybatis SQL 映射框架使得一个**面向对象构建的应用程序**去**�
 > ```
 >
 > 然后在ExternalLibraries 的mybatis:3.5.6里找到，就能看到目录结构 ，随便找一个进去 idea右上角会出现DownloadSource之类的字样 ，点击即可  
-> ![lyx-20241126133816307](images/mypost/lyx-20241126133816307.png)
+> ![lyx-20241126133816307](attachments/img/lyx-20241126133816307.png)
 
 我们首先要从github上下载源码，[仓库地址](https://links.jianshu.com/go?to=https%3A%2F%2Fgithub.com%2Fmybatis%2Fmybatis-3)，然后在IDEA中clone代码
 
-![img](images/mypost/lyx-20241126133816867.png)
+![img](attachments/img/lyx-20241126133816867.png)
 
  
 
 在打开中的IDEA中，选择vsc -> get from version control -> 复制刚才的地址
 
-![img](images/mypost/lyx-20241126133817308.png)
+![img](attachments/img/lyx-20241126133817308.png)
 
 
 
@@ -81,19 +81,19 @@ image.png
 
 
 
-![img](images/mypost/lyx-20241126133817748.png)
+![img](attachments/img/lyx-20241126133817748.png)
 
 image.png
 
 经过漫长的等待后，代码会全部下载下来，项目结果如下，框起来的就是我们要关注的核心代码了。
 
-![img](images/mypost/lyx-20241126133818154.png)
+![img](attachments/img/lyx-20241126133818154.png)
 
 image.png
 
 每个包就是MyBatis的一个模块，每个包的作用如下：
 
-![lyx-20241126133818580](images/mypost/lyx-20241126133818580.png)
+![lyx-20241126133818580](attachments/img/lyx-20241126133818580.png)
 
  
 
@@ -786,4 +786,4 @@ public class MyBatisBootStrap {
 
 这篇文章简单的介绍了下MyBatis的**基本概念**，并提供了简单的栗子，**接下来几篇文章打算写下Mybatis的启动流程**，让我们更好的了解下**mybatis的各模块协作**。
 
-![image.png](images/mypost/lyx-20241126133819032.png)
+![image.png](attachments/img/lyx-20241126133819032.png)

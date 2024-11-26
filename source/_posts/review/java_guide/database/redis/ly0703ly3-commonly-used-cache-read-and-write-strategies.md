@@ -36,7 +36,7 @@ Cache Aside Pattern 中服务端需要同时维系 db 和 cache，并且是**以
 
 简单画了一张图帮助大家理解写的步骤。
 
- ![img](images/mypost/lyx-20241126133539390.jpg) 
+ ![img](attachments/img/lyx-20241126133539390.jpg) 
 
 **读** :
 
@@ -46,7 +46,7 @@ Cache Aside Pattern 中服务端需要同时维系 db 和 cache，并且是**以
 
 简单画了一张图帮助大家理解读的步骤。
 
- ![lyx-20241126133540042](images/mypost/lyx-20241126133540042.png)
+ ![lyx-20241126133540042](attachments/img/lyx-20241126133540042.png)
 
 你仅仅了解了上面这些内容的话是远远不够的，我们还要搞懂其中的原理。
 
@@ -96,7 +96,7 @@ Read/Write Through Pattern 中服务端**把 cache 视为主要数据**存储，
 
 简单画了一张图帮助大家理解写的步骤。
 
- ![lyx-20241126133540467](images/mypost/lyx-20241126133540467.png)
+ ![lyx-20241126133540467](attachments/img/lyx-20241126133540467.png)
 
 **读(Read Through)：**
 
@@ -105,7 +105,7 @@ Read/Write Through Pattern 中服务端**把 cache 视为主要数据**存储，
 
 简单画了一张图帮助大家理解读的步骤。
 
- ![lyx-20241126133540950](images/mypost/lyx-20241126133540950.png)
+ ![lyx-20241126133540950](attachments/img/lyx-20241126133540950.png)
 
 Read-Through Pattern 实际只是在 Cache-Aside Pattern 之上进行了封装。在 Cache-Aside Pattern 下，发生读请求的时候，如果 cache 中不存在对应的数据，是由客户端自己负责把数据写入 cache，而 Read Through Pattern 则是 cache 服务自己来写入缓存的，这对客户端是透明的。
 

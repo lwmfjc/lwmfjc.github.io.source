@@ -21,11 +21,11 @@ updated: 2023-02-15 09:56:36
 
 我们可以把消息队列看作是一个**存放消息的容器**，当我们需要使用消息的时候，直接**从容器中取出消息**供自己使用即可。由于队列 Queue 是一种**先进先出**的数据结构，所以消费消息时也是**按照顺序来消费**的。
 
- ![Message queue](images/mypost/lyx-20241126133939838.jpg) 
+ ![Message queue](attachments/img/lyx-20241126133939838.jpg) 
 
 参与消息传递的双方称为**生产者**和**消费者**，生产者负责**发送**消息，消费者负责**处理**消息。
 
- ![发布/订阅（Pub/Sub）模型](images/mypost/lyx-20241126133940441.png) 
+ ![发布/订阅（Pub/Sub）模型](attachments/img/lyx-20241126133940441.png) 
 
 我们知道操作系统中的进程通信的一种很重要的方式就是消息队列。我们这里提到的**消息队列**稍微有点区别，更多指的是**各个服务**以及**系统内部各个组件**/**模块**之前的通信，属于一种**中间件**。
 
@@ -43,7 +43,7 @@ updated: 2023-02-15 09:56:36
 
 ### 通过异步处理提高系统性能（减少响应所需时间）
 
-![lyx-20241126133940459](images/mypost/lyx-20241126133940459.png)
+![lyx-20241126133940459](attachments/img/lyx-20241126133940459.png)
 
 将用户的请求数据**存储到消息队列之后就立即返回结果**。随后，系统再对消息进行消费。
 
@@ -55,13 +55,13 @@ updated: 2023-02-15 09:56:36
 
 举例：在电子商务一些**秒杀**、**促销**活动中，合理使用消息队列可以**有效抵御促销活动**刚开始大量订单涌入对系统的冲击。如下图所示：
 
- ![削峰](images/mypost/lyx-20241126133941030.jpg) 
+ ![削峰](attachments/img/lyx-20241126133941030.jpg) 
 
 ### 降低系统耦合性
 
 使用消息队列还可以降低系统耦合性。我们知道如果**模块之间不存在直接调用**，那么新增模块或者修改模块就对其他模块影响较小，这样系统的**可扩展性**无疑更好一些。还是直接上图吧：
 
- ![解耦](images/mypost/lyx-20241126133941511.jpg) 
+ ![解耦](attachments/img/lyx-20241126133941511.jpg) 
 
 **生产者（客户端）发送消息到消息队列中去，接受者（服务端）处理消息**，需要消费的系统直接去消息队列取消息进行消费即可而不需要和其他系统有耦合，这显然也提高了系统的扩展性。
 
@@ -99,13 +99,13 @@ JMS 定义了五种不同的消息正文格式以及调用的消息类型，允�
 
 #### 点到点（P2P）模型
 
-[![队列模型](images/mypost/lyx-20241126133941968.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/high-performance/images/message-queue/message-queue-queue-model.png)
+[![队列模型](attachments/img/lyx-20241126133941968.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/high-performance/images/message-queue/message-queue-queue-model.png)
 
 使用**队列（Queue）\**作为消息通信载体；满足\**生产者与消费者模式**，一条消息只能被一个消费者使用，未被消费的消息在队列中保留直到被消费或超时。比如：我们生产者发送 100 条消息的话，两个消费者来消费一般情况下两个消费者会按照消息发送的顺序各自消费一半（也就是你一个我一个的消费。）
 
 #### 发布/订阅（Pub/Sub）模型
 
- ![发布/订阅（Pub/Sub）模型](images/mypost/lyx-20241126133942418.png) 
+ ![发布/订阅（Pub/Sub）模型](attachments/img/lyx-20241126133942418.png) 
 
 发布订阅模型（Pub/Sub） 使用**主题（Topic）\**作为消息通信载体，类似于\**广播模式**；发布者发布一条消息，该消息通过主题传递给所有的订阅者，**在一条消息广播之后才订阅的用户则是收不到该条消息的**。
 
@@ -137,7 +137,7 @@ AMQP，即 Advanced Message Queuing Protocol，一个提供统一消息服务的
 
 #### Kafka
 
-[![img](images/mypost/lyx-20241126133942440.jpg)](https://camo.githubusercontent.com/de92972c493ca9cf7edca4508083c79dce0caa041c8d80e6a366b3ac91f54c15/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f686967682d706572666f726d616e63652f6d6573736167652d71756575652f6b61666b612d6c6f676f2e706e67)
+[![img](attachments/img/lyx-20241126133942440.jpg)](https://camo.githubusercontent.com/de92972c493ca9cf7edca4508083c79dce0caa041c8d80e6a366b3ac91f54c15/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f686967682d706572666f726d616e63652f6d6573736167652d71756575652f6b61666b612d6c6f676f2e706e67)
 
 Kafka 是 LinkedIn 开源的一个分布式流式处理平台，已经成为 Apache 顶级项目，早期被用来用于处理海量的日志，后面才慢慢发展成了一款功能全面的高性能消息队列。
 
@@ -153,7 +153,7 @@ Kafka 是一个分布式系统，由通过高性能 TCP 网络协议进行通信
 
 不过，要提示一下：**如果要使用 KRaft 模式的话，建议选择较高版本的 Kafka，因为这个功能还在持续完善优化中。Kafka 3.3.1 版本是第一个将 KRaft（Kafka Raft）共识协议标记为生产就绪的版本。**
 
- ![lyx-20241126133942924.png](images/mypost/lyx-20241126133942924.png)
+ ![lyx-20241126133942924.png](attachments/img/lyx-20241126133942924.png)
  
 
 Kafka 官网：http://kafka.apache.org/
@@ -162,7 +162,7 @@ Kafka 更新记录（可以直观看到项目是否还在维护）：https://kaf
 
 #### RocketMQ
 
- ![](images/mypost/lyx-20241126133943331.jpg)
+ ![](attachments/img/lyx-20241126133943331.jpg)
 
 RocketMQ **是阿里开源的一款云原生**“消息、事件、流”实时数据处理平台，借鉴了 Kafka，已经成为 Apache 顶级项目。
 
@@ -185,7 +185,7 @@ RocketMQ 更新记录（可以直观看到项目是否还在维护）：https://
 
 #### RabbitMQ
 
- ![img](images/mypost/lyx-20241126133943802.jpg) 
+ ![img](attachments/img/lyx-20241126133943802.jpg) 
 
 RabbitMQ 是采用 **Erlang 语言**实现 AMQP(Advanced Message Queuing Protocol，高级消息队列协议）的消息中间件，它最初起源于金融系统，用于在分布式系统中存储转发消息。
 
@@ -206,7 +206,7 @@ RabbitMQ 更新记录（可以直观看到项目是否还在维护）：https://
 
 #### Pulsar
 
- ![img](images/mypost/lyx-20241126133944273.jpg) 
+ ![img](attachments/img/lyx-20241126133944273.jpg) 
 
 Pulsar 是下一代云原生分布式消息流平台，最初由 **Yahoo** 开发 ，已经成为 Apache 顶级项目。
 

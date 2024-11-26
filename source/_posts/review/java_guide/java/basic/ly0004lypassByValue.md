@@ -78,7 +78,7 @@ updated: 2022-10-09 11:30:05
     ```
   
     change方法的参数，拷贝的是arr(实参)的地址，所以array和arr指向的是同一个数组对象
-    ![lyx-20241126133558949](images/mypost/lyx-20241126133558949.png)
+    ![lyx-20241126133558949](attachments/img/lyx-20241126133558949.png)
   
   - 传递引用类型参数2  
   
@@ -112,7 +112,7 @@ updated: 2022-10-09 11:30:05
   
     这里并不会交换xiaoZhang和xiaoLi，只会交换swap方法栈里的person1和person2   
   
-    ![lyx-20241126133559502](images/mypost/lyx-20241126133559502.png)
+    ![lyx-20241126133559502](attachments/img/lyx-20241126133559502.png)
   
 - 小结  Java 中将实参传递给方法（或函数）的方式是 **值传递** ：
 

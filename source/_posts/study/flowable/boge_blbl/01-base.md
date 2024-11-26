@@ -13,7 +13,7 @@ updated: 2022-05-14 07:29:14
 
 - flowable的历史
 
-  ![lyx-20241126134101432](images/mypost/lyx-20241126134101432.png)
+  ![lyx-20241126134101432](attachments/img/lyx-20241126134101432.png)
 
 - flowable是BPNM的一个基于java的软件实现，不仅包括BPMN，还有DMN决策表和CMMNCase管理引擎，并且有自己的用户管理、微服务API等
 
@@ -97,14 +97,14 @@ updated: 2022-05-14 07:29:14
   - 此时再次启动就会看到一堆日志
 
 - 表
-  ![lyx-20241126134101985](images/mypost/lyx-20241126134101985.png)
+  ![lyx-20241126134101985](attachments/img/lyx-20241126134101985.png)
 
 ## 流程定义文件解析
 
 - 先通过流程绘制器绘制流程
 
 - 案例（官网，请假流程）
-  ![lyx-20241126134102449](images/mypost/lyx-20241126134102449.png)
+  ![lyx-20241126134102449](attachments/img/lyx-20241126134102449.png)
 
   - 设计好流程之后，流程数据保存在holiday-request.bpmn20.xml文件中
 
@@ -200,7 +200,7 @@ updated: 2022-05-14 07:29:14
   ```
 
 - ProcessEngine提供的几个服务
-  ![lyx-20241126134102893](images/mypost/lyx-20241126134102893.png)
+  ![lyx-20241126134102893](attachments/img/lyx-20241126134102893.png)
 
 - 流程部署
 
@@ -225,7 +225,7 @@ updated: 2022-05-14 07:29:14
   ```
 
 - 表结构
-  ![lyx-20241126134103349](images/mypost/lyx-20241126134103349.png)
+  ![lyx-20241126134103349](attachments/img/lyx-20241126134103349.png)
 
 ## 查询和删除操作
 
@@ -279,7 +279,7 @@ updated: 2022-05-14 07:29:14
     
 
   - 下面三个表的数据都会被删除
-    ![lyx-20241126134103800](images/mypost/lyx-20241126134103800.png)
+    ![lyx-20241126134103800](attachments/img/lyx-20241126134103800.png)
 
 ## 启动流程实例
 
@@ -311,7 +311,7 @@ updated: 2022-05-14 07:29:14
 - 三个表
   act_ru_variable  act_ru_task  arc_ru_execution
 
-  ![lyx-20241126134104248](images/mypost/lyx-20241126134104248.png)
+  ![lyx-20241126134104248](attachments/img/lyx-20241126134104248.png)
 
   
 
@@ -338,7 +338,7 @@ updated: 2022-05-14 07:29:14
 
     这里用false参数测试，会提示失败，运行中的流程不允许删除。将第二个参数改为true即可级联删除  
     删除后可以发现下面几个表数据全部清空了
-    ![lyx-20241126134104702](images/mypost/lyx-20241126134104702.png)
+    ![lyx-20241126134104702](attachments/img/lyx-20241126134104702.png)
 
   - 然后修改xml定义文件并运行testDeploy()重新部署
 
@@ -352,9 +352,9 @@ updated: 2022-05-14 07:29:14
   - 运行流程 testRunProcess()
 
     - 运行后节点会跳到给zhangsan的那个任务，查看数据库表
-      ![lyx-20241126134105232](images/mypost/lyx-20241126134105232.png)
+      ![lyx-20241126134105232](attachments/img/lyx-20241126134105232.png)
     - 流程变量
-      ![lyx-20241126134105743](images/mypost/lyx-20241126134105743.png)
+      ![lyx-20241126134105743](attachments/img/lyx-20241126134105743.png)
 
   - 查询任务
 
@@ -388,10 +388,10 @@ updated: 2022-05-14 07:29:14
 - 流程图定义的分析
   任务A处理后，根据处理结果（这里是拒绝），会走向任务D，然后任务D是一个Service，且通过java的委托对象，自动实现操作
 
-  ![lyx-20241126134106321](images/mypost/lyx-20241126134106321.png)
+  ![lyx-20241126134106321](attachments/img/lyx-20241126134106321.png)
 
 - 到了D那个节点，这里指定了一个自定义的java类处理
-  ![lyx-20241126134106848](images/mypost/lyx-20241126134106848.png)
+  ![lyx-20241126134106848](attachments/img/lyx-20241126134106848.png)
 
   - 代码配置，注意类名和xml中的一致
 
@@ -438,14 +438,14 @@ updated: 2022-05-14 07:29:14
     ![image-20220514120154300](C:\Users\ly\AppData\Roaming\Typora\typora-user-images\image-20220514120154300.png)
   - 数据库
     下面几个表的数据都被清空了
-    ![lyx-20241126134107291](images/mypost/lyx-20241126134107291.png)
+    ![lyx-20241126134107291](attachments/img/lyx-20241126134107291.png)
 
 ## 历史任务的完成
 
 - Flowable流程引擎可以自动存储所有流程实例的审计数据或历史数据
 
 - 先查看一下刚才用的流程定义的id
-  ![lyx-20241126134107753](images/mypost/lyx-20241126134107753.png)
+  ![lyx-20241126134107753](attachments/img/lyx-20241126134107753.png)
 
 - 历史信息查询
 
@@ -472,7 +472,7 @@ updated: 2022-05-14 07:29:14
   ```
 
 - 不一样的地方，在旧版本时没有的
-  ![lyx-20241126134108172](images/mypost/lyx-20241126134108172.png)
+  ![lyx-20241126134108172](attachments/img/lyx-20241126134108172.png)
 
 ## 流程设计器
 
@@ -481,16 +481,16 @@ updated: 2022-05-14 07:29:14
 - 使用eclipse的设计，会生成一个bar文件，代码稍微有点不同
   接收一个ZipInputStream
 
-  ![lyx-20241126134108626](images/mypost/lyx-20241126134108626.png)
+  ![lyx-20241126134108626](attachments/img/lyx-20241126134108626.png)
   
 
 ## FlowableUI
 
 - 使用flowable官方提供的包，里面有一个war，直接用命令 java -jar xx.war启动即可
 - 这个应用分成四个模块
-  ![lyx-20241126134109097](images/mypost/lyx-20241126134109097.png)
+  ![lyx-20241126134109097](attachments/img/lyx-20241126134109097.png)
 - 流程图的绘制及用户分配
-  ![lyx-20241126134109504](images/mypost/lyx-20241126134109504.png)
+  ![lyx-20241126134109504](attachments/img/lyx-20241126134109504.png)
 - 
 
 

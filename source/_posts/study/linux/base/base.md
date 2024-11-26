@@ -73,7 +73,7 @@ sh install.sh
 
 //该主题样式如下
 
-![lyx-20241126134255863](images/mypost/lyx-20241126134255863.png)
+![lyx-20241126134255863](attachments/img/lyx-20241126134255863.png)
 
 ```shell
 $ vi ~/.zshrc

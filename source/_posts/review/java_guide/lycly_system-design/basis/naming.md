@@ -29,11 +29,11 @@ updated: 2023-02-17 17:22:14
 
 大名鼎鼎的《重构》的作者老马（Martin Fowler）曾经在[TwoHardThings](https://martinfowler.com/bliki/TwoHardThings.html)这篇文章中提到过CS 领域有两大最难的事情：一是 **缓存失效** ，一是 **程序命名** 。
 
-[![img](images/mypost/lyx-20241126133821363.jpg)](https://camo.githubusercontent.com/55cdff0a451c1d8245d7734247bdb08cfaa79257ce2a03763cb03c27a3056f19/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f6d617274696e672d6e616d696e672e706e67)
+[![img](attachments/img/lyx-20241126133821363.jpg)](https://camo.githubusercontent.com/55cdff0a451c1d8245d7734247bdb08cfaa79257ce2a03763cb03c27a3056f19/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f6d617274696e672d6e616d696e672e706e67)
 
 这个句话实际上也是老马引用别人的，类似的表达还有很多。比如分布式系统领域有两大最难的事情：一是 **保证消息顺序** ，一是 **严格一次传递** 。
 
-[![img](images/mypost/lyx-20241126133822071.jpg)](https://camo.githubusercontent.com/595f6479028a874a759e29bfbc9df6c33e8e83b77c9cf7adeafd9aca696072ba/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f32303231303632393130343834343634352e706e67)
+[![img](attachments/img/lyx-20241126133822071.jpg)](https://camo.githubusercontent.com/595f6479028a874a759e29bfbc9df6c33e8e83b77c9cf7adeafd9aca696072ba/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6a6176612d67756964652d626c6f672f32303231303632393130343834343634352e706e67)
 
 今天咱们就单独拎出 “**命名**” 来聊聊！
 
@@ -148,7 +148,7 @@ void shouldGet200StatusCodeWhenRequestIsValid() {
 
 建议**项目文件夹名称**使用**串式命名法**（kebab-case），比如 dubbo 项目的各个模块的命名是下面这样的。
 
- ![img](images/mypost/lyx-20241126133822587.jpg) 
+ ![img](attachments/img/lyx-20241126133822587.jpg) 
 
 ## 常见命名规范
 
@@ -233,11 +233,11 @@ Codelf 提供了在线网站版本，网址：https://unbug.github.io/codelf/，
 
 我选择了 Java 编程语言，然后搜索了“序列化”这个关键词，然后它就返回了很多关于序列化的命名。
 
- ![img](images/mypost/lyx-20241126133823076.png) 
+ ![img](attachments/img/lyx-20241126133823076.png) 
 
 并且，Codelf 还提供了 VS code 插件，看这个评价，看来大家还是很喜欢这款命名工具的。
 
- ![img](images/mypost/lyx-20241126133823585.png) 
+ ![img](attachments/img/lyx-20241126133823585.png) 
 
 ## 相关阅读推荐
 

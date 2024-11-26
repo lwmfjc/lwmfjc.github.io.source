@@ -196,7 +196,7 @@ updated: 2022-10-24 23:39:12
   - 用于从源头（通常是文件）读取数据（字符信息）到内存中，java.io.Reader抽象类是**所有字符输入流的父类**
 
     注意：InputStream和Reader都是类，再往上就是接口了；Reader用于读取文本，InputStream用于读取原始字节
-    ![lyx-20241126133706702](images/mypost/lyx-20241126133706702.png)
+    ![lyx-20241126133706702](attachments/img/lyx-20241126133706702.png)
 
     > 常用方法：
     >
@@ -539,6 +539,6 @@ updated: 2022-10-24 23:39:12
 
     > 但是**由于 RandomAccessFile 可以自由访问文件的任意**位置，**所以如果需要访问文件的部分内容，而不是把文件从头读到尾，因此 RandomAccessFile 的一个重要使用场景就是网络请求中的多线程下载及断点续传。** https://blog.csdn.net/li1669852599/article/details/122214104
 
-    ![lyx-20241126133707267](images/mypost/lyx-20241126133707267.png)
+    ![lyx-20241126133707267](attachments/img/lyx-20241126133707267.png)
   
   > **ly: 个人感觉，mysql数据库的写入可能也是依赖类似的规则，才能在某个位置读写**

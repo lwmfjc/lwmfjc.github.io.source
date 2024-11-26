@@ -14,13 +14,13 @@ updated: 2023-04-13 23:27:30
 > 部分参考自 https://www.cnblogs.com/ysocean/p/12328088.html
 
 # 基本准备
-![lyx-20241126134605659.png](images/mypost/lyx-20241126134605659.png)
+![lyx-20241126134605659.png](attachments/img/lyx-20241126134605659.png)
 
 ## 架构
 
 采用Centos7，Redis版本为6.2，架构如下：  
 
-![lyx-20241126134606130](images/mypost/lyx-20241126134606130.png)
+![lyx-20241126134606130](attachments/img/lyx-20241126134606130.png)
 
 ## hosts修改
 
@@ -71,7 +71,7 @@ vim /etc/hosts
 mkdir -p /usr/local/redis_cluster/redis_63{79,80}/{conf,pid,logs}
 ```
 
-![lyx-20241126134606153](images/mypost/lyx-20241126134606153.png)
+![lyx-20241126134606153](attachments/img/lyx-20241126134606153.png)
 
 编写配置文件
 
@@ -130,7 +130,7 @@ vim  /usr/local/redis_cluster/redis_6380/conf/redis.conf
 
 查看文件夹当前情况
 
-![lyx-20241126134606692](images/mypost/lyx-20241126134606692.png)
+![lyx-20241126134606692](attachments/img/lyx-20241126134606692.png)
 
 # 运行
 
@@ -157,7 +157,7 @@ tcp        0      0 192.168.1.101:16379     0.0.0.0:*               LISTEN      
 ```
 
 结果  
-![lyx-20241126134607142](images/mypost/lyx-20241126134607142.png)
+![lyx-20241126134607142](attachments/img/lyx-20241126134607142.png)
 
 ```shell
 cat *6379/pid/*pid*      
@@ -264,7 +264,7 @@ a20b6da956145cfa06ed55159456de8259d9f246 192.168.1.103:6379@16379 master - 0 168
 | node3    | 192.168.1.103:6379 | a20b6da956145cfa06ed55159456de8259d9f246 |
 
 主从配置  
-![lyx-20241126134607572](images/mypost/lyx-20241126134607572.png)
+![lyx-20241126134607572](attachments/img/lyx-20241126134607572.png)
 
 ```shell
 #node1:6380->node2:6379
@@ -356,7 +356,7 @@ cluster_stats_messages_received:6996
 >
 > 安装完成后，我们可以使用 ruby -v 查看版本信息。
 >
-> ![img](images/mypost/lyx-20241126134607595.png)
+> ![img](attachments/img/lyx-20241126134607595.png)
 >
 > Ruby环境安装完成后。运行如下命令：
 >
@@ -436,7 +436,7 @@ a6159c5dda95017ba5433f597ea4d18780868dfc 192.168.1.101:6380@16380 myself,slave c
 ```
 
 如上，槽位都已经平均分配完，且主从关系也配置好了  
-![lyx-20241126134608235](images/mypost/lyx-20241126134608235.png)
+![lyx-20241126134608235](attachments/img/lyx-20241126134608235.png)
 
 弊端：通过该方式创建的带有从节点的机器**不能够自己手动指定主节点**，所以如果需要指定的话，需要自己手动指定  
 
@@ -731,7 +731,7 @@ Source node #2: done
 
 ```
 
-![lyx-20241126134608707](images/mypost/lyx-20241126134608707.png)
+![lyx-20241126134608707](attachments/img/lyx-20241126134608707.png)
 
 结果：  
 
@@ -1028,18 +1028,18 @@ public class RedisConfig {
 
 ## 基础架构（数据分片）
 
-![lyx-20241126134609233](images/mypost/lyx-20241126134609233.png)
+![lyx-20241126134609233](attachments/img/lyx-20241126134609233.png)
 
 ## 集群分片原理
 
 如果有任意1个槽位没有被分配，则集群创建不成功。
 
-![lyx-20241126134609758](images/mypost/lyx-20241126134609758.png)
+![lyx-20241126134609758](attachments/img/lyx-20241126134609758.png)
 
 ## 启动集群原理
 
-![lyx-20241126134610237](images/mypost/lyx-20241126134610237.png)
+![lyx-20241126134610237](attachments/img/lyx-20241126134610237.png)
 
 ## 集群通信原理
 
-![lyx-20241126134610681](images/mypost/lyx-20241126134610681.png)
+![lyx-20241126134610681](attachments/img/lyx-20241126134610681.png)

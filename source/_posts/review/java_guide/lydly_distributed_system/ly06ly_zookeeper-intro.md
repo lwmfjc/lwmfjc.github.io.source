@@ -92,7 +92,7 @@ ZooKeeper 数据模型采用**层次化的多叉树形结构**，每个节点上
 
 从下图可以更直观地看出：ZooKeeper 节点路径标识方式**和 Unix 文件系统路径非常相似**，都是由一系列使用斜杠"/"进行分割的路径表示，开发人员可以**向这个节点中写入数据**，也可以**在节点下面创建子节点**。这些操作我们后面都会介绍到。
 
- ![lyx-20241126133919695](images/mypost/lyx-20241126133919695.png)
+ ![lyx-20241126133919695](attachments/img/lyx-20241126133919695.png)
 
 ### 3.2. znode（数据节点）
 
@@ -185,7 +185,7 @@ ZooKeeper 采用 ACL（AccessControlLists）策略来进行权限控制，类似
 
 Watcher（事件监听器），是 ZooKeeper 中的一个很重要的特性。ZooKeeper 允许用户**在指定节点上注册一些 Watcher**，并且在一些**特定事件触发**的时候，ZooKeeper 服务端会**将事件通知到感兴趣的客户端**上去，该机制是 ZooKeeper 实现分布式协调服务的重要特性。
 
- ![lyx-20241126133920230](images/mypost/lyx-20241126133920230.png)
+ ![lyx-20241126133920230](attachments/img/lyx-20241126133920230.png)
 
 *破音：非常有用的一个特性，都拿出小本本记好了，后面用到 ZooKeeper 基本离不开 Watcher（事件监听器）机制。*
 
@@ -201,7 +201,7 @@ Session 有一个属性叫做：`sessionTimeout` ，`sessionTimeout` 代表会�
 
 为了保证高可用，最好是以集群形态来部署 ZooKeeper，这样只要集群中大部分机器是可用的（能够容忍一定的机器故障），那么 ZooKeeper 本身仍然是可用的。通常 3 台服务器就可以构成一个 ZooKeeper 集群了。ZooKeeper 官方提供的架构图就是一个 ZooKeeper 集群整体对外提供服务。
 
-[!![image.png](images/mypost/lyx-20241126133920640.png)
+[!![image.png](attachments/img/lyx-20241126133920640.png)
 
 
 上图中每一个 Server 代表一个安装 ZooKeeper 服务的服务器。组成 ZooKeeper 服务的服务器都会在内存中维护当前的服务器状态，并且**每台服务器之间都互相保持着通信**。集群间通过 **ZAB 协议（ZooKeeper Atomic Broadcast）**来保持数据的一致性。
@@ -215,7 +215,7 @@ Session 有一个属性叫做：`sessionTimeout` ，`sessionTimeout` 代表会�
 
 但是，在 ZooKeeper 中没有选择传统的 Master/Slave 概念，而是引入了 Leader、Follower 和 Observer 三种角色。如下图所示
 
-[!![image.png](images/mypost/lyx-20241126133921085.png)
+[!![image.png](attachments/img/lyx-20241126133921085.png)
 
 ZooKeeper 集群中的所有机器通过一个 **Leader 选举过程** 来选定一台称为 “**Leader**” 的机器，Leader 既可以为客户端提供**写**服务又能提供**读**服务。除了 Leader 外，**Follower** 和 **Observer** 都**只能提供读**服务。Follower 和 Observer 唯一的区别在于 **Observer 机器不参与 Leader 的选举**过程，也**不参与写操作的“过半写成功”策略**，因此 Observer 机器可以在不影响写性能的情况下提升集群的读性能。
 

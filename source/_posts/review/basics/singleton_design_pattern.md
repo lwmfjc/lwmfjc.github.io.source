@@ -64,7 +64,7 @@ public class Singleton2 {
 ```
 
 如图，当初始化实例时需要进行复杂取值操作时，可以取代第一种方法
-![lyx-20241126133414983](images/mypost/lyx-20241126133414983.png)
+![lyx-20241126133414983](attachments/img/lyx-20241126133414983.png)
 
 ### 懒汉式
 

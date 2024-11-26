@@ -12,7 +12,7 @@ updated: 2022-05-19 16:13:44
 ## 会签
 
 - 流程图绘制
-  ![lyx-20241126134201298](images/mypost/lyx-20241126134201298.png)
+  ![lyx-20241126134201298](attachments/img/lyx-20241126134201298.png)
 
   - 注意上面几个参数
 
@@ -23,7 +23,7 @@ updated: 2022-05-19 16:13:44
     - 完成条件--这里填的是 ${nrOfCompletedInstances > 1 }
 
   - 在任务监听器
-    ![lyx-20241126134201991](images/mypost/lyx-20241126134201991.png)
+    ![lyx-20241126134201991](attachments/img/lyx-20241126134201991.png)
 
     ```java
     package org.flowable.listener;
@@ -145,7 +145,7 @@ updated: 2022-05-19 16:13:44
   ```
 
 - 此时数据库会有三个任务
-  ![lyx-20241126134202427](images/mypost/lyx-20241126134202427.png)
+  ![lyx-20241126134202427](attachments/img/lyx-20241126134202427.png)
 
 - 完成第一个任务
 

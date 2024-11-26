@@ -49,7 +49,7 @@ root@eaf70fc620cb:/apache-zookeeper-3.5.8-bin# cd bin
 
 如果你看到控制台成功打印出如下信息的话，说明你已经成功连接 ZooKeeper 服务。
 
- ![连接ZooKeeper服务.png](images/mypost/lyx-20241126133933469.png)
+ ![连接ZooKeeper服务.png](attachments/img/lyx-20241126133933469.png)
 
 ### 2.3. 常用命令演示
 

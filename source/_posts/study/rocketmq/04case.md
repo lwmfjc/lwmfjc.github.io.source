@@ -13,17 +13,17 @@ updated: 2022-04-08 20:00:03
 
 ## 架构
 
-![lyx-20241126134623678](images/mypost/lyx-20241126134623678.png)
+![lyx-20241126134623678](attachments/img/lyx-20241126134623678.png)
 
 ## 流程图
 
 ### 下单流程
 
-![lyx-20241126134624275](images/mypost/lyx-20241126134624275.png)
+![lyx-20241126134624275](attachments/img/lyx-20241126134624275.png)
 
 ### 支付流程
 
-![lyx-20241126134624699](images/mypost/lyx-20241126134624699.png)
+![lyx-20241126134624699](attachments/img/lyx-20241126134624699.png)
 
 # SpringBoot整合RocketMQ
 
@@ -94,7 +94,7 @@ public class Consumer implements RocketMQListener<String> {
 
 # 下单流程利用MQ进行回退处理，保证数据一致性
 
-![lyx-20241126134625110](images/mypost/lyx-20241126134625110.png)
+![lyx-20241126134625110](attachments/img/lyx-20241126134625110.png)
 
 库存回退的消费者，代码如下：  
 

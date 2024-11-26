@@ -129,7 +129,7 @@ public @interface SpringBootConfiguration {
 
 - `@ComponentScan`： 扫描被`@Component` (`@Service`,`@Controller`)注解的 bean，注解默认会扫描启动类所在的包下所有的类 ，可以自定义不扫描某些 bean。如下图所示，容器中将排除`TypeExcludeFilter`和`AutoConfigurationExcludeFilter`。
 
-  ![img](images/mypost/lyx-20241126133809375.jpg)
+  ![img](attachments/img/lyx-20241126133809375.jpg)
 
 **`@EnableAutoConfiguration` 是实现自动装配的重要注解**，我们以这个注解入手。
 
@@ -195,7 +195,7 @@ public String[] selectImports(AnnotationMetadata annotationMetadata) {
 
 该方法调用链如下：
 
-![img](images/mypost/lyx-20241126133810079.jpg)
+![img](attachments/img/lyx-20241126133810079.jpg)
 
 现在我们结合`getAutoConfigurationEntry()`的源码来详细分析一下：
 
@@ -227,13 +227,13 @@ AutoConfigurationEntry getAutoConfigurationEntry(AutoConfigurationMetadata autoC
 
 判断自动装配开关是否打开。默认`spring.boot.enableautoconfiguration=true`，可在 `application.properties` 或 `application.yml` 中设置
 
-![img](images/mypost/lyx-20241126133810495.jpg)
+![img](attachments/img/lyx-20241126133810495.jpg)
 
 **第 2 步** ：
 
 用于获取`EnableAutoConfiguration`注解中的 `exclude` 和 `excludeName`。
 
-![img](images/mypost/lyx-20241126133810934.jpg)
+![img](attachments/img/lyx-20241126133810934.jpg)
 
 **第 3 步**
 
@@ -243,11 +243,11 @@ AutoConfigurationEntry getAutoConfigurationEntry(AutoConfigurationMetadata autoC
 spring-boot/spring-boot-project/spring-boot-autoconfigure/src/main/resources/META-INF/spring.factories
 ```
 
-![lyx-20241126133811497](images/mypost/lyx-20241126133811497.png)
+![lyx-20241126133811497](attachments/img/lyx-20241126133811497.png)
 
 从下图可以看到**这个文件的配置内容都被我们读取到了**。`XXXAutoConfiguration`的作用就是按需加载组件。
 
-[![img](images/mypost/lyx-20241126133811929.jpg)
+[![img](attachments/img/lyx-20241126133811929.jpg)
 
 不光是这个依赖下的`META-INF/spring.factories`被读取到，**所有 Spring Boot Starter 下的`META-INF/spring.factories`都会被读取到**。
 
@@ -255,7 +255,7 @@ spring-boot/spring-boot-project/spring-boot-autoconfigure/src/main/resources/MET
 
 如果，我们自己要创建一个 Spring Boot Starter，这一步是必不可少的。
 
-![lyx-20241126133812362](images/mypost/lyx-20241126133812362.png)
+![lyx-20241126133812362](attachments/img/lyx-20241126133812362.png)
 
 **第 4 步** ：
 
@@ -263,7 +263,7 @@ spring-boot/spring-boot-project/spring-boot-autoconfigure/src/main/resources/MET
 
 很明显，这是不现实的。我们 debug 到后面你会发现，`configurations` 的值变小了。
 
-[![img](images/mypost/lyx-20241126133812769.jpg)](https://camo.githubusercontent.com/5c2144067ccd009fd103e597fb81184162b08082a534bd86e13af9b9e15a056a/68747470733a2f2f70362d6a75656a696e2e62797465696d672e636f6d2f746f732d636e2d692d6b3375316662706663702f32363766383233316165326534386439383231353431343061663634333762307e74706c762d6b3375316662706663702d77617465726d61726b2e696d616765)
+[![img](attachments/img/lyx-20241126133812769.jpg)](https://camo.githubusercontent.com/5c2144067ccd009fd103e597fb81184162b08082a534bd86e13af9b9e15a056a/68747470733a2f2f70362d6a75656a696e2e62797465696d672e636f6d2f746f732d636e2d692d6b3375316662706663702f32363766383233316165326534386439383231353431343061663634333762307e74706c762d6b3375316662706663702d77617465726d61726b2e696d616765)
 
 因为，这一步有经历了一遍筛选，**`@ConditionalOnXXX` 中的所有条件都满足，该类才会生效**。
 
@@ -301,31 +301,31 @@ public class RabbitAutoConfiguration {
 
 第一步，创建`threadpool-spring-boot-starter`工程
 
-![img](images/mypost/lyx-20241126133813231.jpg) 
+![img](attachments/img/lyx-20241126133813231.jpg) 
 
 第二步，引入 Spring Boot 相关依赖
 
-[![img](images/mypost/lyx-20241126133813693.jpg) 
+[![img](attachments/img/lyx-20241126133813693.jpg) 
 
 第三步，创建`ThreadPoolAutoConfiguration`
 
- ![img](images/mypost/lyx-20241126133814125.jpg) 
+ ![img](attachments/img/lyx-20241126133814125.jpg) 
 
 第四步，在`threadpool-spring-boot-starter`工程的 resources 包下创建`META-INF/spring.factories`文件
 
- ![lyx-20241126133814554](images/mypost/lyx-20241126133814554.png)
+ ![lyx-20241126133814554](attachments/img/lyx-20241126133814554.png)
 
 最后新建工程引入`threadpool-spring-boot-starter`
 
-![lyx-20241126133814976](images/mypost/lyx-20241126133814976.png)
+![lyx-20241126133814976](attachments/img/lyx-20241126133814976.png)
 
 测试通过！！！
 
-[![img](images/mypost/lyx-20241126133815429.jpg) 
+[![img](attachments/img/lyx-20241126133815429.jpg) 
 
 ## 总结
 
 Spring Boot 通过**`@EnableAutoConfiguration`**开启自动装配，通过 **SpringFactoriesLoader** 最终加载**`META-INF/spring.factories`**中的**自动配置类**实现**自动装配**，自动配置类其实就是**通过`@Conditional`按需加载的配置类**，想要其生效必须引入**`spring-boot-starter-xxx`包实现起步依赖**
 
 
-![image.png](images/mypost/lyx-20241126133815861.png)
+![image.png](attachments/img/lyx-20241126133815861.png)

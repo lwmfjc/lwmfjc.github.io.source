@@ -20,7 +20,7 @@ updated: 2022-12-18 08:23:21
 - 类加载过程：**加载->连接->初始化**。
 - 连接过程又可分为三步：**验证->准备->解析**。
 
-[![类加载过程](images/mypost/lyx-20241126133739384.jpg) 
+[![类加载过程](attachments/img/lyx-20241126133739384.jpg) 
 
 加载是类加载过程的第一步，主要完成下面 3 件事情：
 
@@ -105,7 +105,7 @@ JVM 中内置了三个重要的 `ClassLoader`：
 
 除了这三种类加载器之外，用户还可以加入**自定义的类加载器**来进行拓展，以满足自己的**特殊需求**。就比如说，我们可以对 Java 类的字节码（ `.class` 文件）进行**加密**，加载时再利用自定义的类加载器对其**解密**。  
 
-![lyx-20241126133739912](images/mypost/lyx-20241126133739912.png)
+![lyx-20241126133739912](attachments/img/lyx-20241126133739912.png)
 
 **除了 `BootstrapClassLoader`** 是 JVM 自身的一部分之外，其他所有的类加载器都是在 **JVM 外部**实现的，并且全都**继承自 `ClassLoader`抽象类**。这样做的好处是用户可以自定义类加载器，以便让应用程序自己决定如何去获取所需的类。
 
@@ -204,7 +204,7 @@ public class PrintClassLoaderTree {
 
 下图展示的各种类加载器之间的层次关系被称为类加载器的“**双亲委派模型(Parents Delegation Model)**”。
 
- ![lyx-20241126133740373](images/mypost/lyx-20241126133740373.png)
+ ![lyx-20241126133740373](attachments/img/lyx-20241126133740373.png)
 
 注意⚠️：双亲委派模型并不是一种强制性的约束，只是 JDK 官方推荐的一种方式。如果我们因为某些特殊需求想要打破双亲委派模型，也是可以的，后文会介绍具体的方法。
 
@@ -284,7 +284,7 @@ protected Class<?> loadClass(String name, boolean resolve)
 - 类加载器在进行类加载的时候，它首先不会自己去尝试加载这个类，而是把这个请求委派给父类加载器去完成（调用父加载器 `loadClass()`方法来加载类）。这样的话，所有的请求最终都会传送到顶层的启动类加载器 `BootstrapClassLoader` 中。
 - 只有当父加载器反馈自己无法完成这个加载请求（它的搜索范围中没有找到所需的类）时，子加载器才会尝试自己去加载（调用自己的 `findClass()` 方法来加载类）。  
 
-![lyx-20241126133740813](images/mypost/lyx-20241126133740813.png)
+![lyx-20241126133740813](attachments/img/lyx-20241126133740813.png)
 
 🌈 拓展一下：
 
@@ -310,7 +310,7 @@ protected Class<?> loadClass(String name, boolean resolve)
 
 Tomcat 的类加载器的层次结构如下：
 
-![lyx-20241126133741265](images/mypost/lyx-20241126133741265.png)
+![lyx-20241126133741265](attachments/img/lyx-20241126133741265.png)
 
 感兴趣的小伙伴可以自行研究一下 Tomcat 类加载器的层次结构，这有助于我们搞懂 Tomcat 隔离 Web 应用的原理，推荐资料是[《深入拆解 Tomcat & Jetty》](http://gk.link/a/10Egr)。
 

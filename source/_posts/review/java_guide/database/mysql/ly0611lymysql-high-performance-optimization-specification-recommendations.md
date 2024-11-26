@@ -90,7 +90,7 @@ updated: 2023-01-23 09:24:34
 ## 优先选择符合存储需要的最小数据类型
 
 **Byte：字节**  
-![lyx-20241126133533467](images/mypost/lyx-20241126133533467.png)
+![lyx-20241126133533467](attachments/img/lyx-20241126133533467.png)
 
 存储字节越小，**占用也就空间越小**，**性能也越好**。
 
@@ -310,7 +310,7 @@ insert into t(c1,c2,c3) values ('a','b','c');
 >    >
 >    > 通过查看MySQL日志可以看到执行的过程：
 >    >
->    > ![img](images/mypost/lyx-20241126133534010.png)
+>    > ![img](attachments/img/lyx-20241126133534010.png)
 >
 > 2. **使用Statement执行预编译**  
 >    **使用Statement执行预编译就是把上面的SQL语句执行一次。   **  

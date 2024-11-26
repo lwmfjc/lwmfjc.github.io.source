@@ -60,7 +60,7 @@ public static void main(String[] args) throws InterruptedException {
 
 001（无锁）和101（偏向锁），00（轻量级锁），10（重量级锁）
 
-![lyx-20241126133617361](images/mypost/lyx-20241126133617361.png)
+![lyx-20241126133617361](attachments/img/lyx-20241126133617361.png)
 
 ## 背景
 
@@ -70,19 +70,19 @@ public static void main(String[] args) throws InterruptedException {
 > - 平常运行的应用程序都运行在用户空间，只有内核空间才能进行系统态级别的资源有关操作---文件管理、进程通信、内存管理
 
 如果直接synchronized加锁，会有下面图的流程出现，频繁进行用户态和内核态的切换(阻塞和唤醒线程[线程通信]，需要频繁切换cpu的状态)  
-![lyx-20241126133618025](images/mypost/lyx-20241126133618025.png)
+![lyx-20241126133618025](attachments/img/lyx-20241126133618025.png)
 
 - 为什么每一个对象都可以成为一个锁
   markOop.hpp （对应对象标识）
   每一个java对象里面，有一个Monitor对象（ObjectMonitor.cpp)关联
   如图，_owner指向持有ObjectMonitor对象的线程
-  ![lyx-20241126133618448](images/mypost/lyx-20241126133618448.png)
+  ![lyx-20241126133618448](attachments/img/lyx-20241126133618448.png)
   Monitor本质依赖于底层操作系统的MutexLock实现，操作系统实现线程之间的切换，需要从用户态到内核态的切换，成本极高
 - ★★ 重点：Monitor与Java对象以及线程是如何关联
   - 如果一个java对象被某个线程锁住，则该对象的MarkWord字段中，LockWord指向monitor的起始地址（这里说的应该是重量级锁）
   - Monitor的Owner字段会存放拥有相关联对象锁的线程id
   - 图
-    ![lyx-20241126133618913](images/mypost/lyx-20241126133618913.png)
+    ![lyx-20241126133618913](attachments/img/lyx-20241126133618913.png)
 
 ## 锁升级
 
@@ -150,7 +150,7 @@ public static void main(String[] args) throws InterruptedException {
   - 如果没有偏向锁，那么就会频繁出现**用户态**到**内核态**的切换
   
   - 意义：当一段同步代码，一直**被同一个线程**多次访问，由于**只有一个线程**那么该线程在后续访问时便会**自动获得锁**
-    ![lyx-20241126133619363](images/mypost/lyx-20241126133619363.png)
+    ![lyx-20241126133619363](attachments/img/lyx-20241126133619363.png)
     
   - 锁在**第一次被拥有**的时候，记录下**偏向线程ID**（后续这个线程进入和退出这段加了同步锁的代码块时，不需要再次加锁和释放锁，只需要**直接检查锁的MarkWord**是不是放的**自己的线程ID**）
     - 如果相等，表示**偏向锁是偏向于当前线程**的，不需要再尝试获得锁，**直到竞争才会释放锁**；以后每次同步，检查**锁的偏向线程ID与当前线程ID**是否一致，若一致则进入同步，无需每次都加锁解锁去CAS更新对象头；如果自始至终使用锁的线程只有一个，很明显偏向锁几乎没有额外开销
@@ -163,7 +163,7 @@ public static void main(String[] args) throws InterruptedException {
 - 一个**synchronized方法被一个线程抢到锁**时，这个方法所在的对象，就会在**其所在的MarkWord**中**将偏向锁修改状态位 
   
   - 如图  
-    ![lyx-20241126133619896](images/mypost/lyx-20241126133619896.png)
+    ![lyx-20241126133619896](attachments/img/lyx-20241126133619896.png)
     
   - JVM不用和操作系统协商设置Mutex（争取内核），不需要操作系统介入
   
@@ -214,12 +214,12 @@ public static void main(String[] args) throws InterruptedException {
     - 是一种等到**竞争出现**才释放锁的机制，只有当其他线程竞争锁时，持有偏向锁的原来线程才会被撤销；撤销需要等待全局安全点（该时间点没有字节码在执行），同时检查持有偏向锁的线程是否还在执行
       - 如果此时第一个线程**正在**执行synchronized方法（处于同步块），还没执行完其他线程来抢，该偏向锁被取消并出现**锁升级**；此时**轻量级锁**由**原持有偏向锁的线程**持有，**继续执行其同步代码**，而**正在竞争**的线程会进入**自旋等待**获得该轻量级锁
       - 如果第一个线程执行完成synchronized方法（**退出同步块**），而将**对象头**设置成**无锁状态**并撤销偏向锁，重新偏向
-      - ![lyx-20241126133620343](images/mypost/lyx-20241126133620343.png)
+      - ![lyx-20241126133620343](attachments/img/lyx-20241126133620343.png)
     
   - Java15之后，HotSpot不再默认开启偏向锁，使用```+XX:UseBiasedLocking```手动开启
   
   - 偏向锁流程总结 (转自https://blog.csdn.net/MariaOzawa/article/details/107665689)
-    ![](images/mypost/lyx-20241126133620872.png)
+    ![](attachments/img/lyx-20241126133620872.png)
   
 - 轻量级锁
   主要是为了在线程近乎交替执行同步块时提高性能

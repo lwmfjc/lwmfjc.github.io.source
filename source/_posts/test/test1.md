@@ -11,9 +11,9 @@ categories:
 - "测试"
 
 ---
-
+![](attachments/img/ly-20241126152756768.png)
 随便加点内容，注意，上面空了一行
-![](images/mypost/ly-20241126144546854.png)
+![](attachments/img/ly-20241126144546854.png)
 ### 测试
 
 ## 图片测试 

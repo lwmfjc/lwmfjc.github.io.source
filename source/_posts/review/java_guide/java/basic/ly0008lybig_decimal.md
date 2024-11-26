@@ -88,7 +88,7 @@ System.out.println(a == b);// false
   ```
 
 - 使用compareTo替换equals方法，equals不止会比较直，还会比较精度
-  ![](images/mypost/lyx-20241126133600878.png)
+  ![](attachments/img/lyx-20241126133600878.png)
 
 - BigDecimal工具类分享
   (用来操作double算术)

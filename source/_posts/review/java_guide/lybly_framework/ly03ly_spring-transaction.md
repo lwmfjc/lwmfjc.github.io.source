@@ -165,7 +165,7 @@ Spring 框架中，事务管理相关最重要的 3 个接口如下：
 
 **`PlatformTransactionManager` 接口的具体实现如下:**
 
-[![img](images/mypost/lyx-20241126133806578.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/system-design/framework/spring/images/spring-transaction/PlatformTransactionManager.png)
+[![img](attachments/img/lyx-20241126133806578.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/system-design/framework/spring/images/spring-transaction/PlatformTransactionManager.png)
 
 `PlatformTransactionManager`接口中定义了三个方法：
 
@@ -551,7 +551,7 @@ public interface TransactionDefinition {
 
 这些规则定义了**哪些异常会导致事务回滚**而**哪些不会**。默认情况下，事务只有遇到**运行期异常（`RuntimeException` 的子类）**时才会回滚，**`Error`** 也会导致事务回滚，但是，在遇到**检查型（Checked）异常时不会回滚**。[ **这里说的是默认情况下 **]
 
-[![img](images/mypost/lyx-20241126133807114.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/system-design/framework/spring/images/spring-transaction/roollbackFor.png)
+[![img](attachments/img/lyx-20241126133807114.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/system-design/framework/spring/images/spring-transaction/roollbackFor.png)
 
 如果你想要回滚你定义的**特定的异常**类型的话，可以这样：
 

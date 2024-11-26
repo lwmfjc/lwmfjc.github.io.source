@@ -33,7 +33,7 @@ updated: 2023-02-20 09:44:23
 
 授权：
 
-![img](images/mypost/lyx-20241126133836914.jpg) 
+![img](attachments/img/lyx-20241126133836914.jpg) 
 
 这两个一般在我们的系统中被结合在一起使用，目的就是为了保护我们系统的安全性。
 
@@ -47,25 +47,25 @@ RBAC 即**基于角色的权限访问控制**（**Role-Based Access Control**）
 
 简单地说：一个**用户可以拥有若干角色**，每一个**角色又可以被分配若干权限**，这样就构造成“**用户-角色-权限**” 的授权模型。在这种模型中，用户与角色、角色与权限之间构成了多对多的关系，如下图
 
-![image.png](images/mypost/lyx-20241126133837563.png)
+![image.png](attachments/img/lyx-20241126133837563.png)
 
 
 **在 RBAC 中，权限与角色相关联，用户通过成为适当角色的成员而得到这些角色的权限。这就极大地简化了权限的管理。**
 
 本系统的权限设计相关的表如下（一共 5 张表，2 张用户建立表之间的联系）：
 
-![lyx-20241126133837994.png](images/mypost/lyx-20241126133837994.png)
+![lyx-20241126133837994.png](attachments/img/lyx-20241126133837994.png)
 
 
 通过这个权限模型，我们可以创建不同的角色并为不同的角色分配不同的权限范围（菜单）。
 
-  ![lyx-20241126133838455](images/mypost/lyx-20241126133838455.png)
+  ![lyx-20241126133838455](attachments/img/lyx-20241126133838455.png)
 
 通常来说，如果系统对于权限控制要求**比较严格**的话，一般都会选择使用 **RBAC** 模型来做权限控制。
 
 ## 什么是 Cookie ? Cookie 的作用是什么?
 
- ![img](images/mypost/lyx-20241126133838891.jpg)
+ ![img](attachments/img/lyx-20241126133838891.jpg)
 
 > ly：如上，可以看出 cookie的附属是**域名**
 
@@ -153,7 +153,7 @@ public String readAllCookies(HttpServletRequest request) {
 
 关于这种认证方式更详细的过程如下：
 
- ![image.png](images/mypost/lyx-20241126133839364.png)
+ ![image.png](attachments/img/lyx-20241126133839364.png)
  
 
 1. 用户向服务器发送用户名、密码、验证码用于登陆系统。
@@ -213,7 +213,7 @@ Session-Cookie 方案在单体环境是一个非常好的身份认证方案。�
 
 但是，我们使用 `Token` 的话就不会存在这个问题，在我们登录成功获得 **`Token` 之后，一般会选择存放在 `localStorage` （浏览器本地存储）**中。然后我们在前端通过某些方式会给每个发到后端的请求加上这个 `Token`,这样就不会出现 CSRF 漏洞的问题。因为，**即使**有个你点击了非法链接发送了请求到服务端，这个**非法请求是不会携带 `Token` 的**，所以这个请求将是非法的。
 
-[![img](images/mypost/lyx-20241126133839796.jpg)](https://camo.githubusercontent.com/5ff87de718e4b46caed37b33a07baa03b3bd6d5f1e2b88fefc20a324c0c97914/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303231303631353136313130383237322e706e67)
+[![img](attachments/img/lyx-20241126133839796.jpg)](https://camo.githubusercontent.com/5ff87de718e4b46caed37b33a07baa03b3bd6d5f1e2b88fefc20a324c0c97914/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303231303631353136313130383237322e706e67)
 
 需要注意的是：不论是 `Cookie` 还是 `Token` 都无法避免 **跨站脚本攻击（Cross Site Scripting）XSS** 。
 
@@ -235,7 +235,7 @@ XSS 中攻击者会用各种方式将恶意代码注入到其他用户的页面�
 
 SSO(Single Sign On)即单点登录说的是**用户登陆多个子系统的其中一个**就有权访问与**其相关的其他系统**。举个例子我们在登陆了京东金融之后，我们同时也成功登陆京东的京东超市、京东国际、京东生鲜等子系统。
 
- ![img](images/mypost/lyx-20241126133840245.jpg)
+ ![img](attachments/img/lyx-20241126133840245.jpg)
 
 ## SSO 有什么好处？
 
@@ -259,7 +259,7 @@ OAuth 2.0 比较常用的场景就是**第三方登录**，当你的网站接入
 
 下图是 [Slack OAuth 2.0 第三方登录](https://api.slack.com/legacy/oauth)的示意图：
 
- ![img](images/mypost/lyx-20241126133840665.jpg) 
+ ![img](attachments/img/lyx-20241126133840665.jpg) 
 
 **推荐阅读：**
 

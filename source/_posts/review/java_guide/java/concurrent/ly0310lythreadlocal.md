@@ -16,7 +16,7 @@ updated: 2022-12-05 17:31:52
 > 本文来自一枝花算不算浪漫投稿， 原文地址：[https://juejin.cn/post/6844904151567040519open in new window](https://juejin.cn/post/6844904151567040519)。 感谢作者!
 
 思维导图  
-![img](images/mypost/lyx-20241126133651396.png)
+![img](attachments/img/lyx-20241126133651396.png)
 
 # 目录
 
@@ -134,14 +134,14 @@ main：threadLocal当前值hello
 > ThreadLocalMap的底层是一个**数组**（**map的底层是数组**）
 
 
-![lyx-20241126133651953](images/mypost/lyx-20241126133651953.png)
+![lyx-20241126133651953](attachments/img/lyx-20241126133651953.png)
 
 `Thread`类有一个类型为**`ThreadLocal.ThreadLocalMap`**的实例变量`threadLocals`，也就是说每个线程有一个自己的`ThreadLocalMap`。
 ThreadLocalMap是一个静态内部类
 
 > 没有修饰符，为**包可见**。比如父类有一个protected修饰的方法f()，不同包下存在子类A和其他类X，在**子类中可以访问方法f()**，即使在**其他类X创建子类A实例a1**，也不能调用**a1.f()**--> **其他包不可见** 
 >
-> ![lyx-20241126133652416](images/mypost/lyx-20241126133652416.png)
+> ![lyx-20241126133652416](attachments/img/lyx-20241126133652416.png)
 
 ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**，**value为代码中放入的值**，（看底层代码可知，**实际key不是ThreadLocal本身，而是它的一个弱引用**）
 
@@ -151,7 +151,7 @@ ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**
 
 > 如下，有个数组存放Entry(弱引用类，且有属性value)，且
 >
-> ![lyx-20241126133652842](images/mypost/lyx-20241126133652842.png)
+> ![lyx-20241126133652842](attachments/img/lyx-20241126133652842.png)
 >
 > ---
 >
@@ -172,7 +172,7 @@ ThreadLocalMap有自己独立实现，简单地将它的**key视作ThreadLocal**
 
 # 为上面的知识点总结一张图
 
-![lyx-20241126133653266](images/mypost/lyx-20241126133653266.png)
+![lyx-20241126133653266](attachments/img/lyx-20241126133653266.png)
 
 # GC之后key是否为null
 
@@ -269,7 +269,7 @@ public class ThreadLocalDemo {
 ```
 
 gc之后的图：  
-![img](images/mypost/lyx-20241126133653847.png)
+![img](attachments/img/lyx-20241126133653847.png)
 ```new ThreadLocal<>().set(s);```  GC之后，key就会被回收，我们看到上面的debug中referent=null 
 
 如果这里修改代码，
@@ -279,7 +279,7 @@ ThreadLocal<Object> threadLocal=new ThreadLocal<>();
 threadLocal.set(s);
 ```
 
-![img](images/mypost/lyx-20241126133654283.png)
+![img](attachments/img/lyx-20241126133654283.png)
 
 使用弱引用+垃圾回收
 
@@ -287,14 +287,14 @@ threadLocal.set(s);
 
 **当不存在强引用时，key会被回收**，即出现**value没被回收，key被回收，导致key永远存在，内存泄漏**
 
-![img](images/mypost/lyx-20241126133654706.png)
+![img](attachments/img/lyx-20241126133654706.png)
 
 
 
 # ThreadLocal.set()方法源码详解
 
 如图所示  
-![lyx-20241126133655145](images/mypost/lyx-20241126133655145.png)
+![lyx-20241126133655145](attachments/img/lyx-20241126133655145.png)
 
 ThreadLocal中的set()方法原理如上，先取出线程Thread中的threadLocals，判断是否存在，然后使用ThreadLocal中的set方法进行数据处理
 
@@ -354,7 +354,7 @@ public class ThreadLocal<T> {
 ```
 
 例子如下，产生的哈希码分布十分均匀  
-![lyx-20241126133655639](images/mypost/lyx-20241126133655639.png)
+![lyx-20241126133655639](attachments/img/lyx-20241126133655639.png)
 
 
 
@@ -366,7 +366,7 @@ public class ThreadLocal<T> {
 - HashMap中解决冲突的方法，是在数组上构造一个**链表**结构，冲突的数据**挂载**到链表上，如果链表长度超过一定数量则会**转化为红黑树**
 - ThreadLocalMap中没有链表结构（使用**线性向后查找**）
   - 如图
-    ![img](images/mypost/lyx-20241126133656076.png)
+    ![img](attachments/img/lyx-20241126133656076.png)
   - 假设需要插入value = 27 的数据，hash后应该落入槽位4，而槽位已经有了Entry数据
   - 此时**线性向后查找**，一直找到Entry为null的操作才会停止查找，将当前元素放入该槽位中
   - 线性向后查找**迭代**中，会遇到**Entry不为null且key值相等**，以及**Entry中的key为null（图中Entry 为 2）**的情况，处理方式不同
@@ -379,19 +379,19 @@ ThreadLocalMap.set() 原理图解
 往ThreadLocalMap中set数据（新增或更新数据）分为好几种
 
 1. 通过**hash计算后**的槽位对应的**Entry数据为空**
-   ![img](images/mypost/lyx-20241126133656494.png)
+   ![img](attachments/img/lyx-20241126133656494.png)
    直接将数据放到该槽位即可
 
 2. 槽位数据不为空，**key值与当前ThreadLocal通过hash**计算获取的**key值一致**
-   ![img](images/mypost/lyx-20241126133656917.png)
+   ![img](attachments/img/lyx-20241126133656917.png)
    直接更新该槽位的数据
 
 3. 槽位数据不为空，往后**遍历**过程中，在找到Entry为null的槽位之前，**没有遇到过期的Entry**
-   ![img](images/mypost/lyx-20241126133657330.png)
+   ![img](attachments/img/lyx-20241126133657330.png)
    遍历散列数组的过程中，**线性往后查找**，如果找到Entry为null的槽位则将数据放入槽位中；或者往后遍历过程中遇到key值相等的数据则更新
 
 4. 槽位数据不为空，在找到Entry为null的槽位之前，遇到了过期的Entry，如下图
-   ![img](images/mypost/lyx-20241126133657768.png)
+   ![img](attachments/img/lyx-20241126133657768.png)
    此时会执行replaceStableEntry()方法，该方法含义是**替换过期数据的逻辑**
 
    > ... 以下省略，太复杂 
@@ -443,7 +443,7 @@ private void expungeStaleEntries() {
    > 这里首先是会进行探测式清理工作，从`table`的起始位置往后清理，上面有分析清理的详细流程。清理完成之后，`table`中可能有一些`key`为`null`的`Entry`数据被清理掉，所以此时通过判断`size >= threshold - threshold / 4` 也就是`size >= threshold * 3/4` 来决定是否扩容。
 
 4. 清理后如果大于 threshold 的3/4 ，则进行扩容
-   ![img](images/mypost/lyx-20241126133658190.png)
+   ![img](attachments/img/lyx-20241126133658190.png)
 
 5. 具体的resize()方法
    以oldTab .len = 8
@@ -488,15 +488,15 @@ private void expungeStaleEntries() {
 # ThreadLocalMap.get() 详解
 
 1.  通过查找`key`值计算出散列表中`slot`位置，然后该`slot`位置中的`Entry.key`和查找的`key`一致，则直接返回
-   ![img](images/mypost/lyx-20241126133658634.png)
+   ![img](attachments/img/lyx-20241126133658634.png)
 
 2. `slot`位置中的`Entry.key`和要查找的`key`不一致，之后**清理**+**遍历**
-   ![img](images/mypost/lyx-20241126133659057.png)
+   ![img](attachments/img/lyx-20241126133659057.png)
 
    > 我们以`get(ThreadLocal1)`为例，通过`hash`计算后，正确的`slot`位置应该是 4，而`index=4`的槽位已经有了数据，且`key`值不等于`ThreadLocal1`，所以需要继续往后迭代查找。
    >
    > 迭代到`index=5`的数据时，此时`Entry.key=null`，触发一次探测式数据回收操作，执行`expungeStaleEntry()`方法，执行完后，`index 5,8`的数据都会被回收，而`index 6,7`的数据都会前移。`index 6,7`前移之后，继续从 `index=5` 往后迭代，于是就在 `index=5` 找到了`key`值相等的`Entry`数据，如下图所示：
-   > ![img](images/mypost/lyx-20241126133659466.png)
+   > ![img](attachments/img/lyx-20241126133659466.png)
 
 3. `ThreadLocalMap.get()`源码详解
 

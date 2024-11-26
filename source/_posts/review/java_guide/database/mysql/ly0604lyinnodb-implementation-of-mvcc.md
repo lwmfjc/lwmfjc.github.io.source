@@ -43,7 +43,7 @@ updated: 2023-01-19 10:18:00
   > **RR产生幻读的另一个场景**
   >
   > - 假设有这样一张表  
-  >   ![img](images/mypost/lyx-20241126133512650.png)
+  >   ![img](attachments/img/lyx-20241126133512650.png)
   >
   > - 事务 A 执行查询 id = 5 的记录，此时表中是没有该记录的，所以查询不出来。
   >
@@ -88,7 +88,7 @@ updated: 2023-01-19 10:18:00
   >   ```
   >
   > - 时序图如下  
-  >   ![lyx-20241126133513253](images/mypost/lyx-20241126133513253.png)
+  >   ![lyx-20241126133513253](attachments/img/lyx-20241126133513253.png)
   >
   > - 在可重复读隔离级别下，事务 A 第一次执行普通的 select 语句时生成了一个 ReadView，之后事务 B 向表中新插入了一条 id = 5 的记录并提交。接着，事务 A 对 id = 5 这条记录进行了更新操作，在这个时刻，**这条新记录的 trx_id 隐藏列的值**就**变成了事务 A 的事务 id**，之后事务 A 再使用普通 select 语句去查询这条记录时就可以看到这条记录了，于是就发生了幻读。
   >
@@ -140,7 +140,7 @@ private:
   > 为什么不是分**大于m_low_limit_id**和**在小于m_low_limit_id里过滤存在于活跃事务列表**，应该和算法有关吧
 
 
-  ![lyx-20241126133513800](images/mypost/lyx-20241126133513800.png)
+  ![lyx-20241126133513800](attachments/img/lyx-20241126133513800.png)
 
 ## undo-log
 
@@ -154,15 +154,15 @@ private:
   1. **insert undo log**：指在**insert**操作中产生的**undo log**，因为**insert**操作的记录只对事务本身可见，对其他事务不可见，故**该undo log**可以在**事务提交后直接删除**。不需要进行**purge**操作（purge：清洗）
 
      **insert**时的数据初始状态：(DB_ROLL_PTR为空)  
-     ![lyx-20241126133514279](images/mypost/lyx-20241126133514279.png)
+     ![lyx-20241126133514279](attachments/img/lyx-20241126133514279.png)
 
   2. **update undo log**：**undate**或**delete**操作产生的undo log。该undo log 可能需要**提供给MVCC机制**，因此不能在事务提交时就进行删除。提交时放入undo log链表，等待**purge线程**进行最后的删除
 
 - 数据第一次修改时  
-  ![lyx-20241126133514742](images/mypost/lyx-20241126133514742.png)
+  ![lyx-20241126133514742](attachments/img/lyx-20241126133514742.png)
 
 - 数据第二次被修改时  
-  ![lyx-20241126133515267](images/mypost/lyx-20241126133515267.png)
+  ![lyx-20241126133515267](attachments/img/lyx-20241126133515267.png)
   **不同事务**或者**相同事务**的**对同一记录行的修改**，会使**该记录行**的 **`undo log` 成为一条链表**，**链首**就是**最新**的记录，**链尾**就是**最早**的旧记录。
 
 ## 数据可见性算法
@@ -170,7 +170,7 @@ private:
 - 在 `InnoDB` 存储引擎中，创建一个新事务后，**执行每个 `select` 语句前(RC下是)**，都会创建一个快照（**Read View**），**快照中保存了当前数据库系统中正处于活跃（没有 commit）的事务的 ID 号**。其实简单的说保存的是系统中**当前不应该被本事务看到的其他事务 ID 列表（即 m_ids）**。当用户在这个事务中要读取某个记录行的时候，`InnoDB` 会将该**记录行的 `DB_TRX_ID`** 与 **`Read View` 中的一些变量**及**当前事务 ID** 进行比较，判断是否满足可见性条件
 
 - 具体的比较算法  
-  ![img](images/mypost/lyx-20241126133515696.png)
+  ![img](attachments/img/lyx-20241126133515696.png)
 
   1. 如果**记录 DB_TRX_ID < m_up_limit_id**，那么表明最新修改该行的事务（DB_TRX_ID）在当前事务创建快照之前就提交了，所以该记录行的值对当前事务是**可见**的
   2. 如果 **DB_TRX_ID >= m_low_limit_id**，那么表明最新修改该行的事务（DB_TRX_ID）在当前事务创建快照之后才修改该行，所以该记录行的值对当前事务**不可见**。跳到步骤 5
@@ -195,13 +195,13 @@ private:
 虽然 RC 和 RR 都通过 `MVCC` 来读取快照数据，但由于 **生成 Read View 时机不同**，从而在 **RR 级别下实现可重复读**
 
 举例：  （Tn 表示时间线）  
-![img](images/mypost/lyx-20241126133516135.png)
+![img](attachments/img/lyx-20241126133516135.png)
 
 ## 在RC下ReadView生成情况
 
 **1. 假设时间线来到 T4 ，那么此时数据行 id = 1 的版本链为：**
 
-![img](images/mypost/lyx-20241126133516155.png)
+![img](attachments/img/lyx-20241126133516155.png)
 
 由于 RC 级别下**每次查询都会生成**`Read View` ，并且事务 101、102 并未提交，此时 `103` 事务生成的 `Read View` 中活跃的事务 **`m_ids` 为：[101,102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：101，`m_creator_trx_id` 为：103
 
@@ -209,11 +209,11 @@ private:
 - **根据 `DB_ROLL_PTR` 找到 `undo log` 中的上一版本记录**，上一条记录的 `DB_TRX_ID` 还是 101，不可见
 - 继续找**上一条 `DB_TRX_ID`为 1**，满足 **1 < m_up_limit_id，可见**，所以事务 103 查询到数据为 `name = 菜花`
 
-![img](images/mypost/lyx-20241126133516589.png)
+![img](attachments/img/lyx-20241126133516589.png)
 
 **2. 时间线来到 T6 ，数据的版本链为：**
 
-![img](images/mypost/lyx-20241126133516609.png)
+![img](attachments/img/lyx-20241126133516609.png)
 
 因为在 RC 级别下，重新生成 `Read View`，这时事务 **101 已经提交，102 并未提交**，所以此时 `Read View` 中活跃的事务 **`m_ids`：[102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：102，`m_creator_trx_id`为：103
 
@@ -221,9 +221,9 @@ private:
 - 根据 `DB_ROLL_PTR` 找到 `undo log` 中的上一版本记录，**上一条记录的 `DB_TRX_ID` 为 101，满足 101 < m_up_limit_id**，记录可见，所以在 `T6` 时间点查询到数据为 `name = 李四`，与时间 T4 查询到的结果不一致，不可重复读！
 
 **3. 时间线来到 T9 ，数据的版本链为：**  
-![img](images/mypost/lyx-20241126133517148.png)
+![img](attachments/img/lyx-20241126133517148.png)
 
-![img](images/mypost/lyx-20241126133517169.png)
+![img](attachments/img/lyx-20241126133517169.png)
 
 重新生成 `Read View`， 这时**事务 101 和 102 都已经提交，所以 m_ids 为空**，则 m_up_limit_id = m_low_limit_id = 104，最新版本事务 ID 为 102，满足 102 < m_low_limit_id，可见，查询结果为 `name = 赵六`
 
@@ -233,11 +233,11 @@ private:
 
 在可重复读级别下，只会在事务开始后**第一次读取数据时生成一个 Read View（m_ids 列表）**
 
-![img](images/mypost/lyx-20241126133517662.png)
+![img](attachments/img/lyx-20241126133517662.png)
 
 **1. 在 T4 情况下的版本链为：**
 
-![img](images/mypost/lyx-20241126133517683.png)
+![img](attachments/img/lyx-20241126133517683.png)
 
 在当前执行 `select` 语句时生成一个 `Read View`，此时 **`m_ids`：[101,102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：101，`m_creator_trx_id` 为：103
 
@@ -249,7 +249,7 @@ private:
 
 **2. 时间点 T6 情况下：**
 
-![img](images/mypost/lyx-20241126133518171.png)
+![img](attachments/img/lyx-20241126133518171.png)
 
 在 RR 级别下只会生成一次`Read View`，所以此时依然沿用 **`m_ids` ：[101,102]** ，`m_low_limit_id`为：104，`m_up_limit_id`为：101，`m_creator_trx_id` 为：103
 
@@ -260,7 +260,7 @@ private:
 
 **3. 时间点 T9 情况下：**
 
-![img](images/mypost/lyx-20241126133518584.png)
+![img](attachments/img/lyx-20241126133518584.png)
 
 此时情况跟 T6 完全一样，由于已经生成了 `Read View`，此时依然沿用 **`m_ids` ：[101,102]** ，所以查询结果依然是 `name = 菜花`
 

@@ -263,8 +263,8 @@ updated: 2022-05-20 17:16:29
   
     - 操作
       ![image-20220526151137850](C:\Users\ztx11\AppData\Roaming\Typora\typora-user-images\image-20220526151137850.png)
-      ![](images/mypost/lyx-20241126134511264.png)
-      ![lyx-20241126134511827](images/mypost/lyx-20241126134511827.png)
+      ![](attachments/img/lyx-20241126134511264.png)
+      ![lyx-20241126134511827](attachments/img/lyx-20241126134511827.png)
   
     - 编写controller确定
   
@@ -488,15 +488,15 @@ updated: 2022-05-20 17:16:29
         ```
   
     - 测试
-      ![lyx-20241126134512277](images/mypost/lyx-20241126134512277.png)
+      ![lyx-20241126134512277](attachments/img/lyx-20241126134512277.png)
   
   - 使用mybatis-x 插件（idea）
   
   
   
-    ![lyx-20241126134512824](images/mypost/lyx-20241126134512824.png)
-    ![lyx-20241126134513252](images/mypost/lyx-20241126134513252.png)
+    ![lyx-20241126134512824](attachments/img/lyx-20241126134512824.png)
+    ![lyx-20241126134513252](attachments/img/lyx-20241126134513252.png)
   
-    ![lyx-20241126134513888](images/mypost/lyx-20241126134513888.png)
+    ![lyx-20241126134513888](attachments/img/lyx-20241126134513888.png)
   
   

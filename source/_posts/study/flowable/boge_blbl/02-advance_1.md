@@ -23,20 +23,20 @@ updated: 2022-05-14 21:59:40
 
   - 流程历史记录
 
-    ![lyx-20241126134110013](images/mypost/lyx-20241126134110013.png)
+    ![lyx-20241126134110013](attachments/img/lyx-20241126134110013.png)
 
   - 流程定义表
-    ![lyx-20241126134110598](images/mypost/lyx-20241126134110598.png)
+    ![lyx-20241126134110598](attachments/img/lyx-20241126134110598.png)
 
   - 运行实例表
-    ![lyx-20241126134111050](images/mypost/lyx-20241126134111050.png)
+    ![lyx-20241126134111050](attachments/img/lyx-20241126134111050.png)
 
   - 用户用户组表
 
-    ![lyx-20241126134111482](images/mypost/lyx-20241126134111482.png)
+    ![lyx-20241126134111482](attachments/img/lyx-20241126134111482.png)
 
 - 源码中的体现
-  ![lyx-20241126134111888](images/mypost/lyx-20241126134111888.png)
+  ![lyx-20241126134111888](attachments/img/lyx-20241126134111888.png)
 
   
 
@@ -121,7 +121,7 @@ updated: 2022-05-14 21:59:40
 ## 加载自定义名称的配置文件
 
 - 把刚才的数据库清空，将flowable的配置文件放到目录custom/lycfg.xml中
-  ![lyx-20241126134112297](images/mypost/lyx-20241126134112297.png)
+  ![lyx-20241126134112297](attachments/img/lyx-20241126134112297.png)
 
 - 代码
 
