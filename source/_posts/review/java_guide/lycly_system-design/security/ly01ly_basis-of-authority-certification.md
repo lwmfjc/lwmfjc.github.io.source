@@ -33,7 +33,7 @@ updated: 2023-02-20 09:44:23
 
 授权：
 
-![img](images/mypost/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303231303630343136313033323431322e706e67) 
+![img](images/mypost/EaXkxEMHRjYC5X9U7.jpg) 
 
 这两个一般在我们的系统中被结合在一起使用，目的就是为了保护我们系统的安全性。
 
@@ -65,7 +65,7 @@ RBAC 即**基于角色的权限访问控制**（**Role-Based Access Control**）
 
 ## 什么是 Cookie ? Cookie 的作用是什么?
 
- ![img](images/mypost/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f636f6f6b69652d73657373696f6e49642e706e67)
+ ![img](images/mypost/2p6s3ObXe9Hbd2Tnk1E7wQU8ztsz9P.jpg)
 
 > ly：如上，可以看出 cookie的附属是**域名**
 
@@ -213,7 +213,7 @@ Session-Cookie 方案在单体环境是一个非常好的身份认证方案。�
 
 但是，我们使用 `Token` 的话就不会存在这个问题，在我们登录成功获得 **`Token` 之后，一般会选择存放在 `localStorage` （浏览器本地存储）**中。然后我们在前端通过某些方式会给每个发到后端的请求加上这个 `Token`,这样就不会出现 CSRF 漏洞的问题。因为，**即使**有个你点击了非法链接发送了请求到服务端，这个**非法请求是不会携带 `Token` 的**，所以这个请求将是非法的。
 
-[![img](images/mypost/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303231303631353136313130383237322e706e67)](https://camo.githubusercontent.com/5ff87de718e4b46caed37b33a07baa03b3bd6d5f1e2b88fefc20a324c0c97914/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303231303631353136313130383237322e706e67)
+[![img](images/mypost/8o8UtWptTvzNbe51N.jpg)](https://camo.githubusercontent.com/5ff87de718e4b46caed37b33a07baa03b3bd6d5f1e2b88fefc20a324c0c97914/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303231303631353136313130383237322e706e67)
 
 需要注意的是：不论是 `Cookie` 还是 `Token` 都无法避免 **跨站脚本攻击（Cross Site Scripting）XSS** 。
 
@@ -235,7 +235,7 @@ XSS 中攻击者会用各种方式将恶意代码注入到其他用户的页面�
 
 SSO(Single Sign On)即单点登录说的是**用户登陆多个子系统的其中一个**就有权访问与**其相关的其他系统**。举个例子我们在登陆了京东金融之后，我们同时也成功登陆京东的京东超市、京东国际、京东生鲜等子系统。
 
- ![img](images/mypost/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f73797374656d2d64657369676e2f73656375726974792f73736f2e706e67)
+ ![img](images/mypost/KU298DzecmkoflU5Q9sNbyEWHiJdua.jpg)
 
 ## SSO 有什么好处？
 
@@ -259,7 +259,7 @@ OAuth 2.0 比较常用的场景就是**第三方登录**，当你的网站接入
 
 下图是 [Slack OAuth 2.0 第三方登录](https://api.slack.com/legacy/oauth)的示意图：
 
- ![img](images/mypost/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f32303231303631353135313731363334302e706e67) 
+ ![img](images/mypost/xVVSx9QdqfXxyJ0os.jpg) 
 
 **推荐阅读：**
 

@@ -107,7 +107,7 @@ OK
 
 对于 Java 开发的小伙伴来说，已经有了现成的解决方案：**[Redisson](https://github.com/redisson/redisson)** 。其他语言的解决方案，可以在 Redis 官方文档中找到，地址：https://redis.io/topics/distlock 。
 
- ![Distributed locks with Redis](images/mypost/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f6769746875622f6a61766167756964652f72656469732d64697374726962757465642d6c6f636b2e706e67) 
+ ![Distributed locks with Redis](images/mypost/0GV3a5I8wN7XCI7JGXttWOeOoSj6yn.jpg) 
 
 Redisson 是一个开源的 Java 语言 Redis 客户端，提供了很多开箱即用的功能，不仅仅包括多种分布式锁的实现。并且，Redisson 还支持 Redis 单机、Redis Sentinel 、Redis Cluster 等多种部署架构。
 

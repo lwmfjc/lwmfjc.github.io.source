@@ -92,7 +92,7 @@ Dijkstra（Dijkstra算法的作者） 在 1972年图灵奖获奖感言中也提�
 
 这个最小可行产品，可以理解为**刚好能够满足客户需求**的产品。下面这张图片把这个思想展示的非常精髓。
 
- ![Running hypothesis driven experiments using the MVP](images/mypost/68747470733a2f2f696d672d626c6f672e6373646e696d672e636e2f696d675f636f6e766572742f39643065303662626638656565653537353166666231306533626332316463362e6a706567) 
+ ![Running hypothesis driven experiments using the MVP](images/mypost/3rbkQTwnhzHMbeOgL.jpg) 
 
 利用**最小可行产品**，我们可以也可以**提早进行市场分析**，这对于我们在探索产品不确定性的道路上非常有帮助。可以非常有效地指导我们下一步该往哪里走。
 

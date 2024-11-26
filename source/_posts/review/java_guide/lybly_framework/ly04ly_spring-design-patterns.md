@@ -25,7 +25,7 @@ updated: 2023-02-08 20:18:14
 
 **IoC 是一个原则，而不是一个模式，以下模式（但不限于）实现了 IoC 原则。**
 
-![ioc-patterns](images/mypost/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d362f696f632d7061747465726e732e706e67)
+![ioc-patterns](images/mypost/LcZvFQY8unpFP4cLc.jpg)
 
 **Spring IoC 容器就像是一个工厂一样，当我们需要创建一个对象的时候，只需要配置好配置文件/注解即可，完全不用考虑对象是如何被创建出来的。** IoC 容器负责创建对象，将对象连接在一起，配置这些对象，并从创建中处理这些对象的整个生命周期，直到它们被完全销毁。
 
@@ -158,7 +158,7 @@ public Object getSingleton(String beanName, ObjectFactory<?> singletonFactory) {
 
 **Spring AOP 就是基于动态代理的**，如果要代理的对象，实现了某个接口，那么 Spring AOP 会使用 **JDK Proxy** 去创建代理对象，而对于没有实现接口的对象，就无法使用 JDK Proxy 去进行代理了，这时候 Spring AOP 会使用 **Cglib** 生成一个被代理对象的子类来作为代理，如下图所示：
 
-![SpringAOPProcess](images/mypost/68747470733a2f2f6d792d626c6f672d746f2d7573652e6f73732d636e2d6265696a696e672e616c6979756e63732e636f6d2f323031392d362f537072696e67414f5050726f636573732e6a7067)
+![SpringAOPProcess](images/mypost/xh2pWZ37ErcCsSW6i.jpg)
 
 当然，你也可以使用 AspectJ ,Spring AOP 已经**集成了 AspectJ** ，AspectJ 应该算的上是 Java 生态系统中最完整的 AOP 框架了。
 
