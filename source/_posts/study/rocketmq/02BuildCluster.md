@@ -50,7 +50,7 @@ systemctl disable firewalld.service
 
 ### 或者直接关闭对应端口即可
 
-![image-20230406122046779](images/mypost/image-20230406122046779.png)
+![lyx-20241126134622124](images/mypost/lyx-20241126134622124.png)
 
 ## 环境变量配置
 

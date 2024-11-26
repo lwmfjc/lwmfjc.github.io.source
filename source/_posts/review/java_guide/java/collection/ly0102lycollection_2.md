@@ -182,10 +182,10 @@ updated: 2022-10-18 08:54:49
 
     拉链法即**链表和数组**结合，也就是创建一个链表数组，**数组每一格为一个链表**，如果**发生哈希冲突**，就将**冲突的值添加到链表**中即可
 
-    ![image-20221019143906992](images/mypost/image-20221019143906992.png)
+    ![lyx-20241126133611149](images/mypost/lyx-20241126133611149.png)
 
   - JDK8之后，解决冲突发生了较大变化，当链表长度大于阈值（默认是8）（如果数组小于64，则只会进行扩容；如果不是，才转成红黑树）时，将链表转换成红黑树，以减少搜索时间
-    ![image-20221019144049952](images/mypost/image-20221019144049952.png)
+    ![lyx-20241126133611680](images/mypost/lyx-20241126133611680.png)
     **二叉查找树**，在某些情况下会**退化成线性**结构，时间复杂度为n ，而**红黑树趋于log n** 。TreeMap、TreeSet以及1.8之后的HashMap都用到了红黑树
 
   - 代码
@@ -271,12 +271,12 @@ updated: 2022-10-18 08:54:49
   - 底层数据结构图
 
     - HashTable：数组+链表
-      ![image-20221019162845607](images/mypost/image-20221019162845607.png)
+      ![lyx-20241126133612104](images/mypost/lyx-20241126133612104.png)
 
     - JDK1.7 的 ConcurrentHashMap（Segment数组，HashEntry数组，链表）
 
       Segment是用来加锁的
-      ![image-20221019163009141](images/mypost/image-20221019163009141.png)
+      ![lyx-20241126133612553](images/mypost/lyx-20241126133612553.png)
       JDK1.8 的ConcurrentHashMap则是Node数组+链表/红黑树，不过红黑树时，不用Node，而是用TreeNode  
 
     - TreeNode，存储红黑树节点，被TreeBin包装
@@ -302,7 +302,7 @@ updated: 2022-10-18 08:54:49
 
   - JDK1.8之前的ConcurrentHashMap
 
-    ![image-20221019164531847](images/mypost/image-20221019164531847.png)`Segment` 继承了 `ReentrantLock`,所以 `Segment` 是一种可重入锁，扮演锁的角色。`HashEntry` 用于存储键值对数据。
+    ![lyx-20241126133613002](images/mypost/lyx-20241126133613002.png)`Segment` 继承了 `ReentrantLock`,所以 `Segment` 是一种可重入锁，扮演锁的角色。`HashEntry` 用于存储键值对数据。
 
     ```java
     static class Segment<K,V> extends ReentrantLock implements Serializable {
@@ -313,7 +313,7 @@ updated: 2022-10-18 08:54:49
     `Segment` 的结构和 `HashMap` 类似，是一种数组和链表结构，一个 `Segment` 包含一个 `HashEntry` 数组，每个 `HashEntry` 是一个链表结构的元素，**每个 `Segment` 守护着一个 `HashEntry` 数组**里的元素，当对 `HashEntry` 数组的数据进行修改时，必须**首先获得对应的 `Segment` 的锁**。也就是说，对同一 `Segment` 的并发写入会被阻塞，不同 `Segment` 的写入是可以并发执行的。
 
   - JDK 1.8 之后
-    ![image-20221019165516462](images/mypost/image-20221019165516462.png)
+    ![lyx-20241126133613422](images/mypost/lyx-20241126133613422.png)
     使用Node数组+链表/红黑树，几乎重写了ConcurrentHashMap，使用```Node+CAS+Synchronized```保证并发安全，数据结构跟HashMap1.8类似，超过一定阈值（默认8）将链表【O(N)】转成红黑树【O(log (N) )】
     JDK8中，**只锁定当前链表/红黑二叉树的首节点**，这样**只要hash不冲突就不会产生并发**，不影响其他Node的读写，提高效率 
 

@@ -135,7 +135,7 @@ Process finished with exit code 0
 - 在化学上，原子是构成一般物质的最小单位，化学反应中是不可分割的，Atomic指**一个操作是不可中断的**，即使在多个线程一起执行时，一个操作一旦开始就**不会被其他线程干扰**
 - 原子类-->具有原子/原子操作特征的类
 - 并发包java.util.concurrent 的原子类都放着```java.util.concurrent.atomic```中
-  ![image-20221205094229003](images/mypost/image-20221205094229003.png)
+  ![lyx-20241126133650837](images/mypost/lyx-20241126133650837.png)
 - 根据操作的数据类型，可以将JUC包中的原子类分为4类（基本类型、数组类型、引用类型、对象的属性修改类型）
   - 基本类型 
     使用原子方式更新基本类型，包括**AtomicInteger 整型原子类**，**AtomicLong 长整型原子类**，AtomicBoolean 布尔型原子类

@@ -194,7 +194,7 @@ class Broker {
 
 #### 2.1.11 其它
 
- ![img](images/mypost/R8ujik8WqU4eEftkTrel9jqhcSI3tldwa8C.jpg) 
+ ![img](images/mypost/lyx-20241126133956861.jpg) 
 
 加分项咯
 

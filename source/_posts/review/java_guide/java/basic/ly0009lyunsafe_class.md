@@ -17,7 +17,7 @@ updated: 2022-10-10 17:10
 ```sun.misc.Unsafe```
 
 提供**执行低级别**、**不安全操作**的方法，如**直接访问系统内存资源**、**自主管理内存资源**等，效率快，但由于有了操作内存空间的能力，会**增加指针问题风险**。且这些功能的实现依赖于本地方法，Java代码中只是声明方法头，具体实现规则交给本地代码
-![image-20221010172203732](images/mypost/image-20221010172203732.png)
+![lyx-20241126133601363](images/mypost/lyx-20241126133601363.png)
 
 ### 为什么要使用本地方法
 
@@ -202,7 +202,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
 
 > 分析一下运行结果，首先使用`allocateMemory`方法申请 4 字节长度的内存空间，在循环中调用`setMemory`方法向每个字节写入内容为`byte`类型的 1，当使用 Unsafe 调用`getInt`方法时，因为一个`int`型变量占 4 个字节，会一次性读取 4 个字节，组成一个`int`的值，对应的十进制结果为 16843009。
 
-![image-20221011114456296](images/mypost/image-20221011114456296.png)
+![lyx-20241126133601808](images/mypost/lyx-20241126133601808.png)
 
 对于reallocateMemory方法：  
 
@@ -212,7 +212,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
 >
 >这种分配属于**堆外内存，无法进行垃圾回收**，需要我们把这些内存当作资源去手动调用freeMemory方法进行释放，否则会产生**内存泄漏**。通常是try-finally进行内存释放
 
-![image-20221011141135430](images/mypost/image-20221011141135430.png)
+![lyx-20241126133602275](images/mypost/lyx-20241126133602275.png)
 
 - 为什么使用堆外内存
 
@@ -338,7 +338,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   ```
   
 - 如果删除上面的loadFence()方法，就会出现下面的情况，主线程无法感知flag发生的变化，会一直在while中循环
-  ![image-20221011163035365](images/mypost/image-20221011163035365.png)
+  ![lyx-20241126133602698](images/mypost/lyx-20241126133602698.png)
 
 - 典型应用
   Java8新引入的锁---```StampedLock```，乐观锁，类似于无锁的操作，完全不会阻塞写线程获取写锁，从而**缓解读多写少的”饥饿“现象**。由于StampedLock提供的乐观读锁不阻塞写线程获取读锁，当**线程共享变量从主内存load到线程工作内存**时，存在数据不一致的问题  
@@ -423,7 +423,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   >
   > ------
   >
-  > ![img](images/mypost/image-20220717144927257.png)
+  > ![img](images/mypost/lyx-20241126133603110.png)
 
 #### CAS操作
 
@@ -486,7 +486,7 @@ public native void setMemory(Object o, long offset, long bytes, byte value);
   ```
   
   使用两个线程去修改int型属性a的值，并且只有在**a的值**等于**传入的参数x减一**时，才会将a的值变为x，也就是实现对a的加一的操作
-  ![image-20221011184828760](images/mypost/image-20221011184828760.png)
+  ![lyx-20241126133603556](images/mypost/lyx-20241126133603556.png)
 
 #### 线程调度(多线程问题)
 
@@ -569,7 +569,7 @@ public native boolean tryMonitorEnter(Object var1);
   ```
 
   流程图如下：  
-  ![image-20221012090743240](images/mypost/image-20221012090743240.png)
+  ![lyx-20241126133603979](images/mypost/lyx-20241126133603979.png)
 
 #### Class操作
 

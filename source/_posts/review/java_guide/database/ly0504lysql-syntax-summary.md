@@ -35,7 +35,7 @@ SQL（Structured Query Language)，标准 SQL 由 ANSI 标准委员会管理，�
 
 #### SQL 语法结构
 
- ![img](images/mypost/XbJpv4US96SG8eYpg.jpg) 
+ ![img](images/mypost/lyx-20241126133452685.jpg) 
 
 SQL 语法结构包括：
 
@@ -329,7 +329,7 @@ WHERE cust_id IN (SELECT cust_id
 
 内部查询首先在其父查询之前执行，以便可以将内部查询的结果传递给外部查询。执行过程可以参考下图：
 
- ![img](images/mypost/SIVTtRBEr4TsxFsxR.jpg) 
+ ![img](images/mypost/lyx-20241126133453238.jpg) 
 
 ### WHERE
 
@@ -507,7 +507,7 @@ SQL 允许在 `JOIN` 左边加上一些修饰性的关键词，从而形成不�
 
 下图展示了 LEFT JOIN、RIGHT JOIN、INNER JOIN、OUTER JOIN 相关的 7 种用法。
 
- ![image-20230312175722478](images/mypost/image-20230312175722478.png)
+ ![lyx-20241126133453694](images/mypost/lyx-20241126133453694.png)
 
 如果不加任何修饰词，只写 `JOIN`，那么默认为 `INNER JOIIN`
 
@@ -735,7 +735,7 @@ DROP PRIMARY KEY;
 - 通过只给用户访问视图的权限，保证数据的安全性；
 - 更改数据格式和表示。
 
- ![mysql视图](images/mypost/8bUH0cWoWOJfa1GhF.jpg) 
+ ![mysql视图](images/mypost/lyx-20241126133454123.jpg) 
 
 #### 创建视图
 
@@ -1008,7 +1008,7 @@ SET PASSWORD FOR myuser = 'mypass';
 
 存储过程可以看成是对一系列 SQL 操作的批处理。存储过程可以由触发器，其他存储过程以及 Java， Python，PHP 等应用程序调用。
 
- ![mysql存储过程](images/mypost/GlwKE08RvULym3Zsl.jpg) 
+ ![mysql存储过程](images/mypost/lyx-20241126133454589.jpg) 
 
 使用存储过程的好处：
 
@@ -1025,7 +1025,7 @@ SET PASSWORD FOR myuser = 'mypass';
 
 需要注意的是：**阿里巴巴《Java 开发手册》强制禁止使用存储过程。因为存储过程难以调试和扩展，更没有移植性。**
 
-![image-20230312175641477](images/mypost/image-20230312175641477.png)
+![lyx-20241126133455027](images/mypost/lyx-20241126133455027.png)
 
 至于到底要不要在项目中使用，还是要看项目实际需求，权衡好利弊即可！
 

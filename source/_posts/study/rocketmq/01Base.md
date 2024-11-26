@@ -119,4 +119,4 @@ ConsumeMessageThread_2 Receive New Messages: [MessageExt [queueId=1, storeSize=1
 
 ## 如图
 
-![image-20230406102316614](images/mypost/image-20230406102316614.png)
+![lyx-20241126134621607](images/mypost/lyx-20241126134621607.png)

@@ -21,7 +21,7 @@ updated: 2023-02-11 13:24:32
 
 下面是我对本地锁画的一张示意图。
 
- ![image-20230211191632497](images/mypost/image-20230211191632497.png)
+ ![lyx-20241126133910713](images/mypost/lyx-20241126133910713.png)
 
 从图中可以看出，这些线程访问共享资源是互斥的，同一时刻只有一个线程可以获取到本地锁访问共享资源。
 
@@ -31,7 +31,7 @@ updated: 2023-02-11 13:24:32
 
 下面是我对分布式锁画的一张示意图。
 
-[![分布式锁](images/mypost/distributed-lock.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/images/distributed-lock/distributed-lock.png)
+[![分布式锁](images/mypost/lyx-20241126133911324.png)](https://github.com/Snailclimb/JavaGuide/blob/main/docs/distributed-system/images/distributed-lock/distributed-lock.png)
 
 从图中可以看出，这些独立的进程中的线程访问共享资源是互斥的，**同一时刻只有一个线程可以获取到分布式锁访问共享资源**。
 
@@ -79,7 +79,7 @@ else
 end
 ```
 
- ![image-20230211192739646](images/mypost/image-20230211192739646.png)
+ ![lyx-20241126133911735](images/mypost/lyx-20241126133911735.png)
 
 这是一种最简易的 Redis 分布式锁实现，实现方式比较简单，性能也很高效。不过，这种方式实现分布式锁**存在一些问题**。就比如应用程序遇到一些问题比如**释放锁的逻辑突然挂掉，可能会导致锁无法被释放**，进而造成**共享资源无法再被其他线程/进程访问**。
 
@@ -107,7 +107,7 @@ OK
 
 对于 Java 开发的小伙伴来说，已经有了现成的解决方案：**[Redisson](https://github.com/redisson/redisson)** 。其他语言的解决方案，可以在 Redis 官方文档中找到，地址：https://redis.io/topics/distlock 。
 
- ![Distributed locks with Redis](images/mypost/0GV3a5I8wN7XCI7JGXttWOeOoSj6yn.jpg) 
+ ![Distributed locks with Redis](images/mypost/lyx-20241126133912270.jpg) 
 
 Redisson 是一个开源的 Java 语言 Redis 客户端，提供了很多开箱即用的功能，不仅仅包括多种分布式锁的实现。并且，Redisson 还支持 Redis 单机、Redis Sentinel 、Redis Cluster 等多种部署架构。
 
@@ -115,7 +115,7 @@ Redisson 中的**分布式锁自带自动续期机制**，使用起来非常简�
 
 > 如图，续期之前也是要检测**是否为持锁线程**
 
- ![image-20230211192936426](images/mypost/image-20230211192936426.png)
+ ![lyx-20241126133912703](images/mypost/lyx-20241126133912703.png)
 
 看门狗名字的由来于 `getLockWatchdogTimeout()` 方法，这个方法返回的是看门狗**给锁续期的过期时间，默认为 30 秒**（[redisson-3.17.6](https://github.com/redisson/redisson/releases/tag/redisson-3.17.6)）。
 
@@ -219,7 +219,7 @@ lock.lock(10, TimeUnit.SECONDS);
 
 实际项目中，我们不需要自己手动实现，推荐使用我们上面提到的 **Redisson** ，其内置了多种类型的锁比如**可重入锁（Reentrant Lock）**、**自旋锁（Spin Lock）**、**公平锁（Fair Lock）**、**多重锁（MultiLock）**、 **红锁（RedLock）**、 **读写锁（ReadWriteLock）**。
 
- ![image-20230211193429281](images/mypost/image-20230211193429281.png)
+ ![lyx-20241126133913308](images/mypost/lyx-20241126133913308.png)
 
 ### Redis 如何解决集群情况下分布式锁的可靠性？
 
@@ -227,11 +227,11 @@ lock.lock(10, TimeUnit.SECONDS);
 
 Redis 集群下，上面介绍到的分布式锁的实现会存在一些问题。由于 **Redis 集群数据同步到各个节点时是异步的**，如果在 Redis 主节点获取到锁后，在没有同步到其他节点时，Redis 主节点宕机了，此时**新的 Redis 主节点依然可以获取锁**，所以多个应用服务就可以**同时**获取到锁。
 
-  ![image-20230211193629588](images/mypost/image-20230211193629588.png)
+  ![lyx-20241126133913736](images/mypost/lyx-20241126133913736.png)
 
 针对这个问题，Redis 之父 antirez 设计了 [Redlock 算法](https://redis.io/topics/distlock) 来解决。
 
- ![image-20230211193729769](images/mypost/image-20230211193729769.png)
+ ![lyx-20241126133914161](images/mypost/lyx-20241126133914161.png)
 
 Redlock 算法的思想是让**客户端**向 Redis 集群中的**多个独立的 Redis 实例** **依次请求申请加锁**，如果客户端能够**和半数以上**的实例成功地**完成加锁**操作，那么我们就认为，客户端**成功地获得**分布式锁，否则加锁失败。
 

@@ -72,7 +72,7 @@ C:\Users\SnailClimb>jps -l
   λ jstat -gc -h3 12224 1000 10  
   ```
 
-  ![image-20221219210349920](images/mypost/image-20221219210349920.png)
+  ![lyx-20241126133746392](images/mypost/lyx-20241126133746392.png)
 
   常见的option如下  , 下面的vmid，即vm的id （id值）
 
@@ -89,22 +89,22 @@ C:\Users\SnailClimb>jps -l
 
   使用```jstat -gcutil -h3 12224 1000 10```
 
-  ![image-20221219210934394](images/mypost/image-20221219210934394.png)
+  ![lyx-20241126133747009](images/mypost/lyx-20241126133747009.png)
 
   另外，加上 `-t`参数可以在输出信息上加一个 Timestamp 列，显示程序的运行时间。
   各个参数的含义  
-  ![image-20221219211407363](images/mypost/image-20221219211407363.png)
+  ![lyx-20241126133747466](images/mypost/lyx-20241126133747466.png)
 
 ## jinfo：实时地查看和调整虚拟机各项参数
 
 `jinfo vmid` :输出当前 jvm 进程的全部参数和系统属性 (第一部分是系统的属性，第二部分是 JVM 的参数)。
 如下图： 
-![image-20221219211745724](images/mypost/image-20221219211745724.png)
-![image-20221219211839945](images/mypost/image-20221219211839945.png)
+![lyx-20241126133747930](images/mypost/lyx-20241126133747930.png)
+![lyx-20241126133748460](images/mypost/lyx-20241126133748460.png)
 
 
 
-![image-20221219211712746](images/mypost/image-20221219211712746.png)
+![lyx-20241126133748897](images/mypost/lyx-20241126133748897.png)
 
 
 
@@ -163,7 +163,7 @@ Server is ready.
 
 之后访问 http://localhost:7000/ 即可，如下：
 进入/histo  会发现，有这个东西
-![image-20221220094041210](images/mypost/image-20221220094041210.png)
+![lyx-20241126133749318](images/mypost/lyx-20241126133749318.png)
 这个对象创建了9次，因为我是在第9次循环后dump堆快照的
 
 ```java
@@ -296,7 +296,7 @@ public class MyMain {
 ## JConsole：Java监视与管理控制台
 
 JConsole 是**基于 JMX 的可视化监视**、**管理工具**。可以很方便的**监视本地及远程服务器的 java 进程的内存使用情况**。你可以在控制台输出**`console`**命令启动或者在 JDK 目录下的 bin 目录**找到`jconsole.exe`然后双击启动**.
-![连接 Jconsole](images/mypost/1JConsole%25E8%25BF%259E%25E6%258E%25A5.7490f097.png)
+![连接 Jconsole](images/mypost/lyx-20241126133749789.png)
 
 对于远程连接
 
@@ -323,10 +323,10 @@ JConsole 是**基于 JMX 的可视化监视**、**管理工具**。可以很方�
    > 外网访问 ip 地址:60001
    > ```
    >
-   > ![image-20221220103410971](images/mypost/image-20221220103410971.png)
+   > ![lyx-20241126133750237](images/mypost/lyx-20241126133750237.png)
 
 2. 注意，虚拟机中（这里ip xxx.200是虚拟机ip），需要开放的端口不只是60001，还要通过 ```netstat -nltp```开放另外两个端口
-   ![image-20221220104157529](images/mypost/image-20221220104157529.png)
+   ![lyx-20241126133750735](images/mypost/lyx-20241126133750735.png)
    centos中使用
 
    ```shell
@@ -338,8 +338,8 @@ JConsole 是**基于 JMX 的可视化监视**、**管理工具**。可以很方�
 
    之后才能连接上
 
-   ![image-20221220104326724](images/mypost/image-20221220104326724.png)
-   ![查看 Java 程序概况 ](images/mypost/2%25E6%259F%25A5%25E7%259C%258BJava%25E7%25A8%258B%25E5%25BA%258F%25E6%25A6%2582%25E5%2586%25B5.9c949b67.png)
+   ![lyx-20241126133751158](images/mypost/lyx-20241126133751158.png)
+   ![查看 Java 程序概况 ](images/mypost/lyx-20241126133751689.png)
 
 ### 内存监控
 
@@ -351,14 +351,14 @@ JConsole 可以显示**当前内存的详细信息**。不仅包括**堆内存/�
 >
 > **老年代 GC（Major GC/Full GC）**:指发生在老年代的 GC，出现了 Major GC 经常会伴随至少一次的 Minor GC（并非绝对），Major GC 的速度一般会比 Minor GC 的慢 10 倍以上。
 
-![内存监控 ](images/mypost/3%25E5%2586%2585%25E5%25AD%2598%25E7%259B%2591%25E6%258E%25A7.4f4b8a7f.png)
+![内存监控 ](images/mypost/lyx-20241126133752177.png)
 
 ### 线程监控
 
 类似我们前面讲的 `jstack` 命令，不过这个是可视化的。
 
 最下面有一个"检测死锁 (D)"按钮，点击这个按钮可以自动为你找到发生死锁的线程以及它们的详细信息 。
-![线程监控 ](images/mypost/4%25E7%25BA%25BF%25E7%25A8%258B%25E7%259B%2591%25E6%258E%25A7.4364833a.png)
+![线程监控 ](images/mypost/lyx-20241126133752633.png)
 
 ## VisualVM： 多合一故障处理工具
 

@@ -276,7 +276,7 @@ public class UserRegisterRequest {
 
 这样我们的后端就可以直接把 json 格式的数据映射到我们的 `UserRegisterRequest` 类上。
 
-![image-20230208145855182](images/mypost/image-20230208145855182.png)
+![lyx-20241126133805516](images/mypost/lyx-20241126133805516.png)
 
 👉 需要注意的是：**一个请求方法只可以有一个`@RequestBody`，但是可以有多个`@RequestParam`和`@PathVariable`**。 如果你的方法必须要用两个 `@RequestBody`来接受数据的话，大概率是你的**数据库设计**或者**系统设计**出问题了！
 
@@ -372,7 +372,7 @@ SpringBoot 项目的 **spring-boot-starter-web** 依赖中已经有 **hibernate-
 
 **注**：更新版本的 spring-boot-starter-web 依赖中不再有 hibernate-validator 包（如2.3.11.RELEASE），需要自己引入 `spring-boot-starter-validation` 依赖。
 
-[![img](images/mypost/4vBv1SPbxu5ehIJAq.jpg)](https://camo.githubusercontent.com/1313232fc862ace5a9955ed030063ff1c1dc16c97a499830b70d4200fe393a65/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f323032312f30332f63376261636431322d316331612d346534312d616161662d3463616438343066633037332e706e67)
+[![img](images/mypost/lyx-20241126133806057.jpg)](https://camo.githubusercontent.com/1313232fc862ace5a9955ed030063ff1c1dc16c97a499830b70d4200fe393a65/68747470733a2f2f67756964652d626c6f672d696d616765732e6f73732d636e2d7368656e7a68656e2e616c6979756e63732e636f6d2f323032312f30332f63376261636431322d316331612d346534312d616161662d3463616438343066633037332e706e67)
 
 非 SpringBoot 项目需要自行引入相关依赖包，这里不多做讲解，具体可以查看我的这篇文章：《[如何在 Spring/Spring Boot 中做参数校验？你需要了解的都在这里！](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485783&idx=1&sn=a407f3b75efa17c643407daa7fb2acd6&chksm=cea2469cf9d5cf8afbcd0a8a1c9cc4294d6805b8e01bee6f76bb2884c5bc15478e91459def49&token=292197051&lang=zh_CN#rd)》。
 

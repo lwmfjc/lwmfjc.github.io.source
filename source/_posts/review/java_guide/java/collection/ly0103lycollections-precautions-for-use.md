@@ -172,7 +172,7 @@ public int indexOf(Object o) {
 >
 > **使用集合转数组的方法，必须使用集合的 `toArray(T[] array)`，传入的是类型完全一致、长度为 0 的空数组。**
 
-![image-20221020152445082](images/mypost/image-20221020152445082.png)
+![lyx-20241126133613916](images/mypost/lyx-20241126133613916.png)
 
 例子：  
 
@@ -256,7 +256,7 @@ public static <T> List<T> asList(T... a) {
   }
   ```
 
-  ![image-20221020154648530](images/mypost/image-20221020154648530.png)
+  ![lyx-20241126133614479](images/mypost/lyx-20241126133614479.png)
 
 - 如何转换成正常的ArraysList呢
 

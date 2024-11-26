@@ -19,7 +19,7 @@ updated: 2022-12-18 09:03:36
 - Java语言通过**字节码**的方式，在一定程度上解决了**传统解释型语言执行效率低**的问题，同时又保留了**解释型语言**可移植的特点。所以Java程序运行时**效率极高**，且由于字节码并不针对一种特定的**机器**。因此，Java程序无需重新编译便可在**多种不通操作系统的计算机**运行
 - Clojure（Lisp 语言的一种方言）、Groovy、Scala 等语言都是运行在 Java 虚拟机之上。下图展示了**不同的语言被不同的编译器**编译**成`.class`**文件**最终运行在 Java 虚拟机**之上。**`.class`文件的二进制格式**可以使用 [WinHexopen in new window](https://www.x-ways.net/winhex/) 查看。
 
-![image-20221218224536987](images/mypost/image-20221218224536987.png)
+![lyx-20241126133726527](images/mypost/lyx-20241126133726527.png)
 
 .class文件是不同语言在**Java虚拟机**之间的重要桥梁，同时也是**支持Java跨平台**很重要的一个原因
 
@@ -50,11 +50,11 @@ ClassFile {
 } 
 ```
 
-![image-20221218230117020](images/mypost/image-20221218230117020.png)
+![lyx-20241126133727114](images/mypost/lyx-20241126133727114.png)
 
 通过IDEA插件jclasslib查看，可以直观看到```Class 文件结构```
 
-![img](images/mypost/image-20210401170711475.png)
+![img](images/mypost/lyx-20241126133727583.png)
 
 使用jclasslib不光能直观地查看某个类对应的字节码文件，还可以查看**类的基本信息**、**常量池**、**接口**、**属性**、**函数**等信息  
 下面介绍一下Class文件结构涉及到的一些组件
@@ -94,7 +94,7 @@ JDK1.4 = 48
 如图，下图是在java8中编译的，使用```javap -v ```查看
 每当Java发布大版本（比如Java8 ，Java9 ）的时候，主版本号都会+1
 
-![image-20221219103843623](images/mypost/image-20221219103843623.png)
+![lyx-20241126133728067](images/mypost/lyx-20241126133728067.png)
 
 > 注：**高版本**的 Java 虚拟机**可以执行低版本编译器**生成的 Class 文件，但是**低版本**的 Java 虚拟机**不能执行高版本编译器**生成的 Class 文件。所以，我们在实际开发的时候要**确保开发的的 JDK 版本和生产环境的 JDK 版本保持一致**
 
@@ -114,7 +114,7 @@ JDK1.4 = 48
 1. 字面量比较接近于Java语言层面的**常量概念**，如**文本字符串**、**声明为final的常量值**等
 
    > 注意，**非常量**是不会在这里的，
-   > ![image-20221219105146588](images/mypost/image-20221219105146588.png)
+   > ![lyx-20241126133728490](images/mypost/lyx-20241126133728490.png)
    >
    > 没有找到3 
 
@@ -126,7 +126,7 @@ JDK1.4 = 48
 
 常量池中的**每一项常量都是一个表**，这14种表有一个共同特点：**开始第一位**是一个**u1类型的标志位 -tag **来标识常量的类型，代表当前这个常量**属于哪种常量类型**
 
-![image-20221219105523632](images/mypost/image-20221219105523632.png)
+![lyx-20241126133728943](images/mypost/lyx-20241126133728943.png)
 
 `.class` 文件可以通过`javap -v class类名` 指令来看一下其常量池中的信息(`javap -v class类名-> temp.txt` ：将结果输出到 temp.txt 文件)。
 
@@ -137,9 +137,9 @@ JDK1.4 = 48
 
 **类访问和属性**修饰符  
 
-【这里好像漏了一个0x0002 ，private 】![image-20221219111039047](images/mypost/image-20221219111039047.png)
+【这里好像漏了一个0x0002 ，private 】![lyx-20241126133729433](images/mypost/lyx-20241126133729433.png)
 
-> ![img](images/mypost/1090617-20190409135129522-1831389208.jpg)
+> ![img](images/mypost/lyx-20241126133729891.jpg)
 >
 > 上图转自： https://www.cnblogs.com/qdhxhz/p/10676337.html 
 
@@ -158,7 +158,7 @@ public class Employee {
 ```
 
 通过 ```javap -v class类名```指令来看一下类的访问标志  
-![查看类的访问标志](images/mypost/%25E6%259F%25A5%25E7%259C%258B%25E7%25B1%25BB%25E7%259A%2584%25E8%25AE%25BF%25E9%2597%25AE%25E6%25A0%2587%25E5%25BF%2597.png)
+![查看类的访问标志](images/mypost/lyx-20241126133730371.png)
 
 ## 当前类（This Class）、父类（Super Class）、接口（Interfaces）索引集合
 
@@ -183,7 +183,7 @@ public class Employee {
 
 - 字段包括**类级变量**以及**实例变量**，但不包括在**方法内部**声明的局部变量
   filed info(字段表)的结构：  
-  ![image-20221219134423914](images/mypost/image-20221219134423914.png)
+  ![lyx-20241126133730905](images/mypost/lyx-20241126133730905.png)
 
   1. access_flag：字段的作用域（public、private、protected修饰符）、是**实例变量**还是**类变量**（static修饰符）、可否被**序列化**（transient修饰符）、**可变**性（final）、**可见**性（volatile修饰符，是否强制从主内存读写）
   2. name_index：对常量池的**引用**，表示的字段的名称
@@ -193,7 +193,7 @@ public class Employee {
 
   上述这些信息中，各个**修饰符都是布尔值**，**要么有**某个修饰符，**要么没有**，很适合**使用标志位**来表示。而**字段叫什么名字**、**字段被定义为什么数据类型**这些都是无法固定的，只能**引用常量池中常量**来描述。
 
-  ![字段的 access_flag 的取值](images/mypost/image-20201031084342859.png)
+  ![字段的 access_flag 的取值](images/mypost/lyx-20241126133731382.png)
 
 ## 方法表集合（Methods）
 
@@ -207,9 +207,9 @@ public class Employee {
 - Class 文件存储格式中**对方法的描述与对字段的描述几乎采用了完全一致**的方式。方法表的结构如同字段表一样，依次包括了**访问标志**、**名称索引**、**描述符索引**、**属性表**集合几项。
 
 - **method_info（方法表的）结构**  
-  ![方法表的结构](images/mypost/%25E6%2596%25B9%25E6%25B3%2595%25E8%25A1%25A8%25E7%259A%2584%25E7%25BB%2593%25E6%259E%2584.png)
+  ![方法表的结构](images/mypost/lyx-20241126133732024.png)
   **方法表的 access_flag 取值：**
-  ![方法表的 access_flag 取值](images/mypost/image-20201031084248965.png)
+  ![方法表的 access_flag 取值](images/mypost/lyx-20241126133732512.png)
 
   > 注意：因为`volatile`修饰符和`transient`修饰符不可以修饰方法，所以方法表的访问标志中没有这两个对应的标志，但是增加了`synchronized`、`native`、`abstract`等关键字修饰方法，所以也就多了这些关键字对应的标志。
 
@@ -217,7 +217,7 @@ public class Employee {
 
 **如上，字段和方法都拥有属性**
 属性大概就是这种
-![image-20221219152310600](images/mypost/image-20221219152310600.png)
+![lyx-20241126133733098](images/mypost/lyx-20241126133733098.png)
 
 ```java
    u2             attributes_count;//此类的属性表中的属性数

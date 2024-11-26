@@ -11,7 +11,7 @@ updated: 2022-05-15 08:31:13
 
 ## Service服务接口
 
-![image-20220514233449225](images/mypost/image-20220514233449225.png)
+![lyx-20241126134112974](images/mypost/lyx-20241126134112974.png)
 
 - 各个Service类
   RepositoryService 资源管理类，流程定义、部署、文件
@@ -26,12 +26,12 @@ BPMN2.0定义的一些图标
 
 - 时间
 
-![image-20220514233856102](images/mypost/image-20220514233856102.png)
+![lyx-20241126134113549](images/mypost/lyx-20241126134113549.png)
 
 - 活动
-  ![image-20220514234008644](images/mypost/image-20220514234008644.png)
+  ![lyx-20241126134114042](images/mypost/lyx-20241126134114042.png)
 - 网关
-  ![image-20220514234018899](images/mypost/image-20220514234018899.png)
+  ![lyx-20241126134114488](images/mypost/lyx-20241126134114488.png)
 - 
 
 
@@ -40,31 +40,31 @@ BPMN2.0定义的一些图标
 
 - 使用eclipse打包部署(没有eclipse环境，所以这里只有截图)
   将两个流程，打包为bar文件，然后放到项目resources文件夹中
-  ![image-20220514235033874](images/mypost/image-20220514235033874.png)![image-20220514235051403](images/mypost/image-20220514235051403.png)
+  ![lyx-20241126134114912](images/mypost/lyx-20241126134114912.png)![lyx-20241126134115356](images/mypost/lyx-20241126134115356.png)
 
 - 这里是为了测试一次部署多个流程（定义，图）
   代码如下
-  ![image-20220514235134845](images/mypost/image-20220514235134845.png)
+  ![lyx-20241126134115794](images/mypost/lyx-20241126134115794.png)
 
 - 部署完成后查看表结构
 
   - act_re_procdef
 
     部署id一样
-    ![image-20220514235300573](images/mypost/image-20220514235300573.png)
+    ![lyx-20241126134116222](images/mypost/lyx-20241126134116222.png)
 
   - act_re_deployment
-    ![image-20220514235344635](images/mypost/image-20220514235344635.png)
+    ![lyx-20241126134116681](images/mypost/lyx-20241126134116681.png)
 
   - 结论：部署和定义是1对多的关系
 
 - 每次部署所涉及到的资源文件
-  ![image-20220514235449058](images/mypost/image-20220514235449058.png)
+  ![lyx-20241126134117148](images/mypost/lyx-20241126134117148.png)
 
 - 涉及到的三张表 
 
   - act_ge_bytearray
-    ![image-20220514235610659](images/mypost/image-20220514235610659.png)
+    ![lyx-20241126134117593](images/mypost/lyx-20241126134117593.png)
 
   - act_re_procdef
     category-->xml中的namespace
@@ -80,23 +80,23 @@ BPMN2.0定义的一些图标
     name_部署名
 
 - 代码
-  ![image-20220515000033931](images/mypost/image-20220515000033931.png)
+  ![lyx-20241126134118031](images/mypost/lyx-20241126134118031.png)
 
 - 主要源码
   DeployCmd.class
-  ![image-20220515000146834](images/mypost/image-20220515000146834.png)
+  ![lyx-20241126134118454](images/mypost/lyx-20241126134118454.png)
 
 - DeploymentEntityManagerImpl.java
-  ![image-20220515000232452](images/mypost/image-20220515000232452.png)
+  ![lyx-20241126134118874](images/mypost/lyx-20241126134118874.png)
 
 - insert()方法
   插入并执行资源
-  ![image-20220515000308747](images/mypost/image-20220515000308747.png)
+  ![lyx-20241126134119324](images/mypost/lyx-20241126134119324.png)
   点开里面的insert方法
-  ![image-20220515000330794](images/mypost/image-20220515000330794.png)
+  ![lyx-20241126134119731](images/mypost/lyx-20241126134119731.png)
 
 - AbstractDataManger.insert()
-  ![image-20220515000405402](images/mypost/image-20220515000405402.png)
+  ![lyx-20241126134120153](images/mypost/lyx-20241126134120153.png)
 
 - 回到test类，deploy()方法最终就是完成了表结构的数据的操作（通过Mybatis）
 
@@ -174,7 +174,7 @@ BPMN2.0定义的一些图标
 - 表结构
   act_re_procdef表中的SUSPENSION_STATE字段来表示1激活，2挂起
 
-  ![image-20220515075535507](images/mypost/image-20220515075535507.png)
+  ![lyx-20241126134120589](images/mypost/lyx-20241126134120589.png)
 
   
 
@@ -210,7 +210,7 @@ BPMN2.0定义的一些图标
   
 
   执行后
-  ![image-20220515080404847](images/mypost/image-20220515080404847.png)
+  ![lyx-20241126134121037](images/mypost/lyx-20241126134121037.png)
 
 - 如果这时启动流程
 
@@ -244,7 +244,7 @@ BPMN2.0定义的一些图标
 
 - 此时再运行一次testSuspend()，将流程定义激活，此时数据库act_re_procdef表中的SUSPENSION_STATE字段值为1
   再运行testRunProcess()，流程正常启动
-  ![image-20220515081034659](images/mypost/image-20220515081034659.png)
+  ![lyx-20241126134121488](images/mypost/lyx-20241126134121488.png)
 
   
 
@@ -289,13 +289,13 @@ BPMN2.0定义的一些图标
   - ACT_RU_EXECUTION 运行时流程执行实例
     当启动一个实例的时候，这里会有两个流程执行
 
-    ![image-20220515084231981](images/mypost/image-20220515084231981.png)
+    ![lyx-20241126134121893](images/mypost/lyx-20241126134121893.png)
 
   - ACT_RU_IDENTITYLINK  运行时用户关系信息
 
     - 记录流程实例当前所处的节点
     - 数据库表
-      ![image-20220515084517415](images/mypost/image-20220515084517415.png)
+      ![lyx-20241126134122295](images/mypost/lyx-20241126134122295.png)
 
     - 有几种任务处理人的类型
 
@@ -319,11 +319,11 @@ BPMN2.0定义的一些图标
       
 
   - ACT_RU_TASK 运行时任务表
-    ![image-20220515084822445](images/mypost/image-20220515084822445.png)
+    ![lyx-20241126134122724](images/mypost/lyx-20241126134122724.png)
 
   - ACT_RU_VARIABLE 运行时变量表
 
-    ![image-20220515084910997](images/mypost/image-20220515084910997.png)
+    ![lyx-20241126134123372](images/mypost/lyx-20241126134123372.png)
 
   
 
@@ -368,8 +368,8 @@ BPMN2.0定义的一些图标
   ```
 
 - 任务处理后，这里添加了一个变量，且修改了变量description
-  ![image-20220515091219370](images/mypost/image-20220515091219370.png)
-  ![image-20220515091248276](images/mypost/image-20220515091248276.png)
+  ![lyx-20241126134123825](images/mypost/lyx-20241126134123825.png)
+  ![lyx-20241126134124231](images/mypost/lyx-20241126134124231.png)
 
   - 可以通过流程变量，它可以在整个流程过程中流转的[注意，这里流程结束后流程变量会不存在的，但是act_hi_variinst里面可以看到流程变量实例]
     //我感觉应该用表单替代
@@ -381,12 +381,12 @@ BPMN2.0定义的一些图标
     - **ACT _ RU _ TASK**：此表包含一个正在运行的实例的每个未完成用户任务的条目。然后在查询用户的任务列表时使用此表。【这里只显示运行中】
   - act_ru_task
     记录当前实例所运行的当前节点的信息
-    ![image-20220515091649172](images/mypost/image-20220515091649172.png)
+    ![lyx-20241126134124879](images/mypost/lyx-20241126134124879.png)
   - act_ru_identitylink
-    ![image-20220515091833571](images/mypost/image-20220515091833571.png)
+    ![lyx-20241126134125306](images/mypost/lyx-20241126134125306.png)
 
 - act_ru_execution这个表的数据不会有变动
-  ![image-20220515091928802](images/mypost/image-20220515091928802.png)
+  ![lyx-20241126134125729](images/mypost/lyx-20241126134125729.png)
 
 ## 流程结束的原理
 
@@ -418,25 +418,25 @@ BPMN2.0定义的一些图标
   ```
 
 - 此时跟流程相关的数据都会被清空掉
-  ![image-20220515093046925](images/mypost/image-20220515093046925.png)
+  ![lyx-20241126134126132](images/mypost/lyx-20241126134126132.png)
 
 - 历史数据
 
   - 变量
-    ![image-20220515093214154](images/mypost/image-20220515093214154.png)
+    ![lyx-20241126134126565](images/mypost/lyx-20241126134126565.png)
 
   - 任务流转历史
-    ![image-20220515093316108](images/mypost/image-20220515093316108.png)
+    ![lyx-20241126134126987](images/mypost/lyx-20241126134126987.png)
 
   - 流程实例
-    ![image-20220515093350660](images/mypost/image-20220515093350660.png)
+    ![lyx-20241126134127429](images/mypost/lyx-20241126134127429.png)
 
   - 涉及到的用户
-    ![image-20220515093451995](images/mypost/image-20220515093451995.png)
+    ![lyx-20241126134127875](images/mypost/lyx-20241126134127875.png)
 
   - 流程活动
 
-    ![image-20220515093538334](images/mypost/image-20220515093538334.png)
+    ![lyx-20241126134128305](images/mypost/lyx-20241126134128305.png)
 
   - 
 

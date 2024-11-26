@@ -26,15 +26,15 @@ updated: 2023-02-14 16:57:38
 
 类似于京东建立的庞大的仓储运输体系，京东物流在全国拥有非常多的仓库，仓储网络几乎覆盖全国所有区县。这样的话，用户下单的第一时间，商品就从距离用户最近的仓库，直接发往对应的配送站，再由京东小哥送到你家。
 
- ![京东仓配系统](images/mypost/9SodWocD2MqsLkwtYwJEkYdBrLfMGr.jpg) 
+ ![京东仓配系统](images/mypost/lyx-20241126133937321.jpg) 
 
 你可以将 CDN 看作是服务上一层的特殊缓存服务，分布在全国各地，主要用来处理静态资源的请求。
 
- ![CDN 简易示意图](images/mypost/jfomJ8PgfulDfI3GHrIx7Vt8snUngb.jpg) 
+ ![CDN 简易示意图](images/mypost/lyx-20241126133937906.jpg) 
 
 我们经常拿**全站加速**和**内容分发**网络做对比，不要把两者搞混了！全站加速（不同云服务商叫法不同，腾讯云叫 ECDN、阿里云叫 DCDN）既可以加速**静态资源**又可以加速**动态资源**，**内容分发网络（CDN）**主要针对的是 **静态资源** 。
 
-  ![image-20230215093539168](images/mypost/image-20230215093539168.png)
+  ![lyx-20241126133938354](images/mypost/lyx-20241126133938354.png)
 
 绝大部分公司都会在项目开发中交使用 **CDN 服务**，但很少会有自建 CDN 服务的公司。基于**成本、稳定性和易用性**考虑，建议**直接选择专业的云厂商**（比如阿里云、腾讯云、华为云、青云）或者 CDN 厂商（比如网宿、蓝汛）提供的开箱即用的 CDN 服务。
 
@@ -88,7 +88,7 @@ CDN 会通过 GSLB 找到最合适的 CDN 节点，更具体点来说是下面�
 
 CDN 服务提供商几乎都提供了这种比较基础的防盗链机制。
 
- ![img](images/mypost/KQz7ZvkbCQzO0paeHKJimBq9N7ChPC.jpg)
+ ![img](images/mypost/lyx-20241126133938790.jpg)
 
 不过，如果站点的防盗链配置允许 Referer 为空的话，通过隐藏 Referer，可以直接绕开防盗链。
 
@@ -116,7 +116,7 @@ http://cdn.wangsu.com/4/123.mp3? wsSecret=79aead3bd7b5db4adeffb93a010298b5&wsTim
 
 时间戳防盗链的实现也比较简单，并且可靠性较高，推荐使用。并且，绝大部分 CDN 服务提供商都提供了开箱即用的时间戳防盗链机制。
 
- ![七牛云时间戳防盗链配置](images/mypost/6FOF7IUpn40qTOLaoP17mD19ChWgdI.jpg) 
+ ![七牛云时间戳防盗链配置](images/mypost/lyx-20241126133939333.jpg) 
 
 除了 Referer 防盗链和时间戳防盗链之外，你还可以 IP 黑白名单配置、IP 访问限频配置等机制来防盗刷。
 

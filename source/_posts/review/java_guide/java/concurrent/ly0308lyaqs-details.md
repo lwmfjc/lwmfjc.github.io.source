@@ -24,7 +24,7 @@ updated: 2022-12-05 09:18:01
 
 AQS,AbstractQueueSyschronizer，即抽象队列同步器，这个类在java.util.concurrent.locks包下面
 
-![image-20221130154309546](images/mypost/image-20221130154309546.png)
+![lyx-20241126133649407](images/mypost/lyx-20241126133649407.png)
 
 AQS是一个抽象类，主要用来构建**锁**和**同步器**
 
@@ -47,10 +47,10 @@ AQS 核心思想是，如果被请求的**共享资源（AQS内部）**空闲，
   > [ 搜索了一下，CLH好像是人名 ]
   > 在 CLH 同步队列中，一个节点表示一个线程，它保存着**线程的引用**（thread）、 当前节点在**队列中的状态**（waitStatus）、**前驱节点**（prev）、**后继节点**（next）。  
   > CLH队列结构  
-  > ![image-20230206085141770](images/mypost/image-20230206085141770.png)
+  > ![lyx-20241126133649961](images/mypost/lyx-20241126133649961.png)
 
 - AQS（AbstractQueuedSynchronized）原理图   
-    ![image-20221120193141243](images/mypost/image-20221120193141243.png)
+    ![lyx-20241126133650381](images/mypost/lyx-20241126133650381.png)
 
   AQS使用一个**int成员变量来表示同步状态**，通过内置的**线程等待队列**来获取资源线程的排队工作。  
 `state` 变量由 `volatile` 修饰，用于展示**当前临界资源的获锁**情况。

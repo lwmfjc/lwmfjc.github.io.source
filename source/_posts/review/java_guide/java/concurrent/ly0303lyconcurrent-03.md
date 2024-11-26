@@ -164,7 +164,7 @@ updated: 2022-11-21 10:54:33
 
        > 虚线是实现，实线是继承。
        
-       ![image-20221109103922513](images/mypost/image-20221109103922513.png)
+       ![lyx-20241126133630623](images/mypost/lyx-20241126133630623.png)
        而入参为Runnable时返回值里是get不到结果的  
        
        
@@ -192,7 +192,7 @@ updated: 2022-11-21 10:54:33
      ```
 
 - FutureTask、Thread、Callable、Executors   
-  ![image-20230307144132470](images/mypost/image-20230307144132470.png)
+  ![lyx-20241126133631157](images/mypost/lyx-20241126133631157.png)
 
 - 如何创建线程池
 
@@ -320,7 +320,7 @@ updated: 2022-11-21 10:54:33
     > - **CachedThreadPool**和**ScheduledThreadPool**：允许创建的线程数量为Integer.MAX_VALUE，可能**创建大量线程**，导致OOM
 
   - 通过构造方法实现
-    ![image-20221109171604573](images/mypost/image-20221109171604573.png)
+    ![lyx-20241126133631578](images/mypost/lyx-20241126133631578.png)
 
   - 通过Executor框架的工具类Executors来实现
     以下三个方法，返回的类型都是ThreadPoolExecutor
@@ -331,7 +331,7 @@ updated: 2022-11-21 10:54:33
       数量不固定，若有空闲线程可以复用则**优先使用可复用**线程。若**所有线程均工作，此时又有新任务**提交，则**创建新线程**处理任务。所有线程在当前任务执行完毕后返回线程池进行复用
 
     Executors工具类中的方法  
-    ![image-20221110104950618](images/mypost/image-20221110104950618.png)
+    ![lyx-20241126133632044](images/mypost/lyx-20241126133632044.png)
 
   - 核心线程数和最大线程数有什么区别？
     该类提供四个构造方法，看最长那个，其余的都是（给定默认值后）调用这个方法
@@ -539,7 +539,7 @@ updated: 2022-11-21 10:54:33
   ```
   
   如图
-  ![image-20221117140008973](images/mypost/image-20221117140008973.png)
+  ![lyx-20241126133632535](images/mypost/lyx-20241126133632535.png)
   分析上面的例子，
   
   > 我们在代码中模拟了 10 个任务，我们配置的核心线程数为 5 、等待队列容量为 100 ，所以每次只可能存在 5 个任务同时执行，剩下的 5 个任务会被放到等待队列中去。当前的5个任务中如果有任务被执行完了，线程池就会去拿新的任务执行。
@@ -676,7 +676,7 @@ updated: 2022-11-21 10:54:33
     > CPU 密集型简单理解就是**利用 CPU 计算能力**的任务比如你在**内存中对大量数据进行排序**。但凡涉及到**网络读取**，**文件读取**这类都是 **IO 密集型**，这类任务的特点是 **CPU 计算耗费时间**相比于等待 **IO 操作**完成的时间来说很少，大部分时间都花在了**等待 IO 操作**完成上。
     >
   
-   ![image-20230307155552472](images/mypost/image-20230307155552472.png)
+   ![lyx-20241126133632992](images/mypost/lyx-20241126133632992.png)
 
 ## Atomic原子类
 
@@ -685,7 +685,7 @@ Atomic ``` 英[əˈtɒmɪk] ```原子，即不可分割
 线程中，Atomic，指一个操作是不可中断的，即使在多线程一起执行时，一个操作一旦开始，就不会被其他线程干扰
 
 原子类，即具有**原子/原子操作特性**的类。并发包```java.util.concurrent```原子类都放在```java.util.concurrent.atomit```
-![image-20221117152847851](images/mypost/image-20221117152847851.png)
+![lyx-20241126133633412](images/mypost/lyx-20241126133633412.png)
 
 Java中存在四种原子类（基本、数组、引用、对象属性）
 
@@ -701,7 +701,7 @@ Java中存在四种原子类（基本、数组、引用、对象属性）
 
 - AQS介绍
   全程，AbstractQueuedSynchronizer抽象队列同步器，在java.util.concurrent.locks包下
-  ![image-20221121094942039](images/mypost/image-20221121094942039.png)
+  ![lyx-20241126133633982](images/mypost/lyx-20241126133633982.png)
 AQS是一个抽象类，主要用来**构建锁**和**同步器**    
   
   ```java
@@ -721,10 +721,10 @@ AQS是一个抽象类，主要用来**构建锁**和**同步器**
     > 搜索了一下，CLH好像是人名
 
   CLH队列结构如下图所示  
-  ![img](images/mypost/40cb932a64694262993907ebda6a0bfe%7Etplv-k3u1fbpfcp-zoom-1.image)
+  ![img](images/mypost/lyx-20241126133634414.image)
   
     AQS（AbstractQueuedSynchronized）原理图   
-    ![image-20221120193141243](images/mypost/image-20221120193141243.png)
+    ![lyx-20241126133634884](images/mypost/lyx-20241126133634884.png)
   
   AQS 使用 **int 成员变量 `state` 表示同步状态**，通过内置的 **线程等待队列** 来完成获取资源线程的**排队**工作。
   
@@ -1233,7 +1233,7 @@ Process finished with exit code 0
 
 ### 三者区别
 
-![image-20230307233809052](images/mypost/image-20230307233809052.png)
+![lyx-20241126133634904](images/mypost/lyx-20241126133634904.png)
 
 **CountDownLatch也能实现CyclicBarrier类似功能，不过它的栅栏被推到后就不会再重新存在了(CyclicBarrier会重新建立栅栏)**
 

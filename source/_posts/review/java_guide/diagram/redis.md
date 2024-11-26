@@ -15,16 +15,16 @@ updated: 2023-02-27 22:11:02
 
 1. 主从复制原理  
 
-   ![主从复制原理](images/mypost/image-20230227221119208.png)
+   ![主从复制原理](images/mypost/lyx-20241126133550296.png)
 
 2. 哨兵模式(简单)  
-    ![image-20230227231636309](images/mypost/image-20230227231636309.png)
+    ![lyx-20241126133550818](images/mypost/lyx-20241126133550818.png)
     
 3. 哨兵模式详解  
    
    > 先配置**主从模式**，再配置**哨兵模式**
    
-    所有的哨兵 sentinel.conf 都是配置为监听master--> 192.168.14.101，如果主机宕机，sentinel.conf 中的配置也会自动更改为选举后的![image-20230228151217464](images/mypost/image-20230228151217464.png)
+    所有的哨兵 sentinel.conf 都是配置为监听master--> 192.168.14.101，如果主机宕机，sentinel.conf 中的配置也会自动更改为选举后的![lyx-20241126133551273](images/mypost/lyx-20241126133551273.png)
    
    1. Java客户端连接原理  
    
@@ -62,12 +62,12 @@ updated: 2023-02-27 22:11:02
        > }
        > ```
    
-       ![image-20230228152739283](images/mypost/image-20230228152739283.png)
+       ![lyx-20241126133551738](images/mypost/lyx-20241126133551738.png)
    
    2. 哨兵工作原理  
        主观宕机：sentinel自认为redis不可用  
        客观宕机：sentinel集群认为redis不可用  
-       ![image-20230228155513262](images/mypost/image-20230228155513262.png)
+       ![lyx-20241126133552301](images/mypost/lyx-20241126133552301.png)
    
    3. 故障转移  
-       ![image-20230228173124506](images/mypost/image-20230228173124506.png)
+       ![lyx-20241126133552753](images/mypost/lyx-20241126133552753.png)

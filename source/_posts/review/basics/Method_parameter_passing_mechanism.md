@@ -101,19 +101,19 @@ my.a = 11
   ```
 
 - change方法调用之前，jvm中的结构
-  ![image-20220922113056133](images/mypost/image-20220922113056133.png)
+  ![lyx-20241126133410974](images/mypost/lyx-20241126133410974.png)
   
 - 方法栈帧中的数据
   执行change方法后，实参给形参赋值：
   基本数据类型：数据值
   引用数据类型：地址值
 
-  ![image-20220922211437515](images/mypost/image-20220922211437515.png)
+  ![lyx-20241126133411506](images/mypost/lyx-20241126133411506.png)
 
   当实参是特殊的类型时：比如String、包装类等对象，不可变，即
   ```s+="world";```
   会导致创建两个对象，如图（ Integer也是）
-  ![image-20220922211733044](images/mypost/image-20220922211733044.png)
+  ![lyx-20241126133411908](images/mypost/lyx-20241126133411908.png)
 
 
 
